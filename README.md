@@ -28,8 +28,9 @@ For trying out the framework, you can follow the steps below:
 3. Along with the API provided, CLI is included for easy use.
 Commands available currently:
 * things-js dashboard
-* things-js worker <config>
-* things-js instrument <code>
+* things-js worker {config}
+* things-js instrument {code}
+
 
 * 3.a) To start the Dashboard Application:
 ```
