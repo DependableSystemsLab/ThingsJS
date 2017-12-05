@@ -1,0 +1,37 @@
+{
+  "name": "things-js",
+  "version": "1.0.0",
+  "description": "Framework for building distribute IoT applications",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "things-js": "./bin/things-js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/karthikp-ubc/ThingsJS.git"
+  },
+  "keywords": [
+    "IoT",
+    "migration",
+    "distributed",
+    "system"
+  ],
+  "author": "University of British Columbia",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/karthikp-ubc/ThingsJS/issues"
+  },
+  "homepage": "https://github.com/karthikp-ubc/ThingsJS#readme",
+  "dependencies": {
+    "escodegen": "^1.9.0",
+    "esprima": "^4.0.0",
+    "js-beautify": "^1.7.4",
+    "jsonschema": "^1.2.0",
+    "mongodb": "^2.2.33",
+    "mqtt": "^2.14.0",
+    "pidusage": "^1.2.0"
+  }
+}

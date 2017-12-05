@@ -1,0 +1,122 @@
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<span class="form-inline">
+			<select ng-model="node" ng-options="data as target for (target, data) in $service.allNodes" class="form-control">
+				<option value="">--- Select Device ---</option>
+				<option ng-repeat="(target, data) in $service.allNodes" ng-value="data">{{ target }}</option>
+			</select>
+		</span>
+		
+		<div class="btn-group" ng-init="viewMode = 'status'">
+			<button ng-click="viewMode = 'status'" class="btn btn-default" ng-class="{ active: viewMode === 'status' }">Status</button>
+			<button ng-click="viewMode = 'graph'" class="btn btn-default" ng-class="{ active: viewMode === 'graph' }">Graph</button>
+			<button ng-click="viewMode = 'console'" class="btn btn-default" ng-class="{ active: viewMode === 'console' }">Console</button>
+		</div>
+	</div>
+	<div class="panel-body">
+		
+		<!-- Status View -->
+		<div ng-show="viewMode === 'status'">
+			
+			<table class="table table-bordered">
+				<tbody ng-if="node">
+					<tr>
+						<th>Status</th>
+						<td>{{ node.status }}</td>
+					</tr>
+					<tr>
+						<th>Device</th>
+						<td>{{ node.info.device }}</td>
+					</tr>
+					<tr>
+						<th>Running</th>
+						<td>
+							<span>{{ node.running || '-' }}</span>
+							<button ng-if="node.status === 'busy'" class="btn btn-danger btn-sm" ng-click="$service.pauseCode(node.id, node.running)">
+								<i class="fa fa-stop"></i> Stop
+							</button>
+						</td>
+					</tr>
+				</tbody>
+				<tbody ng-if="!node">
+					<tr>
+						<td class="text-center">Device not selected</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<!-- 
+			<div ng-if="node.status === 'idle'" class="form-inline">
+				<select ng-model="selectedCode" class="form-control">
+					<option value="">--- Select Code ---</option>
+					<option ng-repeat="(codeName, data) in $service.allCodes" ng-value="data.code">{{ codeName }}</option>
+				</select>
+				<button ng-click="$service.runCode(node.id, selectedCode)" class="btn btn-danger">
+					<i class="fa fa-play"></i> Run
+				</button>
+			</div>
+			
+			<div ng-if="node.status === 'busy'" class="form-inline">
+				<select ng-model="selectedNode" class="form-control">
+					<option value="">--- Select Device ---</option>
+					<option ng-repeat="(target, data) in $service.allNodes" ng-value="target" ng-if="data.status === 'idle' && data.id !== node.id">{{ target }}</option>
+				</select>
+				<button class="btn btn-warning btn-sm"
+						ng-click="$service.migrateCode(node.id, selectedNode, node.running)">
+					<i class="fa fa-exchange"></i> Migrate
+				</button>
+			</div>
+			 -->
+										
+		</div>
+		<!-- End Status View -->
+		
+		<!-- Graph View -->
+		<div ng-show="viewMode === 'graph'">
+			
+			<device-graph node="node"></device-graph>
+										
+		</div>
+		<!-- End Graph View -->
+		
+		<!-- Console View -->
+		<div ng-show="viewMode === 'console'">
+			
+			<device-console lines="node.console"></device-console>
+			<button ng-if="node.console.length > 0" class="btn btn-info btn-sm pull-right" ng-click="node.clearConsole()">Clear Console</button>
+										
+		</div>
+		<!-- End Console View -->
+		
+	</div>
+	<div class="panel-footer">
+		
+		<!-- Node Controls -->
+		<div ng-if="node.status === 'idle'" class="form-inline">
+			<select ng-model="selectedCode" class="form-control">
+				<option value="">--- Select Code ---</option>
+				<option ng-repeat="(codeName, data) in $service.allCodes" ng-value="data.code">{{ codeName }}</option>
+			</select>
+			<button ng-click="$service.runCode(node.id, selectedCode)" class="btn btn-danger">
+				<i class="fa fa-play"></i> Run
+			</button>
+		</div>
+		
+		<div ng-if="node.status === 'busy'" class="form-inline">
+			<span>{{ node.running }}</span>
+			<button ng-if="node.status === 'busy'" class="btn btn-danger btn-sm" ng-click="$service.pauseCode(node.id, node.running)">
+				<i class="fa fa-stop"></i> Stop
+			</button>
+			<select ng-model="selectedNode" class="form-control">
+				<option value="">--- Select Device ---</option>
+				<option ng-repeat="(target, data) in $service.allNodes" ng-value="target" ng-if="data.status === 'idle' && data.id !== node.id">{{ target }}</option>
+			</select>
+			<button class="btn btn-warning btn-sm"
+					ng-click="$service.migrateCode(node.id, selectedNode, node.running)">
+				<i class="fa fa-exchange"></i> Migrate
+			</button>
+		</div>
+		<!-- End Node Controls -->
+		
+	</div>
+</div>

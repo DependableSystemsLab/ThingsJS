@@ -1,0 +1,68 @@
+<div ui-view>
+
+<div class="row">
+	<div class="col-md-12">
+		
+		<div class="panel panel-default">
+			<div class="panel-body">
+			
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>Node ID</th>
+							<th>Status</th>
+							<th>Running</th>
+							<th>Actions</th>
+							<th>Last Updated</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="node in $view.allNodes">
+							<td>
+								<a ui-sref="nodes.view({ nodeId: node.id })">{{ node.id }}</a>
+							</td>
+							<td>
+								{{ node.status }}
+							</td>
+							<td>
+								{{ node.running }}
+								<button ng-if="node.status === 'busy' && node.running" class="btn btn-danger btn-sm"
+										ng-click="$view.pauseNode(node.id, node.running)">
+									Stop
+								</button>
+							</td>
+							<td>
+								<div class="form-inline" ng-if="node.status === 'idle'">
+									<select ng-model="selectedCode" class="form-control">
+										<option ng-repeat="(codeName, data) in $service.allCodes" ng-value="data.code">{{ codeName }}</option>
+									</select>
+									<button class="btn btn-primary btn-sm"
+											ng-click="$service.runCode(node.id, selectedCode)">
+										Run
+									</button>
+								</div>
+								<div class="form-inline" ng-if="node.status === 'busy'">
+									<select ng-model="selectedNode" class="form-control">
+										<option ng-repeat="(target, data) in $view.allNodes" ng-value="target" ng-if="data.status === 'idle' && data.id !== node.id">{{ target }}</option>
+									</select>
+									<button class="btn btn-warning btn-sm"
+											ng-click="$service.migrateCode(node.id, selectedNode, node.running)">
+										Move
+									</button>
+								</div>	
+							</td>
+							<td>
+								{{ node.dtstamp|date:"yyyy-MM-dd HH:mm:ss" }}
+							</td>
+						</tr>
+						
+					</tbody>
+				</table>
+				
+			</div>
+		</div>
+		
+	</div>
+</div>
+
+</div>

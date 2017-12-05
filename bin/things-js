@@ -1,0 +1,47 @@
+#! /usr/bin/env node
+
+var things = require('../lib/things.js');
+var path = require('path');
+var program = require('commander');
+
+program
+  .version('0.0.1')
+  .description('Framework for building IoT systems')
+
+program
+  .command('dashboard')
+  .option('-c, --config <conf_path>', 'Config File Path')
+  .alias('dash')
+  .description('Start a Dashboard application')
+  .action(function(options){
+    var app = require('../util/dashboard/application.js');
+    app(options.config);
+  });
+
+program
+  .command('worker <conf>')
+  .description('Start a ThingsJS Worker')
+  .action(function(conf){
+     var config = things.validateConfig(conf);
+     var engine = new things.CodeEngine(config, { logging: 'thingsjs-logs', logInterval: 500 });
+     
+     process.on('SIGINT', function(){
+       engine.kill();
+     });
+
+  });
+
+program
+  .command('instrument <file_path>')
+  .option('-o, --output <out_path>', 'Output File Path')
+  .alias('inst')
+  .description('Instrument raw JavaScript code to make it migrate-able')
+  .action(function(file_path, options){
+    var config = things.validateConfig(path.resolve(__dirname, '../bin/things-default.conf'));
+    var pubsub = new things.Pubsub('things-cli', config.pubsub_url);
+    var code = new things.Code(file_path, pubsub, true);
+	code.saveToFile(options.output);
+  
+  });
+
+program.parse(process.argv);

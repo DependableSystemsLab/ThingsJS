@@ -1,0 +1,5 @@
+<nvd3 options="$ctrl.graphOptions" data="$ctrl.graphData[mode]"></nvd3>
+<div class="btn-group">
+	<button ng-click="mode = 'memory'" class="btn btn-default" ng-class="{ active: mode === 'memory' }">Memory</button>
+	<button ng-click="mode = 'cpu'" class="btn btn-default" ng-class="{ active: mode === 'cpu' }">CPU</button>
+</div>

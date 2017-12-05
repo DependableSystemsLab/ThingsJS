@@ -1,0 +1,79 @@
+<div class="row">
+	<div class="col-md-12">
+
+		<ol class="breadcrumb">
+			<li><a ui-sref="main">Main</a></li>
+			<li><a ui-sref="nodes">Nodes</a></li>
+			<li><a href="javascript:;"><b>{{ $vm.node.id }}</b></a></li>
+		</ol>
+		
+		<ul class="nav nav-tabs" ng-init="$vm.view = 'status'">
+			<li role="presentation" ng-class="{ active : ($vm.view === 'status') }"><a href="javascript:;" ng-click="$vm.view = 'status'">Status</a></li>
+			<li role="presentation" ng-class="{ active : ($vm.view === 'console') }"><a href="javascript:;" ng-click="$vm.view = 'console'">Console</a></li>
+		</ul>
+		<!-- Status View -->
+		<div ng-show="$vm.view === 'status'">
+			
+			<div class="row">
+				<div class="col-md-12">
+					
+					<table class="table table-bordered">
+						<tbody>
+							<tr>
+								<th>Status</th>
+								<td>{{ $vm.node.status }}</td>
+							</tr>
+							<tr>
+								<th>Device</th>
+								<td>{{ $vm.node.info.device }}</td>
+							</tr>
+							<tr>
+								<th>Running</th>
+								<td>
+									<span>{{ $vm.node.running || '-' }}</span>
+									<button ng-if="$vm.node.status === 'busy'" class="btn btn-danger btn-sm" ng-click="$service.pauseCode($vm.node.id, $vm.node.running)">Stop</button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					
+					<device-graph node="$vm.node" height="320"></device-graph>
+				
+				</div>
+			</div>
+		
+		</div>
+		<!-- End Status View -->
+		<!-- Console View -->
+		<div ng-show="$vm.view === 'console'">
+			
+			<div ng-if="$vm.node.status === 'idle'" class="form-inline">
+				<select ng-model="selectedCode" class="form-control">
+					<option value="">--- Select Code ---</option>
+					<option ng-repeat="(codeName, data) in $service.allCodes" ng-value="data.code">{{ codeName }}</option>
+				</select>
+				<button ng-click="$service.runCode($vm.node.id, selectedCode)" class="btn btn-danger">Run</button>
+			</div>
+			
+			<div ng-if="$vm.node.status === 'busy'" class="form-inline">
+				<span>{{ $vm.node.running }}</span>
+				<button ng-if="$vm.node.status === 'busy'" class="btn btn-danger btn-sm" ng-click="$service.pauseCode($vm.node.id, $vm.node.running)">Stop</button>
+				<select ng-model="selectedNode" class="form-control">
+					<option value="">--- Select Device ---</option>
+					<option ng-repeat="(target, data) in $service.allNodes" ng-value="target" ng-if="data.status === 'idle' && data.id !== $vm.node.id">{{ target }}</option>
+				</select>
+				<button class="btn btn-warning btn-sm"
+						ng-click="$service.migrateCode($vm.node.id, selectedNode, $vm.node.running)">
+					Migrate
+				</button>
+			</div>
+			
+			<device-console lines="$vm.node.console" height="380"></device-console>
+			
+			<button ng-if="$vm.node.console.length > 0" class="btn btn-warning btn-sm" ng-click="$vm.node.clearConsole()">Clear Console</button>
+										
+		</div>
+		<!-- End Console View -->
+
+	</div>
+</div>
