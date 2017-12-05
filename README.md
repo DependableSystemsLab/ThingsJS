@@ -19,7 +19,9 @@ For trying out the framework, you can follow the steps below:
 ~$ git clone https://github.com/karthikp-ubc/ThingsJS.git
 ```
 
-2. `npm install` to install the package. (download all the npm dependencies and link the CLI tool)
+2. `npm install -g` to install the package. (download all the npm dependencies and link the CLI tool)
+You may need to put `sudo` depending on your installation of NodeJS.
+You need the `-g` (global installation) option for using the CLI. If you don't plan on using the CLI, you can omit the `-g` option. 
 ```
 ~$ cd ThingsJS
 ~/ThingsJS$ npm install
@@ -75,6 +77,6 @@ e.g.
 ~$ things-js inst my_code.js -o my_code.instrumented.js
 ```
 
-## LICENSE
+## License
 
 MIT
