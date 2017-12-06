@@ -28,6 +28,7 @@
   "dependencies": {
     "escodegen": "^1.9.0",
     "esprima": "^4.0.0",
+    "express": "^4.16.2",
     "js-beautify": "^1.7.4",
     "jsonschema": "^1.2.0",
     "mongodb": "^2.2.33",

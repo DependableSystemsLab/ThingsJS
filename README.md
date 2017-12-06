@@ -24,7 +24,7 @@ You may need to put `sudo` depending on your installation of NodeJS.
 You need the `-g` (global installation) option for using the CLI. If you don't plan on using the CLI, you can omit the `-g` option. 
 ```
 ~$ cd ThingsJS
-~/ThingsJS$ npm install
+~/ThingsJS$ npm install -g
 ```
 
 3. Along with the API provided, CLI is included for easy use.
