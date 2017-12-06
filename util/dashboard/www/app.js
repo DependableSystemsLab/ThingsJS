@@ -292,10 +292,10 @@ dashApp.constant("CONFIG", {
 	}
 	function getData(datum, mode){
 		if (mode === 'memory'){
-			return Math.round(datum.memoryUsage.heapUsed);
+			return (Math.round(100*datum.memoryUsage.heapUsed)/100);
 		}
 		else if (mode === 'cpu') {
-			return Math.round(datum.cpu);
+			return (datum.cpu < 100) ? (Math.round(100*datum.cpu)/100) : 100.0;
 		}
 	}
 	
@@ -313,12 +313,12 @@ dashApp.constant("CONFIG", {
 			self.graphOptions = {
 					chart: {
 						type: 'lineChart',
-						height: ($scope.height || 180),
+						height: ($scope.height || 200),
 						margin: {
-							top: 20,
-							right: 40,
-							bottom: 40,
-							left: 90
+							top: 25,
+							right: 30,
+							bottom: 30,
+							left: 80
 						},
 						x: function(d){ return d.x },
 						y: function(d){ return d.y },

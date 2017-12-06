@@ -12,6 +12,7 @@
 			<button ng-click="viewMode = 'graph'" class="btn btn-default" ng-class="{ active: viewMode === 'graph' }">Graph</button>
 			<button ng-click="viewMode = 'console'" class="btn btn-default" ng-class="{ active: viewMode === 'console' }">Console</button>
 		</div>
+		
 	</div>
 	<div class="panel-body" style="min-height:204px;">
 		
@@ -44,29 +45,6 @@
 					</tr>
 				</tbody>
 			</table>
-			
-			<!-- 
-			<div ng-if="node.status === 'idle'" class="form-inline">
-				<select ng-model="selectedCode" class="form-control">
-					<option value="">--- Select Code ---</option>
-					<option ng-repeat="(codeName, data) in $service.allCodes" ng-value="data.code">{{ codeName }}</option>
-				</select>
-				<button ng-click="$service.runCode(node.id, selectedCode)" class="btn btn-danger">
-					<i class="fa fa-play"></i> Run
-				</button>
-			</div>
-			
-			<div ng-if="node.status === 'busy'" class="form-inline">
-				<select ng-model="selectedNode" class="form-control">
-					<option value="">--- Select Device ---</option>
-					<option ng-repeat="(target, data) in $service.allNodes" ng-value="target" ng-if="data.status === 'idle' && data.id !== node.id">{{ target }}</option>
-				</select>
-				<button class="btn btn-warning btn-sm"
-						ng-click="$service.migrateCode(node.id, selectedNode, node.running)">
-					<i class="fa fa-exchange"></i> Migrate
-				</button>
-			</div>
-			 -->
 										
 		</div>
 		<!-- End Status View -->
@@ -74,7 +52,7 @@
 		<!-- Graph View -->
 		<div ng-show="viewMode === 'graph'">
 			
-			<device-graph node="node"></device-graph>
+			<device-graph node="node" height="174"></device-graph>
 										
 		</div>
 		<!-- End Graph View -->
