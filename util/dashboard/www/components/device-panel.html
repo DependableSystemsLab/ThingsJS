@@ -13,7 +13,7 @@
 			<button ng-click="viewMode = 'console'" class="btn btn-default" ng-class="{ active: viewMode === 'console' }">Console</button>
 		</div>
 	</div>
-	<div class="panel-body">
+	<div class="panel-body" style="min-height:204px;">
 		
 		<!-- Status View -->
 		<div ng-show="viewMode === 'status'">
@@ -82,7 +82,7 @@
 		<!-- Console View -->
 		<div ng-show="viewMode === 'console'">
 			
-			<device-console lines="node.console"></device-console>
+			<device-console lines="node.console" height="144px"></device-console>
 			<button ng-if="node.console.length > 0" class="btn btn-info btn-sm pull-right" ng-click="node.clearConsole()">Clear Console</button>
 										
 		</div>

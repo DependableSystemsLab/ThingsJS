@@ -97,3 +97,51 @@
 	background: green;
 	color: white;
 }
+
+.ubc-primary {
+	color: #fff;
+	background: #577ea9;
+	border: #577ea9;
+}
+
+.footer-ubc {
+	background: #002145;
+	color: white;
+	margin-top: 2em;
+	padding: 1em;
+}
+.footer-ubc p{
+	font-size: 12px;
+	line-height: 1.1em;
+	margin-bottom: 6px;
+}
+
+.ece-light {
+	background: #dbe2e6;
+}
+
+/* Bootstrap Overrides */
+.navbar-ubc {
+	background: #002145;
+	color: white;
+	border-radius: 0;
+}
+.navbar-ubc a.navbar-brand {
+	color: white;
+	transition: 0.3s;
+}
+.navbar-ubc a.navbar-brand:hover {
+	text-shadow: 0 0 4px white;
+	transition: 0.3s;
+}
+
+.navbar-logo {
+	float: left;
+	height: 50px;
+	font-size: 18px;
+	line-height: 20x;
+	background: white;
+	margin-left: -15px;
+	margin-right: 0.6em;
+	border: 4px solid #dbe2e6;
+}

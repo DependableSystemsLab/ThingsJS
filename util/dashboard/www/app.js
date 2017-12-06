@@ -89,7 +89,7 @@ dashApp.constant("CONFIG", {
 	function handleNodeStats(data){
 		var nodeId = data.topic.split("/")[0];
 		if (!_NODES[nodeId].stats) _NODES[nodeId].stats = [];
-		_NODES[nodeId].stats.push(data.message);
+		if (data.message) _NODES[nodeId].stats.push(data.message);
 	}
 	function handleVideoStream(data){
 		if (data.message){
@@ -240,7 +240,7 @@ dashApp.constant("CONFIG", {
 					}
 				}
 				$rootScope.$apply();
-				console.log(data);
+//				console.log(data);
 			});
 			return deferred.promise;
 		},
@@ -292,10 +292,10 @@ dashApp.constant("CONFIG", {
 	}
 	function getData(datum, mode){
 		if (mode === 'memory'){
-			return datum.memoryUsage.heapUsed;
+			return Math.round(datum.memoryUsage.heapUsed);
 		}
 		else if (mode === 'cpu') {
-			return datum.cpu;
+			return Math.round(datum.cpu);
 		}
 	}
 	
@@ -331,9 +331,22 @@ dashApp.constant("CONFIG", {
 						}
 					}
 				};
-			self.initData = function(){
-				self.graphData = { 'memory': [{ values: [], key: modes['memory'] }],
-								   'cpu': [{ values: [], key: modes['cpu'] }] };
+			self.initData = function(data){
+				var memData, cpuData;
+				if (data){
+					memData = data.map(function(datum){
+						return { x: datum.timestamp, y: getData(datum, 'memory') }
+					});
+					cpuData = data.map(function(datum){
+						return { x: datum.timestamp, y: getData(datum, 'cpu') };
+					})
+				}
+				else {
+					memData = [];
+					cpuData = [];
+				}
+				self.graphData = { 'memory': [{ values: memData, key: modes['memory'] }],
+						   		   'cpu': [{ values: cpuData, key: modes['cpu'] }] };
 			};
 			self.initData();
 			
@@ -351,7 +364,14 @@ dashApp.constant("CONFIG", {
 			$scope.$watch(function(){
 				return $scope.node ? $scope.node.id : undefined;
 			}, function(id){
-				self.initData();
+				if (id){
+					var slen = $scope.node.stats.length;
+					var data = (slen > 60) ? $scope.node.stats.slice(slen-61) : $scope.node.stats.slice(0);
+					self.initData(data);
+				}
+				else {
+					self.initData();
+				}
 			});
 			
 		}],
@@ -364,12 +384,12 @@ dashApp.constant("CONFIG", {
 		restrict: 'E',
 		scope: {
 			lines: '=',
-			height: '=?'
+			height: '@?'
 		},
 		template: '<div class="terminal"><p ng-repeat="text in lines track by $index" ng-bind="text"></p></div>',
 		link: function(scope, element, attrs, ctrl){
 			var div = $('.terminal', element);
-			if (scope.height){ div.css({ "max-height": scope.height }) };
+			if (scope.height){ div.css({ "height": scope.height, "max-height": scope.height }) };
 			
 			scope.$watch(function(){
 //				return scope.lines ? scope.lines.length : 0;
@@ -393,6 +413,24 @@ dashApp.constant("CONFIG", {
 		templateUrl: 'components/device-panel.html'
 	}
 }])
+.directive('stickyFooter', function($window){
+	return {
+		restrict: 'A',
+		link: function(scope, element, attrs, ctrl){
+		var marker = $('<div></div>');
+			marker.css({background: 'transparent'});
+			marker.insertBefore(element);
+		var stick = function(){
+				var y = window.innerHeight - element.outerHeight() - marker.offset().top;
+				if (y > 0){ marker.height(y); }
+				else { marker.height(0); }
+			}
+			scope.$watch(function(){ return marker.offset().top; }, function(newVal, oldVal){ stick(); });
+			scope.$watch(function(){ return element.height(); }, function(newval){ stick(); });
+			angular.element($window).bind('resize', function(){ stick(); });
+		}
+	}
+})
 .config(['$stateProvider', '$urlRouterProvider', 
     function($stateProvider, $urlRouterProvider){
 	$stateProvider
@@ -417,49 +455,15 @@ dashApp.constant("CONFIG", {
 				$scope.$service = DashboardService;
 				
 				self.topDevice = undefined;
+				self.middleDevice = undefined;
 				self.bottomDevice = undefined;
 				
-				self.topDeviceOptions = {
-					chart: {
-						type: 'lineChart',
-						height: 180,
-						margin: {
-							top: 10,
-							right: 10,
-							bottom: 10,
-							left: 40
-						},
-						x: function(d){ return d.x },
-						y: function(d){ return d.y },
-						useInteractiveGuideline: true,
-						duration: 500,
-						yAxis: {
-							tickFormat: function(d){
-								return d3.format('.01f')(d);
-							}
-						}
-					}
-				}
-				self.topDeviceData = [{ values: [], key: 'Memory Usage' }];
-				
-				$scope.$watch(function(){
-					return self.topDevice ? self.topDevice.stats.length : undefined;
-				}, function(){
-					self.topDeviceData[0].values.push({ x: 0, y: Math.random() });
-					if (self.topDeviceData[0].values.length > 30) self.topDeviceData[0].values.shift();
-				});
-				
 				self.subscriptions = DashboardService.subscriptions;
-				
-				function init(){
-					
-				};
 				
 				self.stopWS = function(){
 					self.socket.close();
 				}
 				
-				init();
 			}],
 			controllerAs: '$view',
 			templateUrl: 'views/main.html'

@@ -4,19 +4,14 @@
 <div class="row">
 	<div class="col-md-8">
 		
-		<div class="form-group">
-			<label>Name</label>
-			<input type="text" ng-model="$view.codeName" class="form-control"/>
-		</div>
-		<div class="form-group">
-			<label>Code</label>
-			<div ui-ace="{ mode: 'javascript' }" ng-model="$view.code" ng-keydown="$view.onKeyDown($event)"></div>
-			<!-- 
-			<textarea ng-model="$view.code" class="form-control" rows="20"></textarea>
-			 -->
-		</div>
 		<div class="row">
-			<div class="col-md-6">
+			<div class="col-md-5">
+				<div class="form-group">
+					<label>Name</label>
+					<input type="text" ng-model="$view.codeName" class="form-control"/>
+				</div>
+			</div>
+			<div ng-show="$view.codeName" class="col-md-7 text-right">
 				<div class="form-inline">
 					<select ng-model="$view.selectedNode" class="form-control">
 						<option ng-repeat="(node, data) in $view.idleNodes" ng-value="node" ng-if="data.status === 'idle'">{{ node }}</option>
@@ -24,23 +19,31 @@
 					<button ng-click="$view.sendCode($view.selectedNode, $view.code)" class="btn btn-primary">
 						<i class="fa fa-play"></i> Run Code
 					</button>
+					<button ng-click="$service.saveCode($view.codeName, $view.code)" class="btn btn-primary">
+						<i class="fa fa-save"></i> Save Code
+					</button>
 				</div>
 			</div>
-			<div class="col-md-6 text-right">
-				<button ng-click="$service.saveCode($view.codeName, $view.code)" class="btn btn-primary">
-					<i class="fa fa-save"></i> Save Code
-				</button>
-			</div>
+		</div>
+		<div class="form-group">
+			<label>Code</label>
+			<div ui-ace="{ mode: 'javascript' }" ng-model="$view.code" ng-keydown="$view.onKeyDown($event)"></div>
 		</div>
 	</div>
 	<div class="col-md-4">
 		
-		<button ng-click="$view.codeName =''; $view.code='';" class="btn btn-primary">
-			<i class="fa fa-file"></i> Create New
-		</button>
+		<div class="well">
+			<button ng-click="$view.codeName =''; $view.code='';" class="btn btn-primary">
+				<i class="fa fa-file"></i> Create New
+			</button>
+		</div>
 		
 		<div class="list-group">
-			<a ng-click="$view.selectCode(name)" href="javascript:;" class="list-group-item" ng-repeat="(name, data) in $view.allCodes">
+			<a ng-repeat="(name, data) in $view.allCodes"
+				ng-click="$view.selectCode(name)"
+				ng-class="{ active: ($view.codeName === name) }"
+				href="javascript:;"
+				class="list-group-item">
 				{{ name }}
 			</a>
 		</div>
