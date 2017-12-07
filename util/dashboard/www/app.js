@@ -331,6 +331,11 @@ dashApp.constant("CONFIG", {
 						}
 					}
 				};
+			self.setMode = function(mode){
+				$scope.mode = mode;
+				if (mode === 'cpu') self.graphOptions.chart.yDomain = [0, 100];
+				else if (mode === 'memory') delete self.graphOptions.chart.yDomain;
+			};
 			self.initData = function(data){
 				var memData, cpuData;
 				if (data){
@@ -348,7 +353,9 @@ dashApp.constant("CONFIG", {
 				self.graphData = { 'memory': [{ values: memData, key: modes['memory'] }],
 						   		   'cpu': [{ values: cpuData, key: modes['cpu'] }] };
 			};
+			
 			self.initData();
+			self.setMode($scope.mode);
 			
 			$scope.$watch(function(){
 				return $scope.node ? $scope.node.stats.length : undefined;
