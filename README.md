@@ -90,6 +90,13 @@ e.g.
 ~$ things-js dash -c my_config.conf
 ```
 
+This will start a web-application served at the specified port.
+You can watch the demo of the Dashboard here:
+
+<a href="http://ece.ubc.ca/~kumseok/assets/ThingsJS_Migration.mp4" target="_blank"><img src="ece.ubc.ca/~kumseok/assets/ThingsJS_Migration.png" 
+alt="Demo Screenshot" width="320" height="240" border="10" /><p>Click Image to see Demo Video</p></a>
+
+
 2. Running a ThingsJS worker:
 
 To start a ThingsJS worker, first you need to create a directory that will provide the NodeJS environment. This is because the worker needs to have a reference to the `things-js` module and any other npm modules that a ThingsJS user (developer) may require. If the worker cannot find a link to a `node_modules` directory, it will throw an error.
