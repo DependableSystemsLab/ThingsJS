@@ -93,7 +93,7 @@ e.g.
 This will start a web-application served at the specified port.
 You can watch the demo of the Dashboard here:
 
-<a href="http://ece.ubc.ca/~kumseok/assets/ThingsJS_Migration.mp4" target="_blank"><img src="ece.ubc.ca/~kumseok/assets/ThingsJS_Migration.png" 
+<a href="http://ece.ubc.ca/~kumseok/assets/ThingsJS_Migration.mp4" target="_blank"><img src="http://ece.ubc.ca/~kumseok/assets/ThingsJS_Migration.png" 
 alt="Demo Screenshot" width="320" height="240" border="10" /><p>Click Image to see Demo Video</p></a>
 
 
