@@ -2,13 +2,12 @@
 
 # engine
 
-This module contains objects that enable a ThingsJS application to interact with user-provided code at runtime.
-It uses `pubsub` to communicate with other nodes.
+This module contains objects that enable a ThingsJS application to interact with user-provided code at runtime. It uses `pubsub` to communicate with other nodes.
 
 
 ## Dependencies
 
-* `pubsub`
+* `../pubsub`
     * `CodeEngine` uses the Pubsub network to issue and receive commands
     * `Code` uses the Pubsub mechanism to pause the instrumented user code
     * The instrumented user code uses the Pubsub mechanism to receive "snapshot" command from the `Code` object
