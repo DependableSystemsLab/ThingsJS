@@ -40,6 +40,10 @@ This repository is organized thus:
 
 For trying out the framework, you can follow the steps below:
 
+### Installation
+
+#### Option 1
+
 1. `git clone` this repository
 ```
 ~$ git clone https://github.com/karthikp-ubc/ThingsJS.git
@@ -53,14 +57,25 @@ You need the `-g` (global installation) option for using the CLI. If you don't p
 ~/ThingsJS$ npm install -g
 ```
 
-3. Along with the API provided, CLI is included for easy use.
+#### Option 2
+
+1. Install via npm
+```
+~$ sudo npm install -g things-js
+```
+You may omit the `sudo` depending on your NodeJS install settings.
+
+
+#### Using the CLI
+
+Along with the API provided, CLI is included for easy use.
 Commands available currently:
 * things-js dashboard
 * things-js worker {config}
 * things-js instrument {code}
 
 
-* 3.a) To start the Dashboard Application:
+1. To start the Dashboard Application:
 ```
 ~$ things-js dash
 
@@ -75,7 +90,9 @@ e.g.
 ~$ things-js dash -c my_config.conf
 ```
 
-* 3.b) To start a ThingsJS worker, first you need to create a directory that will provide the NodeJS environment. This is because the worker needs to have a reference to the `things-js` module and any other npm modules that a ThingsJS user (developer) may require. If the worker cannot find a link to a `node_modules` directory, it will throw an error.
+2. Running a ThingsJS worker:
+
+To start a ThingsJS worker, first you need to create a directory that will provide the NodeJS environment. This is because the worker needs to have a reference to the `things-js` module and any other npm modules that a ThingsJS user (developer) may require. If the worker cannot find a link to a `node_modules` directory, it will throw an error.
 
 ```
 ~$ mkdir hello_things
@@ -98,7 +115,7 @@ The configuration file is a required argument for starting the worker. It should
 ```
 
 
-* 3.c) To instrument raw JavaScript code into a "ThingJS-compatible" code:
+3. To instrument raw JavaScript code into a "ThingJS-compatible" code:
 ```
 ~$ things-js inst my_code.js
 
