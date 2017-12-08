@@ -1,7 +1,7 @@
 # ThingsJS
 ThingsJS is a framework for running JavaScript applications on IoT devices such as Raspberry PIs
 
-* NOTE: This repository is currently under active development and contents are subject to breaking changes. Please *DO NOT USE* in production.
+* NOTE: This repository is currently under active development and its contents are subject to breaking changes. 
 
 
 ## Directory Structure
