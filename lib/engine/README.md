@@ -2,19 +2,19 @@
 
 # engine
 
-This module contains objects that enable a ThingsJS application to interact with user-provided code at runtime. It uses `pubsub` to communicate with other nodes.
+This module contains the core objects used to interact with user-provided code at runtime. It uses `Pubsub` to communicate with other nodes.
 
 
 ## Dependencies
 
-* `../pubsub`
-    * `CodeEngine` uses the Pubsub network to issue and receive commands
+* `Pubsub` - located in `lib/pubsub/Pubsub.js`
     * `Code` uses the Pubsub mechanism to pause the instrumented user code
-    * The instrumented user code uses the Pubsub mechanism to receive "snapshot" command from the `Code` object
+    * `CodeEngine` uses the Pubsub network to issue and receive commands
+    * The instrumented user code uses the pub/sub mechanism to receive "snapshot" command from the `Code` object
     
 ## Modules
 
-1. `Code.js` - module for manipulating user code
+1. `Code.js` - module for manipulating user code (this is the bare minimum required for making user code "migration-enabled") 
 2. `CodeEngine.js` - module for running different `Code` instances, runs on an IoT node
 3. `Dispatcher.js` - module for managing a system of `CodeEngine` nodes by sending commands via Pubsub
 4. `Scope.js` - object that is injected into the instrumented user code to capture the internal runtime scope.
@@ -22,20 +22,24 @@ This module contains objects that enable a ThingsJS application to interact with
 
 ### Code.js
 
-This script implements the `Code` class to be used by `CodeEngine`.
-
+This script implements the `Code` class to be used by `CodeEngine`. 
 A `Code` object will instrument the user code by injecting some ThingsJS modules into the user code, which allows the user code to be controlled by the `Code` object. A ThingsJS application can just use this object to interact with the underlying user code.
 
 It exposes the following API:
 
-* (constructor) `Code(sourcePath, pubsub)`
-    * `sourcePath`: path of the raw user code
+* (constructor) `Code(source, pubsub, fromLocalPath, noInitialize)`
+    * `source`: Can be either:
+        * a) The source code as a utf-8 string
+        * b) Path of the source code in the target device. If this is the case, the third argument `fromLocalPath` should be set to `true`
     * `pubsub`: the Pubsub object that this `Code` object uses to interact with the instrumented code, and the `CodeEngine` that this object is run within.
+    * `fromLocalPath`: This should be set to `true` if the first argument `source` is a file path. The path points to the local path of the device that is running the code.
+    * `noInitialize`: set to `true` to prevent the `Code` object from auto-initializing. In general cases a user does not need to use this argument.
 
-* `Code.prototype.initialize(sourcePath, pubsub)`
+* `Code.prototype.initialize(source, pubsub, fromLocalPath)`
     * called by the constructor (no need to call it explicitly)
-    * this function will begin the instrumentation of the user code located at `sourcePath`.
+    * this function will begin the instrumentation of the user code.
     * at the time of instrumentation, the pubsub's pubsubUrl is injected
+    * after instrumentation, the utf-8 string of the instrumented code is stored as a property `codeString` (i.e. `this.codeString`).
 
 * `Code.prototype.run()`
     * this function will execute the instrumented code; the instrumented code will start executing in the same process

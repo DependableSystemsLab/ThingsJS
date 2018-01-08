@@ -44,4 +44,16 @@ program
   
   });
 
+program
+  .command('dispatch <file_path> <pubsub_url> <worker_id>')
+  .description('Dispatch code to a worker')
+  .action(function(file_path, pubsub_url, worker_id){
+    var dispatcher = new things.Dispatcher({ pubsub_url: pubsub_url });
+        dispatcher.runCode(worker_id, file_path)
+        .then(function(result){
+          console.log(">> Running Code ["+result.codeId+"] on CodeEngine ["+result.nodeId+"]");
+          process.exit();
+        });
+  });
+
 program.parse(process.argv);
