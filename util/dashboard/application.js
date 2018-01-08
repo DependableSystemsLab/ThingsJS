@@ -166,6 +166,12 @@ function start(config){
 							ws.send(JSON.stringify({ action: data.action, command: 'get_all', codes: codes }));
 						});
 				}
+				else if (data.command === "delete"){
+					db.deleteCode(data.name)
+						.then(function(result){
+							ws.send(JSON.stringify({ action: data.action, command: 'delete', code: result }));
+						});
+				}				
 			}
 		});
 		ws.on('close', function onSocketClose(){
