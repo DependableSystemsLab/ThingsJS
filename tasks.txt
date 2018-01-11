@@ -1,0 +1,3 @@
+For now my tasks are:
+
+	- organising the code on the dashboard into a directory structure

@@ -32,6 +32,7 @@
     "js-beautify": "^1.7.4",
     "jsonschema": "^1.2.0",
     "mongodb": "^2.2.33",
+    "mosca": "^2.7.0",
     "mqtt": "^2.14.0",
     "pidusage": "^1.2.0"
   }
