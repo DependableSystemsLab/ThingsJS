@@ -1,6 +1,6 @@
 {
   "name": "things-js",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Framework for building distribute IoT applications",
   "main": "index.js",
   "scripts": {
