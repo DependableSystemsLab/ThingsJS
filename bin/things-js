@@ -9,6 +9,14 @@ program
   .description('Framework for building IoT systems')
 
 program
+  .command('shell')
+  .description('Start the ThingsJS shell')
+  .action(function(options){
+    console.log("Starting the ThingsJS shell...")
+    var shell = new things.Shell().repl;
+  });
+
+program
   .command('dashboard')
   .option('-c, --config <conf_path>', 'Config File Path')
   .alias('dash')
