@@ -238,6 +238,10 @@ dashApp.constant("CONFIG", {
 					if (data.command === 'save'){
 						alert(data.code.name+" saved successfully!");
 					}
+					if (data.command === 'delete'){
+						delete _CODES[data.code.name];
+						alert(data.code.name+" deleted successfully!");
+					}
 				}
 				$rootScope.$apply();
 //				console.log(data);
@@ -260,6 +264,12 @@ dashApp.constant("CONFIG", {
 		allNodes: _NODES,
 		saveCode: function(name, code){
 			_SOCKET.send({ action: "code-db", command: "save", name: name, code: code });
+		},
+		deleteCode: function(name){
+			var result = confirm("Are you sure you want to delete " + name + "?");
+			if(result){
+				_SOCKET.send({ action: "code-db", command: "delete", name: name });
+			}
 		},
 		allCodes: _CODES,
 		runCode: runCode,
@@ -513,15 +523,18 @@ dashApp.constant("CONFIG", {
 				
 				self.allCodes = DashboardService.allCodes;
 				
-				self.codeName = "";
-				self.code = "";
-				self.selectedNode = undefined;
-				
+				self.clearAll = function(){
+					self.codeName = "";
+					self.code = "";
+					self.selectedNode = undefined;
+				}
+				self.clearAll();
+
 				self.selectCode = function(codeName){
 					self.codeName = codeName;
 					self.code = self.allCodes[codeName].code;
 				}
-				
+
 				self.sendCode = DashboardService.runCode;
 				
 				self.onKeyDown = function(event){

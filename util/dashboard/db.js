@@ -76,6 +76,18 @@ DashboardDatabase.prototype.saveCode = function(name, code){
 				})
 	});
 };
+DashboardDatabase.prototype.deleteCode = function(name){
+	var self = this;
+	var data = { name: name };
+	return new Promise(function(resolve, reject){
+		self.db.collection("smartjs-raw-code").deleteOne({ _id: name })
+			.then(function(result){
+				resolve(data);
+			}, function(error){
+				reject(error);
+			})
+	});
+};
 DashboardDatabase.prototype.getCode = function(name){
 	return this.db.collection("smartjs-raw-code").findOne({ _id: name });
 };
