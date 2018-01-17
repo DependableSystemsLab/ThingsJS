@@ -88,6 +88,7 @@ DashboardDatabase.prototype.deleteCode = function(name){
 			})
 	});
 };
+/*
 DashboardDatabase.prototype.createNewFolder = function(){
 	var self = this;
 	var data = { name: name };
@@ -95,6 +96,7 @@ DashboardDatabase.prototype.createNewFolder = function(){
 		self.db.createCollection("name"); // does not create a database on my laptop. need to fix
 	});
 };
+*/
 DashboardDatabase.prototype.getCode = function(name){
 	return this.db.collection("smartjs-raw-code").findOne({ _id: name });
 };
