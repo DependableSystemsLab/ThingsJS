@@ -1,3 +1,12 @@
 For now my tasks are:
 
 	- organising the code on the dashboard into a directory structure
+	
+	- directory structure in MongoDB to worked on by Selina. Therefore, I need to work on the Rest API part 
+	
+	- the database we are using is things_dashboard db
+
+
+Questions
+
+	- what should I do the REST API for? Or just have some generic functions set up which can be later used anywhere?

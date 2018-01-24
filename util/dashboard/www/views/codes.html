@@ -1,6 +1,7 @@
 <style>
 	.ace_editor { height: 400px; };
 </style>
+<body ng-controller="app">
 <div class="row">
 	<div class="col-md-8">
 		
@@ -46,7 +47,18 @@
 			<button ng-click="$service.createNewFolder()" class="btn btn-primary">
 				<i class="fa fa-folder"></i> Create New Folder
 			</button>
-		</div>
+		
+
+		<!-- ===================================================================================== -->
+
+		<!-- Dummy JSON button --> 
+		<button ng-click="$view.testGET()" class="btn btn-primary">
+			<i class="fa fa-folder"></i> Test REST API Get
+		</button>
+
+        <!-- ===================================================================================== -->
+
+	</div>
 		
 
 		<div class="list-group">
@@ -61,3 +73,4 @@
 		
 	</div>
 </div>
+</body>

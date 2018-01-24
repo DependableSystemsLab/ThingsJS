@@ -97,6 +97,29 @@ DashboardDatabase.prototype.createNewFolder = function(){
 	});
 };
 */
+
+/**
+ * Dummy/Test code to test REST API for front end
+ */
+
+
+// IMPORTANT: clicking does not run this function \\ 
+
+DashboardDatabase.prototype.testGET = function(){
+	var xhr = new XMLHttpRequest();
+	console.log("Entered testGET");
+	xhr.onreadystatechange = function(){
+		if (this.readyState == 4 && this.status == 200){
+			var string = JSON.parse(xhr.responseText);
+			console.log(string);
+		}
+	}
+
+	xhr.open('GET', '127.0.0.1:59803', 'true');
+	xhr.send();
+} 
+
+
 DashboardDatabase.prototype.getCode = function(name){
 	return this.db.collection("smartjs-raw-code").findOne({ _id: name });
 };

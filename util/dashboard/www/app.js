@@ -535,6 +535,13 @@ dashApp.constant("CONFIG", {
 					self.code = self.allCodes[codeName].code;
 				}
 
+				/***************************************************** */
+				self.testGET = function(){
+					console.log("Clicked Test Button");
+				}
+				/**************************************************** */
+
+
 				self.sendCode = DashboardService.runCode;
 				
 				self.onKeyDown = function(event){

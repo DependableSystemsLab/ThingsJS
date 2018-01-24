@@ -1,0 +1,40 @@
+Works with representation of resources. Usually as JSON
+-----------------------------------------------------------------------------------
+
+GET PUT POST DELETE
+-----------------------------------------------------------------------------------
+
+CONSTRAINTS
+-----------------------------------------------------------------------------------
+
+Uniform interface:
+
+	- defines the interface between client and server. We use these four actions. get put post delete. Use HTTP usually
+	- gets http response (status, body)
+	- URI are resource names 
+
+Stateless
+
+	- Server should not contain client state
+	- Message is self-descriptive
+	- Message has enough information for server to process that message. State is on client side. 
+
+
+Client-Server
+
+	- client needs to understand that it wont have direct access
+	
+
+Cacheable
+	- server responses are cacheable
+
+
+Layered-System
+
+	- Can have middleman (don't assume direct connection)
+	- software/hardware intermediaries
+
+
+Code On Demand (Optional) 
+
+	- Client can do some work. Java applets, Javascript
