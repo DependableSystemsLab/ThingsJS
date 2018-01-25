@@ -537,7 +537,19 @@ dashApp.constant("CONFIG", {
 
 				/***************************************************** */
 				self.testGET = function(){
-					console.log("Clicked Test Button");
+					var xhr = new XMLHttpRequest();
+					var url = "https://cpen400a-bookstore.herokuapp.com/products/";
+					console.log("Got into function");
+
+					xhr.onreadystatechange = function(){
+						if (this.readyState == 4 && this.status == 200){
+							console.log("onreadystate");
+							var string = JSON.parse(xhr.responseText);
+							console.log(string);
+						}
+					};
+					xhr.open('GET', url, true);
+					xhr.send();	
 				}
 				/**************************************************** */
 
