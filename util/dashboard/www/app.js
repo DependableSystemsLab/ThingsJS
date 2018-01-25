@@ -536,6 +536,7 @@ dashApp.constant("CONFIG", {
 				}
 
 				/***************************************************** */ // Ask what needs to change
+				//  { name: 'File1', _id: 'xxx', content: 'some code here'} , { name: 'File3', _id: 'xxx', content: 'someMoreCode'} , { name: 'Folder2', _id: 'xxx', content: '' } ]
 				self.testGET = function(){
 					var xhr = new XMLHttpRequest();
 					var url = "https://cpen400a-bookstore.herokuapp.com/products/";
@@ -553,6 +554,8 @@ dashApp.constant("CONFIG", {
 				}
 				/**************************************************** */
 
+
+				// POST: what should the post body be?
 				self.testPOST = function(){
 					var xhr = new XMLHttpRequest();
 					var url = "https://cpen400a-bookstore.herokuapp.com/products/";
