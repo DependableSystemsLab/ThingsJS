@@ -535,15 +535,15 @@ dashApp.constant("CONFIG", {
 					self.code = self.allCodes[codeName].code;
 				}
 
-				/***************************************************** */
+				/***************************************************** */ // Ask what needs to change
 				self.testGET = function(){
 					var xhr = new XMLHttpRequest();
 					var url = "https://cpen400a-bookstore.herokuapp.com/products/";
-					console.log("Got into function");
+					console.log("Got into function: testGET");
 
 					xhr.onreadystatechange = function(){
 						if (this.readyState == 4 && this.status == 200){
-							console.log("onreadystate");
+							console.log("onreadystate for testGET");
 							var string = JSON.parse(xhr.responseText);
 							console.log(string);
 						}
@@ -553,6 +553,22 @@ dashApp.constant("CONFIG", {
 				}
 				/**************************************************** */
 
+				self.testPOST = function(){
+					var xhr = new XMLHttpRequest();
+					var url = "https://cpen400a-bookstore.herokuapp.com/products/";
+					console.log("Got into function: testPOST");
+
+					xhr.onreadystatechange = function(){
+						if (this.readyState == 4 && this.status == 200){
+							console.log("onready state for testPOST");
+						}
+					};
+					xhr.open('POST', url, true);
+					xhr.send()
+				}
+
+
+				// ADD POST for create new folder.
 
 				self.sendCode = DashboardService.runCode;
 				
