@@ -538,9 +538,24 @@ dashApp.constant("CONFIG", {
 				/***************************************************** */ // Ask what needs to change
 				//  { name: 'File1', _id: 'xxx', content: 'some code here'} , { name: 'File3', _id: 'xxx', content: 'someMoreCode'} , { name: 'Folder2', _id: 'xxx', content: '' } ]
 				self.testGET = function(){
+					var dummy = {
+						"_id"     : "OvFevSSVmu",
+						"name"    :  "File1.js",
+						"path"    :  "/folder1",
+						"content" :  "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+					}
+
 					var xhr = new XMLHttpRequest();
 					var url = "https://cpen400a-bookstore.herokuapp.com/products/";
 					console.log("Got into function: testGET");
+
+					console.log("Printing out dummy JSON"); 
+					console.log("id" + " : " + dummy["_id"]);
+					console.log("name" + " : " + dummy["name"]);
+					console.log("path" + " : " + dummy["path"]);
+					console.log("content" + " : " + dummy["content"]);
+
+					// Need a way to add the filename to the array
 
 					xhr.onreadystatechange = function(){
 						if (this.readyState == 4 && this.status == 200){
@@ -551,6 +566,11 @@ dashApp.constant("CONFIG", {
 					};
 					xhr.open('GET', url, true);
 					xhr.send();	
+
+					console.log(JSON.stringify(dummy));
+
+					console.log(self.allCodes);
+					self.allCodes[2] = dummy;
 				}
 				/**************************************************** */
 
