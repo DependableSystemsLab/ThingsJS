@@ -60,10 +60,20 @@
 
 	</div>
 		
-		<!-- Show the codes here -->
+		<!-- Show the codes here. Modify to have it show directories now. -->
 		
 		<div class="list-group">
 			<a ng-repeat="(name, data) in $view.allCodes"
+				ng-click="$view.selectCode(name)"
+				ng-class="{ active: ($view.codeName === name) }"
+				href="javascript:;"
+				class="list-group-item">
+				{{ name }}
+			</a>
+		</div>
+
+		<div class="list-group">
+			<a ng-repeat="(name, data) in $view.allDirectories"
 				ng-click="$view.selectCode(name)"
 				ng-class="{ active: ($view.codeName === name) }"
 				href="javascript:;"

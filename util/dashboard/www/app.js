@@ -72,6 +72,9 @@ dashApp.constant("CONFIG", {
 	
 	var _NODES = {};
 	var _CODES = {};
+
+	/* Adding the directories object/array. Remember to ask why _CODES is defined as object and not array */
+	var _DIRECTORIES = {};
 	
 	var _VIDEOSTREAM = {};
 	
@@ -272,6 +275,7 @@ dashApp.constant("CONFIG", {
 			}
 		},
 		allCodes: _CODES,
+		allDirectories : _DIRECTORIES,  // Directories added by Atif. 
 		runCode: runCode,
 		sendCode: runCode,
 		pauseCode: pauseCode,
@@ -522,6 +526,7 @@ dashApp.constant("CONFIG", {
 				self.idleNodes = DashboardService.allNodes;
 				
 				self.allCodes = DashboardService.allCodes;
+				self.allDirectories = DashboardService.allDirectories;  // Directories added.
 				
 				self.clearAll = function(){
 					self.codeName = "";
@@ -571,6 +576,7 @@ dashApp.constant("CONFIG", {
 
 					console.log(self.allCodes);
 					self.allCodes.file = dummy;
+					self.allDirectories.file = dummy;
 				}
 				/**************************************************** */
 
