@@ -542,7 +542,7 @@ dashApp.constant("CONFIG", {
 						"_id"     : "OvFevSSVmu",
 						"name"    :  "File1.js",
 						"path"    :  "/folder1",
-						"content" :  "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+						"code" :  "Lorem ipsum dolor sit amet, consectetur adipiscing elit"  // change back to content. Show as content for demo
 					}
 
 					var xhr = new XMLHttpRequest();
@@ -553,7 +553,7 @@ dashApp.constant("CONFIG", {
 					console.log("id" + " : " + dummy["_id"]);
 					console.log("name" + " : " + dummy["name"]);
 					console.log("path" + " : " + dummy["path"]);
-					console.log("content" + " : " + dummy["content"]);
+					console.log("code" + " : " + dummy["code"]);
 
 					// Need a way to add the filename to the array
 
@@ -570,7 +570,7 @@ dashApp.constant("CONFIG", {
 					console.log(JSON.stringify(dummy));
 
 					console.log(self.allCodes);
-					self.allCodes[2] = dummy;
+					self.allCodes.file = dummy;
 				}
 				/**************************************************** */
 
