@@ -63,8 +63,8 @@
 		<!-- Show the codes here. Modify to have it show directories now. -->
 		
 		<div class="list-group">
-			<a ng-repeat="(name, data) in $view.allCodes"
-				ng-click="$view.selectCode(name)"
+			<a ng-repeat="(name, content) in $view.allCodes"
+				ng-click="$view.menuClick(name, data)"
 				ng-class="{ active: ($view.codeName === name) }"
 				href="javascript:;"
 				class="list-group-item">

@@ -526,7 +526,7 @@ dashApp.constant("CONFIG", {
 				self.idleNodes = DashboardService.allNodes;
 				
 				self.allCodes = DashboardService.allCodes;
-				self.allDirectories = DashboardService.allDirectories;  // Directories added.
+
 				
 				self.clearAll = function(){
 					self.codeName = "";
@@ -535,9 +535,51 @@ dashApp.constant("CONFIG", {
 				}
 				self.clearAll();
 
-				self.selectCode = function(codeName){
+				// self.selectCode = function(codeName){
+				// 	self.codeName = codeName;
+				// 	self.code = self.allCodes[codeName].code;
+				// }
+
+				self.menuClick = function(codeName, content){
+					console.log("Pressed " + codeName);
 					self.codeName = codeName;
-					self.code = self.allCodes[codeName].code;
+					console.log("The 'code' for " + codeName + " is " + self.allCodes[codeName]);
+					console.log("The type of  " + codeName + " is " + typeof(self.allCodes[codeName]));
+					
+					if (self.allCodes[codeName].code == undefined){
+
+						console.log("Not a file, it is a directory. Need to parse and show contents");
+						var obj = {};
+						
+						for (var e in self.allCodes[codeName]){
+							var name = self.allCodes[codeName][e];
+							console.log(self.allCodes[codeName][e]);
+							obj[name] = name;
+							console.log("Here is content from obj[name] " + obj[name]);
+						}
+
+						self.allCodes = {};
+
+						for (var e in obj){
+							var name = obj[e];
+							console.log("Here is name " + name);
+							self.allCodes[name] = name;
+						}
+					}
+
+					else {
+						console.log("It is a file. Code is showing on the side.");
+						self.code = self.allCodes[codeName].code;
+					}
+
+					//console.log(typeof(codeName));
+					//console.log(content);
+
+					/* codeName prints the name of the file. So we can use that to check the type (file -vs- directory) for now. And then based on that 
+					 * either show code or refresh the menu bar 
+					 */
+					
+					
 				}
 
 				/***************************************************** */ // Ask what needs to change
@@ -580,8 +622,16 @@ dashApp.constant("CONFIG", {
 
 					console.log(JSON.stringify(dummy));
 
+					// This prints what we want it to. Now we must utilise it in the menuClick function
+					// POINT: We need to modify the front end to read content instead of code
+					console.log("Now printing stringified content " + JSON.stringify(dummy.content));
+
 					console.log(self.allCodes);
 					self.allCodes[dummy.data["name"]] = dummy.content;
+					console.log("Watch below for self.allCodes");
+					console.log(self.allCodes);
+
+					// Add all the files to menu
 
 					// self.allCodes.push(dummy.data["name"]);
 					
