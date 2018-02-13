@@ -1,8 +1,19 @@
 var repl = require('repl');
+var http = require('http');
+var fs = require('fs');
 var things_engine = require('../lib/engine/CodeEngine.js');
 var things_pubsub = require('../lib/pubsub/Pubsub.js');
 var things_dispatcher = require('../lib/engine/Dispatcher.js');
 var things_common = require('../lib/common.js');
+
+// (!!) Probably want to change them so they aren't global. Initialize to Shell fields
+// in the future?
+var DB_URL = "localhost";
+var DB_PORT = 5000;
+var MAKE_FSOBJECT = "/createFSObject";
+var DELETE_DIR = "/deleteDirectory";
+var MOVE_DIR = "/moveDirectory";
+var ROOT_PATH = '/';
 
 var _NODES = {};
 
@@ -20,26 +31,297 @@ var _NODES = {};
  * fields <worker>          -- fetch all the fields of a worker
  */
 var VALID_SHELL_CMDS = {
+	// things-js related commands
 	'pubsub':   setPubSub,
-	'ls':       listNodes,	
+	'ln':       listNodes,	
 	'worker':   startWorker,
 	'dispatch': dispatch,
-	'exit':     exit,
 	'migrate':  migrate,
 	'cmds':     listCommands,
 	'fields':   getAllFields,
 	'pause':    pauseCode, 
+	// standard process commands
+	'clear':    clear,
+	'exit':     exit,
+	// filesystem commands
+	'ls':       listFiles,
+	'touch':    makeFile,
+	'cat':      catFile,
+	'rm':       removeFileObject,
+	'mkdir':    makeDirectory,
+	'pwd':      printWorkingDirectory,
+	'cd':       changeDirectory,
+	'mv':       moveFileObject,
+	// misc
 	'':         function(){return '';} 
 }
 
 var COMMON_ERRORS = {
-	NOTEXIST: "Oh no! A node doesn't exist. Type \'ls\' to view all nodes on this mqtt address",
+	NOTEXIST: "Oh no! A node doesn't exist. Type \'ln\' to view all nodes on this mqtt address",
 	NOPUBSUB: "Please set your pubsub URL first using the command \'pubsub\'"
 }
 
 function exit(){
 	process.exit();
 }
+
+function clear(){
+	process.stdout.write('\033c');
+}
+
+/* (!!) In-progress. Perhaps we can initialize db information as a Shell field
+ * usage: use <db name>
+ *			- <db name>: name of the database
+ */
+function connectDB(db){
+}
+
+/* Analogous to 'pwd' in Linux
+ * usage: pwd
+ */
+function printWorkingDirectory(){
+	return this.path;
+}
+
+/* usage: cat <filename>
+ */
+function catFile(name){
+	path = (this.path == '/') ? (this.path + name) : (this.path + '/' + name);
+	if(this.cachedChildren[path] == 'file'){
+		return getRequest(path);
+	}
+	else{
+		return "No such file";
+	}
+}
+
+
+
+/* Analogous to 'cd' in Linux
+ *	usage: cd <dir> | cd .. | cd ~
+ *		- <dir> must be a child of the current path
+ */
+function changeDirectory(dirName){
+	if(dirName === '~'){
+		this.path = ROOT_PATH;
+	}
+	// traverse to parent
+	else if(dirName === '..'){
+		currPath = this.path.split('/');
+		if(currPath.length == 2){
+			this.path = ROOT_PATH;
+		}
+		else{
+			ancestor = currPath.splice(0, currPath.length-1).join('/');
+			this.path = ancestor;
+		}
+	}
+	else if(this.cachedChildren[dirName] == 'directory'){
+		this.path = (this.path === '/')?(this.path + dirName) : (this.path + '/' + dirName);
+	}
+	else{
+		return dirName + ": no such file or directory";
+	}
+}
+
+
+/* Analogous to 'mv' in Linux
+ * usage: mv <path> <newpath>
+ * (!!) TO-DO: check if path is valid?
+ * (!!) TO-DO: update cache
+ *
+ */
+function moveFileObject(path, newPath){
+	function getAbsPath(name){
+		var path = (this.path == '/') ? (this.path + name) : (this.path + '/' + name);
+		return path;
+	}
+
+	var oldPath = '';
+	if(path === '/'){
+		return "Cannot move the root directory";
+	}
+	pathTokens = path.split('/');
+	if(pathTokens.length == 1){
+		oldPath = getAbsPath.call(this, pathTokens.toString());
+	}
+	else{
+		oldPath = path;
+	}
+	pathTokens = newPath.split('/');
+	if(pathTokens.length == 1){
+		newPath = getAbsPath.call(this, pathTokens.toString());
+	}
+	postMoveDirectory(oldPath, newPath);
+}
+
+function postMoveDirectory(path, newPath){
+	var self = this;
+	var options = {
+		method: 'POST',
+		host: DB_URL,
+		port: DB_PORT,
+		path: MOVE_DIR,
+		headers: {
+			'Content-Type': 'application/json'
+		}			
+	}
+	var requestBody = {
+		path: path,
+		new_path: newPath
+	}
+	return new Promise(function(resolve, reject){
+		var req = http.request(options, function(res){
+			res.on('data', function(c){
+			});
+			res.on('end', function(){
+				resolve('Moved the file object');
+			});
+			res.on('error', function(err){
+				console.log(err)
+			})
+		});
+		req.write(JSON.stringify(requestBody));
+		req.end();
+	})
+}
+
+/* Analogous to 'mkdir' in Linux
+ * usage: mkdir <dirName>
+ *		- <dirName> name of the new folder
+ */
+function makeDirectory(dirName){
+	return postDirectory.call(this, dirName, this.path, true)
+}
+
+/* (!!) No error checking to see if the file exists
+ * Analagous to 'rmdir' in Linux
+ * usage: rmdir <dirName>
+ *		- <dirName> name of the folder to remove *recursively
+ */
+function removeFileObject(dirName){
+	return deleteDirectory.call(this, dirName, this.path);
+}
+
+/* Helper function to make a POST request for removeDirectory()
+ */
+function deleteDirectory(name, parentPath){
+	var self = this;
+	var options = {
+		method: 'POST',
+		host: DB_URL,
+		port: DB_PORT,
+		path: DELETE_DIR,
+		headers: {
+			'Content-Type': 'application/json'
+		}	
+	}
+	var requestBody = {
+		file_path: (parentPath ==='/') ? (parentPath + name) : (parentPath + '/' + name)
+	}
+
+	return new Promise(function(resolve, reject){
+		var req = http.request(options, function(res){
+			res.on('data', function(c){
+			});
+			res.on('end', function(){
+				resolve("Deleted the directory " + name);
+			});
+		});
+		req.write(JSON.stringify(requestBody));
+		req.end();
+	})
+}
+
+/* Creates a new file with contents from a local file
+ * 
+ * filePath relative to path of ThingsJS folder currently
+ * usage: touch <name> <local codepath>
+ *		- <local codepath> if empty, creates empty file
+ */
+function makeFile(fileName, codePath){
+	var contentString = '';
+
+	if(!fileName){
+		return "usage: touch <filename> <local-path of code to copy>";
+	}
+	if(codePath){
+		try {
+			contentString = fs.readFileSync(codePath).toString('utf-8');
+		}catch(e){
+			return "Could not read the contents of the local file";
+		}
+	}
+	return postDirectory.call(this, fileName, this.path, false, contentString);
+}
+
+/* Helper to make a POST request for creating a directory or file
+ * @param {name}        : name of the file/directory
+ * @param {parentPath}  : parent of the file/directory to be created
+ * @param {isDirectory} : true if the fsobject will be a directory
+ * @param {fileContent} : contents of the file (utf-8)
+ */
+function postDirectory(name, parentPath, isDirectory, fileContent){
+	var self = this;
+	var options = {
+		method: 'POST',
+		host: DB_URL,
+		port: DB_PORT,
+		path: MAKE_FSOBJECT,
+		headers: {
+			'Content-Type': 'application/json'
+		}
+	}
+	var requestBody = {
+		file_name: name,
+		parent_path: parentPath,
+		type: (isDirectory) ? 'directory' : 'file'
+	}
+	if(!isDirectory){
+		requestBody.content = fileContent;
+	}
+	return new Promise(function(resolve, reject){
+		var req = http.request(options, function(res){
+			res.on('data', function(c){
+			});
+			res.on('end', function(){
+				resolve("Created the file: " + name);
+				self.cachedChildren[name] = (isDirectory) ? 'directory' : 'file';
+			});
+		});
+		req.write(JSON.stringify(requestBody));
+		req.end();
+	})
+}
+
+/* Sends an http GET request to the filesystem database
+ */
+function getRequest(path){
+	var options = {
+		host: DB_URL,
+		port: DB_PORT,
+		path: path
+	}
+	return new Promise(function(resolve, reject){
+		http.get(options, function(res){
+			var body = '';
+			res.on('data', function(c) {
+				body += c;
+			});
+			res.on('end', function(){
+				resolve(body);
+			});
+		})
+	})
+}
+
+/* (!!) Needs a caching mechanism
+ * Analogous to 'ls' in Linux
+ * usage: ls
+ */
+function listFiles(){
+	return getRequest(this.path);
+} 
 
 /* (!!) Function assumes that code field is valid  
  */
@@ -64,6 +346,9 @@ function pauseCode(nodeId){
 	}
 }
 
+/* usage: ln 
+ * - requires setting a pubsub
+ */
 function listNodes(){
 	if(!this.pubsub){
 		return COMMON_ERRORS['NOPUBSUB'];
@@ -236,6 +521,9 @@ function Shell(){
 	this.repl.pubsub = undefined;
 	this.repl.engine = undefined;
 	this.repl.dispatcher = undefined;
+	// for code repository
+	this.repl.path = ROOT_PATH;
+	this.repl.cachedChildren = {};
 }
 
 Shell.prototype.shellEval = function(input, context, filename, callback){
@@ -245,11 +533,33 @@ Shell.prototype.shellEval = function(input, context, filename, callback){
 		cmd: parsedInput[0],
 		args: parsedInput.splice(1, parsedInput.length-1)
 	}
+	var self = context;
+
 	if(VALID_SHELL_CMDS[userInput.cmd]){
 		var result = VALID_SHELL_CMDS[userInput.cmd].apply(context, userInput.args);
 		if(result instanceof Promise){
 			result.then(function(data){
-				callback(null, data);
+				try{
+					outputString = '';
+					parsedData = JSON.parse(data);
+					dataInfo = parsedData['data'];
+					if(dataInfo.type === 'file'){
+						self.cachedChildren[dataInfo.path] = dataInfo.type;
+						callback(null, parsedData['content']);
+					}
+					else {
+						children = parsedData['content'];
+						for(var i = 0; i < children.length; i++){
+							var fsObject = children[i]['name'];
+							var fsPath = children[i]['path'];
+							self.cachedChildren[fsPath] = children[i]['type'];
+							outputString += fsObject + "\n";
+						}
+						callback(null, outputString);
+					}
+				} catch(e){
+					callback(null, data)
+				}
 			});
 		}
 		else{

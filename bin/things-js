@@ -13,7 +13,7 @@ program
   .description('Start the ThingsJS shell')
   .action(function(options){
     console.log("Starting the ThingsJS shell...")
-    var shell = new things.Shell().repl;
+    var shell = new things.Shell();
   });
 
 program
