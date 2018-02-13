@@ -544,21 +544,27 @@ dashApp.constant("CONFIG", {
 				//  { name: 'File1', _id: 'xxx', content: 'some code here'} , { name: 'File3', _id: 'xxx', content: 'someMoreCode'} , { name: 'Folder2', _id: 'xxx', content: '' } ]
 				self.testGET = function(){
 					var dummy = {
-						"_id"     : "OvFevSSVmu",
-						"name"    :  "File1.js",
-						"path"    :  "/folder1",
-						"code" :  "Lorem ipsum dolor sit amet, consectetur adipiscing elit"  // change back to content. Show as content for demo
-					}
+						data : {
+							_id    : "d5f4dvDxe454dhw3",
+							name   : "Directory 1",
+							type   : "directory",
+							path   : "~/Directory 1",
+							parent : "root"
+						},
+
+						content : ["Foo.js", "Bar.txt", "Foobar.md"]
+					} 
 
 					var xhr = new XMLHttpRequest();
 					var url = "https://cpen400a-bookstore.herokuapp.com/products/";
 					console.log("Got into function: testGET");
 
 					console.log("Printing out dummy JSON"); 
-					console.log("id" + " : " + dummy["_id"]);
-					console.log("name" + " : " + dummy["name"]);
-					console.log("path" + " : " + dummy["path"]);
-					console.log("code" + " : " + dummy["code"]);
+					console.log("id" + " : " + dummy.data["_id"]);
+					console.log("name" + " : " + dummy.data["name"]);
+					console.log("path" + " : " + dummy.data["path"]);
+					console.log("JSON parsing ends here");
+					
 
 					// Need a way to add the filename to the array
 
@@ -575,8 +581,10 @@ dashApp.constant("CONFIG", {
 					console.log(JSON.stringify(dummy));
 
 					console.log(self.allCodes);
-					self.allCodes.file = dummy;
-					self.allDirectories.file = dummy;
+					self.allCodes[dummy.data["name"]] = dummy.content;
+
+					// self.allCodes.push(dummy.data["name"]);
+					
 				}
 				/**************************************************** */
 
