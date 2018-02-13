@@ -548,6 +548,7 @@ dashApp.constant("CONFIG", {
 					
 					if (self.allCodes[codeName].code == undefined){
 
+						self.code = "";
 						console.log("Not a file, it is a directory. Need to parse and show contents");
 						var obj = {};
 						
@@ -597,6 +598,18 @@ dashApp.constant("CONFIG", {
 						content : ["Foo.js", "Bar.txt", "Foobar.md"]
 					} 
 
+					var dummy2 = {
+						data : {
+							_id    : "d5f4dvegt5r454dhw3",
+							name   : "Directory 2",
+							type   : "directory",
+							path   : "~/Directory 2",
+							parent : "root"
+						},
+
+						content : ["kumseok.js", "julien.java", "selina.cpp"]
+					} 
+
 					var xhr = new XMLHttpRequest();
 					var url = "https://cpen400a-bookstore.herokuapp.com/products/";
 					console.log("Got into function: testGET");
@@ -627,7 +640,9 @@ dashApp.constant("CONFIG", {
 					console.log("Now printing stringified content " + JSON.stringify(dummy.content));
 
 					console.log(self.allCodes);
-					self.allCodes[dummy.data["name"]] = dummy.content;
+					self.allCodes[dummy.data["name"]] =  dummy.content;
+					self.allCodes[dummy2.data["name"]] = dummy2.content;
+
 					console.log("Watch below for self.allCodes");
 					console.log(self.allCodes);
 
