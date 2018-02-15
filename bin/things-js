@@ -45,6 +45,20 @@ program
   });
 
 program
+  .command('run <file_path>')
+  .option('-s, --save <save_path>', 'File path to optionally save instrumented code')
+  .description('Instrument and run raw JavaScript code.')
+  .action(function(file_path, options){
+    var config = things.validateConfig(path.resolve(__dirname, '../bin/things-default.conf'));
+    var pubsub = new things.Pubsub('things-cli', config.pubsub_url);
+    var code = new things.Code(file_path, pubsub, true);
+    if (options && options.output){
+      code.saveToFile(options.output);
+    }
+    code.run();
+  });
+
+program
   .command('dispatch <file_path> <pubsub_url> <worker_id>')
   .description('Dispatch code to a worker')
   .action(function(file_path, pubsub_url, worker_id){
