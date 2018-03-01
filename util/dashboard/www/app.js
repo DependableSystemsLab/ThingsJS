@@ -546,6 +546,29 @@ dashApp.constant("CONFIG", {
 				
 				self.menuClick = function(codeName, content){
 					console.log("Pressed " + codeName);
+
+					var xhr = new XMLHttpRequest();
+					var url = "http://localhost:5000/" + codeName;
+
+					xhr.onreadystatechange = function(){
+						if (this.readyState == 4 && this.status == 200){
+							console.log("onreadystate for testGET in menuClick");
+							var response = JSON.parse(xhr.responseText);
+			
+							self.allCodes = {};
+
+
+							for (var i = 0; i < response.content.length; i++){
+								var child = response.content[i];
+								self.allCodes[child.name] = child;
+							}
+							
+						}
+					};
+
+					xhr.open('GET', url, true);
+					xhr.send();	
+
 				}
 
 			
@@ -559,8 +582,6 @@ dashApp.constant("CONFIG", {
 							console.log("onreadystate for testGET");
 							var data = xhr.responseText;
 							var string = JSON.parse(xhr.responseText);
-							console.log(string);
-							
 							self.allCodes[string.name] = data;
 
 						}

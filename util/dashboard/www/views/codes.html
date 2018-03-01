@@ -53,7 +53,7 @@
 
 		<!-- Dummy JSON button --> 
 		<button ng-click="$view.testGET()" class="btn btn-primary">
-			<i class="fa fa-folder"></i> Test REST API Get
+			<i class="fa fa-folder"></i> Get Code Directories
 		</button>
 
         <!-- ===================================================================================== -->
@@ -64,7 +64,7 @@
 		
 		<div class="list-group">
 			<a ng-repeat="(name, content) in $view.allCodes"
-				ng-click="$view.menuClick(name, data)"
+				ng-click="$view.menuClick(name, content)"
 				ng-class="{ active: ($view.codeName === name) }"
 				href="javascript:;"
 				class="list-group-item">
