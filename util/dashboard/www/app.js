@@ -535,134 +535,52 @@ dashApp.constant("CONFIG", {
 				}
 				self.clearAll();
 
+				/***********************************************************************/
+
 				// self.selectCode = function(codeName){
 				// 	self.codeName = codeName;
 				// 	self.code = self.allCodes[codeName].code;
 				// }
 
+			    /***********************************************************************/
+				
 				self.menuClick = function(codeName, content){
 					console.log("Pressed " + codeName);
-					self.codeName = codeName;
-					console.log("The 'code' for " + codeName + " is " + self.allCodes[codeName]);
-					console.log("The type of  " + codeName + " is " + typeof(self.allCodes[codeName]));
-					
-					if (self.allCodes[codeName].code == undefined){
-
-						self.code = "";
-						console.log("Not a file, it is a directory. Need to parse and show contents");
-						var obj = {};
-						
-						for (var e in self.allCodes[codeName]){
-							var name = self.allCodes[codeName][e];
-							console.log(self.allCodes[codeName][e]);
-							obj[name] = name;
-							console.log("Here is content from obj[name] " + obj[name]);
-						}
-
-						self.allCodes = {};
-
-						for (var e in obj){
-							var name = obj[e];
-							console.log("Here is name " + name);
-							self.allCodes[name] = name;
-						}
-					}
-
-					else {
-						console.log("It is a file. Code is showing on the side.");
-						self.code = self.allCodes[codeName].code;
-					}
-
-					//console.log(typeof(codeName));
-					//console.log(content);
-
-					/* codeName prints the name of the file. So we can use that to check the type (file -vs- directory) for now. And then based on that 
-					 * either show code or refresh the menu bar 
-					 */
-					
-					
 				}
 
-				/***************************************************** */ // Ask what needs to change
-				//  { name: 'File1', _id: 'xxx', content: 'some code here'} , { name: 'File3', _id: 'xxx', content: 'someMoreCode'} , { name: 'Folder2', _id: 'xxx', content: '' } ]
+			
 				self.testGET = function(){
-					var dummy = {
-						data : {
-							_id    : "d5f4dvDxe454dhw3",
-							name   : "Directory 1",
-							type   : "directory",
-							path   : "~/Directory 1",
-							parent : "root"
-						},
-
-						content : ["Foo.js", "Bar.txt", "Foobar.md"]
-					} 
-
-					var dummy2 = {
-						data : {
-							_id    : "d5f4dvegt5r454dhw3",
-							name   : "Directory 2",
-							type   : "directory",
-							path   : "~/Directory 2",
-							parent : "root"
-						},
-
-						content : ["kumseok.js", "julien.java", "selina.cpp"]
-					} 
-
-					var xhr = new XMLHttpRequest();
-					var url = "https://cpen400a-bookstore.herokuapp.com/products/";
-					console.log("Got into function: testGET");
-
-					console.log("Printing out dummy JSON"); 
-					console.log("id" + " : " + dummy.data["_id"]);
-					console.log("name" + " : " + dummy.data["name"]);
-					console.log("path" + " : " + dummy.data["path"]);
-					console.log("JSON parsing ends here");
 					
-
-					// Need a way to add the filename to the array
+					var xhr = new XMLHttpRequest();
+					var url = "http://localhost:5000/root";
 
 					xhr.onreadystatechange = function(){
 						if (this.readyState == 4 && this.status == 200){
 							console.log("onreadystate for testGET");
+							var data = xhr.responseText;
 							var string = JSON.parse(xhr.responseText);
 							console.log(string);
+							
+							self.allCodes[string.name] = data;
+
 						}
 					};
+
 					xhr.open('GET', url, true);
 					xhr.send();	
 
-					console.log(JSON.stringify(dummy));
-
-					// This prints what we want it to. Now we must utilise it in the menuClick function
-					// POINT: We need to modify the front end to read content instead of code
-					console.log("Now printing stringified content " + JSON.stringify(dummy.content));
-
-					console.log(self.allCodes);
-					self.allCodes[dummy.data["name"]] =  dummy.content;
-					self.allCodes[dummy2.data["name"]] = dummy2.content;
-
-					console.log("Watch below for self.allCodes");
-					console.log(self.allCodes);
-
-					// Add all the files to menu
-
-					// self.allCodes.push(dummy.data["name"]);
-					
 				}
-				/**************************************************** */
+				
 
 
 				// POST: what should the post body be?
 				self.testPOST = function(){
 					var xhr = new XMLHttpRequest();
 					var url = "https://cpen400a-bookstore.herokuapp.com/products/";
-					console.log("Got into function: testPOST");
 
 					xhr.onreadystatechange = function(){
 						if (this.readyState == 4 && this.status == 200){
-							console.log("onready state for testPOST");
+
 						}
 					};
 					xhr.open('POST', url, true);

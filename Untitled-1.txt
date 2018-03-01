@@ -1,0 +1,23 @@
+// JSON FORMAT I EXPECT
+
+
+	var dummy2 = {
+						data : {
+							_id    : "d5f4dvegt5r454dhw3",
+							name   : "Directory 2",
+							type   : "directory",
+							path   : "~/Directory 2",
+							parent : "root"
+						},
+
+						content : ["kumseok.js", "julien.java", "selina.cpp"]
+					} 
+
+
+        If it is a file, content is the code (expressed as a string)
+
+        If it is a directory, the content is the array of files? 
+
+
+        
+
