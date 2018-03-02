@@ -1,15 +1,6 @@
 TODO:
 
-1. Fix the two clicks required to see root
 2. Once root is clicked, get all the files in it to show
 3. Figure out how to differentiate file and folder in menuClick. In particular, how to access the type in menuClick
-
-
-
---- Still needing two clicks
---- Two clicks on root shows the contentsm but click on folder1 shows nothing, similarly, click on file.js shows nothing either. Need to fix that 
-
-
-
 
 --- Need to fix the post request too

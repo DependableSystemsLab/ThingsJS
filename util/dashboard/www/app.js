@@ -519,7 +519,7 @@ dashApp.constant("CONFIG", {
 		.state('codes', {
 			parent: 'init',
 			url: '/codes',
-			controller: ['$scope', 'socket', 'DashboardService', function($scope, socket, DashboardService){
+			controller: ['$scope', 'socket', 'DashboardService', '$http', function($scope, socket, DashboardService, $http){
 				var self = this;
 				$scope.$service = DashboardService;
 				
@@ -544,71 +544,35 @@ dashApp.constant("CONFIG", {
 
 			    /***********************************************************************/
 				
+				/* When the folder/file name is clicked */
+
 				self.menuClick = function(codeName, content){
-					console.log("Pressed " + codeName);
+					$http.get('http://localhost:5000/' + codeName).then(function(response){
 
-					var xhr = new XMLHttpRequest();
-					var url = "http://localhost:5000/" + codeName;
+						console.log(response.data);
+						self.allCodes = {};
 
-					xhr.onreadystatechange = function(){
-						if (this.readyState == 4 && this.status == 200){
-							console.log("onreadystate for testGET in menuClick");
-							var response = JSON.parse(xhr.responseText);
-			
-							self.allCodes = {};
-
-
-							for (var i = 0; i < response.content.length; i++){
-								var child = response.content[i];
-								self.allCodes[child.name] = child;
-							}
-							
+						for(var i = 0; i < response.data.content.length; i++){
+							var child = response.data.content[i];
+							self.allCodes[child.name] = child;
 						}
-					};
 
-					xhr.open('GET', url, true);
-					xhr.send();	
-
-				}
-
+					}, function(){
+						console.log("An error occured");
+					})
+				}	
 			
 				self.testGET = function(){
+					$http.get('http://localhost:5000/root').then(function(response){
+						console.log(response.data);
+						self.allCodes[response.data.name] = response.data;
+					}, function(){
+						console.log("An error occured");
+					})
 					
-					var xhr = new XMLHttpRequest();
-					var url = "http://localhost:5000/root";
-
-					xhr.onreadystatechange = function(){
-						if (this.readyState == 4 && this.status == 200){
-							console.log("onreadystate for testGET");
-							var data = xhr.responseText;
-							var string = JSON.parse(xhr.responseText);
-							self.allCodes[string.name] = data;
-
-						}
-					};
-
-					xhr.open('GET', url, true);
-					xhr.send();	
 
 				}
 				
-
-
-				// POST: what should the post body be?
-				self.testPOST = function(){
-					var xhr = new XMLHttpRequest();
-					var url = "https://cpen400a-bookstore.herokuapp.com/products/";
-
-					xhr.onreadystatechange = function(){
-						if (this.readyState == 4 && this.status == 200){
-
-						}
-					};
-					xhr.open('POST', url, true);
-					xhr.send()
-				}
-
-
 				// ADD POST for create new folder.
 
 				self.sendCode = DashboardService.runCode;
