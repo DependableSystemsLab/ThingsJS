@@ -548,20 +548,30 @@ dashApp.constant("CONFIG", {
 				self.menuClick = function(codeName, content){
 					console.log(content);
 					console.log(content.type);
-					$http.get('http://localhost:5000/' + codeName).then(function(response){
-						console.log(response.data);
-						self.allCodes = {};
 
-						for(var i = 0; i < response.data.content.length; i++){
-							var child = response.data.content[i];
-							self.allCodes[child.name] = child;
-						}
+					if (content.type === "directory"){
+						
+						console.log("It is directory");
 
-					}, function(){
-						console.log("An error occured");
-					})
-				}	
-			
+						$http.get('http://localhost:5000/' + codeName).then(function(response){
+							console.log(response.data);
+							self.allCodes = {};
+
+							for(var i = 0; i < response.data.content.length; i++){
+								var child = response.data.content[i];
+								self.allCodes[child.name] = child;
+							}
+
+						}, function(){
+							console.log("An error occured");
+						})
+					
+				} else if (content.type === "file"){
+					  console.log("It is a file");
+					  self.code = self.allCodes[codeName].content;
+				}
+			}
+				
 
 				/* When the get directories button is clicked */
 				self.testGET = function(){
