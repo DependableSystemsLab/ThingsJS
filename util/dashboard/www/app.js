@@ -545,10 +545,10 @@ dashApp.constant("CONFIG", {
 			    /***********************************************************************/
 				
 				/* When the folder/file name is clicked */
-
 				self.menuClick = function(codeName, content){
+					console.log(content);
+					console.log(content.type);
 					$http.get('http://localhost:5000/' + codeName).then(function(response){
-
 						console.log(response.data);
 						self.allCodes = {};
 
@@ -562,6 +562,8 @@ dashApp.constant("CONFIG", {
 					})
 				}	
 			
+
+				/* When the get directories button is clicked */
 				self.testGET = function(){
 					$http.get('http://localhost:5000/root').then(function(response){
 						console.log(response.data);
@@ -569,11 +571,13 @@ dashApp.constant("CONFIG", {
 					}, function(){
 						console.log("An error occured");
 					})
-					
-
 				}
 				
 				// ADD POST for create new folder.
+
+
+
+
 
 				self.sendCode = DashboardService.runCode;
 				
