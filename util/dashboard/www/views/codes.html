@@ -68,6 +68,7 @@
 		<div class="list-group">
 			<a ng-repeat="(name, content) in $view.allCodes"
 				ng-click="$view.menuClick(name, content)"
+				ng-mouseover="$view.menuHover(name, content)"
 				ng-class="{ active: ($view.codeName === name) }"
 				href="javascript:;"
 				class="list-group-item">

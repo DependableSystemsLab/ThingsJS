@@ -1,7 +1,10 @@
-TODO:
+| DONE:           |
+------------------
 
-1. Figure out use case and based on that update the current path and update the view
+1. View updates when you go to codes page
 
-2. Get the POST request going
+2. Code saving goes into main menu; need to save current directory/context
 
-3. If possible write some tests for that
+3. On click/hover delete and save buttons show
+
+4. POST

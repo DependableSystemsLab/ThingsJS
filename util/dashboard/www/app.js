@@ -592,7 +592,10 @@ dashApp.constant("CONFIG", {
 					  self.code = self.allCodes[codeName].content;
 				}
 			}
-				
+			
+			self.menuHover = function(codeName, content){
+				console.log("Hover over " + codeName);
+			}
 
 				// /* When the get directories button is clicked */
 				// self.getDirectories = function(){
