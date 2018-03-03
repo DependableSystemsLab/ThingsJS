@@ -8,6 +8,7 @@ var dashApp = angular.module('dashApp', ['ngResource',
 										 
 var url = "http://localhost:5000/";
 var current;
+var options = ["Run", "Delete"];
 
 dashApp.constant("CONFIG", {
 	service_url: (window.location.hostname+':'+window.location.port),
@@ -594,7 +595,8 @@ dashApp.constant("CONFIG", {
 			}
 			
 			self.menuHover = function(codeName, content){
-				console.log("Hover over " + codeName);
+				//console.log("Hover over " + codeName);
+				//console.log("Should I delete?");
 			}
 
 				// /* When the get directories button is clicked */

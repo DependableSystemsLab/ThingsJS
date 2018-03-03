@@ -8,3 +8,17 @@
 3. On click/hover delete and save buttons show
 
 4. POST
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++=
+
+Replace create new file create new folder button with dropdown that allows either file or folder
+and the name will be in name field
+
+content will be from the code window (if file)
+it will be empty if folder 
+
+
+
+delete file/folder will be shown at all times, and once you click, it will be triggered for current
+
+update current to keep track of the file too
