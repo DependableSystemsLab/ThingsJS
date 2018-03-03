@@ -1,6 +1,7 @@
 TODO:
 
-2. Once root is clicked, get all the files in it to show
-3. Figure out how to differentiate file and folder in menuClick. In particular, how to access the type in menuClick
+1. Figure out use case and based on that update the current path and update the view
 
---- Need to fix the post request too
+2. Get the POST request going
+
+3. If possible write some tests for that

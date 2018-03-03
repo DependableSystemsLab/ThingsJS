@@ -12,6 +12,7 @@
 					<input type="text" ng-model="$view.codeName" class="form-control"/>
 				</div>
 			</div>
+
 			<div ng-show="$view.codeName" class="col-md-8 text-right">
 				<div class="form-inline">
 					<select ng-model="$view.selectedNode" class="form-control">
@@ -31,6 +32,7 @@
 				</div>
 			</div>
 		</div>
+		
 		<div class="form-group">
 			<label>Code</label>
 			<div ui-ace="{ mode: 'javascript' }" ng-model="$view.code" ng-keydown="$view.onKeyDown($event)"></div>
@@ -52,10 +54,11 @@
 		<!-- ===================================================================================== -->
 
 		<!-- Dummy JSON button --> 
+		<!--
 		<button type="radio" ng-click="$view.testGET()" class="btn btn-primary">
 			<i class="fa fa-folder"></i> Get Code Directories
 		</button>
-
+	    -->
         <!-- ===================================================================================== -->
 
 	</div>

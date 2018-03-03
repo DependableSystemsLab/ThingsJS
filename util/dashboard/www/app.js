@@ -4,7 +4,10 @@ var dashApp = angular.module('dashApp', ['ngResource',
                                          'ui.router',
                                          'ui.bootstrap',
                                          'ui.ace',
-                                         'nvd3'] );
+										 'nvd3'] );
+										 
+var url = "http://localhost:5000/";
+var current;
 
 dashApp.constant("CONFIG", {
 	service_url: (window.location.hostname+':'+window.location.port),
@@ -523,11 +526,24 @@ dashApp.constant("CONFIG", {
 				var self = this;
 				$scope.$service = DashboardService;
 				
+				self.allCodes = {};
+				console.log("Called")
+				
+				/***************************************************** */
+				$http.get(url + "root/").then(function(response){
+					console.log(response.data);
+					self.allCodes[response.data.name] = response.data;
+					current = "root";
+					console.log("Current is " + current);
+				}, function(){
+					console.log("An error occured");
+				})
+				/***************************************************** */
+
 				self.idleNodes = DashboardService.allNodes;
 				
 				self.allCodes = DashboardService.allCodes;
 
-				
 				self.clearAll = function(){
 					self.codeName = "";
 					self.code = "";
@@ -552,8 +568,13 @@ dashApp.constant("CONFIG", {
 					if (content.type === "directory"){
 						
 						console.log("It is directory");
+						
+						url += codeName + "/";
+						current = codeName;
+						console.log("Current is " + current);
+						console.log(url);
 
-						$http.get('http://localhost:5000/' + codeName).then(function(response){
+						$http.get(url).then(function(response){
 							console.log(response.data);
 							self.allCodes = {};
 
@@ -573,21 +594,21 @@ dashApp.constant("CONFIG", {
 			}
 				
 
-				/* When the get directories button is clicked */
-				self.testGET = function(){
-					$http.get('http://localhost:5000/root').then(function(response){
-						console.log(response.data);
-						self.allCodes[response.data.name] = response.data;
-					}, function(){
-						console.log("An error occured");
-					})
-				}
+				// /* When the get directories button is clicked */
+				// self.getDirectories = function(){
+
+				// 	self.allCodes = {};
+				// 	console.log("Called")
+					
+				// 	$http.get(url + "root/").then(function(response){
+				// 		console.log(response.data);
+				// 		self.allCodes[response.data.name] = response.data;
+				// 	}, function(){
+				// 		console.log("An error occured");
+				// 	})
+				// }
 				
 				// ADD POST for create new folder.
-
-
-
-
 
 				self.sendCode = DashboardService.runCode;
 				
