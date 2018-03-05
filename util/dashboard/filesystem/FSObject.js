@@ -3,14 +3,6 @@ var Schema = mongoose.Schema;
 mongoose.Promise = global.Promise;
 
 /* An fs object
- *
- * name     : name of object, eg. 'code.js'
- * created  : date of object creation
- * updated  : date of modification to file
- * type     : either 'file' or 'directory'
- * path     : abs path, eg. '/temp/js/code.js'
- * parent   : path of parent directory, eg. '/temp/js'
- *
  */
 var FileSystemSchema = new Schema({
 	_id     : Schema.Types.ObjectId,
@@ -18,151 +10,106 @@ var FileSystemSchema = new Schema({
 	created : {type: Date, default: Date.now },
 	updated : Date,
 	type    : { type: String, enum: ['directory', 'file'] },
-	path    : { type: String, unique: true, index: true },
 	content : String,
-	parent  : { type: String, ref: 'FSObject' } 
+	parent  : { type: Schema.Types.ObjectId, ref: 'FSObject' },
+	nodes   : [{ type: String }] 
 })
+
+/* guarantee uniqueness of name - parent */
+FileSystemSchema.index({ name: 1, parent: 1 }, { unique: true });
+
 
 /* Retrieve all contents from the f/s
  */
-FileSystemSchema.methods.getAllPaths = function(){
+FileSystemSchema.methods.getAllObjects = function(){
 	return this.model('FSObject')
 		.find({})
-		.select('path')
+		.lean()
+		.exec();
+}
+
+FileSystemSchema.methods.getFileObjectById = function(id){
+	return this.model('FSObject')
+		.findOne({ _id: id })
+		.lean()
 		.exec();
 }
 
 /* Overwrite the contents of a file
+ * precondition: file object must be of type 'file'
  */
-FileSystemSchema.methods.overWriteFile = function(path, newContent){
+FileSystemSchema.methods.overwriteFile = function(id, newContent){
 	return this.model('FSObject')
-		.findOne({ path: path })
-		.update({ $set: { content: newContent, updated: Date.now }})
+		.findOne({ _id : id })
+		.update({ $set: { content: newContent, updated: new Date() }})
 		.exec();
 }
 
-/* Retrieve an entire file object
+/* Return all the file objects with a matching name
+ * @param name : name to match
  */
-FileSystemSchema.methods.getFileObject = function(path){
+FileSystemSchema.methods.getObjectsByName = function(name){
 	return this.model('FSObject')
-		.findOne({ path: path })
+		.find({ name : name })
+		.lean()
 		.exec();
 }
 
-/* Retrieve the children of a directory
+/* Retrieve a file object based on its name and parentId
+ * @param name     : name of the object
+ * @param parentId : _id field of the parent for this object 
+ * 
  */
-FileSystemSchema.methods.getChildren = function(path){
+FileSystemSchema.methods.getFileObject = function(name, parentId){
+	console.log('<T> FSObject.js -- getFileObject - name: ' + name);
+	console.log('<T> FSObject.js -- getFileObject - parentID: ' + parentId);
 	return this.model('FSObject')
-		.find({ parent: path })
+		.findOne({ name : name, parent: parentId })
+		.lean()
 		.exec();
 }
 
-/* Retrieve both the children and the directory meta-data
+/* Delete a file object and all its children
  */
-FileSystemSchema.methods.getChildrenAndSelf = function(path){
+FileSystemSchema.methods.deleteFileObject = function(id){
 	return this.model('FSObject')
-		.find({ $or: [{ parent: path }, { path: path }] })
+		.find({ $or: [{ _id: id }, { parent: id }] })
+		.remove()
 		.exec();
 }
 
-/* Uses regex to find children -- not in use
+/* Retrieve the children of a directory 
+ * @param id : _id field of the directory
  */
-FileSystemSchema.methods.getImmediateChildren = function(path){
-	path.replace(/\//g, '\\/');
-	var regex = new RegExp('^'+'('+path+')'+'\/*[0-9a-zA-Z\\.]*[^\/]$');
-
+FileSystemSchema.methods.getChildren = function(id){
 	return this.model('FSObject')
-		.find({ path: { $regex: regex }})
-		.exec();
-}
-
-/* Uses regex to delete self and children -- not in use
- */
-FileSystemSchema.methods.deleteFileObject = function(path){
-	path.replace(/\//g, '\\/');
-	var regex = new RegExp('^'+'('+path+')');
-
-	return this.model('FSObject')
-		.deleteMany({ path: { $regex: regex }})
+		.find({ parent: id })
+		.lean()
 		.exec();
 }
 
 /* moves a file object
- * NEEDS TO BE OPTIMIZED
+ * @param id          : _id field of the object
+ * @param newParentId : new parent of the object 
  */
-FileSystemSchema.methods.updateParent = function(path, newPath, callback, context){
-	var self = this;
-	var updatedPaths = [];
-	// should put this in a utility function
-	oldParent = path.split('/');
-	oldParent = oldParent.splice(0, oldParent.length-1);
-	oldParent = oldParent.join('/');
-	if(!oldParent){
-		oldParent = '/';
-	}
-
-	newParent = newPath.split('/');
-	var temp = newParent.splice(0, newParent.length-1);
-	newName = newParent.toString();
-	newParent = temp;
-	newParent = newParent.join('/');
-	if(!newParent){
-		newParent = '/';
-	}
-
-	console.log("oldParent: " + oldParent + " newParent: " + newParent + " newName: " + newName);
-
-	// Call to update all parent pointers 
-	var updateParentPointers = function(doc, parentPath){
-		var name = doc.name;
-		var newPath = (parentPath == '/') ? (parentPath + name) : (parentPath + '/' + name);
-		console.log("new parent path: " + newPath);
-
-		// update object 
-		this.model('FSObject').find({ path: doc.path })
-			.update({$set: { parent: parentPath, path: newPath }})
-			.exec(function(){
-			});
-		// recursively update children
-		this.model('FSObject').find({ parent: doc.path })
-			.exec(function(err, docs){
-				if(!docs){
-					return;
-				}
-				docs.map(function(doc){
-					return updateParentPointers.call(self, doc, newPath);
-				});
-			});
-	}
-
-	/* - Check that the path of the new parent is valid
-	 * - If it is, we update the file or directory 
-	 * - Then, we must update all the children (if the modified object is a directory)
-	 *
-	 */
-	var isValid = this.model('FSObject').find({ path : newParent }).limit(1).size();
-	if(isValid){
-		// update object 
-		this.model('FSObject').find({ path: path })
-			.update({$set: { path: newPath, name: newName, parent: newParent }})
-			.exec(function(){
-			});
-		// update this object's children
-		this.model('FSObject').find({ parent: path })
-			.exec(function(err, docs){
-				if(!docs){
-					return;
-				}
-				docs.map(function(doc){
-					return updateParentPointers.call(self, doc, newPath);
-				});
-			});
-	}	
+FileSystemSchema.methods.updateParent = function(id, newParentId){
+	return this.model('FSObject')
+		.find({ _id: id })
+		.update({ $set: { parent: newParentId } })
+		.exec();
 }
 
-
+/* rename a file object
+ * @param id      : _id field of the object
+ * @param newName : the new name of the object
+ */
+FileSystemSchema.methods.updateName = function(id, newName){
+	return this.model('FSObject')
+		.find({ _id: id })
+		.update({ $set: { name: newName } })
+		.exec();
+}
 
 var FSObject = mongoose.model('FSObject', FileSystemSchema);
-
 
 module.exports = FSObject;
