@@ -10,28 +10,20 @@ var things_common = require('../lib/common.js');
 // in the future?
 var DB_URL = "localhost";
 var DB_PORT = 5000;
-var MAKE_FSOBJECT = "/createFSObject";
-var DELETE_DIR = "/deleteDirectory";
-var MOVE_DIR = "/moveDirectory";
-var ROOT_PATH = '/';
+
+var FS_MAKE = "/makeFromPath";
+var FS_DELETE = "/deleteFromPath";
+var FS_MOVE = "/moveFromPath";
+var FS_RENAME = "/renameFromPath";
+var FS_COPY = "/cloneFromPath";
+var FS_UPDATE = "/updateFromPath";
+
+var ROOT_PATH = '/root';
 
 var _NODES = {};
 
-/* 
- * Current command to function mappings. 
- * (!!) Better way to do this besides hash table?
- * (!!) Have a Command class?
- *
- * pubsub <url>      		-- connect to a pubsub URL
- * ls                		-- list all nodes on the connected pubsub network
- * worker <config>   		-- deploy a worker given a config
- * dispatch <code> <worker> -- run code on a given node
- * exit              		-- exit the shell
- * cmds              		-- list all currently available commands
- * fields <worker>          -- fetch all the fields of a worker
- */
 var VALID_SHELL_CMDS = {
-	// things-js related commands
+	/* things-js */
 	'pubsub':   setPubSub,
 	'ln':       listNodes,	
 	'worker':   startWorker,
@@ -40,19 +32,19 @@ var VALID_SHELL_CMDS = {
 	'cmds':     listCommands,
 	'fields':   getAllFields,
 	'pause':    pauseCode, 
-	// standard process commands
+	/* std process */
 	'clear':    clear,
 	'exit':     exit,
-	// filesystem commands
+	/* filesystem */
 	'ls':       listFiles,
-	'touch':    makeFile,
 	'cat':      catFile,
 	'rm':       removeFileObject,
 	'mkdir':    makeDirectory,
+	'touch':    makeFile,
 	'pwd':      printWorkingDirectory,
 	'cd':       changeDirectory,
 	'mv':       moveFileObject,
-	// misc
+	/* misc */
 	'':         function(){return '';} 
 }
 
@@ -61,51 +53,67 @@ var COMMON_ERRORS = {
 	NOPUBSUB: "Please set your pubsub URL first using the command \'pubsub\'"
 }
 
+/* usage: exit
+ */
 function exit(){
 	process.exit();
 }
 
+/* usage: clear
+ */
 function clear(){
 	process.stdout.write('\033c');
 }
 
-/* (!!) In-progress. Perhaps we can initialize db information as a Shell field
- * usage: use <db name>
- *			- <db name>: name of the database
+/* In-progress
  */
 function connectDB(db){
 }
 
-/* Analogous to 'pwd' in Linux
+/* Analogous to 'pwd' in Linux; shows the current working directory
  * usage: pwd
  */
 function printWorkingDirectory(){
 	return this.path;
 }
 
-/* usage: cat <filename>
+/* display the contents inside a file
+ * usage: cat <path of file>
+ *
+ * @param name : name of the file (if it exists in the current directory), or the absolute path of the file
  */
 function catFile(name){
-	path = (this.path == '/') ? (this.path + name) : (this.path + '/' + name);
-	if(this.cachedChildren[path] == 'file'){
-		return getRequest(path);
+	var absPath = name;
+	var tokens = path.split('/');
+
+	// append the cwd to the path if we are given only a file name
+	if(tokens.length == 1 && tokens[0] == name){
+		absPath = this.path + '/' + name;
 	}
-	else{
-		return "No such file";
-	}
+
+	return new Promise(function(resolve, reject){
+		getRequest(absPath).then(function(data){
+			if(!data || data.type != 'file'){
+				resolve('No such file');
+				return;
+			}
+			resolve(data);
+		});
+	});
 }
-
-
 
 /* Analogous to 'cd' in Linux
  *	usage: cd <dir> | cd .. | cd ~
- *		- <dir> must be a child of the current path
+ *
+ * @param dirName  : the name of a folder (in the current directory), or absolute path 
  */
 function changeDirectory(dirName){
+	var self = this;
+	// travel to the root
 	if(dirName === '~'){
 		this.path = ROOT_PATH;
 	}
-	// traverse to parent
+	// travel up the parent
 	else if(dirName === '..'){
 		currPath = this.path.split('/');
 		if(currPath.length == 2){
@@ -117,65 +125,82 @@ function changeDirectory(dirName){
 		}
 	}
 	else if(this.cachedChildren[dirName] == 'directory'){
-		this.path = (this.path === '/')?(this.path + dirName) : (this.path + '/' + dirName);
+		this.path = this.path + '/' + dirName;
 	}
 	else{
-		return dirName + ": no such file or directory";
+		return new Promise(function(resolve, reject){
+			getRequest(dirName).then(function(data){
+				if(data && data.type == 'directory'){
+					self.path = dirName;
+					resolve();
+				}
+				else{
+					resolve(dirName + ': no such directory');
+				}
+
+			});
+		});
 	}
 }
 
 
 /* Analogous to 'mv' in Linux
  * usage: mv <path> <newpath>
- * (!!) TO-DO: check if path is valid?
- * (!!) TO-DO: update cache
+ *
+ * @param path    : path of the file object to be moved
+ * @param newPath : path of the new parent directory, or what a file should be renamed to
  *
  */
 function moveFileObject(path, newPath){
-	function getAbsPath(name){
-		var path = (this.path == '/') ? (this.path + name) : (this.path + '/' + name);
-		return path;
-	}
-
 	var oldPath = '';
-	if(path === '/'){
+	if(path === ROOT_PATH){
 		return "Cannot move the root directory";
 	}
 	pathTokens = path.split('/');
+
+	// get the absolute path of the file
 	if(pathTokens.length == 1){
-		oldPath = getAbsPath.call(this, pathTokens.toString());
+		oldPath = this.path + '/' + pathTokens.toString();
 	}
 	else{
 		oldPath = path;
 	}
+
 	pathTokens = newPath.split('/');
 	if(pathTokens.length == 1){
-		newPath = getAbsPath.call(this, pathTokens.toString());
+		moveRequest(oldPath, newPath, true);
+		return;
 	}
-	postMoveDirectory(oldPath, newPath);
+	moveRequest(oldPath, newPath, false);
 }
 
-function postMoveDirectory(path, newPath){
+function moveRequest(path, newPath, rename){
 	var self = this;
 	var options = {
 		method: 'POST',
 		host: DB_URL,
 		port: DB_PORT,
-		path: MOVE_DIR,
+		path: (rename) ? FS_RENAME : FS_MOVE,
 		headers: {
 			'Content-Type': 'application/json'
 		}			
 	}
 	var requestBody = {
-		path: path,
-		new_path: newPath
+		file_path: path,
+	}
+	if(rename){
+		requestBody.file_name = newPath;
+	}
+	else{
+		requestBody.parent_path = newPath;
 	}
 	return new Promise(function(resolve, reject){
 		var req = http.request(options, function(res){
 			res.on('data', function(c){
 			});
 			res.on('end', function(){
-				resolve('Moved the file object');
+				var ret = (rename) ? 'Renamed file object' : 'Moved file object';
+				resolve(ret);
 			});
 			res.on('error', function(err){
 				console.log(err)
@@ -188,86 +213,48 @@ function postMoveDirectory(path, newPath){
 
 /* Analogous to 'mkdir' in Linux
  * usage: mkdir <dirName>
- *		- <dirName> name of the new folder
  */
 function makeDirectory(dirName){
-	return postDirectory.call(this, dirName, this.path, true)
-}
-
-/* (!!) No error checking to see if the file exists
- * Analagous to 'rmdir' in Linux
- * usage: rmdir <dirName>
- *		- <dirName> name of the folder to remove *recursively
- */
-function removeFileObject(dirName){
-	return deleteDirectory.call(this, dirName, this.path);
-}
-
-/* Helper function to make a POST request for removeDirectory()
- */
-function deleteDirectory(name, parentPath){
-	var self = this;
-	var options = {
-		method: 'POST',
-		host: DB_URL,
-		port: DB_PORT,
-		path: DELETE_DIR,
-		headers: {
-			'Content-Type': 'application/json'
-		}	
-	}
-	var requestBody = {
-		file_path: (parentPath ==='/') ? (parentPath + name) : (parentPath + '/' + name)
-	}
-
-	return new Promise(function(resolve, reject){
-		var req = http.request(options, function(res){
-			res.on('data', function(c){
-			});
-			res.on('end', function(){
-				resolve("Deleted the directory " + name);
-			});
-		});
-		req.write(JSON.stringify(requestBody));
-		req.end();
-	})
+	return createRequest.call(this, dirName, this.path, false)
 }
 
 /* Creates a new file with contents from a local file
  * 
  * filePath relative to path of ThingsJS folder currently
  * usage: touch <name> <local codepath>
- *		- <local codepath> if empty, creates empty file
+ *
+ * @param fileName : name of the file to be created
+ * @param codePath : absolute path of the content to be copied over
  */
-function makeFile(fileName, codePath){
+function makeFile(fileName, contentPath){
 	var contentString = '';
 
 	if(!fileName){
 		return "usage: touch <filename> <local-path of code to copy>";
 	}
-	if(codePath){
+	if(contentPath){
 		try {
-			contentString = fs.readFileSync(codePath).toString('utf-8');
-		}catch(e){
+			contentString = fs.readFileSync(contentPath).toString('utf-8');
+		} catch(e){
 			return "Could not read the contents of the local file";
 		}
 	}
-	return postDirectory.call(this, fileName, this.path, false, contentString);
+	return postDirectory.call(this, fileName, this.path, true, contentString);
 }
 
 /* Helper to make a POST request for creating a directory or file
- * @param {name}        : name of the file/directory
- * @param {parentPath}  : parent of the file/directory to be created
- * @param {isDirectory} : true if the fsobject will be a directory
- * @param {fileContent} : contents of the file (utf-8)
+ * @param name        : name of the file/directory
+ * @param parentPath  : parent of the file/directory to be created
+ * @param isDirectory : true if the fsobject will be a directory
+ * @param fileContent : contents of the file (utf-8)
  */
-function postDirectory(name, parentPath, isDirectory, fileContent){
+function createRequest(name, parentPath, isFile, fileContent){
 	var self = this;
 	var options = {
 		method: 'POST',
 		host: DB_URL,
 		port: DB_PORT,
-		path: MAKE_FSOBJECT,
+		path: FS_MAKE,
 		headers: {
 			'Content-Type': 'application/json'
 		}
@@ -275,9 +262,9 @@ function postDirectory(name, parentPath, isDirectory, fileContent){
 	var requestBody = {
 		file_name: name,
 		parent_path: parentPath,
-		type: (isDirectory) ? 'directory' : 'file'
+		is_file: isFile
 	}
-	if(!isDirectory){
+	if(isFile){
 		requestBody.content = fileContent;
 	}
 	return new Promise(function(resolve, reject){
@@ -286,7 +273,51 @@ function postDirectory(name, parentPath, isDirectory, fileContent){
 			});
 			res.on('end', function(){
 				resolve("Created the file: " + name);
-				self.cachedChildren[name] = (isDirectory) ? 'directory' : 'file';
+				self.cachedChildren[name] = (isFile) ? 'file' : 'directory';
+			});
+		});
+		req.write(JSON.stringify(requestBody));
+		req.end();
+	})
+}
+
+/* Analagous to 'rm' in Linux
+ * usage: rm <name>
+ *
+ * @param name  : name of the file object to delete, or path
+ */
+function removeFileObject(name){
+	if(this.cachedChildren[name]){
+		deleteRequest.call(this, name, this.path);
+	}
+	else{
+		deleteRequest.call(this, '', name);
+	}
+}
+
+/* Helper function to make a POST request to delete a file object
+ */
+function deleteRequest(name, parentPath){
+	var self = this;
+	var options = {
+		method: 'POST',
+		host: DB_URL,
+		port: DB_PORT,
+		path: FS_DELETE,
+		headers: {
+			'Content-Type': 'application/json'
+		}	
+	}
+	var requestBody = {
+		file_path: parentPath + '/' + name
+	}
+
+	return new Promise(function(resolve, reject){
+		var req = http.request(options, function(res){
+			res.on('data', function(c){
+			});
+			res.on('end', function(){
+				resolve("Deleted " + name);
 			});
 		});
 		req.write(JSON.stringify(requestBody));
@@ -315,8 +346,7 @@ function getRequest(path){
 	})
 }
 
-/* (!!) Needs a caching mechanism
- * Analogous to 'ls' in Linux
+/* Analogous to 'ls' in Linux
  * usage: ls
  */
 function listFiles(){
@@ -521,18 +551,19 @@ function Shell(){
 	this.repl.pubsub = undefined;
 	this.repl.engine = undefined;
 	this.repl.dispatcher = undefined;
-	// for code repository
+
+	/* code repository */
 	this.repl.path = ROOT_PATH;
 	this.repl.cachedChildren = {};
 }
 
-Shell.prototype.shellEval = function(input, context, filename, callback){
-	// hacky way of getting all the user input
+function parseArguments(input){
 	var parsedInput = input.trim().split(/\s+/) || '';
-	var userInput = {
-		cmd: parsedInput[0],
-		args: parsedInput.splice(1, parsedInput.length-1)
-	}
+	return { cmd: parsedInput[0], args: parsedInput.splice(1, parsedInput.length-1) };
+}
+
+Shell.prototype.shellEval = function(input, context, filename, callback){
+	var userInput = parseArguments(input);
 	var self = context;
 
 	if(VALID_SHELL_CMDS[userInput.cmd]){
@@ -542,18 +573,16 @@ Shell.prototype.shellEval = function(input, context, filename, callback){
 				try{
 					outputString = '';
 					parsedData = JSON.parse(data);
-					dataInfo = parsedData['data'];
-					if(dataInfo.type === 'file'){
-						self.cachedChildren[dataInfo.path] = dataInfo.type;
+					if(parsedData.type === 'file'){
+						self.cachedChildren[parsedData.name] = parsedData.type;
 						callback(null, parsedData['content']);
 					}
 					else {
 						children = parsedData['content'];
 						for(var i = 0; i < children.length; i++){
 							var fsObject = children[i]['name'];
-							var fsPath = children[i]['path'];
-							self.cachedChildren[fsPath] = children[i]['type'];
-							outputString += fsObject + "\n";
+							self.cachedChildren[fsObject] = children[i]['type'];
+							outputString += fsObject + "     ";
 						}
 						callback(null, outputString);
 					}
