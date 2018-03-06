@@ -29,6 +29,7 @@ FSServer.prototype._init = function(){
 	this._initDelete();
 	this._initMove();
 	this._initMisc();
+	this._initCreate();
 }
 
 /* start the server

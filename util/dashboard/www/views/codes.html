@@ -21,10 +21,10 @@
 						<button ng-click="$view.sendCode($view.selectedNode, $view.code)" class="btn btn-success">
 							<i class="fa fa-play"></i> Run Code
 						</button>						
-						<button ng-click="$service.saveCode($view.codeName, $view.code)" class="btn btn-primary">
+						<button ng-click="$view.saveCode($view.codeName, $view.code)" class="btn btn-primary">
 							<i class="fa fa-save"></i> Save Code
 						</button>
-						<button ng-show="$view.allCodes[$view.codeName]" ng-click="$service.deleteCode($view.codeName); $view.clearAll();" class="btn btn-danger">
+						<button ng-show="$view.allCodes[$view.codeName]" ng-click="$view.deleteCode($view.codeName); $view.clearAll();" class="btn btn-danger">
 							<i class="fa fa-trash"></i> Delete Code
 						</button>				
 							

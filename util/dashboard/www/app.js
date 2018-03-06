@@ -7,6 +7,8 @@ var dashApp = angular.module('dashApp', ['ngResource',
 										 'nvd3'] );
 										 
 var url = "http://localhost:5000/";
+var createFSUrl = "http://localhost:5000/createFSObjectFromPath";
+var deleteFSUrl = "http://localhost:5000/deleteFSObjectFromPath";
 var current;
 var options = ["Run", "Delete"];
 
@@ -64,7 +66,7 @@ dashApp.constant("CONFIG", {
 		}
 	}
 })
-.factory('DashboardService', ['$q', '$rootScope', 'WebSocketService', 'CodeEngine', function($q, $rootScope, WebSocketService, CodeEngine){
+.factory('DashboardService', ['$q', '$rootScope', '$http', 'WebSocketService', 'CodeEngine', function($q, $rootScope, $http, WebSocketService, CodeEngine){
 	var TOPICS = {
 		'node-registry': 'things-engine-registry'
 	}
@@ -154,6 +156,7 @@ dashApp.constant("CONFIG", {
 		}
 	}
 	
+
 	return {
 		start: function(){
 			var self = this;
@@ -269,15 +272,7 @@ dashApp.constant("CONFIG", {
 		subscribe: subscribe,
 		unsubscribe: unsubscribe,
 		allNodes: _NODES,
-		saveCode: function(name, code){
-			_SOCKET.send({ action: "code-db", command: "save", name: name, code: code });
-		},
-		deleteCode: function(name){
-			var result = confirm("Are you sure you want to delete " + name + "?");
-			if(result){
-				_SOCKET.send({ action: "code-db", command: "delete", name: name });
-			}
-		},
+
 		allCodes: _CODES,
 		allDirectories : _DIRECTORIES,  // Directories added by Atif. 
 		runCode: runCode,
@@ -534,8 +529,9 @@ dashApp.constant("CONFIG", {
 				$http.get(url + "root/").then(function(response){
 					console.log(response.data);
 					self.allCodes[response.data.name] = response.data;
-					current = "root";
-					console.log("Current is " + current);
+					current = response.data;
+					//console.log("Current object is " + JSON.parse(current));
+					console.log("Current name is " + current.name);
 				}, function(){
 					console.log("An error occured");
 				})
@@ -571,8 +567,9 @@ dashApp.constant("CONFIG", {
 						console.log("It is directory");
 						
 						url += codeName + "/";
-						current = codeName;
-						console.log("Current is " + current);
+						current = content;
+						//console.log("Current object is " + JSON.parse(current));
+						console.log("Current name is " + current.name);
 						console.log(url);
 
 						$http.get(url).then(function(response){
@@ -594,6 +591,84 @@ dashApp.constant("CONFIG", {
 				}
 			}
 			
+			self.saveCode = function(name, code){
+				// _SOCKET.send({ action: "code-db", command: "save", name: name, code: code });
+				var postData = {
+					"file_name" : name,
+					"parent_path" : url.replace("http://localhost:5000/", ""),
+					"is_file" : true,
+					"content" : code
+				}
+				
+				$http.post(createFSUrl, postData).then(function(){
+					alert("File saved succesfully using http POST");
+		
+					$http.get(url).then(function(response){
+						console.log("Call to getMenu");
+						console.log(response.data);
+						self.allCodes = {};
+						//var res = JSON.parse(response)
+						//console.log("self.allCodes is " + self.allCodes);
+							
+						for(var i = 0; i < response.data.content.length; i++){
+							var child = response.data.content[i];
+							self.allCodes[child.name] = child;
+							console.log(child);
+							console.log("Rendering menu");
+						}
+							
+						}, function(){
+							console.log("An error occured");
+					});
+					
+					$scope.apply();
+				
+				}, 
+				function(){
+					alert("File save was unsuccessful");
+				});
+			
+			},
+
+			self.deleteCode = function(name){
+				var result = confirm("Are you sure you want to delete " + name + "?");
+				if(result){
+					//_SOCKET.send({ action: "code-db", command: "delete", name: name });
+
+					$http.post(deleteFSUrl, { "file_path" :  url.replace("http://localhost:5000", "") + name}).then(function(){
+						alert(name + " deleted successfully");
+						self.allCodes = {};
+						console.log(url);
+					
+
+						$http.get(url ).then(function(response){
+							console.log("Call to getMenu");
+							console.log(response.data);
+							self.allCodes = {};
+							//var res = JSON.parse(response)
+							//console.log("self.allCodes is " + self.allCodes);
+								
+							for(var i = 0; i < response.data.content.length; i++){
+								var child = response.data.content[i];
+								self.allCodes[child.name] = child;
+								console.log(child);
+								console.log("Rendering menu");
+							}
+								
+							}, function(){
+								console.log("An error occured");
+						});
+					
+					}, function(){
+						alert("File delete was unsuccessful");
+					});
+
+				}
+			},
+
+
+
+
 			self.menuHover = function(codeName, content){
 				//console.log("Hover over " + codeName);
 				//console.log("Should I delete?");
