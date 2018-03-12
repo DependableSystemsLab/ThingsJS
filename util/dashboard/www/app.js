@@ -44,6 +44,7 @@ dashApp.constant("CONFIG", {
 		//additional properties for humans
 		this.setIcon((data.info ? data.info.device : 'undefined'));
 	}
+
 	CodeEngine.prototype.update = function(data){
 		this.status = data.status || "unknown";
 		this.running = data.running || undefined;
@@ -53,9 +54,11 @@ dashApp.constant("CONFIG", {
 			this.setIcon(data.info.device);
 		}
 	};
+
 	CodeEngine.prototype.clearConsole = function(){
 		this.console = [];
 	};
+
 	CodeEngine.prototype.setIcon = function(device){
 		this.icon = icon_mapping[device];
 	};
@@ -95,11 +98,13 @@ dashApp.constant("CONFIG", {
 			});	
 		}
 	}
+
 	function handleNodeStats(data){
 		var nodeId = data.topic.split("/")[0];
 		if (!_NODES[nodeId].stats) _NODES[nodeId].stats = [];
 		if (data.message) _NODES[nodeId].stats.push(data.message);
 	}
+
 	function handleVideoStream(data){
 		if (data.message){
 			_VIDEOSTREAM.raw = "data:image/png;base64,"+data.message;	
@@ -109,6 +114,7 @@ dashApp.constant("CONFIG", {
 			_VIDEOSTREAM.raw= "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
 		}
 	}
+
 	function handleVideoMotion(data){
 		if (data.message){
 			_VIDEOSTREAM.motion = "data:image/png;base64,"+data.message;	
@@ -125,6 +131,7 @@ dashApp.constant("CONFIG", {
 		_SOCKET.send({ action: "pubsub", command: "subscribe", topic: topic });
 		_SUBSCRIPTIONS[topic].subscribed = true;
 	}
+
 	function unsubscribe(topic){
 		if (!_SUBSCRIPTIONS[topic]) _SUBSCRIPTIONS[topic] = { subscribed: false };
 		_SOCKET.send({ action: "pubsub", command: "unsubscribe", topic: topic });
@@ -140,12 +147,14 @@ dashApp.constant("CONFIG", {
 			alert("You need to select the node AND provide the code");
 		}
 	}
+
 	//Send PAUSE command to dispatcher
 	function pauseCode(nodeId, codeId){
 		if (nodeId && _NODES[nodeId].status === 'busy'){
 			_SOCKET.send({ action: "dispatcher", command: "pause_code", args: { nodeId: nodeId, codeId: codeId } });
 		}
 	}
+
 	//Send MIGRATE command to dispatcher
 	function migrateCode(fromId, toId, codeId){
 		if (fromId && _NODES[fromId].status === 'busy' && toId && _NODES[toId].status === 'idle' && codeId){
@@ -156,7 +165,6 @@ dashApp.constant("CONFIG", {
 		}
 	}
 	
-
 	return {
 		start: function(){
 			var self = this;
@@ -303,6 +311,7 @@ dashApp.constant("CONFIG", {
 		'memory': 'Memory Usage',
 		'cpu': 'CPU'
 	}
+
 	function getData(datum, mode){
 		if (mode === 'memory'){
 			return (Math.round(100*datum.memoryUsage.heapUsed)/100);
@@ -381,6 +390,7 @@ dashApp.constant("CONFIG", {
 					if (self.graphData['cpu'][0].values.length > 60) self.graphData['cpu'][0].values.shift();
 				}
 			});
+
 			$scope.$watch(function(){
 				return $scope.node ? $scope.node.id : undefined;
 			}, function(id){
@@ -525,17 +535,15 @@ dashApp.constant("CONFIG", {
 				self.allCodes = {};
 				console.log("Called")
 				
-				/***************************************************** */
 				$http.get(url + "root/").then(function(response){
 					console.log(response.data);
 					self.allCodes[response.data.name] = response.data;
 					current = response.data;
-					//console.log("Current object is " + JSON.parse(current));
 					console.log("Current name is " + current.name);
 				}, function(){
 					console.log("An error occured");
 				})
-				/***************************************************** */
+			
 
 				self.idleNodes = DashboardService.allNodes;
 				
@@ -546,50 +554,33 @@ dashApp.constant("CONFIG", {
 					self.code = "";
 					self.selectedNode = undefined;
 				}
-				self.clearAll();
 
-				/***********************************************************************/
+				self.renderMenu = function(url){
+					$http.get(url).then(function(response){
+						console.log(response.data);	
+						self.allCodes = {};
 
-				// self.selectCode = function(codeName){
-				// 	self.codeName = codeName;
-				// 	self.code = self.allCodes[codeName].code;
-				// }
+						for(var i = 0; i < response.data.content.length; i++){
+							var child = response.data.content[i];
+							self.allCodes[child.name] = child;
+						}
+					}, function(){
+						console.log("An error occured");
+					})
+				}
 
-			    /***********************************************************************/
-				
 				/* When the folder/file name is clicked */
 				self.menuClick = function(codeName, content){
-					console.log(content);
-					console.log(content.type);
-
 					if (content.type === "directory"){
-						
-						console.log("It is directory");
-						
 						url += codeName + "/";
 						current = content;
-						//console.log("Current object is " + JSON.parse(current));
-						console.log("Current name is " + current.name);
-						console.log(url);
-
-						$http.get(url).then(function(response){
-							console.log(response.data);
-							self.allCodes = {};
-
-							for(var i = 0; i < response.data.content.length; i++){
-								var child = response.data.content[i];
-								self.allCodes[child.name] = child;
-							}
-
-						}, function(){
-							console.log("An error occured");
-						})
-					
-				} else if (content.type === "file"){
+						self.renderMenu(url);
+					} 
+					else if (content.type === "file"){
 					  console.log("It is a file");
 					  self.code = self.allCodes[codeName].content;
+					}
 				}
-			}
 			
 			self.saveCode = function(name, code){
 				// _SOCKET.send({ action: "code-db", command: "save", name: name, code: code });
@@ -606,18 +597,9 @@ dashApp.constant("CONFIG", {
 					$http.get(url).then(function(response){
 						console.log("Call to getMenu");
 						console.log(response.data);
-						self.allCodes = {};
-						//var res = JSON.parse(response)
-						//console.log("self.allCodes is " + self.allCodes);
-							
-						for(var i = 0; i < response.data.content.length; i++){
-							var child = response.data.content[i];
-							self.allCodes[child.name] = child;
-							console.log(child);
-							console.log("Rendering menu");
-						}
-							
-						}, function(){
+						self.renderMenu(url);
+						
+					}, function(){
 							console.log("An error occured");
 					});
 					
@@ -638,26 +620,7 @@ dashApp.constant("CONFIG", {
 					$http.post(deleteFSUrl, { "file_path" :  url.replace("http://localhost:5000", "") + name}).then(function(){
 						alert(name + " deleted successfully");
 						self.allCodes = {};
-						console.log(url);
-					
-
-						$http.get(url ).then(function(response){
-							console.log("Call to getMenu");
-							console.log(response.data);
-							self.allCodes = {};
-							//var res = JSON.parse(response)
-							//console.log("self.allCodes is " + self.allCodes);
-								
-							for(var i = 0; i < response.data.content.length; i++){
-								var child = response.data.content[i];
-								self.allCodes[child.name] = child;
-								console.log(child);
-								console.log("Rendering menu");
-							}
-								
-							}, function(){
-								console.log("An error occured");
-						});
+						self.renderMenu(url);
 					
 					}, function(){
 						alert("File delete was unsuccessful");
@@ -666,40 +629,16 @@ dashApp.constant("CONFIG", {
 				}
 			},
 
-
-
-
-			self.menuHover = function(codeName, content){
-				//console.log("Hover over " + codeName);
-				//console.log("Should I delete?");
-			}
-
-				// /* When the get directories button is clicked */
-				// self.getDirectories = function(){
-
-				// 	self.allCodes = {};
-				// 	console.log("Called")
-					
-				// 	$http.get(url + "root/").then(function(response){
-				// 		console.log(response.data);
-				// 		self.allCodes[response.data.name] = response.data;
-				// 	}, function(){
-				// 		console.log("An error occured");
-				// 	})
-				// }
+			self.sendCode = DashboardService.runCode;
 				
-				// ADD POST for create new folder.
-
-				self.sendCode = DashboardService.runCode;
-				
-				self.onKeyDown = function(event){
-					if (event.ctrlKey && event.which === 83){
-						/* Pressed Ctrl + S */
-						event.preventDefault();
-						$scope.$service.saveCode(self.codeName, self.code);
-					}
-				};
-			}],
+			self.onKeyDown = function(event){
+				if (event.ctrlKey && event.which === 83){
+					/* Pressed Ctrl + S */
+					event.preventDefault();
+					$scope.$service.saveCode(self.codeName, self.code);
+				}
+			};
+		}],
 			controllerAs: '$view',
 			templateUrl: 'views/codes.html'
 		})
