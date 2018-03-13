@@ -50,6 +50,7 @@
 			<!-- Show the codes here. Modify to have it show directories now. -->
 			<div class="list-group">
 				<a ng-repeat="(name, content) in $view.allCodes"
+					x-lvl-draggable="true"
 					ng-click="$view.menuClick(name, content)"
 					ng-mouseover="$view.menuHover(name, content)"
 					ng-class="{ active: ($view.codeName === name) }"

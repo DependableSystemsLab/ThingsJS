@@ -543,7 +543,6 @@ dashApp.constant("CONFIG", {
 				}, function(){
 					console.log("An error occured");
 				})
-			
 
 				self.idleNodes = DashboardService.allNodes;
 				
