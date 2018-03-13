@@ -569,18 +569,18 @@ dashApp.constant("CONFIG", {
 					})
 				}
 
-				/* When the folder/file name is clicked */
-				self.menuClick = function(codeName, content){
-					if (content.type === "directory"){
-						url += codeName + "/";
-						current = content;
-						self.renderMenu(url);
-					} 
-					else if (content.type === "file"){
-					  console.log("It is a file");
-					  self.code = self.allCodes[codeName].content;
-					}
+			/* When the folder/file name is clicked */
+			self.menuClick = function(codeName, content){
+				if (content.type === "directory"){
+					url += codeName + "/";
+					current = content;
+					self.renderMenu(url);
+				} 
+				else if (content.type === "file"){
+					console.log("It is a file");
+					self.code = self.allCodes[codeName].content;
 				}
+			}
 			
 			self.saveCode = function(name, code){
 				// _SOCKET.send({ action: "code-db", command: "save", name: name, code: code });
@@ -612,21 +612,54 @@ dashApp.constant("CONFIG", {
 			
 			},
 
+			
+			self.saveFolder = function(name, code){
+				// _SOCKET.send({ action: "code-db", command: "save", name: name, code: code });
+				var postData = {
+					"file_name" : name,
+					"parent_path" : url.replace("http://localhost:5000/", ""),
+					"is_file" : false,
+				}
+				
+				$http.post(createFSUrl, postData).then(function(){
+					alert("Folder saved succesfully using http POST");
+		
+					$http.get(url).then(function(response){
+						console.log("Call to getMenu");
+						console.log(response.data);
+						self.renderMenu(url);
+						
+					}, function(){
+							console.log("An error occured");
+					});
+				}, 
+				function(){
+					alert("File save was unsuccessful");
+				});
+			
+			},
+
 			self.deleteCode = function(name){
 				var result = confirm("Are you sure you want to delete " + name + "?");
 				if(result){
 					//_SOCKET.send({ action: "code-db", command: "delete", name: name });
 
 					$http.post(deleteFSUrl, { "file_path" :  url.replace("http://localhost:5000", "") + name}).then(function(){
+						console.log(url);
 						alert(name + " deleted successfully");
 						self.allCodes = {};
-						self.renderMenu(url);
+						self.renderMenu(url.replace(name + "/", ""));
 					
 					}, function(){
 						alert("File delete was unsuccessful");
 					});
 
 				}
+			},
+
+			self.deleteItem = function(name){
+				console.log("Want to delete " + name);
+				self.deleteCode(name);
 			},
 
 			self.sendCode = DashboardService.runCode;
