@@ -563,6 +563,7 @@ dashApp.constant("CONFIG", {
 						for(var i = 0; i < response.data.content.length; i++){
 							var child = response.data.content[i];
 							self.allCodes[child.name] = child;
+							self.clearAll();
 						}
 					}, function(){
 						console.log("An error occured");
@@ -649,6 +650,7 @@ dashApp.constant("CONFIG", {
 						alert(name + " deleted successfully");
 						self.allCodes = {};
 						self.renderMenu(url.replace(name + "/", ""));
+						
 					
 					}, function(){
 						alert("File delete was unsuccessful");
