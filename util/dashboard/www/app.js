@@ -10,6 +10,7 @@ var url = "http://localhost:5000/";
 var createFSUrl = "http://localhost:5000/createFSObjectFromPath";
 var deleteFSUrl = "http://localhost:5000/deleteFSObjectFromPath";
 var current;
+var checked = [];
 var options = ["Run", "Delete"];
 
 dashApp.constant("CONFIG", {
@@ -543,7 +544,6 @@ dashApp.constant("CONFIG", {
 				}, function(){
 					console.log("An error occured");
 				})
-			
 
 				self.idleNodes = DashboardService.allNodes;
 				
@@ -662,6 +662,13 @@ dashApp.constant("CONFIG", {
 			self.deleteItem = function(name){
 				console.log("Want to delete " + name);
 				self.deleteCode(name);
+			},
+
+			self.checked = function(name, content, value){
+				console.log(value)
+				console.log("Checked " + name);
+				checked.push(name);
+				console.log(checked);
 			},
 
 			self.sendCode = DashboardService.runCode;
