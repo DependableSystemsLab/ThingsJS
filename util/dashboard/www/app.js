@@ -553,6 +553,7 @@ dashApp.constant("CONFIG", {
 					self.codeName = "";
 					self.code = "";
 					self.selectedNode = undefined;
+					self.checked = "false"
 				}
 
 				self.renderMenu = function(url){
@@ -664,11 +665,21 @@ dashApp.constant("CONFIG", {
 				self.deleteCode(name);
 			},
 
+			self.click = function(){
+				console.log("Clicked the new button")
+			}
+
 			self.checked = function(name, content, value){
-				console.log(value)
-				console.log("Checked " + name);
-				checked.push(name);
+		
+				console.log(value);
+				
+				if(value){
+					console.log("Checked " + name);
+					checked.push(name);
+				}
+
 				console.log(checked);
+				
 			},
 
 			self.sendCode = DashboardService.runCode;
