@@ -57,8 +57,7 @@
 			<!-- Show the codes here. Modify to have it show directories now. -->
 			<div class="list-group">
 				<a ng-repeat="(name, content) in $view.allCodes"
-					x-lvl-draggable="true"
-					ng-mouseover="$view.menuHover(name, content)"
+
 					ng-class="{ active: ($view.codeName === name) }"
 					href="javascript:;"
 					class="list-group-item">
@@ -67,7 +66,10 @@
 					<input type="checkbox"
 					ng-model="value"
 					name="check"
+					ng-model="value"
 					ng-false-value="false"
+					ng-class="{ active: ($view.codeName === name) }"
+					href="javascript:;"
 					ng-true-value="true"
 					ng-change="$view.checked(name, content, value)">
 

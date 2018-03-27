@@ -10,7 +10,7 @@ var url = "http://localhost:5000/";
 var createFSUrl = "http://localhost:5000/createFSObjectFromPath";
 var deleteFSUrl = "http://localhost:5000/deleteFSObjectFromPath";
 var current;
-var checked = [];
+var checkedArray = [];
 var options = ["Run", "Delete"];
 
 dashApp.constant("CONFIG", {
@@ -557,6 +557,8 @@ dashApp.constant("CONFIG", {
 				}
 
 				self.renderMenu = function(url){
+					
+					checkedArray = [];
 					$http.get(url).then(function(response){
 						console.log(response.data);	
 						self.allCodes = {};
@@ -564,8 +566,9 @@ dashApp.constant("CONFIG", {
 						for(var i = 0; i < response.data.content.length; i++){
 							var child = response.data.content[i];
 							self.allCodes[child.name] = child;
-							self.clearAll();
 						}
+
+						console.log("Checked is " + self.checked);
 					}, function(){
 						console.log("An error occured");
 					})
@@ -656,26 +659,26 @@ dashApp.constant("CONFIG", {
 			},
 
 			self.click = function(){
-				console.log("Clicked the new button")
-			}
+				console.log("Clicked the new button");
+			},
 
 			self.checked = function(name, content, value){
-		
+			
 				console.log(value);
 				
 				if(value){
 					console.log("Checked " + name);
-					checked.push(name);
+					checkedArray.push(name);
 				} else {
-					checked.splice( checked.indexOf('foo'), 1 );
+					checkedArray.splice( checkedArray.indexOf(name), 1 );
 				}
 
-				console.log(checked);
+				console.log(checkedArray);
 				
 			},
 
-			self.deleteSelected = function(checked){
-				for (var e in checked){
+			self.deleteSelected = function(checkedArray){
+				for (var e in checkedArray){
 					self.deleteCode(e.name);
 				}
 			},
