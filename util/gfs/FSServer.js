@@ -1,6 +1,6 @@
 var express = require('express');
 var url = require('url');
-var ThingsDatabase = require('../dashboard/db.js')
+var ThingsDatabase = require('./db.js')
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 
