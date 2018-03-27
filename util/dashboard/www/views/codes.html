@@ -43,8 +43,15 @@
 
 		<div class="col-md-4">
 
-			<div class="well">
-				<!-- Kept to preserve structure -->
+			<div class="checked">
+				<button ng-click="$view.deleteSelected()" class="btn btn-primary">
+					<i class="fa fa-trash"></i> Delete Selected Files
+				</button>
+					 
+				<!-- Adding a create new folder --> 
+				<button ng-click="$copySelected()" class="btn btn-primary">
+					<i class="fa fa-folder"></i> Copy Selected Files
+				</button>
 			</div>
 			
 			<!-- Show the codes here. Modify to have it show directories now. -->
@@ -59,7 +66,7 @@
 
 					<input type="checkbox"
 					ng-model="value"
-					name="checked"
+					name="check"
 					ng-false-value="false"
 					ng-true-value="true"
 					ng-change="$view.checked(name, content, value)">

@@ -595,19 +595,10 @@ dashApp.constant("CONFIG", {
 				
 				$http.post(createFSUrl, postData).then(function(){
 					alert("File saved succesfully using http POST");
-		
-					$http.get(url).then(function(response){
-						console.log("Call to getMenu");
-						console.log(response.data);
-						self.renderMenu(url);
-						
-					}, function(){
-							console.log("An error occured");
-					});
-					
+					self.renderMenu(url);
 					$scope.apply();
-				
 				}, 
+
 				function(){
 					alert("File save was unsuccessful");
 				});
@@ -649,8 +640,7 @@ dashApp.constant("CONFIG", {
 					$http.post(deleteFSUrl, { "file_path" :  url.replace("http://localhost:5000", "") + name}).then(function(){
 						console.log(url);
 						alert(name + " deleted successfully");
-						self.allCodes = {};
-						self.renderMenu(url.replace(name + "/", ""));
+						self.renderMenu(url);
 						
 					
 					}, function(){
@@ -676,10 +666,18 @@ dashApp.constant("CONFIG", {
 				if(value){
 					console.log("Checked " + name);
 					checked.push(name);
+				} else {
+					checked.splice( checked.indexOf('foo'), 1 );
 				}
 
 				console.log(checked);
 				
+			},
+
+			self.deleteSelected = function(checked){
+				for (var e in checked){
+					self.deleteCode(e.name);
+				}
 			},
 
 			self.sendCode = DashboardService.runCode;
