@@ -6,7 +6,7 @@ var dashApp = angular.module('dashApp', ['ngResource',
                                          'ui.ace',
 										 'nvd3'] );
 										 
-var url = "http://localhost:5000/root";
+var url = "http://localhost:5000/root/";
 var createFSUrl = "http://localhost:5000/createFSObjectFromPath";
 var deleteFSUrl = "http://localhost:5000/deleteFSObjectFromPath";
 var current;
@@ -533,15 +533,22 @@ dashApp.constant("CONFIG", {
 				$scope.$service = DashboardService;
 			
 				self.idleNodes = DashboardService.allNodes;
-				
 				self.allCodes = DashboardService.allCodes;
-
+				
+				/* Called when the page loads */
+				self.init = function(){
+					console.log("In init")
+					self.renderMenu(url);
+				},
+				
+				/* Function to clear the text fields */
 				self.clearAll = function(){
 					self.codeName = "";
 					self.code = "";
 					self.selectedNode = undefined;
 				},
 
+				/* Refreshes menu to show files/folders in current directory */
 				self.renderMenu = function(url){
 					console.log("In rendermenu, url is " + url);
 					$http.get(url).then(function(response){
@@ -552,17 +559,15 @@ dashApp.constant("CONFIG", {
 							var child = response.data.content[i];
 							self.allCodes[child.name] = child;
 						}
+
+						self.clearAll();
+						
 					}, function(){
 						console.log("An error occured");
 					})
 				},
 
-				self.init = function(){
-					console.log("In init")
-					self.renderMenu(url);
-				},
-
-			/* When the folder/file name is clicked */
+			/* Navigates to folder when clicked */
 			self.menuClick = function(codeName, content){
 				if (content.type === "directory"){
 					url += codeName + "/";
@@ -573,8 +578,9 @@ dashApp.constant("CONFIG", {
 					console.log("It is a file");
 					self.code = self.allCodes[codeName].content;
 				}
-			}
+			}, 
 			
+			/* Saves a file */
 			self.saveCode = function(name, code){
 				// _SOCKET.send({ action: "code-db", command: "save", name: name, code: code });
 				var postData = {
@@ -586,85 +592,63 @@ dashApp.constant("CONFIG", {
 				
 				$http.post(createFSUrl, postData).then(function(){
 					alert("File saved succesfully using http POST");
-		
-					$http.get(url).then(function(response){
-						console.log("Call to getMenu");
-						console.log(response.data);
-						self.renderMenu(url);
-						
-					}, function(){
-							console.log("An error occured");
-					});
-					
-					$scope.apply();
-				
-				}, 
-				function(){
+					self.renderMenu(url);
+				}, function(){
 					alert("File save was unsuccessful");
 				});
 			
 			},
 
 			
+			/* Saves a folder */
 			self.saveFolder = function(name, code){
-				// _SOCKET.send({ action: "code-db", command: "save", name: name, code: code });
+				
 				var postData = {
 					"file_name" : name,
 					"parent_path" : url.replace("http://localhost:5000/", ""),
 					"is_file" : false,
-				}
+				};
 				
 				$http.post(createFSUrl, postData).then(function(){
 					alert("Folder saved succesfully using http POST");
-		
-					$http.get(url).then(function(response){
-						console.log("Call to getMenu");
-						console.log(response.data);
-						self.renderMenu(url);
-						
-					}, function(){
-							console.log("An error occured");
-					});
-				}, 
-				function(){
-					alert("File save was unsuccessful");
+					self.renderMenu(url);
+				}, function(){
+					console.log("Folder save failed");
 				});
-			
-			},
+			}, 
 
-			self.deleteCode = function(name){
-				var result = confirm("Are you sure you want to delete " + name + "?");
-				if(result){
-					//_SOCKET.send({ action: "code-db", command: "delete", name: name });
+				self.deleteCode = function(name){
+					var result = confirm("Are you sure you want to delete " + name + "?");
 
-					$http.post(deleteFSUrl, { "file_path" :  url.replace("http://localhost:5000", "") + name}).then(function(){
-						console.log(url);
-						alert(name + " deleted successfully");
-						self.allCodes = {};
-						self.renderMenu(url.replace(name + "/", ""));
-					
-					}, function(){
-						alert("File delete was unsuccessful");
-					});
+						if(result){
+							$http.post(deleteFSUrl, { "file_path" :  url.replace("http://localhost:5000", "") + name}).then(function(){
+								console.log(url);
+								alert(name + " deleted successfully");
+								self.allCodes = {};
+								self.renderMenu(url.replace(name + "/", ""));
+							}, function(){
+								alert("File delete was unsuccessful");
+							});
+						}
+				},
 
-				}
-			},
-
-			self.deleteItem = function(name){
-				console.log("Want to delete " + name);
-				self.deleteCode(name);
-			},
-
-			self.sendCode = DashboardService.runCode;
+				/* Called first upon delete request. Makes call to deleteCode which does actual deletion */
+				self.deleteItem = function(name){
+					console.log("Want to delete " + name);
+					self.deleteCode(name);
+				},
 				
-			self.onKeyDown = function(event){
-				if (event.ctrlKey && event.which === 83){
-					/* Pressed Ctrl + S */
-					event.preventDefault();
-					$scope.$service.saveCode(self.codeName, self.code);
-				}
-			};
-		}],
+				self.sendCode = DashboardService.runCode;
+				
+				self.onKeyDown = function(event){
+					if (event.ctrlKey && event.which === 83){
+						/* Pressed Ctrl + S */
+						event.preventDefault();
+						$scope.$service.saveCode(self.codeName, self.code);
+					}
+				};
+			}],
+
 			controllerAs: '$view',
 			templateUrl: 'views/codes.html'
 		})
