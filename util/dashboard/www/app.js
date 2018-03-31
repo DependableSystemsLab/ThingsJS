@@ -6,7 +6,7 @@ var dashApp = angular.module('dashApp', ['ngResource',
                                          'ui.ace',
 										 'nvd3'] );
 										 
-var url = "http://localhost:5000/";
+var url = "http://localhost:5000/root";
 var createFSUrl = "http://localhost:5000/createFSObjectFromPath";
 var deleteFSUrl = "http://localhost:5000/deleteFSObjectFromPath";
 var current;
@@ -531,20 +531,7 @@ dashApp.constant("CONFIG", {
 			controller: ['$scope', 'socket', 'DashboardService', '$http', function($scope, socket, DashboardService, $http){
 				var self = this;
 				$scope.$service = DashboardService;
-				
-				self.allCodes = {};
-				console.log("Called")
-				
-				$http.get(url + "root/").then(function(response){
-					console.log(response.data);
-					self.allCodes[response.data.name] = response.data;
-					current = response.data;
-					console.log("Current name is " + current.name);
-				}, function(){
-					console.log("An error occured");
-				})
 			
-
 				self.idleNodes = DashboardService.allNodes;
 				
 				self.allCodes = DashboardService.allCodes;
@@ -553,9 +540,10 @@ dashApp.constant("CONFIG", {
 					self.codeName = "";
 					self.code = "";
 					self.selectedNode = undefined;
-				}
+				},
 
 				self.renderMenu = function(url){
+					console.log("In rendermenu, url is " + url);
 					$http.get(url).then(function(response){
 						console.log(response.data);	
 						self.allCodes = {};
@@ -567,7 +555,12 @@ dashApp.constant("CONFIG", {
 					}, function(){
 						console.log("An error occured");
 					})
-				}
+				},
+
+				self.init = function(){
+					console.log("In init")
+					self.renderMenu(url);
+				},
 
 			/* When the folder/file name is clicked */
 			self.menuClick = function(codeName, content){
