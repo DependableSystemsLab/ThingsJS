@@ -10,6 +10,7 @@ var url = "http://localhost:5000/root/";
 var createFSUrl = "http://localhost:5000/createFSObjectFromPath";
 var deleteFSUrl = "http://localhost:5000/deleteFSObjectFromPath";
 var current;
+var checkedArray = [];
 var options = ["Run", "Delete"];
 
 dashApp.constant("CONFIG", {
@@ -531,7 +532,23 @@ dashApp.constant("CONFIG", {
 			controller: ['$scope', 'socket', 'DashboardService', '$http', function($scope, socket, DashboardService, $http){
 				var self = this;
 				$scope.$service = DashboardService;
+<<<<<<< HEAD
 			
+=======
+				
+				self.allCodes = {};
+				console.log("Called")
+				
+				$http.get(url + "root/").then(function(response){
+					console.log(response.data);
+					self.allCodes[response.data.name] = response.data;
+					current = response.data;
+					console.log("Current name is " + current.name);
+				}, function(){
+					console.log("An error occured");
+				})
+
+>>>>>>> db985661f0f9105f8e02e4e912a304a3cbc39026
 				self.idleNodes = DashboardService.allNodes;
 				self.allCodes = DashboardService.allCodes;
 				
@@ -546,11 +563,21 @@ dashApp.constant("CONFIG", {
 					self.codeName = "";
 					self.code = "";
 					self.selectedNode = undefined;
+<<<<<<< HEAD
 				},
+=======
+					self.checked = "false"
+				}
+>>>>>>> db985661f0f9105f8e02e4e912a304a3cbc39026
 
 				/* Refreshes menu to show files/folders in current directory */
 				self.renderMenu = function(url){
+<<<<<<< HEAD
 					console.log("In rendermenu, url is " + url);
+=======
+					
+					checkedArray = [];
+>>>>>>> db985661f0f9105f8e02e4e912a304a3cbc39026
 					$http.get(url).then(function(response){
 						console.log(response.data);	
 						self.allCodes = {};
@@ -560,8 +587,12 @@ dashApp.constant("CONFIG", {
 							self.allCodes[child.name] = child;
 						}
 
+<<<<<<< HEAD
 						self.clearAll();
 						
+=======
+						console.log("Checked is " + self.checked);
+>>>>>>> db985661f0f9105f8e02e4e912a304a3cbc39026
 					}, function(){
 						console.log("An error occured");
 					})
@@ -593,7 +624,14 @@ dashApp.constant("CONFIG", {
 				$http.post(createFSUrl, postData).then(function(){
 					alert("File saved succesfully using http POST");
 					self.renderMenu(url);
+<<<<<<< HEAD
 				}, function(){
+=======
+					$scope.apply();
+				}, 
+
+				function(){
+>>>>>>> db985661f0f9105f8e02e4e912a304a3cbc39026
 					alert("File save was unsuccessful");
 				});
 			
@@ -615,7 +653,27 @@ dashApp.constant("CONFIG", {
 				}, function(){
 					console.log("Folder save failed");
 				});
+<<<<<<< HEAD
 			}, 
+=======
+			
+			},
+
+			self.deleteCode = function(name){
+				var result = confirm("Are you sure you want to delete " + name + "?");
+				if(result){
+					//_SOCKET.send({ action: "code-db", command: "delete", name: name });
+
+					$http.post(deleteFSUrl, { "file_path" :  url.replace("http://localhost:5000", "") + name}).then(function(){
+						console.log(url);
+						alert(name + " deleted successfully");
+						self.renderMenu(url);
+						
+					
+					}, function(){
+						alert("File delete was unsuccessful");
+					});
+>>>>>>> db985661f0f9105f8e02e4e912a304a3cbc39026
 
 				self.deleteCode = function(name){
 					var result = confirm("Are you sure you want to delete " + name + "?");
@@ -632,11 +690,40 @@ dashApp.constant("CONFIG", {
 						}
 				},
 
+<<<<<<< HEAD
 				/* Called first upon delete request. Makes call to deleteCode which does actual deletion */
 				self.deleteItem = function(name){
 					console.log("Want to delete " + name);
 					self.deleteCode(name);
 				},
+=======
+			self.click = function(){
+				console.log("Clicked the new button");
+			},
+
+			self.checked = function(name, content, value){
+			
+				console.log(value);
+				
+				if(value){
+					console.log("Checked " + name);
+					checkedArray.push(name);
+				} else {
+					checkedArray.splice( checkedArray.indexOf(name), 1 );
+				}
+
+				console.log(checkedArray);
+				
+			},
+
+			self.deleteSelected = function(checkedArray){
+				for (var e in checkedArray){
+					self.deleteCode(e.name);
+				}
+			},
+
+			self.sendCode = DashboardService.runCode;
+>>>>>>> db985661f0f9105f8e02e4e912a304a3cbc39026
 				
 				self.sendCode = DashboardService.runCode;
 				
