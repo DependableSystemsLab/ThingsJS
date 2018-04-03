@@ -44,20 +44,34 @@
 		<div class="col-md-4">
 
 			<div class="well">
-				<!-- Kept to preserve structure -->
+				<button ng-click="$view.deleteSelected()" class="btn btn-danger">
+					<i class="fa fa-trash"></i> Delete Selected Files
+				</button>	
+
+
 			</div>
 			
 			<!-- Show the codes here. Modify to have it show directories now. -->
 			<div class="list-group">
 				<a ng-repeat="(name, content) in $view.allCodes"
-					ng-click="$view.menuClick(name, content)"
 					ng-mouseover="$view.menuHover(name, content)"
 					ng-class="{ active: ($view.codeName === name) }"
 					href="javascript:;"
 					class="list-group-item">
 					{{ name }}
-					<i class="fa fa-trash"
-					   ng-click="$view.deleteItem(name)"></i>
+
+					<input type="checkbox"
+					ng-model="value"
+					name="check"
+					ng-model="value"
+					ng-false-value="false"
+					ng-class="{ active: ($view.codeName === name) }"
+					href="javascript:;"
+					ng-true-value="true"
+					ng-change="$view.checked(name, content, value)">
+
+					<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAADVSURBVDhPYxgc4P8qBuZ/8xk8/s9nCIXjmQz8UGnCAKi5+f8Chv/I+N8ChqNEGwJUvBTdAFwYaNkfIJ4N1QoBpBgAwiBDoFohAG7AIqb//w8p/P9/SoMg/ndK496/s5ryqAas4caqGBf+d0ozHNWAzUJYFeLEJzSMUQ3YJYldIRYM9MKff8dkOFENOKSIVTE2/O+kxg2wZhAAG7CQ8f//k+pYFWPDQANWQ7WDDWj6v5wdq0Jc+N9J9QyodmhSXsUd/W+7eB9ReJdU4v//DIxQ7QMKGBgAo9+dHtgNjMIAAAAASUVORK5CYII="
+					ng-click="$view.menuClick(name, content)">
 				</a>
 			</div>
 			

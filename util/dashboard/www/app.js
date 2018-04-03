@@ -5,7 +5,8 @@ var dashApp = angular.module('dashApp', ['ngResource',
                                          'ui.bootstrap',
                                          'ui.ace',
 										 'nvd3'] );
-										 
+var checkedArray = [];		
+var toDelete;			 
 var url = "http://localhost:5000/root/";
 var createFSUrl = "http://localhost:5000/createFSObjectFromPath";
 var deleteFSUrl = "http://localhost:5000/deleteFSObjectFromPath";
@@ -617,14 +618,14 @@ dashApp.constant("CONFIG", {
 				});
 			}, 
 
+				/* Deletes Code */
 				self.deleteCode = function(name){
 					var result = confirm("Are you sure you want to delete " + name + "?");
 
 						if(result){
 							$http.post(deleteFSUrl, { "file_path" :  url.replace("http://localhost:5000", "") + name}).then(function(){
 								console.log(url);
-								alert(name + " deleted successfully");
-								self.allCodes = {};
+								console.log(name + " deleted successfully");
 								self.renderMenu(url.replace(name + "/", ""));
 							}, function(){
 								alert("File delete was unsuccessful");
@@ -632,11 +633,39 @@ dashApp.constant("CONFIG", {
 						}
 				},
 
+				/* When checsked */
+				self.checked = function(name, content, value){
+					
+						console.log(value);
+						
+						if(value){
+							console.log("Checked " + name);
+							checkedArray.push({"name": name, "content": content});
+						} else {
+							checkedArray.splice( checkedArray.indexOf(name), 1 );
+						}
+		
+						console.log(checkedArray);
+						
+					},
+
 				/* Called first upon delete request. Makes call to deleteCode which does actual deletion */
 				self.deleteItem = function(name){
 					console.log("Want to delete " + name);
 					self.deleteCode(name);
 				},
+
+				/* Deletes all selected files */
+				self.deleteSelected = function(){
+
+					for (var e in checkedArray){
+						toDelete = checkedArray[e].name;
+						console.log("Deleting " + toDelete);
+						self.deleteItem(toDelete);
+					}
+
+					checkedArray = [];
+				}
 				
 				self.sendCode = DashboardService.runCode;
 				
