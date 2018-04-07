@@ -1,6 +1,5 @@
 #! /usr/bin/env node
 
-var things = require('../lib/things.js');
 var path = require('path');
 var program = require('commander');
 
@@ -20,28 +19,34 @@ program
 
 program
   .command('worker <conf>')
+  .alias('engine')
   .description('Start a ThingsJS Worker')
   .action(function(conf){
-     var config = things.validateConfig(conf);
-     var engine = new things.CodeEngine(config, { logging: 'thingsjs-logs', logInterval: 500 });
-     
-     process.on('SIGINT', function(){
-       engine.kill();
-     });
+    var things = require('../lib/things.js');
+    var config = things.CodeEngine.validateConfig(conf);
+    var engine = new things.CodeEngine(config, { logging: 'thingsjs-logs', logInterval: 500 });
+    process.on('SIGINT', function(){
+      engine.kill().then(function(){
+          process.exit();
+        })
+    });
 
   });
 
 program
   .command('instrument <file_path>')
+  .option('-p, --pubsub <pubsub_url>', 'Pubsub URL')
   .option('-o, --output <out_path>', 'Output File Path')
+  .option('-d, --debug', 'Set environment variable DEBUG to "true" and see debug output')
   .alias('inst')
   .description('Instrument raw JavaScript code to make it migrate-able')
   .action(function(file_path, options){
-    var config = things.validateConfig(path.resolve(__dirname, '../bin/things-default.conf'));
-    var pubsub = new things.Pubsub('things-cli', config.pubsub_url);
-    var code = new things.Code(file_path, pubsub, true);
-	code.saveToFile(options.output);
-  
+    process.env['DEBUG'] = options.debug ? "true": "false";
+    var things = require('../lib/things.js');
+    var pubsub = { url: (options.pubsub_url || 'mqtt://localhost') }; // use a dummy pubsub, no need to connect
+    var code = things.Code.fromFile(pubsub, file_path);
+    if (options.output) code.save(options.output);
+    else console.log(code.source);
   });
 
 program
