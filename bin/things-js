@@ -36,7 +36,7 @@ program
 program
   .command('instrument <file_path>')
   .option('-p, --pubsub <pubsub_url>', 'Pubsub URL')
-  .option('-o, --output <out_path>', 'Output File Path')
+  .option('-s, --save <save_path>', 'File path to optionally save instrumented code')
   .option('-d, --debug', 'Set environment variable DEBUG to "true" and see debug output')
   .alias('inst')
   .description('Instrument raw JavaScript code to make it migrate-able')
@@ -45,21 +45,22 @@ program
     var things = require('../lib/things.js');
     var pubsub = { url: (options.pubsub_url || 'mqtt://localhost') }; // use a dummy pubsub, no need to connect
     var code = things.Code.fromFile(pubsub, file_path);
-    if (options.output) code.save(options.output);
+    if (options.save) code.save(options.save);
     else console.log(code.source);
   });
 
 program
   .command('run <file_path>')
+  .option('-p, --pubsub <pubsub_url>', 'Pubsub URL')
   .option('-s, --save <save_path>', 'File path to optionally save instrumented code')
+  .option('-d, --debug', 'Set environment variable DEBUG to "true" and see debug output')
   .description('Instrument and run raw JavaScript code.')
   .action(function(file_path, options){
-    var config = things.validateConfig(path.resolve(__dirname, '../bin/things-default.conf'));
-    var pubsub = new things.Pubsub('things-cli', config.pubsub_url);
-    var code = new things.Code(file_path, pubsub, true);
-    if (options && options.output){
-      code.saveToFile(options.output);
-    }
+    process.env['DEBUG'] = options.debug ? "true": "false";
+    var things = require('../lib/things.js');
+    var pubsub = { url: (options.pubsub_url || 'mqtt://localhost') }; // use a dummy pubsub, no need to connect
+    var code = things.Code.fromFile(pubsub, file_path);
+    if (options.save) code.save(options.save);
     code.run();
   });
 
