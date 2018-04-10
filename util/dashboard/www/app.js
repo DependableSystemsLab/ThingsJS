@@ -1,15 +1,18 @@
 'use strict';
 
-var dashApp = angular.module('dashApp', ['ngResource', 
+var dashApp = window.angular.module('dashApp', ['ngResource', 
                                          'ui.router',
                                          'ui.bootstrap',
                                          'ui.ace',
 										 'nvd3'] );
 var checkedArray = [];		
-var toDelete;			 
+var currentpath;
+var toDelete;		
+var toMove;	 
 var url = "http://localhost:5000/root/";
 var createFSUrl = "http://localhost:5000/createFSObjectFromPath";
 var deleteFSUrl = "http://localhost:5000/deleteFSObjectFromPath";
+var moveFSUrl = "http://localhost:5000/moveFSObjectFromPath";
 var current;
 var options = ["Run", "Delete"];
 
@@ -22,7 +25,7 @@ dashApp.constant("CONFIG", {
 		create: function(config){
 			return new EasyWebSocket(CONFIG.websocket_url, config);
 		}
-	}
+	};
 }])
 .factory('CodeEngine', function(){
 	
@@ -32,7 +35,7 @@ dashApp.constant("CONFIG", {
 		'raspberry-pi0': 'assets/img/device-raspberry-pi0-sm.png',
 		'xeon-e3': 'assets/img/device-xeon-e3-sm.png',
 		'xeon-e5': 'assets/img/device-xeon-e5-sm.png'
-	}
+	};
 	
 	function CodeEngine(data){
 		this.id = data.id;
@@ -68,12 +71,12 @@ dashApp.constant("CONFIG", {
 		create: function(data){
 			return new CodeEngine(data);
 		}
-	}
+	};
 })
 .factory('DashboardService', ['$q', '$rootScope', '$http', 'WebSocketService', 'CodeEngine', function($q, $rootScope, $http, WebSocketService, CodeEngine){
 	var TOPICS = {
 		'node-registry': 'things-engine-registry'
-	}
+	};
 	
 	var _SOCKET = undefined;
 	
@@ -204,7 +207,7 @@ dashApp.constant("CONFIG", {
 						if (!_SUBSCRIPTIONS[item]){
 							_SUBSCRIPTIONS[item] = { subscribed: false };	
 						}
-					})
+					});
 				}
 				else if (data.action === 'pubsub'){
 					if (data.topic && data.messages){
@@ -289,7 +292,7 @@ dashApp.constant("CONFIG", {
 		pauseCode: pauseCode,
 		migrateCode: migrateCode,
 		videostream: _VIDEOSTREAM
-	}
+	};
 }])
 .directive('topicTable', ['DashboardService', function(DashboardService){
 	return {
@@ -305,13 +308,13 @@ dashApp.constant("CONFIG", {
 		},
 		controllerAs: '$ctrl',
 		templateUrl: 'components/topic-table.html' 
-	}
+	};
 }])
 .directive('deviceGraph', ['$filter', function($filter){
 	var modes = {
 		'memory': 'Memory Usage',
 		'cpu': 'CPU'
-	}
+	};
 
 	function getData(datum, mode){
 		if (mode === 'memory'){
@@ -363,17 +366,17 @@ dashApp.constant("CONFIG", {
 				var memData, cpuData;
 				if (data){
 					memData = data.map(function(datum){
-						return { x: datum.timestamp, y: getData(datum, 'memory') }
+						return { x: datum.timestamp, y: getData(datum, 'memory') };
 					});
 					cpuData = data.map(function(datum){
 						return { x: datum.timestamp, y: getData(datum, 'cpu') };
-					})
+					});
 				}
 				else {
 					memData = [];
 					cpuData = [];
 				}
-				self.graphData = { 'memory': [{ values: memData, key: modes['memory'] }],
+				self.graphData = { 'memory': [{ values: memData, key: modes.memory }],
 						   		   'cpu': [{ values: cpuData, key: modes['cpu'] }] };
 			};
 			
@@ -408,7 +411,7 @@ dashApp.constant("CONFIG", {
 		}],
 		controllerAs: '$ctrl',
 		templateUrl: 'components/device-graph.html'
-	}
+	};
 }])
 .directive('deviceConsole', function(){
 	return {
@@ -420,16 +423,16 @@ dashApp.constant("CONFIG", {
 		template: '<div class="terminal"><p ng-repeat="text in lines track by $index" ng-bind="text"></p></div>',
 		link: function(scope, element, attrs, ctrl){
 			var div = $('.terminal', element);
-			if (scope.height){ div.css({ "height": scope.height, "max-height": scope.height }) };
+			if (scope.height){ div.css({ "height": scope.height, "max-height": scope.height }) }
 			
 			scope.$watch(function(){
 //				return scope.lines ? scope.lines.length : 0;
 				return div[0].scrollHeight;
 			}, function(height){
 				div.scrollTop(height);
-			})
+			});
 		}
-	}
+	};
 })
 .directive('devicePanel', ['DashboardService', function(DashboardService){
 	return {
@@ -442,7 +445,7 @@ dashApp.constant("CONFIG", {
 		}],
 		controllerAs: '$ctrl',
 		templateUrl: 'components/device-panel.html'
-	}
+	};
 }])
 .directive('stickyFooter', function($window){
 	return {
@@ -455,12 +458,12 @@ dashApp.constant("CONFIG", {
 				var y = window.innerHeight - element.outerHeight() - marker.offset().top;
 				if (y > 0){ marker.height(y); }
 				else { marker.height(0); }
-			}
+			};
 			scope.$watch(function(){ return marker.offset().top; }, function(newVal, oldVal){ stick(); });
 			scope.$watch(function(){ return element.height(); }, function(newval){ stick(); });
 			angular.element($window).bind('resize', function(){ stick(); });
 		}
-	}
+	};
 })
 .config(['$stateProvider', '$urlRouterProvider', 
     function($stateProvider, $urlRouterProvider){
@@ -493,7 +496,7 @@ dashApp.constant("CONFIG", {
 				
 				self.stopWS = function(){
 					self.socket.close();
-				}
+				};
 				
 			}],
 			controllerAs: '$view',
@@ -538,7 +541,7 @@ dashApp.constant("CONFIG", {
 				
 				/* Called when the page loads */
 				self.init = function(){
-					console.log("In init")
+					console.log("In init");
 					self.renderMenu(url);
 				},
 				
@@ -568,55 +571,55 @@ dashApp.constant("CONFIG", {
 					})
 				},
 
-			/* Navigates to folder when clicked */
-			self.menuClick = function(codeName, content){
-				if (content.type === "directory"){
-					url += codeName + "/";
-					current = content;
-					self.renderMenu(url);
-				} 
-				else if (content.type === "file"){
-					console.log("It is a file");
-					self.code = self.allCodes[codeName].content;
-				}
-			}, 
-			
-			/* Saves a file */
-			self.saveCode = function(name, code){
-				// _SOCKET.send({ action: "code-db", command: "save", name: name, code: code });
-				var postData = {
-					"file_name" : name,
-					"parent_path" : url.replace("http://localhost:5000/", ""),
-					"is_file" : true,
-					"content" : code
-				}
+				/* Navigates to folder when clicked */
+				self.menuClick = function(codeName, content){
+					if (content.type === "directory"){
+						url += codeName + "/";
+						current = content;
+						self.renderMenu(url);
+					} 
+					else if (content.type === "file"){
+						console.log("It is a file");
+						self.code = self.allCodes[codeName].content;
+					}
+				}, 
 				
-				$http.post(createFSUrl, postData).then(function(){
-					alert("File saved succesfully using http POST");
-					self.renderMenu(url);
-				}, function(){
-					alert("File save was unsuccessful");
-				});
-			
-			},
+				/* Saves a file */
+				self.saveCode = function(name, code){
+					// _SOCKET.send({ action: "code-db", command: "save", name: name, code: code });
+					var postData = {
+						"file_name" : name,
+						"parent_path" : url.replace("http://localhost:5000/", ""),
+						"is_file" : true,
+						"content" : code
+					}
+					
+					$http.post(createFSUrl, postData).then(function(){
+						window.alert("File saved successfully using http POST");
+						self.renderMenu(url);
+					}, function(){
+						alert("File save was unsuccessful");
+					});
+				
+				},
 
-			
-			/* Saves a folder */
-			self.saveFolder = function(name, code){
 				
-				var postData = {
-					"file_name" : name,
-					"parent_path" : url.replace("http://localhost:5000/", ""),
-					"is_file" : false,
-				};
-				
-				$http.post(createFSUrl, postData).then(function(){
-					alert("Folder saved succesfully using http POST");
-					self.renderMenu(url);
-				}, function(){
-					console.log("Folder save failed");
-				});
-			}, 
+				/* Saves a folder */
+				self.saveFolder = function(name, code){
+					
+					var postData = {
+						"file_name" : name,
+						"parent_path" : url.replace("http://localhost:5000/", ""),
+						"is_file" : false,
+					};
+					
+					$http.post(createFSUrl, postData).then(function(){
+						alert("Folder saved succesfully using http POST");
+						self.renderMenu(url);
+					}, function(){
+						console.log("Folder save failed");
+					});
+				}, 
 
 				/* Deletes Code */
 				self.deleteCode = function(name){
@@ -640,7 +643,7 @@ dashApp.constant("CONFIG", {
 						
 						if(value){
 							console.log("Checked " + name);
-							checkedArray.push({"name": name, "content": content});
+							checkedArray.push({"name": name, "content": content, "url": url});
 						} else {
 							checkedArray.splice( checkedArray.indexOf(name), 1 );
 						}
@@ -665,7 +668,38 @@ dashApp.constant("CONFIG", {
 					}
 
 					checkedArray = [];
-				}
+				},
+
+				/* Moves folders/files */
+				self.pasteSelected = function(){
+
+					for (var e in checkedArray){
+						toMove = checkedArray[e].name;
+						currentpath = checkedArray[e].url;
+						console.log("Moving " + toMove);
+						self.moveObject(toMove, currentpath);
+					}
+				},
+
+				/* Actual implementation of move */
+				self.moveObject = function(name, path){
+
+					console.log("path: " + path);
+					console.log("url: " + url);
+
+					$http.post(moveFSUrl, { "file_path" :  path.replace("http://localhost:5000/", "") + name, "parent_path": url.replace("http://localhost:5000/", "")}).then(function(){
+						console.log("file_path: " + file_path);
+						console.log("parent_path: " + parent_path);
+						console.log(name + " moved successfully");
+					}, function(){
+						console.log("file_path: " + file_path);
+						console.log("parent_path: " + parent_path);
+						alert("File move was unsuccessful");
+					});
+
+					self.renderMenu(url.replace(name + "/", ""));
+				},
+				
 				
 				self.sendCode = DashboardService.runCode;
 				
@@ -689,11 +723,11 @@ dashApp.constant("CONFIG", {
 				
 				self.subscribe = function(topic){
 					socket.send({ action: "subscribe", topic: topic });
-				}
+				};
 			}],
 			controllerAs: '$view',
 			templateUrl: 'views/debug.html'
-		})
+		});
      			
 	$urlRouterProvider.otherwise('/');
 }]);
