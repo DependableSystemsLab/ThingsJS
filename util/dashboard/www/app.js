@@ -540,12 +540,16 @@ dashApp.constant("CONFIG", {
 				self.idleNodes = DashboardService.allNodes;
 				self.allCodes = DashboardService.allCodes;
 				
+
+
 				/* Called when the page loads */
 				self.init = function(){
 					console.log("In init");
 					self.renderMenu(url);
 				},
 				
+
+
 				/* Function to clear the text fields */
 				self.clearAll = function(){
 					self.codeName = "";
@@ -553,11 +557,18 @@ dashApp.constant("CONFIG", {
 					self.selectedNode = undefined;
 				},
 
+
+
 				/* Refreshes menu to show files/folders in current directory */
 				self.renderMenu = function(url){
-					console.log("In rendermenu, url is " + url);
+
+					console.log("In renderMenu, url is: " + url);
+
 					$http.get(url).then(function(response){
-						console.log(response.data);	
+						
+						console.log("http get request response");
+						console.log(response);
+
 						self.allCodes = {};
 
 						for(var i = 0; i < response.data.content.length; i++){
@@ -566,11 +577,13 @@ dashApp.constant("CONFIG", {
 						}
 
 						self.clearAll();
-						
+
 					}, function(){
 						console.log("An error occured");
 					});
 				},
+
+
 
 				/* Navigates to folder when clicked */
 				self.menuClick = function(codeName, content){
@@ -580,14 +593,15 @@ dashApp.constant("CONFIG", {
 						self.renderMenu(url);
 					} 
 					else if (content.type === "file"){
-						console.log("It is a file");
 						self.code = self.allCodes[codeName].content;
 					}
 				}, 
 				
+
+
 				/* Saves a file */
 				self.saveCode = function(name, code){
-					// _SOCKET.send({ action: "code-db", command: "save", name: name, code: code });
+				
 					var postData = {
 						"file_name" : name,
 						"parent_path" : url.replace("http://localhost:5000/", ""),
@@ -601,15 +615,8 @@ dashApp.constant("CONFIG", {
 					}, function(){
 						alert("File save was unsuccessful");
 					});
+				},
 
-				$http.post(createFSUrl, postData).then(function(){
-					alert("File saved succesfully using http POST");
-					self.renderMenu(url);
-				}, function(){
-					alert("File save was unsuccessful");
-				});
-			
-			},
 
 
 				/* Saves a folder */
@@ -627,58 +634,49 @@ dashApp.constant("CONFIG", {
 					}, function(){
 						console.log("Folder save failed");
 					});
-			}, 
+				}, 
+
 
 
 				/* Deletes Code */
 				self.deleteCode = function(name){
 					var result = confirm("Are you sure you want to delete " + name + "?");
 
-						if(result){
-							$http.post(deleteFSUrl, { "file_path" :  url.replace("http://localhost:5000", "") + name}).then(function(){
-								console.log(url);
-								console.log(name + " deleted successfully");
-								self.renderMenu(url.replace(name + "/", ""));
-							}, function(){
-								alert("File delete was unsuccessful");
-							});
-						}
+					if(result){
+						$http.post(deleteFSUrl, { "file_path" :  url.replace("http://localhost:5000", "") + name}).then(function(){
+							console.log(name + " deleted successfully");
+							self.renderMenu(url);
+						}, function(){
+							alert("File delete was unsuccessful");
+						});
+					}
 				},
+
 
 
 				/* When checsked */
 				self.checked = function(name, content, value){
-					
-						console.log(value);
-						
-						if(value){
-							console.log("Checked " + name);
-							checkedArray.push({"name": name, "content": content, "url": url});
-						} else {
-							checkedArray.splice( checkedArray.indexOf(name), 1 );
-						}
-		
-						console.log(checkedArray);
-						
-					},
-
-				/* Called first upon delete request. Makes call to deleteCode which does actual deletion */
-				self.deleteItem = function(name){
-					console.log("Want to delete " + name);
-					self.deleteCode(name);
+			
+					if(value){
+						checkedArray.push({"name": name, "content": content, "url": url});
+					} else {
+						checkedArray.splice( checkedArray.indexOf(name), 1 );
+					}	
 				},
+
+
 
 				/* Deletes all selected files */
 				self.deleteSelected = function(){
 
 					for (var e in checkedArray){
 						toDelete = checkedArray[e].name;
-						console.log("Deleting " + toDelete);
-						self.deleteItem(toDelete);
+						self.deleteCode(toDelete);
 					}
 
 					checkedArray = [];
 				},
+
 
 				/* Moves folders/files */
 				self.pasteSelected = function(){
@@ -686,35 +684,43 @@ dashApp.constant("CONFIG", {
 					for (var e in checkedArray){
 						toMove = checkedArray[e].name;
 						currentpath = checkedArray[e].url;
-						console.log("Moving " + toMove);
 						self.moveObject(toMove, currentpath);
 					}
+
+					checkedArray = [];
 				},
+
+
 
 				/* Actual implementation of move */
 				self.moveObject = function(name, path){
 
-					console.log("path: " + path);
-					console.log("url: " + url);
+					var movePostBody = {
+						"file_path" :  path.replace("http://localhost:5000/", "") + name, 
+						"parent_path": url.replace("http://localhost:5000/", "")
+					};
 
-					$http.post(moveFSUrl, { "file_path" :  path.replace("http://localhost:5000/", "") + name, "parent_path": url.replace("http://localhost:5000/", "")}).then(function(){
-						console.log("file_path: " + file_path);
-						console.log("parent_path: " + parent_path);
-						console.log(name + " moved successfully");
+					$http.post(moveFSUrl, movePostBody).then(function(){
+						self.renderMenu(url);
 					}, function(){
-						console.log("file_path: " + file_path);
-						console.log("parent_path: " + parent_path);
 						alert("File move was unsuccessful");
 					});
 
-					self.renderMenu(url.replace(name + "/", ""));
+					console.log("Here");
 				},
 				
+
+
+				/* Run code on a node */
 				self.sendCode = DashboardService.runCode;
 				
+
+
+				/* Actions on keydown shortcuts */
 				self.onKeyDown = function(event){
+
+					// Ctrl + S
 					if (event.ctrlKey && event.which === 83){
-						/* Pressed Ctrl + S */
 						event.preventDefault();
 						$scope.$service.saveCode(self.codeName, self.code);
 					}
