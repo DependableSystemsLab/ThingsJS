@@ -14,6 +14,7 @@ var createFSUrl = "http://localhost:5000/createFSObjectFromPath";
 var deleteFSUrl = "http://localhost:5000/deleteFSObjectFromPath";
 var moveFSUrl = "http://localhost:5000/moveFSObjectFromPath";
 var current;
+var checkedArray = [];
 var options = ["Run", "Delete"];
 
 dashApp.constant("CONFIG", {
@@ -568,7 +569,7 @@ dashApp.constant("CONFIG", {
 						
 					}, function(){
 						console.log("An error occured");
-					})
+					});
 				},
 
 				/* Navigates to folder when clicked */
@@ -592,7 +593,7 @@ dashApp.constant("CONFIG", {
 						"parent_path" : url.replace("http://localhost:5000/", ""),
 						"is_file" : true,
 						"content" : code
-					}
+					};
 					
 					$http.post(createFSUrl, postData).then(function(){
 						window.alert("File saved successfully using http POST");
@@ -600,10 +601,17 @@ dashApp.constant("CONFIG", {
 					}, function(){
 						alert("File save was unsuccessful");
 					});
-				
-				},
 
-				
+				$http.post(createFSUrl, postData).then(function(){
+					alert("File saved succesfully using http POST");
+					self.renderMenu(url);
+				}, function(){
+					alert("File save was unsuccessful");
+				});
+			
+			},
+
+
 				/* Saves a folder */
 				self.saveFolder = function(name, code){
 					
@@ -619,7 +627,8 @@ dashApp.constant("CONFIG", {
 					}, function(){
 						console.log("Folder save failed");
 					});
-				}, 
+			}, 
+
 
 				/* Deletes Code */
 				self.deleteCode = function(name){
@@ -635,6 +644,7 @@ dashApp.constant("CONFIG", {
 							});
 						}
 				},
+
 
 				/* When checsked */
 				self.checked = function(name, content, value){
@@ -700,7 +710,6 @@ dashApp.constant("CONFIG", {
 					self.renderMenu(url.replace(name + "/", ""));
 				},
 				
-				
 				self.sendCode = DashboardService.runCode;
 				
 				self.onKeyDown = function(event){
@@ -715,6 +724,7 @@ dashApp.constant("CONFIG", {
 			controllerAs: '$view',
 			templateUrl: 'views/codes.html'
 		})
+
 		.state('debug', {
 			parent: 'init',
 			url: '/debug',
@@ -723,11 +733,11 @@ dashApp.constant("CONFIG", {
 				
 				self.subscribe = function(topic){
 					socket.send({ action: "subscribe", topic: topic });
-				};
+				}
 			}],
 			controllerAs: '$view',
 			templateUrl: 'views/debug.html'
-		});
+		})
      			
 	$urlRouterProvider.otherwise('/');
 }]);
