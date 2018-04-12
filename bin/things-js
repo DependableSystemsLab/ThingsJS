@@ -2,6 +2,7 @@
 
 var path = require('path');
 var program = require('commander');
+var jsBeautify = require('js-beautify').js_beautify;
 
 program
   .version('0.0.1')
@@ -62,6 +63,30 @@ program
     var code = things.Code.fromFile(pubsub, file_path);
     if (options.save) code.save(options.save);
     code.run();
+
+    process.stdin.setRawMode( true );
+    process.stdin.setEncoding('utf8');
+    process.stdin.on('data', function(key){
+      if (key === 'p'){
+        if (code.status === things.Code.Status.RUNNING) code.pause();
+      }
+      else if (key === 'r'){
+        if (code.status === things.Code.Status.PAUSED) code.resume();
+      }
+      else if (key === 's'){
+        code.snapshot(true).then(function(snap){
+          console.log(jsBeautify(JSON.stringify(snap)));
+          code.saveLastSnapshot(file_path+'.snap.json')
+        })
+      }
+      else if (key === '\u0003'){
+        code.kill();
+        process.exit();
+      }
+      else {
+        console.log(key);
+      }
+    });
   });
 
 program
