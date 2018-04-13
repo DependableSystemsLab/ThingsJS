@@ -31,6 +31,10 @@ ThingsDatabase.prototype._initialize = function(){
 	})
 }
 
+ThingsDatabase.prototype.makeId = function(){
+	return new mongoose.Types.ObjectId();
+}
+
 ThingsDatabase.prototype._tokenizePath = function(path){
 	// parse the path into tokens
 	var tokens = path.split('/');
@@ -75,6 +79,22 @@ ThingsDatabase.prototype._staleCache = function(path){
 	if(cachedPath in this.cache){
 		this.cache[cachedPath].stale = true;
 	}
+}
+
+ThingsDatabase.prototype.clearCache = function(){
+		this.cache = {};	
+}		
+
+
+/* return the parent path from its child, e.g. 'path/path2/path3 -> path/path2'
+ * if this is root, returns root
+ */
+ThingsDatabase.prototype._parentPath = function(path){
+	var tokens = this._tokenizePath(path);
+	if(tokens.length > 1){
+		tokens = tokens.splice(0, tokens.length-1);
+	}
+	return tokens.join('/');
 }
 
 /* Recursive function to view a file object
@@ -153,7 +173,7 @@ ThingsDatabase.prototype.cloneFileFromPath = function(filePath, destPath, name){
 					resolve(self.cloneFile(data._id, name, parent._id));
 				})
 			}
-			else resolve(self.cloneFile(data._id, name, null));
+			else resolve(self.cloneFile(data._id, name, data.parent));
 		});
 	});
 }
@@ -161,7 +181,7 @@ ThingsDatabase.prototype.cloneFileFromPath = function(filePath, destPath, name){
 /* recursive function to deep clone a file object and its descendants
  */
 ThingsDatabase.prototype._cloneFileHelper = function(id, name, parentId){
-	console.log('<T> db.js -- _cloneFileHelper: ' + id);
+	console.log('<T> db.js -- _cloneFileHelper: ' + id + ', ' + name + ', ' + parentId);
 	var self = this;
 	var fs = new FSObject();
 
@@ -170,9 +190,10 @@ ThingsDatabase.prototype._cloneFileHelper = function(id, name, parentId){
 		var deepClone = function(isRoot, id, parent, resolve){
 			fs.getFileObjectById(id)
 				.then(function(data){
+					console.log('<T> -- deepClone: ' + data);
 					var newId = new mongoose.Types.ObjectId();
 					if(isRoot){
-						that.createFile(name, parent || data.parent, data.type == 'file', data.content, newId);
+						that.createFile(name, parent, data.type == 'file', data.content, newId);
 					}
 					else{
 						that.createFile(data.name, parent, data.type == 'file', data.content, newId);
@@ -217,13 +238,17 @@ ThingsDatabase.prototype.createFile = function(name, parentId, isFile, content, 
 	if(isFile){
 		fsobj.content = content;
 	}
-	fsobj.save(function(err){
-		if(err){
-			console.log('<E> db.js -- createFile: ' + err);
-			return true;
-		}
-		return false;
-		console.log('<D> db.js -- createFile: ' + name + ' created');
+	return new Promise(function(resolve, reject){
+		fsobj.save(function(err){
+			if(err){
+				console.log('<E> db.js -- createFile: ' + err);
+				reject(err);
+			}
+			else{
+				console.log('<D> db.js -- createFile: ' + name + ' created');
+				resolve(true);
+			}
+		});
 	});
 }
 
@@ -253,7 +278,7 @@ ThingsDatabase.prototype.createFileFromPath = function(name, parentPath, isFile,
 ThingsDatabase.prototype.deleteFile = function(id){
 	console.log('<T> db.js -- deleteFile: ' + id);
 	var fs = new FSObject();
-	return fs.deleteFileObject(id);
+	return this._deleteFileHelper(id);
 }
 
 /* @param path: implicit path of the file object
@@ -265,14 +290,51 @@ ThingsDatabase.prototype.deleteFileFromPath = function(path){
 		self.viewFileObject(path).then(function(data){
 			if(!data){
 				resolve(false);
+				return;
 			}
-			var parent = path.split('/');
-			parent.pop();
-			self._staleCache(parent.join('/'));
-			delete self.cache[path];
-
-			resolve(self.deleteFile(data._id));
+			self._staleCache(path);
+			resolve(self._deleteFileHelper(data._id, path));
 		});
+	});
+}
+
+/* recursive function to deep clone a file object and its descendants
+ */
+ThingsDatabase.prototype._deleteFileHelper = function(id, parentPath){
+	console.log('<T> db.js -- _deleteFileHelper: ' + id);
+	var self = this;
+	var fs = new FSObject();
+
+	return new Promise(function(resolve, reject){
+		var that = self;
+		var deepDelete = function(id, resolve){
+			fs.getFileObjectById(id)
+				.then(function(data){
+
+					if(parentPath){
+						self._staleCache(parentPath + '/' + data.name);
+					}
+					fs.deleteFileObject(id);
+
+					if(data.type == 'directory'){
+						fs.getChildren(id).then(function(children){
+							if(children.length == 0){
+								resolve(true);
+								return;
+							}
+							for(var i = 0; i < children.length; i++){
+								console.log('<D> db.js -- deepDelete: child name ' + children[i].name);
+								deepDelete(children[i]._id, resolve);
+							}
+						});
+					}
+					else{
+						resolve(true);
+						return;
+					}
+				});
+		}
+		deepDelete(id, resolve);
 	});
 }
 
@@ -330,6 +392,7 @@ ThingsDatabase.prototype.changeNameFromPath = function(path, newName){
 				resolve(false);
 				return;
 			}
+			self._staleCache(path);
 			resolve(self.changeName(data._id, newName));
 		});
 	});
@@ -341,6 +404,7 @@ ThingsDatabase.prototype.changeNameFromPath = function(path, newName){
  */
 ThingsDatabase.prototype.moveFileFromPath = function(path, parentPath){
 	var self = this;
+	console.log('<T> db.js --movieFileFromPath: ' + path + ', ' + parentPath);
 	return new Promise(function(resolve, reject){
 		self.viewFileObject(path).then(function(data){
 			if(!data){
@@ -348,11 +412,11 @@ ThingsDatabase.prototype.moveFileFromPath = function(path, parentPath){
 				return;
 			}
 			self.viewFileObject(parentPath).then(function(parentData){
-				self._staleCache()
 				if(!parentData){
 					resolve(false);
 					return;
 				}
+				self._staleCache(self._parentPath(path));
 				self._staleCache(path);
 				self._staleCache(parentPath);
 				resolve(self.moveFile(data._id, parentData._id));

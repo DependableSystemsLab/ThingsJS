@@ -69,11 +69,11 @@ FileSystemSchema.methods.getFileObject = function(name, parentId){
 		.exec();
 }
 
-/* Delete a file object and all its children
+/* Delete a file object
  */
 FileSystemSchema.methods.deleteFileObject = function(id){
 	return this.model('FSObject')
-		.find({ $or: [{ _id: id }, { parent: id }] })
+		.findOne({ _id: id })
 		.remove()
 		.exec();
 }
@@ -94,7 +94,7 @@ FileSystemSchema.methods.getChildren = function(id){
  */
 FileSystemSchema.methods.updateParent = function(id, newParentId){
 	return this.model('FSObject')
-		.find({ _id: id })
+		.findOne({ _id: id })
 		.update({ $set: { parent: newParentId } })
 		.exec();
 }
@@ -105,7 +105,7 @@ FileSystemSchema.methods.updateParent = function(id, newParentId){
  */
 FileSystemSchema.methods.updateName = function(id, newName){
 	return this.model('FSObject')
-		.find({ _id: id })
+		.findOne({ _id: id })
 		.update({ $set: { name: newName } })
 		.exec();
 }
