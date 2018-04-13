@@ -293,7 +293,7 @@ ThingsDatabase.prototype.deleteFileFromPath = function(path){
 				return;
 			}
 			self._staleCache(path);
-			resolve(self._deleteFileHelper(data._id, path));
+			resolve(self._deleteFileHelper(data._id, self._parentPath(path)));
 		});
 	});
 }
@@ -312,7 +312,7 @@ ThingsDatabase.prototype._deleteFileHelper = function(id, parentPath){
 				.then(function(data){
 
 					if(parentPath){
-						self._staleCache(parentPath + '/' + data.name);
+						self._staleCache(parentPath);
 					}
 					fs.deleteFileObject(id);
 
