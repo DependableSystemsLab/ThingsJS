@@ -171,11 +171,19 @@ ThingsDatabase.prototype.cloneFileFromPath = function(filePath, destPath, name){
 						return;
 					}
 					self._staleCache(destPath);
-					resolve(self.cloneFile(data._id, name, parent._id));
-				})
+					self.cloneFile(data._id, name, parent._id)
+						.then(function(data){
+							resolve(data);
+						});
+				});
 			}
 			self._staleCache(self._parentPath(filePath));
-			else resolve(self.cloneFile(data._id, name, data.parent));
+			else {
+				self.cloneFile(data._id, name, data.parent)
+					.then(function(data){
+						resolve(data);
+					});
+			}
 		});
 	});
 }
@@ -270,7 +278,10 @@ ThingsDatabase.prototype.createFileFromPath = function(name, parentPath, isFile,
 				return;
 			}
 			self._staleCache(parentPath);
-			resolve(self.createFile(name, data._id, isFile, fileContent));
+			self.createFile(name, data._id, isFile, fileContent)
+				.then(function(data){
+					resolve(data);
+				});
 		});
 	});
 }
@@ -295,7 +306,10 @@ ThingsDatabase.prototype.deleteFileFromPath = function(path){
 				return;
 			}
 			self._staleCache(path);
-			resolve(self._deleteFileHelper(data._id, self._parentPath(path)));
+			self._deleteFileHelper(data._id, self._parentPath(path))
+				.then(function(data){
+					resolve(data);
+				});
 		});
 	});
 }
@@ -360,7 +374,10 @@ ThingsDatabase.prototype.updateFileFromPath = function(path, newContent){
 			}
 			self._staleCache(self._parentPath(path));
 			self._staleCache(path);
-			resolve(self.updateFile(data._id, newContent));
+			self.updateFile(data._id, newContent)
+				.then(function(){
+					resolve();
+				});
 		});
 	});
 }
@@ -397,7 +414,10 @@ ThingsDatabase.prototype.changeNameFromPath = function(path, newName){
 			}
 			self._staleCache(path);
 			self._staleCache(self._parentPath(path));
-			resolve(self.changeName(data._id, newName));
+			self.changeName(data.id, newName)
+				.then(function(){
+					resolve(true);
+				});
 		});
 	});
 }
@@ -423,7 +443,10 @@ ThingsDatabase.prototype.moveFileFromPath = function(path, parentPath){
 				self._staleCache(self._parentPath(path));
 				self._staleCache(path);
 				self._staleCache(parentPath);
-				resolve(self.moveFile(data._id, parentData._id));
+				self.moveFile(data._id, parentData._id)
+					.then(function() {
+						resolve(true);
+					});
 			});
 		});
 	});
