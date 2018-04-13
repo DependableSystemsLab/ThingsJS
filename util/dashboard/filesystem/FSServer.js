@@ -62,8 +62,10 @@ FSServer.prototype._initCreate = function(){
 		var isFile      = req.body.is_file;
 		var fileContent = req.body.content;
 
-		db.createFile(fileName, parentId, isFile, fileContent);
-		res.end();
+		db.createFile(fileName, parentId, isFile, fileContent)
+			.then(function(){
+				res.end();
+			});
 	});
 
 	app.post('/makeFromPath', function(req, res){
@@ -73,8 +75,10 @@ FSServer.prototype._initCreate = function(){
 		var fileContent = req.body.content; 
 
 		console.log('<D> FSServer.js -- _initCreate: ' + fileName + ', ' + parentPath);
-		db.createFileFromPath(fileName, parentPath, isFile, fileContent);
-		res.end();
+		db.createFileFromPath(fileName, parentPath, isFile, fileContent)
+			.then(function(){
+				res.end();
+			});
 	});
 }
 
@@ -90,8 +94,10 @@ FSServer.prototype._initDelete = function(){
 
 	app.post('/deleteFromPath', function(req, res){
 		var path = req.body.file_path;
-		db.deleteFileFromPath(path);
-		res.end();
+		db.deleteFileFromPath(path)
+			.then(function(){
+				res.end();
+			});
 	})
 }
 
@@ -112,8 +118,10 @@ FSServer.prototype._initMove = function(){
 		var parentPath = req.body.parent_path;
 
 		console.log('<T> FSServer.js -- _initMove: ' + path + ', ' + parentPath);
-		db.moveFileFromPath(path, parentPath);
-		res.end();
+		db.moveFileFromPath(path, parentPath)
+			.then(function(){
+				res.end();
+			});
 	});
 }
 
@@ -123,23 +131,29 @@ FSServer.prototype._initMisc = function(){
 	app.post('/updateFromPath', function(req, res){
 		var path = req.body.file_path;
 		var content = req.body.content;
-		db.updateFileFromPath(path, content);
-		res.end();
+		db.updateFileFromPath(path, content)
+			.then(function(){
+				res.end();
+			});
 	});
 
 	app.post('/renameFromPath', function(req, res){
 		var path = req.body.file_path;
 		var name = req.body.file_name;
-		db.changeNameFromPath(path, name);
-		res.end();
-	})
+		db.changeNameFromPath(path, name)
+			.then(function(){
+				res.end();
+			});
+	});
 
 	app.post('/cloneFromPath', function(req, res){
 		var path = req.body.file_path;
 		var name = req.body.file_name;
 		var destPath = req.body.parent_path;
-		db.cloneFileFromPath(path, destPath, name);
-		res.end();
+		db.cloneFileFromPath(path, destPath, name)
+			.then(function(){
+				res.end();
+			});
 	});
 }
 
