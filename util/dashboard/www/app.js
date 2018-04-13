@@ -10,9 +10,9 @@ var currentpath;
 var toDelete;		
 var toMove;	 
 var url = "http://localhost:5000/root/";
-var createFSUrl = "http://localhost:5000/createFSObjectFromPath";
-var deleteFSUrl = "http://localhost:5000/deleteFSObjectFromPath";
-var moveFSUrl = "http://localhost:5000/moveFSObjectFromPath";
+var createFSUrl = "http://localhost:5000/makeFromPath";
+var deleteFSUrl = "http://localhost:5000/deleteFromPath";
+var moveFSUrl = "http://localhost:5000/moveFromPath";
 var current;
 var checkedArray = [];
 var options = ["Run", "Delete"];
@@ -712,6 +712,7 @@ dashApp.constant("CONFIG", {
 					};
 
 					$http.post(moveFSUrl, movePostBody).then(function(){
+						console.log("File move successful");
 						self.renderMenu(url);
 					}, function(){
 						alert("File move was unsuccessful");
