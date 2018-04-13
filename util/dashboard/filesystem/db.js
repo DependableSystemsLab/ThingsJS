@@ -170,9 +170,11 @@ ThingsDatabase.prototype.cloneFileFromPath = function(filePath, destPath, name){
 						resolve(false);
 						return;
 					}
+					self._staleCache(destPath);
 					resolve(self.cloneFile(data._id, name, parent._id));
 				})
 			}
+			self._staleCache(self._parentPath(filePath));
 			else resolve(self.cloneFile(data._id, name, data.parent));
 		});
 	});
@@ -356,6 +358,7 @@ ThingsDatabase.prototype.updateFileFromPath = function(path, newContent){
 			if(!data){
 				resolve(false);
 			}
+			self._staleCache(self._parentPath(path));
 			self._staleCache(path);
 			resolve(self.updateFile(data._id, newContent));
 		});
@@ -393,6 +396,7 @@ ThingsDatabase.prototype.changeNameFromPath = function(path, newName){
 				return;
 			}
 			self._staleCache(path);
+			self._staleCache(self._parentPath(path));
 			resolve(self.changeName(data._id, newName));
 		});
 	});
