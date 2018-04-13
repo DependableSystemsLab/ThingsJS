@@ -642,8 +642,12 @@ dashApp.constant("CONFIG", {
 				self.deleteCode = function(name){
 					var result = confirm("Are you sure you want to delete " + name + "?");
 
+					var postBody = {
+						"file_path" :  url.replace("http://localhost:5000", "") + name
+					};
+
 					if(result){
-						$http.post(deleteFSUrl, { "file_path" :  url.replace("http://localhost:5000", "") + name}).then(function(){
+						$http.post(deleteFSUrl, postBody).then(function(){
 							console.log(name + " deleted successfully");
 							self.renderMenu(url);
 						}, function(){
@@ -656,9 +660,15 @@ dashApp.constant("CONFIG", {
 
 				/* When checsked */
 				self.checked = function(name, content, value){
-			
+					
+					var checkedObject = {
+						"name" : name,
+						"content" : content,
+						"url" : url
+					};
+
 					if(value){
-						checkedArray.push({"name": name, "content": content, "url": url});
+						checkedArray.push(checkedObject);
 					} else {
 						checkedArray.splice( checkedArray.indexOf(name), 1 );
 					}	
@@ -676,6 +686,7 @@ dashApp.constant("CONFIG", {
 
 					checkedArray = [];
 				},
+
 
 
 				/* Moves folders/files */
@@ -711,6 +722,13 @@ dashApp.constant("CONFIG", {
 				
 
 
+				/* Checks if checkedArray is empty: for ng-show */
+				self.isEmpty = function(){
+					return !(checkedArray.length === 0);
+				},
+
+
+				
 				/* Run code on a node */
 				self.sendCode = DashboardService.runCode;
 				
