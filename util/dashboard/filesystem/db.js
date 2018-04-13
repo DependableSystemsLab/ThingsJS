@@ -53,7 +53,7 @@ ThingsDatabase.prototype._tokenizePath = function(path){
 ThingsDatabase.prototype.viewFileObject = function(path){
 	console.log('<T> db.js -- viewFileObject: ' + path);
 	var self = this;
-	tokens = self._tokenizePath(path);
+	var tokens = self._tokenizePath(path);
 
 	var cachedPath = tokens.join('/');
 	if(cachedPath in this.cache && !this.cache[cachedPath].stale){
@@ -62,6 +62,12 @@ ThingsDatabase.prototype.viewFileObject = function(path){
 		});
 	}
 
+	return this._viewFileHelper(0, tokens, null);
+}
+
+ThingsDatabase.prototype.viewUncachedFileObject = function(path){
+	var self = this;
+	var tokens = self._tokenizePath(path);
 	return this._viewFileHelper(0, tokens, null);
 }
 
@@ -170,10 +176,20 @@ ThingsDatabase.prototype.cloneFileFromPath = function(filePath, destPath, name){
 						resolve(false);
 						return;
 					}
-					resolve(self.cloneFile(data._id, name, parent._id));
-				})
+					self._staleCache(destPath);
+					self.cloneFile(data._id, name, parent._id)
+						.then(function(data){
+							resolve(data);
+						});
+				});
 			}
-			else resolve(self.cloneFile(data._id, name, data.parent));
+			else{
+				self._staleCache(self._parentPath(filePath));
+				self.cloneFile(data._id, name, data.parent)
+					.then(function(data){
+						resolve(data);
+					});
+			}
 		});
 	});
 }
@@ -268,7 +284,10 @@ ThingsDatabase.prototype.createFileFromPath = function(name, parentPath, isFile,
 				return;
 			}
 			self._staleCache(parentPath);
-			resolve(self.createFile(name, data._id, isFile, fileContent));
+			self.createFile(name, data._id, isFile, fileContent)
+				.then(function(data){
+					resolve(data);
+				});
 		});
 	});
 }
@@ -287,13 +306,16 @@ ThingsDatabase.prototype.deleteFileFromPath = function(path){
 	var self = this;
 
 	return new Promise(function(resolve, reject){
-		self.viewFileObject(path).then(function(data){
+		self.viewUncachedFileObject(path).then(function(data){
 			if(!data){
 				resolve(false);
 				return;
 			}
 			self._staleCache(path);
-			resolve(self._deleteFileHelper(data._id, path));
+			self._deleteFileHelper(data._id, self._parentPath(path))
+				.then(function(data){
+					resolve(data);
+				});
 		});
 	});
 }
@@ -312,7 +334,7 @@ ThingsDatabase.prototype._deleteFileHelper = function(id, parentPath){
 				.then(function(data){
 
 					if(parentPath){
-						self._staleCache(parentPath + '/' + data.name);
+						self._staleCache(parentPath);
 					}
 					fs.deleteFileObject(id);
 
@@ -356,8 +378,12 @@ ThingsDatabase.prototype.updateFileFromPath = function(path, newContent){
 			if(!data){
 				resolve(false);
 			}
+			self._staleCache(self._parentPath(path));
 			self._staleCache(path);
-			resolve(self.updateFile(data._id, newContent));
+			self.updateFile(data._id, newContent)
+				.then(function(){
+					resolve();
+				});
 		});
 	});
 }
@@ -393,7 +419,11 @@ ThingsDatabase.prototype.changeNameFromPath = function(path, newName){
 				return;
 			}
 			self._staleCache(path);
-			resolve(self.changeName(data._id, newName));
+			self._staleCache(self._parentPath(path));
+			self.changeName(data.id, newName)
+				.then(function(){
+					resolve(true);
+				});
 		});
 	});
 }
@@ -419,7 +449,10 @@ ThingsDatabase.prototype.moveFileFromPath = function(path, parentPath){
 				self._staleCache(self._parentPath(path));
 				self._staleCache(path);
 				self._staleCache(parentPath);
-				resolve(self.moveFile(data._id, parentData._id));
+				self.moveFile(data._id, parentData._id)
+					.then(function() {
+						resolve(true);
+					});
 			});
 		});
 	});
