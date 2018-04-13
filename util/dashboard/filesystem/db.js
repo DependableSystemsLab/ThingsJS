@@ -53,7 +53,7 @@ ThingsDatabase.prototype._tokenizePath = function(path){
 ThingsDatabase.prototype.viewFileObject = function(path){
 	console.log('<T> db.js -- viewFileObject: ' + path);
 	var self = this;
-	tokens = self._tokenizePath(path);
+	var tokens = self._tokenizePath(path);
 
 	var cachedPath = tokens.join('/');
 	if(cachedPath in this.cache && !this.cache[cachedPath].stale){
@@ -62,6 +62,12 @@ ThingsDatabase.prototype.viewFileObject = function(path){
 		});
 	}
 
+	return this._viewFileHelper(0, tokens, null);
+}
+
+ThingsDatabase.prototype.viewUncachedFileObject = function(path){
+	var self = this;
+	var tokens = self._tokenizePath(path);
 	return this._viewFileHelper(0, tokens, null);
 }
 
@@ -300,7 +306,7 @@ ThingsDatabase.prototype.deleteFileFromPath = function(path){
 	var self = this;
 
 	return new Promise(function(resolve, reject){
-		self.viewFileObject(path).then(function(data){
+		self.viewUncachedFileObject(path).then(function(data){
 			if(!data){
 				resolve(false);
 				return;
