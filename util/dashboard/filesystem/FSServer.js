@@ -113,6 +113,7 @@ FSServer.prototype._initMove = function(){
 
 		console.log('<T> FSServer.js -- _initMove: ' + path + ', ' + parentPath);
 		db.moveFileFromPath(path, parentPath);
+		res.end();
 	});
 }
 
@@ -123,12 +124,14 @@ FSServer.prototype._initMisc = function(){
 		var path = req.body.file_path;
 		var content = req.body.content;
 		db.updateFileFromPath(path, content);
+		res.end();
 	});
 
 	app.post('/renameFromPath', function(req, res){
 		var path = req.body.file_path;
 		var name = req.body.file_name;
 		db.changeNameFromPath(path, name);
+		res.end();
 	})
 
 	app.post('/cloneFromPath', function(req, res){
@@ -136,6 +139,7 @@ FSServer.prototype._initMisc = function(){
 		var name = req.body.file_name;
 		var destPath = req.body.parent_path;
 		db.cloneFileFromPath(path, destPath, name);
+		res.end();
 	});
 }
 
