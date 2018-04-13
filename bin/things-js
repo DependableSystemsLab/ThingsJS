@@ -9,6 +9,14 @@ program
   .description('Framework for building IoT systems')
 
 program
+  .command('shell')
+  .description('Start the ThingsJS shell')
+  .action(function(options){
+    console.log("Starting the ThingsJS shell...")
+    var shell = new things.Shell();
+  });
+
+program
   .command('dashboard')
   .option('-c, --config <conf_path>', 'Config File Path')
   .alias('dash')
@@ -42,6 +50,20 @@ program
     var code = new things.Code(file_path, pubsub, true);
 	code.saveToFile(options.output);
   
+  });
+
+program
+  .command('run <file_path>')
+  .option('-s, --save <save_path>', 'File path to optionally save instrumented code')
+  .description('Instrument and run raw JavaScript code.')
+  .action(function(file_path, options){
+    var config = things.validateConfig(path.resolve(__dirname, '../bin/things-default.conf'));
+    var pubsub = new things.Pubsub('things-cli', config.pubsub_url);
+    var code = new things.Code(file_path, pubsub, true);
+    if (options && options.output){
+      code.saveToFile(options.output);
+    }
+    code.run();
   });
 
 program
