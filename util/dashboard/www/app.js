@@ -717,8 +717,6 @@ dashApp.constant("CONFIG", {
 					}, function(){
 						alert("File move was unsuccessful");
 					});
-
-					console.log("Here");
 				},
 				
 
