@@ -177,8 +177,8 @@ ThingsDatabase.prototype.cloneFileFromPath = function(filePath, destPath, name){
 						});
 				});
 			}
-			self._staleCache(self._parentPath(filePath));
-			else {
+			else{
+				self._staleCache(self._parentPath(filePath));
 				self.cloneFile(data._id, name, data.parent)
 					.then(function(data){
 						resolve(data);
