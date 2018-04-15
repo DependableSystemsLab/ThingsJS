@@ -5,7 +5,9 @@ var dashApp = window.angular.module('dashApp', ['ngResource',
                                          'ui.bootstrap',
                                          'ui.ace',
 										 'nvd3'] );
-var checkedArray = [];		
+var checkedArray = [];	
+var copied = [];
+var cut = [];	
 var currentpath;
 var toDelete;		
 var toMove;	 
@@ -668,6 +670,7 @@ dashApp.constant("CONFIG", {
 					};
 
 					if(value){
+						console.log(checkedObject);
 						checkedArray.push(checkedObject);
 					} else {
 						checkedArray.splice( checkedArray.indexOf(name), 1 );
@@ -692,13 +695,55 @@ dashApp.constant("CONFIG", {
 				/* Moves folders/files */
 				self.pasteSelected = function(){
 
-					for (var e in checkedArray){
-						toMove = checkedArray[e].name;
-						currentpath = checkedArray[e].url;
+	
+					for (var e in copied){
+						if (typeof(copied[e].content.type) === "array"){
+							self.saveFolder(copied[e].name, copied[e].content);
+						} else if (typeof(copied[e].content.type) === "string"){
+							self.saveCode(copied[e].name, copied[e].content);
+						}
+					}
+
+					copied = [];
+
+					for (var e in cut){
+						toMove = cut[e].name;
+						currentpath = cut[e].url;
 						self.moveObject(toMove, currentpath);
 					}
 
+					cut = [];
+				
+				},
+
+
+
+				/* Copies folders/files for pasting */
+				self.copySelected = function(){
+
+
+
+					for (var e in checkedArray){
+						var toPush = checkedArray[e];
+						copied.push(toPush);
+					}
+
 					checkedArray = [];
+		
+				},
+
+
+
+				/* "Cuts" folders/files for pasting */
+				self.cutSelected = function(){
+
+					for (var e in checkedArray){
+						var toPush = checkedArray[e];
+						cut.push(toPush);
+					}
+
+					checkedArray = [];
+
 				},
 
 

@@ -48,8 +48,16 @@
 					<i class="fa fa-trash"></i> Delete Selected Files
 				</button>
 				
-				<button ng-click="$view.pasteSelected()" ng-show="$view.isEmpty()" class="btn btn-primary">
-					<i class="fa fa-folder"></i> Move Selected Files
+				<button ng-click="$view.cutSelected()" ng-show="$view.isEmpty()" class="btn btn-primary">
+					<i class="fa fa-folder"></i> Cut Selected Files
+				</button>
+
+				<button ng-click="$view.copySelected()" ng-show="$view.isEmpty()" class="btn btn-primary">
+					<i class="fa fa-folder"></i> Copy Selected Files
+				</button>
+
+				<button ng-click="$view.pasteSelected()" class="btn btn-primary">
+					<i class="fa fa-folder"></i> Paste Selected Files
 				</button>
 
 
