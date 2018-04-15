@@ -768,11 +768,18 @@ dashApp.constant("CONFIG", {
 
 				/* Checks if checkedArray is empty: for ng-show */
 				self.isEmpty = function(){
-					return !(checkedArray.length === 0);
+					return ( !(checkedArray.length === 0) || !(copied.length === 0) || !(cut.length === 0) );
 				},
 
 
-				
+
+				/* True when file or folder is copied */
+				self.paste = function(){
+					return ( !(copied.length === 0) || !(cut.length === 0) );
+				},
+
+
+
 				/* Run code on a node */
 				self.sendCode = DashboardService.runCode;
 				
