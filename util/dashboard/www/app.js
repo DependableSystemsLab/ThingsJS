@@ -289,7 +289,6 @@ dashApp.constant("CONFIG", {
 		allNodes: _NODES,
 
 		allCodes: _CODES,
-		allDirectories : _DIRECTORIES,  // Directories added by Atif. 
 		runCode: runCode,
 		sendCode: runCode,
 		pauseCode: pauseCode,
@@ -740,6 +739,7 @@ dashApp.constant("CONFIG", {
 					for (var e in checkedArray){
 						var toPush = checkedArray[e];
 						cut.push(toPush);
+						console.log(cut);
 					}
 
 					checkedArray = [];
@@ -780,11 +780,22 @@ dashApp.constant("CONFIG", {
 
 
 
+				/* Change the opacity if cut */
+				self.liststyle = function(name){
+					for (var e in cut){
+						if(cut[e].name == name){
+							return {"opacity" : 0.5};
+						}
+					}
+				}
+
+				
 				/* Run code on a node */
 				self.sendCode = DashboardService.runCode;
+
+
+
 				
-
-
 				/* Actions on keydown shortcuts */
 				self.onKeyDown = function(event){
 

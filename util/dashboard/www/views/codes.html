@@ -69,6 +69,7 @@
 					ng-mouseover="$view.menuHover(name, content)"
 					ng-class="{ active: ($view.codeName === name) }"
 					href="javascript:;"
+					ng-style="$view.liststyle(name)"
 					class="list-group-item">
 					{{ name }}
 
