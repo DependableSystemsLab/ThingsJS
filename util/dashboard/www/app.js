@@ -297,8 +297,8 @@ dashApp.constant("CONFIG", {
 }])
 .directive('deviceGraph', ['$filter', function($filter){
 	var modes = {
-		'memory': 'Memory Usage',
-		'cpu': 'CPU'
+		'cpu': 'CPU',
+		'memory': 'Memory Usage'
 	}
 	function getData(datum, mode){
 		if (mode === 'memory'){
@@ -318,7 +318,7 @@ dashApp.constant("CONFIG", {
 		},
 		controller: ['$scope', function($scope){
 			var self = this;
-			$scope.mode = angular.isDefined($scope.mode) ? $scope.mode : 'memory';
+			$scope.mode = angular.isDefined($scope.mode) ? $scope.mode : 'cpu';
 			
 			self.graphOptions = {
 					chart: {
