@@ -300,9 +300,13 @@ dashApp.constant("CONFIG", {
 		'cpu': 'CPU',
 		'memory': 'Memory Usage'
 	}
+	var units = {
+		'cpu': '%',
+		'memory': 'MB'
+	}
 	function getData(datum, mode){
 		if (mode === 'memory'){
-			return (Math.round(100*datum.memoryUsage.heapUsed)/100);
+			return (Math.round(datum.memoryUsage.heapUsed/10000)/100);
 		}
 		else if (mode === 'cpu') {
 			return (datum.cpu < 100) ? (Math.round(100*datum.cpu)/100) : 100.0;
@@ -337,6 +341,11 @@ dashApp.constant("CONFIG", {
 						xAxis: {
 							tickFormat: function(d){
 								return $filter('date')(d, 'HH:mm:ss');
+							}
+						},
+						yAxis: {
+							tickFormat: function(d){
+								return d+' '+units[$scope.mode];
 							}
 						}
 					}
