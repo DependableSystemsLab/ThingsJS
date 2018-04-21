@@ -15,6 +15,7 @@ var url = "http://localhost:5000/root/";
 var createFSUrl = "http://localhost:5000/makeFromPath";
 var deleteFSUrl = "http://localhost:5000/deleteFromPath";
 var moveFSUrl = "http://localhost:5000/moveFromPath";
+var cloneUrl = "http://localhost:5000/cloneFromPath";
 var current;
 var checkedArray = [];
 var options = ["Run", "Delete"];
@@ -696,9 +697,12 @@ dashApp.constant("CONFIG", {
 
 	
 					for (var e in copied){
-						if (typeof(copied[e].content.type) === "array"){
-							self.saveFolder(copied[e].name, copied[e].content);
-						} else if (typeof(copied[e].content.type) === "string"){
+						if (copied[e].content.type === "directory"){
+							var filepath = (copied[e].url).replace("http://localhost:5000/", "") + copied[e].name;
+							console.log("IN JSON it is " + filepath); 
+							console.log("URL is " + url.replace("http://localhost:5000/", ""));
+							self.cloneObject(filepath, copied[e].content.name + "_copied", url.replace("http://localhost:5000/", ""));
+						} else if (copied[e].content.type === "file"){
 							self.saveCode(copied[e].name, copied[e].content);
 						}
 					}
@@ -712,6 +716,7 @@ dashApp.constant("CONFIG", {
 					}
 
 					cut = [];
+					self.renderMenu(url);
 				
 				},
 
@@ -719,8 +724,6 @@ dashApp.constant("CONFIG", {
 
 				/* Copies folders/files for pasting */
 				self.copySelected = function(){
-
-
 
 					for (var e in checkedArray){
 						var toPush = checkedArray[e];
@@ -789,7 +792,26 @@ dashApp.constant("CONFIG", {
 					}
 				}
 
+
+
+				self.cloneObject = function(name, newName, path){
+					
+					var postObject = {
+						"file_path" : name,
+						"file_name" : newName,
+						"parent_path"		: path
+					};
+
+					$http.post(cloneUrl, postObject).then(function(){
+						console.log("Copy/paste successful");
+						self.renderMenu(url);
+					}, function(){
+						alert("Copy/paste was unsuccessful");
+					});
+				}
+
 				
+
 				/* Run code on a node */
 				self.sendCode = DashboardService.runCode;
 
