@@ -1,10 +1,24 @@
 'use strict';
 
-var dashApp = angular.module('dashApp', ['ngResource', 
+var dashApp = window.angular.module('dashApp', ['ngResource', 
                                          'ui.router',
                                          'ui.bootstrap',
                                          'ui.ace',
-                                         'nvd3'] );
+										 'nvd3'] );
+var checkedArray = [];	
+var copied = [];
+var cut = [];	
+var currentpath;
+var toDelete;		
+var toMove;	 
+var url = "http://localhost:5000/root/";
+var createFSUrl = "http://localhost:5000/makeFromPath";
+var deleteFSUrl = "http://localhost:5000/deleteFromPath";
+var moveFSUrl = "http://localhost:5000/moveFromPath";
+var cloneUrl = "http://localhost:5000/cloneFromPath";
+var current;
+var checkedArray = [];
+var options = ["Run", "Delete"];
 
 dashApp.constant("CONFIG", {
 	service_url: (window.location.hostname+':'+window.location.port),
@@ -15,7 +29,7 @@ dashApp.constant("CONFIG", {
 		create: function(config){
 			return new EasyWebSocket(CONFIG.websocket_url, config);
 		}
-	}
+	};
 }])
 .factory('CodeEngine', function(){
 	
@@ -25,7 +39,7 @@ dashApp.constant("CONFIG", {
 		'raspberry-pi0': 'assets/img/device-raspberry-pi0-sm.png',
 		'xeon-e3': 'assets/img/device-xeon-e3-sm.png',
 		'xeon-e5': 'assets/img/device-xeon-e5-sm.png'
-	}
+	};
 	
 	function CodeEngine(data){
 		this.id = data.id;
@@ -38,6 +52,7 @@ dashApp.constant("CONFIG", {
 		//additional properties for humans
 		this.setIcon((data.info ? data.info.device : 'undefined'));
 	}
+
 	CodeEngine.prototype.update = function(data){
 		this.status = data.status || "unknown";
 		this.running = data.running || undefined;
@@ -47,9 +62,11 @@ dashApp.constant("CONFIG", {
 			this.setIcon(data.info.device);
 		}
 	};
+
 	CodeEngine.prototype.clearConsole = function(){
 		this.console = [];
 	};
+
 	CodeEngine.prototype.setIcon = function(device){
 		this.icon = icon_mapping[device];
 	};
@@ -58,12 +75,12 @@ dashApp.constant("CONFIG", {
 		create: function(data){
 			return new CodeEngine(data);
 		}
-	}
+	};
 })
-.factory('DashboardService', ['$q', '$rootScope', 'WebSocketService', 'CodeEngine', function($q, $rootScope, WebSocketService, CodeEngine){
+.factory('DashboardService', ['$q', '$rootScope', '$http', 'WebSocketService', 'CodeEngine', function($q, $rootScope, $http, WebSocketService, CodeEngine){
 	var TOPICS = {
 		'node-registry': 'things-engine-registry'
-	}
+	};
 	
 	var _SOCKET = undefined;
 	
@@ -72,6 +89,9 @@ dashApp.constant("CONFIG", {
 	
 	var _NODES = {};
 	var _CODES = {};
+
+	/* Adding the directories object/array. Remember to ask why _CODES is defined as object and not array */
+	var _DIRECTORIES = {};
 	
 	var _VIDEOSTREAM = {};
 	
@@ -86,11 +106,13 @@ dashApp.constant("CONFIG", {
 			});	
 		}
 	}
+
 	function handleNodeStats(data){
 		var nodeId = data.topic.split("/")[0];
 		if (!_NODES[nodeId].stats) _NODES[nodeId].stats = [];
 		if (data.message) _NODES[nodeId].stats.push(data.message);
 	}
+
 	function handleVideoStream(data){
 		if (data.message){
 			_VIDEOSTREAM.raw = "data:image/png;base64,"+data.message;	
@@ -100,6 +122,7 @@ dashApp.constant("CONFIG", {
 			_VIDEOSTREAM.raw= "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
 		}
 	}
+
 	function handleVideoMotion(data){
 		if (data.message){
 			_VIDEOSTREAM.motion = "data:image/png;base64,"+data.message;	
@@ -116,6 +139,7 @@ dashApp.constant("CONFIG", {
 		_SOCKET.send({ action: "pubsub", command: "subscribe", topic: topic });
 		_SUBSCRIPTIONS[topic].subscribed = true;
 	}
+
 	function unsubscribe(topic){
 		if (!_SUBSCRIPTIONS[topic]) _SUBSCRIPTIONS[topic] = { subscribed: false };
 		_SOCKET.send({ action: "pubsub", command: "unsubscribe", topic: topic });
@@ -131,12 +155,14 @@ dashApp.constant("CONFIG", {
 			alert("You need to select the node AND provide the code");
 		}
 	}
+
 	//Send PAUSE command to dispatcher
 	function pauseCode(nodeId, codeId){
 		if (nodeId && _NODES[nodeId].status === 'busy'){
 			_SOCKET.send({ action: "dispatcher", command: "pause_code", args: { nodeId: nodeId, codeId: codeId } });
 		}
 	}
+
 	//Send MIGRATE command to dispatcher
 	function migrateCode(fromId, toId, codeId){
 		if (fromId && _NODES[fromId].status === 'busy' && toId && _NODES[toId].status === 'idle' && codeId){
@@ -185,7 +211,7 @@ dashApp.constant("CONFIG", {
 						if (!_SUBSCRIPTIONS[item]){
 							_SUBSCRIPTIONS[item] = { subscribed: false };	
 						}
-					})
+					});
 				}
 				else if (data.action === 'pubsub'){
 					if (data.topic && data.messages){
@@ -262,22 +288,14 @@ dashApp.constant("CONFIG", {
 		subscribe: subscribe,
 		unsubscribe: unsubscribe,
 		allNodes: _NODES,
-		saveCode: function(name, code){
-			_SOCKET.send({ action: "code-db", command: "save", name: name, code: code });
-		},
-		deleteCode: function(name){
-			var result = confirm("Are you sure you want to delete " + name + "?");
-			if(result){
-				_SOCKET.send({ action: "code-db", command: "delete", name: name });
-			}
-		},
+
 		allCodes: _CODES,
 		runCode: runCode,
 		sendCode: runCode,
 		pauseCode: pauseCode,
 		migrateCode: migrateCode,
 		videostream: _VIDEOSTREAM
-	}
+	};
 }])
 .directive('topicTable', ['DashboardService', function(DashboardService){
 	return {
@@ -293,13 +311,14 @@ dashApp.constant("CONFIG", {
 		},
 		controllerAs: '$ctrl',
 		templateUrl: 'components/topic-table.html' 
-	}
+	};
 }])
 .directive('deviceGraph', ['$filter', function($filter){
 	var modes = {
 		'memory': 'Memory Usage',
 		'cpu': 'CPU'
-	}
+	};
+
 	function getData(datum, mode){
 		if (mode === 'memory'){
 			return (Math.round(100*datum.memoryUsage.heapUsed)/100);
@@ -350,17 +369,17 @@ dashApp.constant("CONFIG", {
 				var memData, cpuData;
 				if (data){
 					memData = data.map(function(datum){
-						return { x: datum.timestamp, y: getData(datum, 'memory') }
+						return { x: datum.timestamp, y: getData(datum, 'memory') };
 					});
 					cpuData = data.map(function(datum){
 						return { x: datum.timestamp, y: getData(datum, 'cpu') };
-					})
+					});
 				}
 				else {
 					memData = [];
 					cpuData = [];
 				}
-				self.graphData = { 'memory': [{ values: memData, key: modes['memory'] }],
+				self.graphData = { 'memory': [{ values: memData, key: modes.memory }],
 						   		   'cpu': [{ values: cpuData, key: modes['cpu'] }] };
 			};
 			
@@ -378,6 +397,7 @@ dashApp.constant("CONFIG", {
 					if (self.graphData['cpu'][0].values.length > 60) self.graphData['cpu'][0].values.shift();
 				}
 			});
+
 			$scope.$watch(function(){
 				return $scope.node ? $scope.node.id : undefined;
 			}, function(id){
@@ -394,7 +414,7 @@ dashApp.constant("CONFIG", {
 		}],
 		controllerAs: '$ctrl',
 		templateUrl: 'components/device-graph.html'
-	}
+	};
 }])
 .directive('deviceConsole', function(){
 	return {
@@ -406,16 +426,16 @@ dashApp.constant("CONFIG", {
 		template: '<div class="terminal"><p ng-repeat="text in lines track by $index" ng-bind="text"></p></div>',
 		link: function(scope, element, attrs, ctrl){
 			var div = $('.terminal', element);
-			if (scope.height){ div.css({ "height": scope.height, "max-height": scope.height }) };
+			if (scope.height){ div.css({ "height": scope.height, "max-height": scope.height }) }
 			
 			scope.$watch(function(){
 //				return scope.lines ? scope.lines.length : 0;
 				return div[0].scrollHeight;
 			}, function(height){
 				div.scrollTop(height);
-			})
+			});
 		}
-	}
+	};
 })
 .directive('devicePanel', ['DashboardService', function(DashboardService){
 	return {
@@ -428,7 +448,7 @@ dashApp.constant("CONFIG", {
 		}],
 		controllerAs: '$ctrl',
 		templateUrl: 'components/device-panel.html'
-	}
+	};
 }])
 .directive('stickyFooter', function($window){
 	return {
@@ -441,12 +461,12 @@ dashApp.constant("CONFIG", {
 				var y = window.innerHeight - element.outerHeight() - marker.offset().top;
 				if (y > 0){ marker.height(y); }
 				else { marker.height(0); }
-			}
+			};
 			scope.$watch(function(){ return marker.offset().top; }, function(newVal, oldVal){ stick(); });
 			scope.$watch(function(){ return element.height(); }, function(newval){ stick(); });
 			angular.element($window).bind('resize', function(){ stick(); });
 		}
-	}
+	};
 })
 .config(['$stateProvider', '$urlRouterProvider', 
     function($stateProvider, $urlRouterProvider){
@@ -479,7 +499,7 @@ dashApp.constant("CONFIG", {
 				
 				self.stopWS = function(){
 					self.socket.close();
-				}
+				};
 				
 			}],
 			controllerAs: '$view',
@@ -515,39 +535,304 @@ dashApp.constant("CONFIG", {
 		.state('codes', {
 			parent: 'init',
 			url: '/codes',
-			controller: ['$scope', 'socket', 'DashboardService', function($scope, socket, DashboardService){
+			controller: ['$scope', 'socket', 'DashboardService', '$http', function($scope, socket, DashboardService, $http){
 				var self = this;
 				$scope.$service = DashboardService;
-				
+			
 				self.idleNodes = DashboardService.allNodes;
-				
 				self.allCodes = DashboardService.allCodes;
 				
+
+
+				/* Called when the page loads */
+				self.init = function(){
+					console.log("In init");
+					self.renderMenu(url);
+				},
+				
+
+
+				/* Function to clear the text fields */
 				self.clearAll = function(){
 					self.codeName = "";
 					self.code = "";
 					self.selectedNode = undefined;
-				}
-				self.clearAll();
+				},
 
-				self.selectCode = function(codeName){
-					self.codeName = codeName;
-					self.code = self.allCodes[codeName].code;
-				}
 
-				self.sendCode = DashboardService.runCode;
+
+				/* Refreshes menu to show files/folders in current directory */
+				self.renderMenu = function(url){
+
+					console.log("In renderMenu, url is: " + url);
+
+					$http.get(url).then(function(response){
+						
+						console.log("http get request response");
+						console.log(response);
+
+						self.allCodes = {};
+
+						for(var i = 0; i < response.data.content.length; i++){
+							var child = response.data.content[i];
+							self.allCodes[child.name] = child;
+						}
+
+						self.clearAll();
+
+					}, function(){
+						console.log("An error occured");
+					});
+				},
+
+
+
+				/* Navigates to folder when clicked */
+				self.menuClick = function(codeName, content){
+					if (content.type === "directory"){
+						url += codeName + "/";
+						current = content;
+						self.renderMenu(url);
+					} 
+					else if (content.type === "file"){
+						self.code = self.allCodes[codeName].content;
+					}
+				}, 
 				
+
+
+				/* Saves a file */
+				self.saveCode = function(name, code){
+				
+					var postData = {
+						"file_name" : name,
+						"parent_path" : url.replace("http://localhost:5000/", ""),
+						"is_file" : true,
+						"content" : code
+					};
+					
+					$http.post(createFSUrl, postData).then(function(){
+						window.alert("File saved successfully using http POST");
+						self.renderMenu(url);
+					}, function(){
+						alert("File save was unsuccessful");
+					});
+				},
+
+
+
+				/* Saves a folder */
+				self.saveFolder = function(name, code){
+					
+					var postData = {
+						"file_name" : name,
+						"parent_path" : url.replace("http://localhost:5000/", ""),
+						"is_file" : false,
+					};
+					
+					$http.post(createFSUrl, postData).then(function(){
+						alert("Folder saved succesfully using http POST");
+						self.renderMenu(url);
+					}, function(){
+						console.log("Folder save failed");
+					});
+				}, 
+
+
+
+				/* Deletes Code */
+				self.deleteCode = function(name){
+					var result = confirm("Are you sure you want to delete " + name + "?");
+
+					var postBody = {
+						"file_path" :  url.replace("http://localhost:5000", "") + name
+					};
+
+					if(result){
+						$http.post(deleteFSUrl, postBody).then(function(){
+							console.log(name + " deleted successfully");
+							self.renderMenu(url);
+						}, function(){
+							alert("File delete was unsuccessful");
+						});
+					}
+				},
+
+
+
+				/* When checsked */
+				self.checked = function(name, content, value){
+					
+					var checkedObject = {
+						"name" : name,
+						"content" : content,
+						"url" : url
+					};
+
+					if(value){
+						console.log(checkedObject);
+						checkedArray.push(checkedObject);
+					} else {
+						checkedArray.splice( checkedArray.indexOf(name), 1 );
+					}	
+				},
+
+
+
+				/* Deletes all selected files */
+				self.deleteSelected = function(){
+
+					for (var e in checkedArray){
+						toDelete = checkedArray[e].name;
+						self.deleteCode(toDelete);
+					}
+
+					checkedArray = [];
+				},
+
+
+
+				/* Moves folders/files */
+				self.pasteSelected = function(){
+
+	
+					for (var e in copied){
+						if (copied[e].content.type === "directory"){
+							var filepath = (copied[e].url).replace("http://localhost:5000/", "") + copied[e].name;
+							console.log("IN JSON it is " + filepath); 
+							console.log("URL is " + url.replace("http://localhost:5000/", ""));
+							self.cloneObject(filepath, copied[e].content.name + "_copied", url.replace("http://localhost:5000/", ""));
+						} else if (copied[e].content.type === "file"){
+							self.saveCode(copied[e].name, copied[e].content);
+						}
+					}
+
+					copied = [];
+
+					for (var e in cut){
+						toMove = cut[e].name;
+						currentpath = cut[e].url;
+						self.moveObject(toMove, currentpath);
+					}
+
+					cut = [];
+					self.renderMenu(url);
+				
+				},
+
+
+
+				/* Copies folders/files for pasting */
+				self.copySelected = function(){
+
+					for (var e in checkedArray){
+						var toPush = checkedArray[e];
+						copied.push(toPush);
+					}
+
+					checkedArray = [];
+		
+				},
+
+
+
+				/* "Cuts" folders/files for pasting */
+				self.cutSelected = function(){
+
+					for (var e in checkedArray){
+						var toPush = checkedArray[e];
+						cut.push(toPush);
+						console.log(cut);
+					}
+
+					checkedArray = [];
+
+				},
+
+
+
+				/* Actual implementation of move */
+				self.moveObject = function(name, path){
+
+					var movePostBody = {
+						"file_path" :  path.replace("http://localhost:5000/", "") + name, 
+						"parent_path": url.replace("http://localhost:5000/", "")
+					};
+
+					$http.post(moveFSUrl, movePostBody).then(function(){
+						console.log("File move successful");
+						self.renderMenu(url);
+					}, function(){
+						alert("File move was unsuccessful");
+					});
+				},
+				
+
+
+				/* Checks if checkedArray is empty: for ng-show */
+				self.isEmpty = function(){
+					return ( !(checkedArray.length === 0) || !(copied.length === 0) || !(cut.length === 0) );
+				},
+
+
+
+				/* True when file or folder is copied */
+				self.paste = function(){
+					return ( !(copied.length === 0) || !(cut.length === 0) );
+				},
+
+
+
+				/* Change the opacity if cut */
+				self.liststyle = function(name){
+					for (var e in cut){
+						if(cut[e].name == name){
+							return {"opacity" : 0.5};
+						}
+					}
+				}
+
+
+
+				self.cloneObject = function(name, newName, path){
+					
+					var postObject = {
+						"file_path" : name,
+						"file_name" : newName,
+						"parent_path"		: path
+					};
+
+					$http.post(cloneUrl, postObject).then(function(){
+						console.log("Copy/paste successful");
+						self.renderMenu(url);
+					}, function(){
+						alert("Copy/paste was unsuccessful");
+					});
+				}
+
+				
+
+				/* Run code on a node */
+				self.sendCode = DashboardService.runCode;
+
+
+
+				
+				/* Actions on keydown shortcuts */
 				self.onKeyDown = function(event){
+
+					// Ctrl + S
 					if (event.ctrlKey && event.which === 83){
-						/* Pressed Ctrl + S */
 						event.preventDefault();
 						$scope.$service.saveCode(self.codeName, self.code);
 					}
 				};
 			}],
+
 			controllerAs: '$view',
 			templateUrl: 'views/codes.html'
 		})
+
 		.state('debug', {
 			parent: 'init',
 			url: '/debug',
