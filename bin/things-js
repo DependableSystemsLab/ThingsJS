@@ -1,8 +1,8 @@
 #! /usr/bin/env node
 
-var things = require('../lib/things.js');
 var path = require('path');
 var program = require('commander');
+var jsBeautify = require('js-beautify').js_beautify;
 
 program
   .version('0.0.1')
@@ -28,42 +28,73 @@ program
 
 program
   .command('worker <conf>')
+  .alias('engine')
   .description('Start a ThingsJS Worker')
   .action(function(conf){
-     var config = things.validateConfig(conf);
-     var engine = new things.CodeEngine(config, { logging: 'thingsjs-logs', logInterval: 500 });
-     
-     process.on('SIGINT', function(){
-       engine.kill();
-     });
+    var things = require('../lib/things.js');
+    var config = things.CodeEngine.validateConfig(conf);
+    var engine = new things.CodeEngine(config, { logging: 'thingsjs-logs', logInterval: 500 });
+    process.on('SIGINT', function(){
+      engine.kill().then(function(){
+          process.exit();
+        })
+    });
 
   });
 
 program
   .command('instrument <file_path>')
-  .option('-o, --output <out_path>', 'Output File Path')
+  .option('-p, --pubsub <pubsub_url>', 'Pubsub URL')
+  .option('-s, --save <save_path>', 'File path to optionally save instrumented code')
+  .option('-d, --debug', 'Set environment variable DEBUG to "true" and see debug output')
   .alias('inst')
   .description('Instrument raw JavaScript code to make it migrate-able')
   .action(function(file_path, options){
-    var config = things.validateConfig(path.resolve(__dirname, '../bin/things-default.conf'));
-    var pubsub = new things.Pubsub('things-cli', config.pubsub_url);
-    var code = new things.Code(file_path, pubsub, true);
-	code.saveToFile(options.output);
-  
+    process.env['DEBUG'] = options.debug ? "true": "false";
+    var things = require('../lib/things.js');
+    var pubsub = { url: (options.pubsub_url || 'mqtt://localhost') }; // use a dummy pubsub, no need to connect
+    var code = things.Code.fromFile(pubsub, file_path);
+    if (options.save) code.save(options.save);
+    else console.log(code.source);
   });
 
 program
   .command('run <file_path>')
+  .option('-p, --pubsub <pubsub_url>', 'Pubsub URL')
   .option('-s, --save <save_path>', 'File path to optionally save instrumented code')
+  .option('-d, --debug', 'Set environment variable DEBUG to "true" and see debug output')
   .description('Instrument and run raw JavaScript code.')
   .action(function(file_path, options){
-    var config = things.validateConfig(path.resolve(__dirname, '../bin/things-default.conf'));
-    var pubsub = new things.Pubsub('things-cli', config.pubsub_url);
-    var code = new things.Code(file_path, pubsub, true);
-    if (options && options.output){
-      code.saveToFile(options.output);
-    }
+    process.env['DEBUG'] = options.debug ? "true": "false";
+    var things = require('../lib/things.js');
+    var pubsub = { url: (options.pubsub_url || 'mqtt://localhost') }; // use a dummy pubsub, no need to connect
+    var code = things.Code.fromFile(pubsub, file_path);
+    if (options.save) code.save(options.save);
     code.run();
+
+    process.stdin.setRawMode( true );
+    process.stdin.setEncoding('utf8');
+    process.stdin.on('data', function(key){
+      if (key === 'p'){
+        if (code.status === things.Code.Status.RUNNING) code.pause();
+      }
+      else if (key === 'r'){
+        if (code.status === things.Code.Status.PAUSED) code.resume();
+      }
+      else if (key === 's'){
+        code.snapshot(true).then(function(snap){
+          console.log(jsBeautify(JSON.stringify(snap)));
+          code.saveLastSnapshot(file_path+'.snap.json')
+        })
+      }
+      else if (key === '\u0003'){
+        code.kill();
+        process.exit();
+      }
+      else {
+        console.log(key);
+      }
+    });
   });
 
 program
