@@ -1,55 +1,94 @@
 <style>
 	.ace_editor { height: 400px; };
 </style>
-<div class="row">
-	<div class="col-md-8">
-		
-		<div class="row">
-			<div class="col-md-4">
-				<div class="form-group">
-					<label>Name</label>
-					<input type="text" ng-model="$view.codeName" class="form-control"/>
+
+
+<body ng-controller="app">
+
+	<div class="row" ng-init="$view.init()">
+		<div class="col-md-8">
+			
+			<div class="row">
+				<div class="col-md-4">
+					<div class="form-group">
+						<label>Name</label>
+						<input type="text" ng-model="$view.codeName" class="form-control"/>
+					</div>
+				</div>
+
+				<div ng-show="$view.codeName" class="col-md-8 text-right">
+					<div class="form-inline">
+						<select ng-model="$view.selectedNode" class="form-control">
+							<option ng-repeat="(node, data) in $view.idleNodes" ng-value="node" ng-if="data.status === 'idle'">{{ node }}</option>
+						</select>
+							<button ng-click="$view.sendCode($view.selectedNode, $view.code)" class="btn btn-success">
+								<i class="fa fa-play"></i> Run Code
+							</button>						
+							<button ng-click="$view.saveCode($view.codeName, $view.code)" class="btn btn-primary">
+								<i class="fa fa-save"></i> Save Code
+							</button>
+							<button ng-click="$view.saveFolder($view.codeName)" class="btn btn-primary">
+								<i class="fa fa-folder"></i> Create Folder
+							</button>				
+					</div>
+
 				</div>
 			</div>
-			<div ng-show="$view.codeName" class="col-md-8 text-right">
-				<div class="form-inline">
-					<select ng-model="$view.selectedNode" class="form-control">
-						<option ng-repeat="(node, data) in $view.idleNodes" ng-value="node" ng-if="data.status === 'idle'">{{ node }}</option>
-					</select>
-						<button ng-click="$view.sendCode($view.selectedNode, $view.code)" class="btn btn-success">
-							<i class="fa fa-play"></i> Run Code
-						</button>						
-						<button ng-click="$service.saveCode($view.codeName, $view.code)" class="btn btn-primary">
-							<i class="fa fa-save"></i> Save Code
-						</button>
-						<button ng-show="$view.allCodes[$view.codeName]" ng-click="$service.deleteCode($view.codeName); $view.clearAll();" class="btn btn-danger">
-							<i class="fa fa-trash"></i> Delete Code
-						</button>					
-				</div>
+			
+			<div class="form-group">
+				<label>Code</label>
+				<div ui-ace="{ mode: 'javascript' }" ng-model="$view.code" ng-keydown="$view.onKeyDown($event)"></div>
 			</div>
 		</div>
-		<div class="form-group">
-			<label>Code</label>
-			<div ui-ace="{ mode: 'javascript' }" ng-model="$view.code" ng-keydown="$view.onKeyDown($event)"></div>
+
+		<div class="col-md-4">
+
+			<div class="well">
+				<button ng-click="$view.deleteSelected()" ng-show="$view.isEmpty()" class="btn btn-danger">
+					<i class="fa fa-trash"></i> Delete Selected Files
+				</button>
+				
+				<button ng-click="$view.cutSelected()" ng-show="$view.isEmpty()" class="btn btn-primary">
+					<i class="fa fa-folder"></i> Cut Selected Files
+				</button>
+
+				<button ng-click="$view.copySelected()" ng-show="$view.isEmpty()" class="btn btn-primary">
+					<i class="fa fa-folder"></i> Copy Selected Files
+				</button>
+
+				<button ng-click="$view.pasteSelected()" ng-show="$view.showPaste()" class="btn btn-primary">
+					<i class="fa fa-folder"></i> Paste Selected Files
+				</button>
+
+				<button ng-click="$view.moveBackFolder()" ng-show="$view.showBackButton()" class="btn btn-primary">
+					<i class="fa fa-arrow-left"></i> Back
+				</button>	
+			</div>
+			
+			
+			<div class="list-group">
+				<a ng-repeat="(name, content) in $view.allCodes"
+					ng-mouseover="$view.menuHover(name, content)"
+					ng-class="{ active: ($view.codeName === name) }"
+					href="javascript:;"
+					ng-style="$view.liststyle(name)"
+					class="list-group-item">
+					{{ name }}
+
+					<input type="checkbox"
+					name="check"
+					href="javascript:;"
+					ng-class="{ active: ($view.codeName === name) }"
+					ng-true-value="true" ng-false-value="false"
+					ng-model="value" ng-change="$view.checked(name, content, value)">
+
+					<i ng-class="$view.getIcon(content)" ng-click="$view.menuClick(name, content)"></i>
+					
+				</a>
+			</div>
+			
 		</div>
+
 	</div>
-	<div class="col-md-4">
-		
-		<div class="well">
-			<button ng-click="$view.clearAll()" class="btn btn-primary">
-				<i class="fa fa-file"></i> Create New
-			</button>
-		</div>
-		
-		<div class="list-group">
-			<a ng-repeat="(name, data) in $view.allCodes"
-				ng-click="$view.selectCode(name)"
-				ng-class="{ active: ($view.codeName === name) }"
-				href="javascript:;"
-				class="list-group-item">
-				{{ name }}
-			</a>
-		</div>
-		
-	</div>
-</div>
+
+</body>

@@ -5,19 +5,27 @@ var dashApp = window.angular.module('dashApp', ['ngResource',
                                          'ui.bootstrap',
                                          'ui.ace',
 										 'nvd3'] );
-var checkedArray = [];	
+
+/* Keeps all checked items */
+var checkedArray = [];
+
+/* Keeps all copied items */
 var copied = [];
+
+/* Keeps all cut items */
 var cut = [];	
-var currentpath;
-var toDelete;		
-var toMove;	 
+
+/* Keeps track of visited pages for the back button */
+var visitedPages = [];
+
+
+/* REST API endpoints */
 var url = "http://localhost:5000/root/";
 var createFSUrl = "http://localhost:5000/makeFromPath";
 var deleteFSUrl = "http://localhost:5000/deleteFromPath";
 var moveFSUrl = "http://localhost:5000/moveFromPath";
-var cloneUrl = "http://localhost:5000/cloneFromPath";
-var current;
-var checkedArray = [];
+var cloneFSUrl = "http://localhost:5000/cloneFromPath";
+
 var options = ["Run", "Delete"];
 
 dashApp.constant("CONFIG", {
@@ -544,15 +552,20 @@ dashApp.constant("CONFIG", {
 				
 
 
-				/* Called when the page loads */
+				/**
+				 * Function called when the page loads: initializes the file menu
+				 * @author Atif Mahmud
+				 */ 
 				self.init = function(){
-					console.log("In init");
 					self.renderMenu(url);
+					visitedPages.push(url);
 				},
 				
 
 
-				/* Function to clear the text fields */
+				/**
+				 * Function clears out the text fields
+				 */
 				self.clearAll = function(){
 					self.codeName = "";
 					self.code = "";
@@ -561,7 +574,11 @@ dashApp.constant("CONFIG", {
 
 
 
-				/* Refreshes menu to show files/folders in current directory */
+				/**
+				 * Refreshes the filemenu with all filesystem objects from current url
+				 * @param {String} url endpoint to refresh the file menu from 
+				 * @author Atif Mahmud
+				 */
 				self.renderMenu = function(url){
 
 					console.log("In renderMenu, url is: " + url);
@@ -587,12 +604,17 @@ dashApp.constant("CONFIG", {
 
 
 
-				/* Navigates to folder when clicked */
+				/**
+				 * Navigates to directory or displays file contents on code window
+				 * @param {String} codeName Name of the filesystem object 
+				 * @param {Array} content 
+				 * @author Atif Mahmud
+				 */
 				self.menuClick = function(codeName, content){
 					if (content.type === "directory"){
 						url += codeName + "/";
-						current = content;
 						self.renderMenu(url);
+						visitedPages.push(url);
 					} 
 					else if (content.type === "file"){
 						self.code = self.allCodes[codeName].content;
@@ -601,7 +623,37 @@ dashApp.constant("CONFIG", {
 				
 
 
-				/* Saves a file */
+				/**
+				 * Adds the checked object to checkedArray
+				 * @param {String} name Name of the filesystem object 
+				 * @param {String} content Content of the filesystem object (String if file, Array if folder)
+				 * @param {Boolean} value Status of checkbox (1 if checked)
+				 * @author Atif Mahmud
+				 */
+				self.checked = function(name, content, value){
+					
+					var checkedObject = {
+						"name" : name,
+						"content" : content,
+						"url" : url
+					};
+
+					if(value){
+						console.log(checkedObject);
+						checkedArray.push(checkedObject);
+					} else {
+						checkedArray.splice( checkedArray.indexOf(name), 1 );
+					}	
+				},
+
+
+
+				/**
+				 * Saves a file in the current directory
+				 * @param {String} name Name of the file 
+				 * @param {String} code Contents of the file
+				 * @author Atif Mahmud
+				 */
 				self.saveCode = function(name, code){
 				
 					var postData = {
@@ -621,8 +673,12 @@ dashApp.constant("CONFIG", {
 
 
 
-				/* Saves a folder */
-				self.saveFolder = function(name, code){
+				/**
+				 * Saves a new folder in the current directory
+				 * @param {String} name Name of the folder
+				 * @author Atif Mahmud 
+				 */
+				self.saveFolder = function(name){
 					
 					var postData = {
 						"file_name" : name,
@@ -640,8 +696,12 @@ dashApp.constant("CONFIG", {
 
 
 
-				/* Deletes Code */
-				self.deleteCode = function(name){
+				/**
+				 * Deletes a filesystem object
+				 * @param {String} name Name of the filesystem object to delete
+				 * @author Atif Mahmud
+				 */
+				self.deleteObject = function(name){
 					var result = confirm("Are you sure you want to delete " + name + "?");
 
 					var postBody = {
@@ -660,69 +720,10 @@ dashApp.constant("CONFIG", {
 
 
 
-				/* When checsked */
-				self.checked = function(name, content, value){
-					
-					var checkedObject = {
-						"name" : name,
-						"content" : content,
-						"url" : url
-					};
-
-					if(value){
-						console.log(checkedObject);
-						checkedArray.push(checkedObject);
-					} else {
-						checkedArray.splice( checkedArray.indexOf(name), 1 );
-					}	
-				},
-
-
-
-				/* Deletes all selected files */
-				self.deleteSelected = function(){
-
-					for (var e in checkedArray){
-						toDelete = checkedArray[e].name;
-						self.deleteCode(toDelete);
-					}
-
-					checkedArray = [];
-				},
-
-
-
-				/* Moves folders/files */
-				self.pasteSelected = function(){
-
-	
-					for (var e in copied){
-						if (copied[e].content.type === "directory"){
-							var filepath = (copied[e].url).replace("http://localhost:5000/", "") + copied[e].name;
-							console.log("IN JSON it is " + filepath); 
-							console.log("URL is " + url.replace("http://localhost:5000/", ""));
-							self.cloneObject(filepath, copied[e].content.name + "_copied", url.replace("http://localhost:5000/", ""));
-						} else if (copied[e].content.type === "file"){
-							self.saveCode(copied[e].name, copied[e].content);
-						}
-					}
-
-					copied = [];
-
-					for (var e in cut){
-						toMove = cut[e].name;
-						currentpath = cut[e].url;
-						self.moveObject(toMove, currentpath);
-					}
-
-					cut = [];
-					self.renderMenu(url);
-				
-				},
-
-
-
-				/* Copies folders/files for pasting */
+				/**
+				 * Copies filesystem objects into copied array
+				 * @author Atif Mahmud
+				 */
 				self.copySelected = function(){
 
 					for (var e in checkedArray){
@@ -736,7 +737,10 @@ dashApp.constant("CONFIG", {
 
 
 
-				/* "Cuts" folders/files for pasting */
+				/**
+				 * "Cuts" folders/files for pasting
+				 * @author Atif Mahmud
+				 */
 				self.cutSelected = function(){
 
 					for (var e in checkedArray){
@@ -751,7 +755,61 @@ dashApp.constant("CONFIG", {
 
 
 
-				/* Actual implementation of move */
+				/**
+				 * Deletes all the checked/selected files
+				 * @author Atif Mahmud
+				 */
+				self.deleteSelected = function(){
+
+					for (var e in checkedArray){
+						var toDelete = checkedArray[e].name;
+						self.deleteObject(toDelete);
+					}
+
+					checkedArray = [];
+				},
+
+
+
+				/**
+				 * Pastes the filesystem objects after cut/copy
+				 * @author Atif Mahmud
+				 */
+				self.pasteSelected = function(){
+
+					for (var e in copied){
+						if (copied[e].content.type === "directory"){
+							var filepath = (copied[e].url).replace("http://localhost:5000/", "") + copied[e].name;
+							console.log("IN JSON it is " + filepath); 
+							console.log("URL is " + url.replace("http://localhost:5000/", ""));
+							self.cloneObject(filepath, copied[e].content.name + "_copied", url.replace("http://localhost:5000/", ""));
+						} else if (copied[e].content.type === "file"){
+							self.saveCode(copied[e].name, copied[e].content);
+						}
+					}
+
+					copied = [];
+
+					for (var e in cut){
+						var toMove = cut[e].name;
+						var objectPath = cut[e].url;
+						self.moveObject(toMove, currentPath);
+					}
+
+					cut = [];
+					
+					self.renderMenu(url);
+				
+				},
+
+
+
+				/**
+				 * Moves filesystem objects
+				 * @param {String} name Name of filesystem object
+				 * @param {String} path Path from which it is being moved
+				 * @author Atif Mahmud
+				 */
 				self.moveObject = function(name, path){
 
 					var movePostBody = {
@@ -769,56 +827,119 @@ dashApp.constant("CONFIG", {
 				
 
 
-				/* Checks if checkedArray is empty: for ng-show */
+				/**
+				 * Makes a clone of a filesystem object (used in copy-paste) 
+				 * @param {String} name Name of the filesystem object 
+				 * @param {String} newName New Name of the filesystem object
+				 * @param {String} path Path from where it is being cloned
+				 * @author Atif Mahmud
+				 */
+				self.cloneObject = function(name, newName, path){
+					
+					var postObject = {
+						"file_path"   : name,
+						"file_name"   : newName,
+						"parent_path" : path
+					};
+
+					$http.post(cloneFSUrl, postObject).then(function(){
+						console.log("Copy/paste successful");
+						self.renderMenu(url);
+					}, function(){
+						alert("Copy/paste was unsuccessful");
+					});
+				},
+
+
+
+				/**
+				 * Moves back up in the directory navigation path
+				 */
+				self.moveBackFolder = function(){
+					console.log("Now in url: " + url);
+					var newUrl = visitedPages[visitedPages.length - 2];
+					console.log("Going to url " + newUrl);
+					visitedPages.pop();
+					self.renderMenu(newUrl);
+				},
+
+
+
+				/**
+				 * Determines visibility of HTML components based on contents of checkedArray
+				 * @returns {Boolean} true if files have been checked, copied, or cut
+				 * @author Atif Mahmud
+				 */
 				self.isEmpty = function(){
 					return ( !(checkedArray.length === 0) || !(copied.length === 0) || !(cut.length === 0) );
 				},
 
 
 
-				/* True when file or folder is copied */
-				self.paste = function(){
+				/**
+				 * Determines visibility of the "Paste" button
+				 * @returns {Boolean} true if any file has been copied or cut
+				 * @author Atif Mahmud
+				 */
+				self.showPaste = function(){
 					return ( !(copied.length === 0) || !(cut.length === 0) );
 				},
 
 
 
-				/* Change the opacity if cut */
+				/**
+				 * Grays out filesystem objects that have been cut
+				 * @param {String} name Name of filesystem object
+				 * @author Atif Mahmud
+				 */
 				self.liststyle = function(name){
 					for (var e in cut){
 						if(cut[e].name == name){
 							return {"opacity" : 0.5};
 						}
 					}
-				}
+				},
 
 
 
-				self.cloneObject = function(name, newName, path){
-					
-					var postObject = {
-						"file_path" : name,
-						"file_name" : newName,
-						"parent_path"		: path
-					};
+				/**
+				 * Determines visibility of the back button
+				 * @returns {Boolean} 1 if more than one page has been visited (if you go back all the way to first page, back button disappears)
+				 * @author Atif Mahmud
+				 */
+				self.showBackButton = function(){
+					return (visitedPages.length > 1);
+				},
 
-					$http.post(cloneUrl, postObject).then(function(){
-						console.log("Copy/paste successful");
-						self.renderMenu(url);
-					}, function(){
-						alert("Copy/paste was unsuccessful");
-					});
-				}
 
-				
 
-				/* Run code on a node */
+				/**
+				 * Determines which icon is to be shown in the file menu
+				 * @param {Array} content Content of the filesystem object
+				 * @returns {String} the icon to display
+				 * @author Atif Mahmud
+				 */
+				self.getIcon = function(content){
+					if (content.type == "directory"){
+						return "fa fa-folder";
+					} else if (content.type == "file"){
+						return "fa fa-file";
+					}
+				},
+
+
+
+				/**
+				 * Run code on a node 
+				 */
 				self.sendCode = DashboardService.runCode;
 
 
-
 				
-				/* Actions on keydown shortcuts */
+				/**
+				 * Action on keyboard shortcut events
+				 * @param {Event} event Keyboard event 
+				 */
 				self.onKeyDown = function(event){
 
 					// Ctrl + S
