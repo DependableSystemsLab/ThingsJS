@@ -18,6 +18,8 @@ var cut = [];
 /* Keeps track of visited pages for the back button */
 var visitedPages = [];
 
+/* Commonly replaced string in a url */
+var replace = "http://localhost:5000/";
 
 /* REST API endpoints */
 var url = "http://localhost:5000/root/";
@@ -553,7 +555,7 @@ dashApp.constant("CONFIG", {
 
 
 				/**
-				 * Function called when the page loads: initializes the file menu
+				 * @function init Function called when the page loads: initializes the file menu
 				 * @author Atif Mahmud
 				 */ 
 				self.init = function(){
@@ -564,7 +566,7 @@ dashApp.constant("CONFIG", {
 
 
 				/**
-				 * Function clears out the text fields
+				 * @function clearAll Function clears out the text fields
 				 */
 				self.clearAll = function(){
 					self.codeName = "";
@@ -575,12 +577,13 @@ dashApp.constant("CONFIG", {
 
 
 				/**
-				 * Refreshes the filemenu with all filesystem objects from current url
+				 * @function renderMenu Refreshes the filemenu with all filesystem objects from current url
 				 * @param {String} url endpoint to refresh the file menu from 
 				 * @author Atif Mahmud
 				 */
-				self.renderMenu = function(url){
+				self.renderMenu = function(menuUrl){
 
+					url = menuUrl;
 					console.log("In renderMenu, url is: " + url);
 
 					$http.get(url).then(function(response){
@@ -605,7 +608,7 @@ dashApp.constant("CONFIG", {
 
 
 				/**
-				 * Navigates to directory or displays file contents on code window
+				 * @function menuClick Navigates to directory or displays file contents on code window
 				 * @param {String} codeName Name of the filesystem object 
 				 * @param {Array} content 
 				 * @author Atif Mahmud
@@ -624,7 +627,7 @@ dashApp.constant("CONFIG", {
 
 
 				/**
-				 * Adds the checked object to checkedArray
+				 * @function checked Adds the checked object to checkedArray
 				 * @param {String} name Name of the filesystem object 
 				 * @param {String} content Content of the filesystem object (String if file, Array if folder)
 				 * @param {Boolean} value Status of checkbox (1 if checked)
@@ -649,7 +652,7 @@ dashApp.constant("CONFIG", {
 
 
 				/**
-				 * Saves a file in the current directory
+				 * @function saveCode Saves a file in the current directory
 				 * @param {String} name Name of the file 
 				 * @param {String} code Contents of the file
 				 * @author Atif Mahmud
@@ -658,7 +661,7 @@ dashApp.constant("CONFIG", {
 				
 					var postData = {
 						"file_name" : name,
-						"parent_path" : url.replace("http://localhost:5000/", ""),
+						"parent_path" : url.replace(replace, ""),
 						"is_file" : true,
 						"content" : code
 					};
@@ -674,7 +677,7 @@ dashApp.constant("CONFIG", {
 
 
 				/**
-				 * Saves a new folder in the current directory
+				 * @function saveFolder Saves a new folder in the current directory
 				 * @param {String} name Name of the folder
 				 * @author Atif Mahmud 
 				 */
@@ -682,7 +685,7 @@ dashApp.constant("CONFIG", {
 					
 					var postData = {
 						"file_name" : name,
-						"parent_path" : url.replace("http://localhost:5000/", ""),
+						"parent_path" : url.replace(replace, ""),
 						"is_file" : false,
 					};
 					
@@ -697,7 +700,7 @@ dashApp.constant("CONFIG", {
 
 
 				/**
-				 * Deletes a filesystem object
+				 * @function deleteObject Deletes a filesystem object
 				 * @param {String} name Name of the filesystem object to delete
 				 * @author Atif Mahmud
 				 */
@@ -705,7 +708,7 @@ dashApp.constant("CONFIG", {
 					var result = confirm("Are you sure you want to delete " + name + "?");
 
 					var postBody = {
-						"file_path" :  url.replace("http://localhost:5000", "") + name
+						"file_path" :  url.replace(replace, "") + name
 					};
 
 					if(result){
@@ -721,7 +724,7 @@ dashApp.constant("CONFIG", {
 
 
 				/**
-				 * Copies filesystem objects into copied array
+				 * @function copySelected Copies filesystem objects into copied array
 				 * @author Atif Mahmud
 				 */
 				self.copySelected = function(){
@@ -738,7 +741,7 @@ dashApp.constant("CONFIG", {
 
 
 				/**
-				 * "Cuts" folders/files for pasting
+				 * @function cutSelected "Cuts" folders/files for pasting
 				 * @author Atif Mahmud
 				 */
 				self.cutSelected = function(){
@@ -756,7 +759,7 @@ dashApp.constant("CONFIG", {
 
 
 				/**
-				 * Deletes all the checked/selected files
+				 * @function deleteSelected Deletes all the checked/selected files
 				 * @author Atif Mahmud
 				 */
 				self.deleteSelected = function(){
@@ -772,20 +775,14 @@ dashApp.constant("CONFIG", {
 
 
 				/**
-				 * Pastes the filesystem objects after cut/copy
+				 * @function pasteSelected Pastes the filesystem objects after cut/copy
 				 * @author Atif Mahmud
 				 */
 				self.pasteSelected = function(){
 
 					for (var e in copied){
-						if (copied[e].content.type === "directory"){
-							var filepath = (copied[e].url).replace("http://localhost:5000/", "") + copied[e].name;
-							console.log("IN JSON it is " + filepath); 
-							console.log("URL is " + url.replace("http://localhost:5000/", ""));
-							self.cloneObject(filepath, copied[e].content.name + "_copied", url.replace("http://localhost:5000/", ""));
-						} else if (copied[e].content.type === "file"){
-							self.saveCode(copied[e].name, copied[e].content);
-						}
+						var filepath = (copied[e].url).replace(replace, "") + copied[e].name;
+						self.cloneObject(filepath, copied[e].content.name + "_copied", url.replace(replace, ""));
 					}
 
 					copied = [];
@@ -797,7 +794,6 @@ dashApp.constant("CONFIG", {
 					}
 
 					cut = [];
-					
 					self.renderMenu(url);
 				
 				},
@@ -805,7 +801,7 @@ dashApp.constant("CONFIG", {
 
 
 				/**
-				 * Moves filesystem objects
+				 * @function moveObject Moves filesystem objects
 				 * @param {String} name Name of filesystem object
 				 * @param {String} path Path from which it is being moved
 				 * @author Atif Mahmud
@@ -813,8 +809,8 @@ dashApp.constant("CONFIG", {
 				self.moveObject = function(name, path){
 
 					var movePostBody = {
-						"file_path" :  path.replace("http://localhost:5000/", "") + name, 
-						"parent_path": url.replace("http://localhost:5000/", "")
+						"file_path" :  path.replace(replace, "") + name, 
+						"parent_path": url.replace(replace, "")
 					};
 
 					$http.post(moveFSUrl, movePostBody).then(function(){
@@ -828,7 +824,7 @@ dashApp.constant("CONFIG", {
 
 
 				/**
-				 * Makes a clone of a filesystem object (used in copy-paste) 
+				 * @function cloneObject Makes a clone of a filesystem object (used in copy-paste) 
 				 * @param {String} name Name of the filesystem object 
 				 * @param {String} newName New Name of the filesystem object
 				 * @param {String} path Path from where it is being cloned
@@ -853,7 +849,7 @@ dashApp.constant("CONFIG", {
 
 
 				/**
-				 * Moves back up in the directory navigation path
+				 * @function moveBackFolder Moves back up in the directory navigation path
 				 */
 				self.moveBackFolder = function(){
 					console.log("Now in url: " + url);
@@ -866,7 +862,7 @@ dashApp.constant("CONFIG", {
 
 
 				/**
-				 * Determines visibility of HTML components based on contents of checkedArray
+				 * @function isEmpty Determines visibility of HTML components based on contents of checkedArray
 				 * @returns {Boolean} true if files have been checked, copied, or cut
 				 * @author Atif Mahmud
 				 */
@@ -877,7 +873,7 @@ dashApp.constant("CONFIG", {
 
 
 				/**
-				 * Determines visibility of the "Paste" button
+				 * @function showPaste Determines visibility of the "Paste" button
 				 * @returns {Boolean} true if any file has been copied or cut
 				 * @author Atif Mahmud
 				 */
@@ -888,11 +884,11 @@ dashApp.constant("CONFIG", {
 
 
 				/**
-				 * Grays out filesystem objects that have been cut
+				 * @function listStyle Grays out filesystem objects that have been cut
 				 * @param {String} name Name of filesystem object
 				 * @author Atif Mahmud
 				 */
-				self.liststyle = function(name){
+				self.listStyle = function(name){
 					for (var e in cut){
 						if(cut[e].name == name){
 							return {"opacity" : 0.5};
@@ -903,7 +899,7 @@ dashApp.constant("CONFIG", {
 
 
 				/**
-				 * Determines visibility of the back button
+				 * @function showBackButton Determines visibility of the back button
 				 * @returns {Boolean} 1 if more than one page has been visited (if you go back all the way to first page, back button disappears)
 				 * @author Atif Mahmud
 				 */
@@ -914,7 +910,7 @@ dashApp.constant("CONFIG", {
 
 
 				/**
-				 * Determines which icon is to be shown in the file menu
+				 * @function getIcon Determines which icon is to be shown in the file menu
 				 * @param {Array} content Content of the filesystem object
 				 * @returns {String} the icon to display
 				 * @author Atif Mahmud
@@ -930,14 +926,14 @@ dashApp.constant("CONFIG", {
 
 
 				/**
-				 * Run code on a node 
+				 * @function sendCode Run code on a node 
 				 */
 				self.sendCode = DashboardService.runCode;
 
 
 				
 				/**
-				 * Action on keyboard shortcut events
+				 * @function onKeyDown Action on keyboard shortcut events
 				 * @param {Event} event Keyboard event 
 				 */
 				self.onKeyDown = function(event){

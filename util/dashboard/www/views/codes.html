@@ -44,6 +44,11 @@
 		<div class="col-md-4">
 
 			<div class="well">
+
+				<button ng-click="$view.moveBackFolder()" ng-show="$view.showBackButton()" class="btn btn-primary">
+					<i class="fa fa-arrow-left"></i> Back
+				</button>	
+
 				<button ng-click="$view.deleteSelected()" ng-show="$view.isEmpty()" class="btn btn-danger">
 					<i class="fa fa-trash"></i> Delete Selected Files
 				</button>
@@ -60,9 +65,6 @@
 					<i class="fa fa-folder"></i> Paste Selected Files
 				</button>
 
-				<button ng-click="$view.moveBackFolder()" ng-show="$view.showBackButton()" class="btn btn-primary">
-					<i class="fa fa-arrow-left"></i> Back
-				</button>	
 			</div>
 			
 			
@@ -71,22 +73,25 @@
 					ng-mouseover="$view.menuHover(name, content)"
 					ng-class="{ active: ($view.codeName === name) }"
 					href="javascript:;"
-					ng-style="$view.liststyle(name)"
+					ng-style="$view.listStyle(name)"
 					class="list-group-item">
+
 					{{ name }}
 
-					<input type="checkbox"
+				<input type="checkbox"
 					name="check"
 					href="javascript:;"
 					ng-class="{ active: ($view.codeName === name) }"
 					ng-true-value="true" ng-false-value="false"
 					ng-model="value" ng-change="$view.checked(name, content, value)">
 
-					<i ng-class="$view.getIcon(content)" ng-click="$view.menuClick(name, content)"></i>
+				<i ng-class="$view.getIcon(content)" 
+					ng-click="$view.menuClick(name, content)">
+				</i>
 					
 				</a>
+
 			</div>
-			
 		</div>
 
 	</div>
