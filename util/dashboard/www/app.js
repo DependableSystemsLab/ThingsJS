@@ -21,12 +21,20 @@ var visitedPages = [];
 /* Commonly replaced string in a url */
 var replace = "http://localhost:5000/";
 
+/* To determine visibility of the update button */
+var showUpdate = 0;
+
+/* Current file */
+var currentFile;
+
 /* REST API endpoints */
 var url = "http://localhost:5000/root/";
 var createFSUrl = "http://localhost:5000/makeFromPath";
 var deleteFSUrl = "http://localhost:5000/deleteFromPath";
 var moveFSUrl = "http://localhost:5000/moveFromPath";
 var cloneFSUrl = "http://localhost:5000/cloneFromPath";
+var updateFSUrl = "http://localhost:5000/updateFromPath";
+var renameFSUrl = "http://localhost:5000/renameFromPath";
 
 var options = ["Run", "Delete"];
 
@@ -571,26 +579,26 @@ dashApp.constant("CONFIG", {
 				self.clearAll = function(){
 					self.codeName = "";
 					self.code = "";
+					currentFile= "";
 					self.selectedNode = undefined;
+					showUpdate = 0;
 				},
 
 
 
 				/**
 				 * @function renderMenu Refreshes the filemenu with all filesystem objects from current url
-				 * @param {String} url endpoint to refresh the file menu from 
+				 * @param {String} menuUrl endpoint to refresh the file menu from 
 				 * @author Atif Mahmud
 				 */
 				self.renderMenu = function(menuUrl){
 
 					url = menuUrl;
-					console.log("In renderMenu, url is: " + url);
 
 					$http.get(url).then(function(response){
 						
 						console.log("http get request response");
 						console.log(response);
-
 						self.allCodes = {};
 
 						for(var i = 0; i < response.data.content.length; i++){
@@ -621,6 +629,8 @@ dashApp.constant("CONFIG", {
 					} 
 					else if (content.type === "file"){
 						self.code = self.allCodes[codeName].content;
+						currentFile =  self.allCodes[codeName].name;
+						showUpdate = 1;
 					}
 				}, 
 				
@@ -849,6 +859,50 @@ dashApp.constant("CONFIG", {
 
 
 				/**
+				 * @function updateFile Updates the contents of a file
+				 * @param {String} content New contents of the file
+				 */
+				self.updateFile = function(content){
+				
+					var postBody = {
+						"file_path" : url.replace(replace, "") + currentFile,
+						"content" 	: content
+					};
+		
+					$http.post(updateFSUrl, postBody).then(function(){
+						console.log("Updated");
+						self.renderMenu(url);
+					}, function(){
+						alert("Update was unsuccessful");
+					});
+				},
+
+
+
+				/**
+				 * @function renameFile Renames the file
+				 * @param {String} name The new name of the file
+				 */
+				self.renameFile = function(name){
+
+					var postBody = {
+						"file_path" : url.replace(replace, "") + currentFile,
+						"file_name" : name
+					};
+					
+					console.log(postBody);
+					
+					$http.post(renameFSUrl, postBody).then(function(){
+						console.log("Renamed");
+						self.renderMenu(url);
+					}, function(){
+						alert("Rename was unsuccessful");
+					});
+				},
+
+
+
+				/**
 				 * @function moveBackFolder Moves back up in the directory navigation path
 				 */
 				self.moveBackFolder = function(){
@@ -905,6 +959,40 @@ dashApp.constant("CONFIG", {
 				 */
 				self.showBackButton = function(){
 					return (visitedPages.length > 1);
+				},
+
+
+
+				/**
+				 * @function showOpenButtons Determines the visibility of the buttons when file open
+				 * @returns {Boolean} true if a file is open and hence the update button needs to be shown
+				 */
+				self.showOpenButtons = function(){
+					if (showUpdate === 1){
+						return true;
+					} else {
+						return false;
+					}
+				},
+
+
+
+				/**
+				 * @function showNewButtons Determines the visibility of buttons for actions for new file
+				 * @returns {Boolean} true if code name filled
+				 */
+				self.showNewButtons = function(){
+					return self.codeName && !self.showOpenButtons();
+				},
+
+
+				
+				/**
+				 * @function showRenameButton Determines the visibility of the rename button
+				 * @returns {Boolean} true if and only if both file open and codename filled
+				 */
+				self.showRenameButton = function(){
+					return (self.codeName && self.showOpenButtons() );
 				},
 
 

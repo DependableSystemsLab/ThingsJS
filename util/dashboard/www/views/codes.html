@@ -10,24 +10,30 @@
 			
 			<div class="row">
 				<div class="col-md-4">
-					<div class="form-group">
+					<div class="form-group" id="codeName">
 						<label>Name</label>
 						<input type="text" ng-model="$view.codeName" class="form-control"/>
 					</div>
 				</div>
 
-				<div ng-show="$view.codeName" class="col-md-8 text-right">
+				<div class="col-md-8 text-right">
 					<div class="form-inline">
 						<select ng-model="$view.selectedNode" class="form-control">
 							<option ng-repeat="(node, data) in $view.idleNodes" ng-value="node" ng-if="data.status === 'idle'">{{ node }}</option>
 						</select>
-							<button ng-click="$view.sendCode($view.selectedNode, $view.code)" class="btn btn-success">
+							<button ng-show="$view.showOpenButtons()" ng-click="$view.sendCode($view.selectedNode, $view.code)" class="btn btn-success">
 								<i class="fa fa-play"></i> Run Code
 							</button>						
-							<button ng-click="$view.saveCode($view.codeName, $view.code)" class="btn btn-primary">
+							<button ng-show="$view.showNewButtons()" ng-click="$view.saveCode($view.codeName, $view.code)" class="btn btn-primary">
 								<i class="fa fa-save"></i> Save Code
 							</button>
-							<button ng-click="$view.saveFolder($view.codeName)" class="btn btn-primary">
+							<button ng-show="$view.showOpenButtons()" ng-click="$view.updateFile($view.code)" class="btn btn-primary">
+								<i class="fa fa-save"></i> Update Code
+							</button>
+							<button ng-show="$view.showRenameButton()" ng-click="$view.renameFile($view.codeName)" class="btn btn-primary">
+									<i class="fa fa-save"></i> Rename Code
+							</button>
+							<button ng-show="$view.showNewButtons()" ng-click="$view.saveFolder($view.codeName)" class="btn btn-primary">
 								<i class="fa fa-folder"></i> Create Folder
 							</button>				
 					</div>
