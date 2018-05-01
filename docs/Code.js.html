@@ -1,4 +1,32 @@
-'use strict'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Code.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Code.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict'
 var path = require('path');
 var fs = require('fs');
 var child_process = require('child_process');
@@ -110,13 +138,13 @@ StaticScope.prototype.findRef = function(raw_name){
 	if (raw_name in this.refs) return { scope: this, identifier: this.identifier()+'.refs.'+raw_name }
 	if (this.parent !== null) return this.parent.findRef(raw_name);
 	else {
-		(WARNING && console.log(chalk.red('[WARNING] Could not find scope for ')+raw_name));
+		(WARNING &amp;&amp; console.log(chalk.red('[WARNING] Could not find scope for ')+raw_name));
 		return { scope: null, identifier: raw_name };
 	}
 }
 StaticScope.prototype.protectAncestor = function(ancestor){
-	if (ancestor.level < this.level){
-		if (!(this.protects) || (this.protects.level < ancestor.level)) this.protects = ancestor;
+	if (ancestor.level &lt; this.level){
+		if (!(this.protects) || (this.protects.level &lt; ancestor.level)) this.protects = ancestor;
 	}
 }
 
@@ -128,15 +156,15 @@ function AstHook(scope, node){
 	this.scope = scope;
 	this.node = node;
 
-	(DEBUG && this.debug(chalk.green('top-down')));
+	(DEBUG &amp;&amp; this.debug(chalk.green('top-down')));
 	if (this.node.type in AstHook.onEnter){
 		AstHook.onEnter[this.node.type](this);	
 	}
 	else {
-		(DEBUG && console.log(chalk.yellow('[INFO] '+this.node.type+' remains the same')));
+		(DEBUG &amp;&amp; console.log(chalk.yellow('[INFO] '+this.node.type+' remains the same')));
 	}
 
-	(DEBUG && this.debug(chalk.red('bottom-up')));
+	(DEBUG &amp;&amp; this.debug(chalk.red('bottom-up')));
 }
 AstHook.prototype.debug = function(message){
 	console.log(helpers.indent(this.scope.level*4)
@@ -170,8 +198,8 @@ function _getMemberExpressionObject(node){
 }
 function isNative(node){
 	return ( !node
-			|| ((node.type === 'Identifier') && (node.name in AstHook.NATIVE_KEYWORDS))
-			|| ((node.type === 'MemberExpression') && isNative(_getMemberExpressionObject(node.object)) ) )
+			|| ((node.type === 'Identifier') &amp;&amp; (node.name in AstHook.NATIVE_KEYWORDS))
+			|| ((node.type === 'MemberExpression') &amp;&amp; isNative(_getMemberExpressionObject(node.object)) ) )
 }
 AstHook.onEnter = {
 	Program: function(self){
@@ -249,7 +277,7 @@ AstHook.onEnter = {
 		// Intercept console.log calls
 		if (self.node.callee.type === 'MemberExpression'){
 			if (self.node.callee.object.name === 'console'
-				&& self.node.callee.property.name === 'log'){
+				&amp;&amp; self.node.callee.property.name === 'log'){
 				self.node.callee.object.name = SCOPE_PREFIX;
 			}
 			else if (self.node.callee.object.name in AstHook.NATIVE_KEYWORDS){
@@ -400,7 +428,7 @@ AstHook.onEnter = {
 		if (self.node.left.type === 'ExpressionStatement'){
 			self.node.left = self.node.left.expression;
 			
-			if (self.node.left.right && self.node.left.right.type === 'Identifier' && self.node.left.right.name === 'undefined'){
+			if (self.node.left.right &amp;&amp; self.node.left.right.type === 'Identifier' &amp;&amp; self.node.left.right.name === 'undefined'){
 				self.node.left = self.node.left.left;
 			}
 		}
@@ -493,14 +521,14 @@ AstHook.onEnter = {
 		self.node.argument = new AstHook(self.scope, self.node.argument).node;
 	},
 	MemberExpression: function(self){
-		if (!(self.node.object.type === 'Identifier' && self.node.object.name in AstHook.NATIVE_KEYWORDS)){
+		if (!(self.node.object.type === 'Identifier' &amp;&amp; self.node.object.name in AstHook.NATIVE_KEYWORDS)){
 			self.node.object = new AstHook(self.scope, self.node.object).node;
 		}
 		if (self.node.computed === true) self.node.property = new AstHook(self.scope, self.node.property).node;
 	},
 	Identifier: function(self){
 		var reference = self.scope.findRef(self.node.name);
-		(reference.scope && self.scope.protectAncestor(reference.scope));
+		(reference.scope &amp;&amp; self.scope.protectAncestor(reference.scope));
 		var replace = esprima.parse(reference.identifier).body[0].expression;
 		self.node = replace;
 	},
@@ -616,7 +644,7 @@ Code.prototype.run = function(options){
 					status: Code.Status.RUNNING
 				})
 			}
-			else if (message.ctrl && message.ctrl === 'publish'){
+			else if (message.ctrl &amp;&amp; message.ctrl === 'publish'){
 				self.pubsub.publish(message.topic, message.message);
 			}
 			else if (message.timestamp){ // if there's timestamp, it's resource usage
@@ -637,8 +665,8 @@ Code.prototype.ipcSend = function(instance_id, ctrl, kwargs){
 	var self = this;
 	return new Promise(function(resolve, reject){
 		var instance = self.processes[instance_id];
-		// if (self.process !== null && self.process.connected){
-		if (instance && instance.process.connected){
+		// if (self.process !== null &amp;&amp; self.process.connected){
+		if (instance &amp;&amp; instance.process.connected){
 			var req_id = helpers.randKey(4);
 			var deferred = helpers.defer();
 			deferred.promise.then(function(reply){
@@ -651,8 +679,8 @@ Code.prototype.ipcSend = function(instance_id, ctrl, kwargs){
 			instance.process._requests[req_id] = deferred;
 			instance.process.send({ request: req_id, ctrl: ctrl, kwargs: kwargs });
 			setTimeout(function(){
-				if (instance.process && req_id in instance.process._requests){
-				// if (self.process && req_id in self.process._requests){
+				if (instance.process &amp;&amp; req_id in instance.process._requests){
+				// if (self.process &amp;&amp; req_id in self.process._requests){
 					deferred.reject({
 						error: 'IPCTimeout',
 						message: 'IPC Request timed out'
@@ -772,7 +800,7 @@ Code.instrument = function(pubsub, code_name, raw_code){
 	var result = escodegen.generate(template);
 
 	// var ended = Date.now();
-	// (DEBUG && console.log(chalk.green('Instrumented in '+(ended - started)+'ms')));
+	// (DEBUG &amp;&amp; console.log(chalk.green('Instrumented in '+(ended - started)+'ms')));
 	return result;
 }
 
@@ -849,7 +877,7 @@ Timer.prototype.start = function(){
 		self.callback();
 		self.cleared_at = Date.now();
 		// self.callback[PROPERTY_PREFIX+'parent'].removeChild(self.callback[PROPERTY_PREFIX+'scope']);
-		((self.type !== 'Interval') && (delete self.root_scope.timers[self.id]));
+		((self.type !== 'Interval') &amp;&amp; (delete self.root_scope.timers[self.id]));
 	}, self.timedelta);
 	this.ref_type = this.type;
 };
@@ -1092,7 +1120,7 @@ function Scope(instance, arg1, id, parent, params, hoisted, uid){
 
 	this.wrapped = {};
 
-	(hoisted && this.hoist(hoisted));	// shortcut for hoisting via argument
+	(hoisted &amp;&amp; this.hoist(hoisted));	// shortcut for hoisting via argument
 }
 // Used only for debugging - unlike StaticScope, this identifier function is not involved in migration routine
 Scope.prototype.identifier = function(){
@@ -1107,7 +1135,7 @@ Scope.prototype.addChild = function(scope){
 	this.children[scope.uid] = scope;
 }
 Scope.prototype.removeChild = function(scope){
-	((scope.uid in this.children) && (delete this.children[scope.uid]));
+	((scope.uid in this.children) &amp;&amp; (delete this.children[scope.uid]));
 }
 Scope.prototype.getScope = function(uri){
 	var tokens = (uri instanceof Array) ? uri : uri.split('/');
@@ -1146,8 +1174,8 @@ Scope.prototype.addFunction = function(func, protects, uid){
 	var wrapped = function(){
 		var result = func.apply(this, arguments);
 		((typeof result !== 'function') 
-			&& (!result || typeof result !== 'object') 
-			&& func[PROPERTY_PREFIX+'post'](chalk.yellow(func.name)+' is done') );
+			&amp;&amp; (!result || typeof result !== 'object') 
+			&amp;&amp; func[PROPERTY_PREFIX+'post'](chalk.yellow(func.name)+' is done') );
 		// console.log(chalk.yellow(func.name)+' is done');
 		return result;
 	}
@@ -1177,7 +1205,7 @@ Scope.prototype.getRawFunction = function(uri){
 	else throw "No Scope found for "+uri;
 }
 function gcPrescan(obj){
-	if (obj && (typeof obj === 'object') && (obj[PROPERTY_PREFIX+'scope'])){
+	if (obj &amp;&amp; (typeof obj === 'object') &amp;&amp; (obj[PROPERTY_PREFIX+'scope'])){
 		obj[PROPERTY_PREFIX+'scope'].protectAncestry();
 		Object.keys(obj).forEach(function(prop){
 			// Commented out for now, to optimize. Cycle detection missing
@@ -1208,7 +1236,7 @@ Scope.prototype.gc = function(sum, indent){
 		
 	});
 	// console.log(helpers.indent(indent)+chalk.red(this.uri())+' GC Frozen - '+(!!this.frozen));
-	if (!(this.in_use) && this.parent){
+	if (!(this.in_use) &amp;&amp; this.parent){
 		this.parent.removeChild(this);
 		return 0;
 	}
@@ -1257,7 +1285,7 @@ Scope.prototype.getSerializable = function(options){
 		});
 	})
 	Object.keys(this.refs).forEach(function(key){
-		if (self.refs[key] && self.refs[key].__uri){
+		if (self.refs[key] &amp;&amp; self.refs[key].__uri){
 		// if (options.processed.indexOf(self.refs[key].__uri) > -1){
 			safe.refs[key] = {
 				type: 'things-js.reference',
@@ -1266,7 +1294,7 @@ Scope.prototype.getSerializable = function(options){
 		}
 		else {
 			safe.refs[key] = makeSerializable(self.refs[key]);
-			if (safe.refs[key] && (typeof safe.refs[key] === 'object')){
+			if (safe.refs[key] &amp;&amp; (typeof safe.refs[key] === 'object')){
 				self.refs[key].__uri = self.identifier()+'.refs.'+key;
 				options.processed.push(self.refs[key].__uri);
 			}
@@ -1462,25 +1490,25 @@ RootScope.prototype.gc = function(){
 		// console.log('    until '+timer.callback[PROPERTY_PREFIX+'protects'].uri());
 	});
 	var sum = Scope.prototype.gc.call(this, 0);
-	(DEBUG && console.log(" --- "+sum+" scopes ---"));
+	(DEBUG &amp;&amp; console.log(" --- "+sum+" scopes ---"));
 	// console.log(" --- "+sum+" scopes ---")
 };
 
 var ProcessHandler = {
 	PAUSE: function(root_scope){
 		root_scope.pauseTimers();
-		console.log(chalk.yellow('--- Paused <'+root_scope.meta.code_name+'> ---'));
+		console.log(chalk.yellow('--- Paused &lt;'+root_scope.meta.code_name+'> ---'));
 		return { status: Code.Status.PAUSED };
 	},
 	RESUME: function(root_scope){
-		console.log(chalk.green('--- Resuming <'+root_scope.meta.code_name+'> ---'));
+		console.log(chalk.green('--- Resuming &lt;'+root_scope.meta.code_name+'> ---'));
 		root_scope.resumeTimers();
 		return { status: Code.Status.RUNNING };
 	},
 	SNAPSHOT: function(root_scope, kwargs){
 		root_scope.pauseTimers();
 		var status = Code.Status.PAUSED;
-		console.log(chalk.yellow('--- Paused <'+root_scope.meta.code_name+'> ---'));
+		console.log(chalk.yellow('--- Paused &lt;'+root_scope.meta.code_name+'> ---'));
 		
 		var started = Date.now();
 		var safe = root_scope.snapshot();
@@ -1489,7 +1517,7 @@ var ProcessHandler = {
 		console.log('Snapshot taken in '+elapsed+' ms');
 
 		if (!kwargs.pause_after){
-			console.log(chalk.green('--- Resuming <'+root_scope.meta.code_name+'> ---'));
+			console.log(chalk.green('--- Resuming &lt;'+root_scope.meta.code_name+'> ---'));
 			root_scope.resumeTimers();
 			status = Code.Status.RUNNING;
 		}
@@ -1540,4 +1568,26 @@ Code.bootstrap = function(pubsub_url, code_uri){
 	return root_scope
 }
 
-module.exports = Code;
+module.exports = Code;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Code.html">Code</a></li><li><a href="Scope.html">Scope</a></li></ul><h3>Global</h3><ul><li><a href="global.html#AstHook">AstHook</a></li><li><a href="global.html#NATIVE_TRANSFORMERS">NATIVE_TRANSFORMERS</a></li><li><a href="global.html#RootScope">RootScope</a></li><li><a href="global.html#StaticScope">StaticScope</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Apr 30 2018 18:44:46 GMT-0700 (PDT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
