@@ -35,5 +35,9 @@
     "mosca": "^2.8.1",
     "mqtt": "^2.14.0",
     "pidusage": "^1.2.0"
+  },
+  "devDependencies": {
+    "jsdoc": "^3.5.5",
+    "mocha": "^5.1.1"
   }
 }

@@ -33,7 +33,7 @@ program
   .action(function(conf){
     var things = require('../lib/things.js');
     var config = things.CodeEngine.validateConfig(conf);
-    var engine = new things.CodeEngine(config, { logging: 'thingsjs-logs', logInterval: 500 });
+    var engine = new things.CodeEngine(config);
     process.on('SIGINT', function(){
       engine.kill().then(function(){
           process.exit();
@@ -67,34 +67,37 @@ program
   .action(function(file_path, options){
     process.env['DEBUG'] = options.debug ? "true": "false";
     var things = require('../lib/things.js');
-    var pubsub = { url: (options.pubsub_url || 'mqtt://localhost') }; // use a dummy pubsub, no need to connect
+    // var pubsub = { url: (options.pubsub_url || 'mqtt://localhost') }; // use a dummy pubsub, no need to connect
+    var pubsub = new things.Pubsub(options.pubsub_url || 'mqtt://localhost');
     var code = things.Code.fromFile(pubsub, file_path);
     if (options.save) code.save(options.save);
-    code.run();
-
-    process.stdin.setRawMode( true );
-    process.stdin.setEncoding('utf8');
-    process.stdin.on('data', function(key){
-      if (key === 'p'){
-        if (code.status === things.Code.Status.RUNNING) code.pause();
-      }
-      else if (key === 'r'){
-        if (code.status === things.Code.Status.PAUSED) code.resume();
-      }
-      else if (key === 's'){
-        code.snapshot(true).then(function(snap){
-          console.log(jsBeautify(JSON.stringify(snap)));
-          code.saveLastSnapshot(file_path+'.snap.json')
-        })
-      }
-      else if (key === '\u0003'){
-        code.kill();
-        process.exit();
-      }
-      else {
-        console.log(key);
-      }
-    });
+    code.run()
+    .then(function(instance){
+      process.stdin.setRawMode( true );
+      process.stdin.setEncoding('utf8');
+      process.stdin.on('data', function(key){
+        if (key === 'p'){
+          code.pause(instance.id);
+        }
+        else if (key === 'r'){
+          code.resume(instance.id);
+        }
+        else if (key === 's'){
+          code.snapshot(instance.id, true).then(function(snap){
+            console.log(jsBeautify(JSON.stringify(snap)));
+            code.saveLastSnapshot(file_path+'.snap.json')
+          })
+        }
+        else if (key === '\u0003'){
+          code.kill();
+          process.exit();
+        }
+        else {
+          console.log(key);
+        }
+      });
+    })
+    
   });
 
 program
