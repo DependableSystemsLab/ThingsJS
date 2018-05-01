@@ -12,83 +12,6 @@ dashApp.constant("CONFIG", {
 	websocket_url: (window.location.hostname+':'+window.location.port+'/websocket'),
 	pubsub_url: ('ws://'+window.location.hostname+':8000')
 })
-// .factory('CodeEngine', function(){
-	
-// 	var icon_mapping = {
-// 		'undefined': 'assets/img/device-unknown-sm.png',
-// 		'raspberry-pi3': 'assets/img/device-raspberry-pi3-sm.png',
-// 		'raspberry-pi0': 'assets/img/device-raspberry-pi0-sm.png',
-// 		'xeon-e3': 'assets/img/device-xeon-e3-sm.png',
-// 		'xeon-e5': 'assets/img/device-xeon-e5-sm.png'
-// 	}
-	
-// 	function CodeEngine(data){
-// 		this.id = data.id;
-// 		this.status = data.status || "unknown";
-// 		this.running = data.running || undefined;
-// 		this.info = data.info || {};
-// 		this.stats = [];
-// 		this.console = [];
-		
-// 		//additional properties for humans
-// 		this.setIcon((data.info ? data.info.device : 'undefined'));
-// 	}
-// 	CodeEngine.prototype.update = function(data){
-// 		this.status = data.status || "unknown";
-// 		this.running = data.running || undefined;
-		
-// 		if (data.info){
-// 			this.info = data.info;
-// 			this.setIcon(data.info.device);
-// 		}
-// 	};
-// 	CodeEngine.prototype.clearConsole = function(){
-// 		this.console = [];
-// 	};
-// 	CodeEngine.prototype.setIcon = function(device){
-// 		this.icon = icon_mapping[device];
-// 	};
-	
-// 	return {
-// 		create: function(data){
-// 			return new CodeEngine(data);
-// 		}
-// 	}
-// })
-// .directive('topicTable', ['DashboardService', function(DashboardService){
-// 	return {
-// 		restrict: 'E',
-// 		scope: {},
-// 		controller: function($scope){
-// 			var self = this;
-			
-// 			self.subscriptions = DashboardService.subscriptions;
-// 			self.messages = DashboardService.messages;
-// 			self.selectedTopic = Object.keys(self.subscriptions)[0];
-// 			self.msgSearch = "";
-// 		},
-// 		controllerAs: '$ctrl',
-// 		templateUrl: 'components/topic-table.html' 
-// 	}
-// }])
-.directive('stickyFooter', function($window){
-	return {
-		restrict: 'A',
-		link: function(scope, element, attrs, ctrl){
-		var marker = $('<div></div>');
-			marker.css({background: 'transparent'});
-			marker.insertBefore(element);
-		var stick = function(){
-				var y = window.innerHeight - element.outerHeight() - marker.offset().top;
-				if (y > 0){ marker.height(y); }
-				else { marker.height(0); }
-			}
-			scope.$watch(function(){ return marker.offset().top; }, function(newVal, oldVal){ stick(); });
-			scope.$watch(function(){ return element.height(); }, function(newval){ stick(); });
-			angular.element($window).bind('resize', function(){ stick(); });
-		}
-	}
-})
 .config(['$stateProvider', '$urlRouterProvider', 
     function($stateProvider, $urlRouterProvider){
 	$stateProvider
@@ -211,4 +134,22 @@ dashApp.constant("CONFIG", {
 		})
      			
 	$urlRouterProvider.otherwise('/');
-}]);
+}])
+.directive('stickyFooter', function($window){
+	return {
+		restrict: 'A',
+		link: function(scope, element, attrs, ctrl){
+		var marker = $('<div></div>');
+			marker.css({background: 'transparent'});
+			marker.insertBefore(element);
+		var stick = function(){
+				var y = window.innerHeight - element.outerHeight() - marker.offset().top;
+				if (y > 0){ marker.height(y); }
+				else { marker.height(0); }
+			}
+			scope.$watch(function(){ return marker.offset().top; }, function(newVal, oldVal){ stick(); });
+			scope.$watch(function(){ return element.height(); }, function(newval){ stick(); });
+			angular.element($window).bind('resize', function(){ stick(); });
+		}
+	}
+});
