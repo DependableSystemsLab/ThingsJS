@@ -5,10 +5,14 @@ const WebSocket = require('ws');
 
 //import ThingsJS libs
 const things_js = require('../../lib/things.js');
+const helpers = require('../../lib/helpers.js');
+const MqttWsBridge = require('../../lib/util/MqttWsBridge.js');
 const Database = require('./db.js');
 
 const DEBUG_MODE = false;
-const static_path = path.join(__dirname, '/www');
+
+const STATIC_PATH = path.join(__dirname, '/www');
+const DOCS_PATH = path.resolve(__dirname, '../../docs');
 
 const CONFIG_SCHEMA = {
 	    type: 'object',
@@ -22,15 +26,16 @@ const CONFIG_SCHEMA = {
 	    required: ['pubsub_url', 'service_host', 'service_port', 'database_url'],
 	}
 
-const DEFAULT_CONFIG = things_js.validateConfig(path.resolve(__dirname, '../../bin/things-dashboard-default.conf'), CONFIG_SCHEMA);
+const DEFAULT_CONFIG = helpers.validateJSON(path.resolve(__dirname, '../../bin/things-dashboard-default.conf'), CONFIG_SCHEMA);
 
 function start(config){
 	if (!config){
 		config = DEFAULT_CONFIG;
 	}
 	else if (typeof config === 'string'){
-		config = things_js.validateConfig(config, CONFIG_SCHEMA);
+		config = helpers.validateJSON(config, CONFIG_SCHEMA);
 	}
+
 	//create express app annd http server
 	const app = express();
 	const server = http.createServer(app);
@@ -64,7 +69,7 @@ function start(config){
 	//attach event handlers on new websocket connection
 	sock.on('connection', function connection(ws, request){
 		console.log("\n>>> WebSocket connected from "+request.connection.remoteAddress);
-		var client_id = things_js.randomKey();
+		var client_id = helpers.randKey();
 		clients[client_id] = {
 			ws: ws,
 			subscribed: []
@@ -189,52 +194,81 @@ function start(config){
 		});
 	});
 
-	var pubsub = new things_js.Pubsub('things-dashboard', config.pubsub_url);
-	pubsub.connect().then(function(){
-		console.log("[things-dashboard] : Connected to MQTT Server at "+config.pubsub_url);
-		
-		//loop through the topics and subscribe to it
-		for (var i=0; i < watchTopics.length; i++){
-			(function subscribeToTopic(){
-				var topic = watchTopics[i];
-				pubsub.subscribe(topic, function onNewMessage(msg){
-					//console.log(JSON.stringify(msg));
-					if (msg instanceof Buffer){
-						msg = msg.toString('base64');
-						console.log('<'+topic+'> : [ RAW BUFFER DATA ]');
-					}
-					else {
-						console.log('<'+topic+'> : '+JSON.stringify(msg));
-					}
-		            var wsResponse = {
-		            	action: "pubsub",
-		            	topic: topic,
-		            	message: msg
-		            };
-		            
-		            if (['things-stats',
-		            	 'things-videostream/raw',
-		            	 'things-videostream/motion',
-		            	 'things-videostream/alarm'].indexOf(topic) < 0){
-		            	//Not saving stats in database for now, as the amount of data increases really fast
-		            	db.onMessage(topic, msg);	
-		            }
-		            sock.broadcast(topic, JSON.stringify(wsResponse));
-		            
-		        });
-			})();
-		}
-	}, function(err){
-		console.log(err);
+	var pubsub = new things_js.Pubsub(config.pubsub_url);
+	watchTopics.forEach(function(topic){
+		pubsub.subscribe(topic, function onNewMessage(msg){
+			//console.log(JSON.stringify(msg));
+			if (msg instanceof Buffer){
+				msg = msg.toString('base64');
+				console.log('<'+topic+'> : [ RAW BUFFER DATA ]');
+			}
+			else {
+				console.log('<'+topic+'> : '+JSON.stringify(msg));
+			}
+            var wsResponse = {
+            	action: "pubsub",
+            	topic: topic,
+            	message: msg
+            };
+            
+            if (['things-stats', 'things-videostream/raw', 'things-videostream/motion'].indexOf(topic) < 0){
+            	//Not saving stats in database for now, as the amount of data increases really fast
+            	db.onMessage(topic, msg);	
+            }
+            sock.broadcast(topic, JSON.stringify(wsResponse));
+            
+        });
 	});
+	pubsub.on('ready', function(){
+		console.log("[things-dashboard] : Connected to MQTT Server at "+config.pubsub_url);
+	})
+
+	// pubsub.connect().then(function(){
+	// 	console.log("[things-dashboard] : Connected to MQTT Server at "+config.pubsub_url);
+		
+	// 	//loop through the topics and subscribe to it
+	// 	for (var i=0; i < watchTopics.length; i++){
+	// 		(function subscribeToTopic(){
+	// 			var topic = watchTopics[i];
+	// 			pubsub.subscribe(topic, function onNewMessage(msg){
+	// 				//console.log(JSON.stringify(msg));
+	// 				if (msg instanceof Buffer){
+	// 					msg = msg.toString('base64');
+	// 					console.log('<'+topic+'> : [ RAW BUFFER DATA ]');
+	// 				}
+	// 				else {
+	// 					console.log('<'+topic+'> : '+JSON.stringify(msg));
+	// 				}
+	// 	            var wsResponse = {
+	// 	            	action: "pubsub",
+	// 	            	topic: topic,
+	// 	            	message: msg
+	// 	            };
+	// 	            if (['things-stats',
+	// 	            	 'things-videostream/raw',
+	// 	            	 'things-videostream/motion',
+	// 	            	 'things-videostream/alarm'].indexOf(topic) < 0){
+	// 	            	//Not saving stats in database for now, as the amount of data increases really fast
+	// 	            	db.onMessage(topic, msg);	
+	// 	            }
+	// 	            sock.broadcast(topic, JSON.stringify(wsResponse));
+	// 	        });
+	// 		})();
+	// 	}
+	// }, function(err){
+	// 	console.log(err);
+	// });
 
 	// route url: /
 	// just serving the directory as a static web root
-	app.use('/', express.static(static_path));
+	app.use('/', express.static(STATIC_PATH));
+	app.use('/docs', express.static(DOCS_PATH));
 
 	server.listen(config.service_port, function startApp(){
-		console.log(">>> Starting Pubsub Dashboard on PORT "+config.service_port);
+		console.log(">>> Starting ThingsJS Dashboard on PORT "+config.service_port);
 	});
+
+	var bridge = new MqttWsBridge()
 }
 
 module.exports = start

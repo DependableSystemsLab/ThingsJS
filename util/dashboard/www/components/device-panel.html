@@ -1,9 +1,9 @@
 <div class="panel panel-default">
 	<div class="panel-heading">
 		<span class="form-inline">
-			<select ng-model="node" ng-options="data as target for (target, data) in $service.allNodes" class="form-control">
+			<select ng-model="node" ng-options="data as target for (target, data) in $dash.engines" class="form-control">
 				<option value="">--- Select Device ---</option>
-				<option ng-repeat="(target, data) in $service.allNodes" ng-value="data">{{ target }}</option>
+				<option ng-repeat="(target, data) in $dash.engines" ng-value="data">{{ target }}</option>
 			</select>
 		</span>
 		
@@ -18,6 +18,7 @@
 		
 		<!-- Status View -->
 		<div ng-show="viewMode === 'status'">
+			<h4>{{ node.id }}</h4>
 			
 			<table class="table table-bordered">
 				<tbody ng-if="node">
@@ -29,7 +30,7 @@
 						<th>Device</th>
 						<td>{{ node.info.device }}</td>
 					</tr>
-					<tr>
+					<!-- <tr>
 						<th>Running</th>
 						<td>
 							<span>{{ node.running || '-' }}</span>
@@ -37,11 +38,55 @@
 								<i class="fa fa-stop"></i> Stop
 							</button>
 						</td>
-					</tr>
+					</tr> -->
 				</tbody>
 				<tbody ng-if="!node">
 					<tr>
 						<td class="text-center">Device not selected</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h4 ng-if="node">Processes</h4>
+			<table class="table table-bordered" ng-if="node">
+				<thead>
+					<tr>
+						<th>Code</th>
+						<th>Runtime ID</th>
+						<th>Status</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody ng-repeat="(code_name, instances) in node.codes">
+					<tr ng-repeat="(instance_id, status) in instances">
+						<th>
+							{{ code_name }}
+						</th>
+						<td>
+							{{ instance_id }}
+						</td>
+						<td>
+							{{ status }}
+						</td>
+						<td>
+							<button ng-show="status === 'Running'" ng-click="node.pauseCode(code_name, instance_id)" class="btn btn-danger">
+								Pause
+							</button>
+							<button ng-show="status === 'Paused'" ng-click="node.resumeCode(code_name, instance_id)" class="btn btn-success">
+								Resume
+							</button>
+
+							<span ng-show="status === 'Running' || status === 'Paused'" class="form-inline">
+								<select ng-model="selectedNode" class="form-control">
+									<option value="">--- Select Device ---</option>
+									<option ng-repeat="(target, data) in $dash.engines" ng-value="target" ng-if="data.id !== node.id">{{ target }}</option>
+								</select>
+								<button class="btn btn-warning btn-sm"
+										ng-click="node.migrateCode(code_name, instance_id, selectedNode)">
+									<i class="fa fa-exchange"></i> Migrate
+								</button>
+							</span>
+						</td>
 					</tr>
 				</tbody>
 			</table>
@@ -61,7 +106,7 @@
 		<div ng-show="viewMode === 'console'">
 			
 			<device-console lines="node.console" height="144px"></device-console>
-			<button ng-if="node.console.length > 0" class="btn btn-info btn-sm pull-right" ng-click="node.clearConsole()">Clear Console</button>
+			<button ng-if="node.console.length > 0" class="btn btn-info btn-sm pull-right" ng-click="node.console = []">Clear Console</button>
 										
 		</div>
 		<!-- End Console View -->
@@ -73,9 +118,9 @@
 		<div ng-if="node.status === 'idle'" class="form-inline">
 			<select ng-model="selectedCode" class="form-control">
 				<option value="">--- Select Code ---</option>
-				<option ng-repeat="(codeName, data) in $service.allCodes" ng-value="data.code">{{ codeName }}</option>
+				<option ng-repeat="(codeName, data) in $service.allCodes" ng-value="codeName">{{ codeName }}</option>
 			</select>
-			<button ng-click="$service.runCode(node.id, selectedCode)" class="btn btn-danger">
+			<button ng-click="node.runCode(selectedCode, $service.allCodes[selectedCode].code)" class="btn btn-danger">
 				<i class="fa fa-play"></i> Run
 			</button>
 		</div>

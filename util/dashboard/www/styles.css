@@ -134,6 +134,13 @@
 	text-shadow: 0 0 4px white;
 	transition: 0.3s;
 }
+.navbar-ubc .navbar-nav a{
+	color: white;
+}
+.navbar-ubc .navbar-nav a:hover{
+	background: #577ea9;
+	color: white;
+}
 
 .navbar-logo {
 	float: left;
