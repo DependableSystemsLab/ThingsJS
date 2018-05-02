@@ -869,15 +869,19 @@ function Timer(root_scope, type, callback, timedelta, timer_id){
 	this.called_at = undefined;
 	this.cleared_at = undefined;
 	this.stopped_at = undefined;
+
+	this.freeze();
 };
 Timer.prototype.start = function(){
 	var self = this;
+
 	self.called_at = Date.now();
 	this.ref = global['set'+this.type](function(){
 		self.callback();
 		self.cleared_at = Date.now();
 		// self.callback[PROPERTY_PREFIX+'parent'].removeChild(self.callback[PROPERTY_PREFIX+'scope']);
-		((self.type !== 'Interval') &amp;&amp; (delete self.root_scope.timers[self.id]));
+		// ((self.type !== 'Interval') &amp;&amp; ((delete self.root_scope.timers[self.id]), (self.unfreeze())) );
+		((self.type !== 'Interval') &amp;&amp; (delete self.root_scope.timers[self.id]) );
 	}, self.timedelta);
 	this.ref_type = this.type;
 };
@@ -956,7 +960,8 @@ Timer.generateCode = function(obj){
 Timer.prototype.freeze = function(){
 	var scope = this.callback[PROPERTY_PREFIX+'parent'];
 	while (scope){
-		scope.frozen = true;
+		// scope.frozen = true;
+		scope.in_use = true;
 		scope = scope.parent;
 	}
 }
@@ -964,7 +969,8 @@ Timer.prototype.freeze = function(){
 Timer.prototype.unfreeze = function(){
 	var scope = this.callback[PROPERTY_PREFIX+'parent'];
 	while (scope){
-		scope.frozen = false;
+		// scope.frozen = false;
+		scope.in_use = false;
 		scope = scope.parent;
 	}
 }
@@ -1085,7 +1091,7 @@ function Scope(instance, arg1, id, parent, params, hoisted, uid){
 		// arg1[PROPERTY_PREFIX+'scope'] = this;
 		if (parent){
 			arg1[PROPERTY_PREFIX+'post'] = function(message){
-				parent.removeChild(self);
+				if (!self.in_use) parent.removeChild(self);
 				// console.log(message);
 			};
 		}
@@ -1156,10 +1162,13 @@ Scope.prototype.protectAncestry = function(ancestor){
 Scope.prototype.hoist = function(funcs){
 	var self = this;
 	funcs.forEach(function(func_meta){
-		self.addFunction(func_meta[0], func_meta[1], func_meta[0].name);
-		self.hoisted[func_meta[0].name] = func_meta[0];
-		self.refs[func_meta[0].name] = func_meta[0];
+		// self.addFunction(func_meta[0], func_meta[1], func_meta[0].name);
+		// self.hoisted[func_meta[0].name] = func_meta[0];
+		// self.refs[func_meta[0].name] = func_meta[0];
 		// self.refs[func_meta[0].name] = self.wrapped[func_meta[0].name];
+		// self.refs[func_meta[0].name] = self.funcs[func_meta[0].name];
+
+		self.refs[func_meta[0].name] = self.hoisted[func_meta[0].name] = self.addFunction(func_meta[0], func_meta[1], func_meta[0].name);
 	})
 }
 /**
@@ -1171,30 +1180,44 @@ Scope.prototype.addFunction = function(func, protects, uid){
 
 	// ATTN: Wrapping the function to detect end of a function call.
 	//     we do this to destroy Scopes that are obviously not needed anymore.
-	var wrapped = function(){
-		var result = func.apply(this, arguments);
-		((typeof result !== 'function') 
-			&amp;&amp; (!result || typeof result !== 'object') 
-			&amp;&amp; func[PROPERTY_PREFIX+'post'](chalk.yellow(func.name)+' is done') );
-		// console.log(chalk.yellow(func.name)+' is done');
-		return result;
+	function wrapped(){
+		if (this instanceof wrapped){
+			return func.apply(this, arguments);
+		}
+		else {
+			var result = func.apply(this, arguments);
+			((typeof result !== 'function') 
+				&amp;&amp; (!result || typeof result !== 'object') 
+				&amp;&amp; func[PROPERTY_PREFIX+'post'](chalk.yellow(func.name)+' is done') );
+			// console.log(chalk.yellow(func.name)+' is done');
+			return result;
+		}
 	}
 
-	func[PROPERTY_PREFIX+'uid'] = uid || func.name+'.'+helpers.randKey(6);		// .uid is the unique identifier within the parent scope
-	wrapped[PROPERTY_PREFIX+'uri'] = func[PROPERTY_PREFIX+'uri'] = this.uri()+'/'+func[PROPERTY_PREFIX+'uid'];	// .uri is the universal identifier for the global scope
-	wrapped[PROPERTY_PREFIX+'parent'] = func[PROPERTY_PREFIX+'parent'] = this;						// parent is the parent scope
-	wrapped[PROPERTY_PREFIX+'protects'] = func[PROPERTY_PREFIX+'protects'] = protects || null;		// the eldest scope that this function depends on
-	this.funcs[func[PROPERTY_PREFIX+'uid']] = func;				// store the function in the parent scope
-	
-	this.wrapped[func[PROPERTY_PREFIX+'uid']] = wrapped;
+	// func[PROPERTY_PREFIX+'uid'] = uid || func.name+'.'+helpers.randKey(6);		// .uid is the unique identifier within the parent scope
+	// wrapped[PROPERTY_PREFIX+'uri'] = func[PROPERTY_PREFIX+'uri'] = this.uri()+'/'+func[PROPERTY_PREFIX+'uid'];	// .uri is the universal identifier for the global scope
+	// wrapped[PROPERTY_PREFIX+'parent'] = func[PROPERTY_PREFIX+'parent'] = this;						// parent is the parent scope
+	// wrapped[PROPERTY_PREFIX+'protects'] = func[PROPERTY_PREFIX+'protects'] = protects || null;		// the eldest scope that this function depends on
+	// wrapped[PROPERTY_PREFIX+'raw'] = func;
+
+	// this.funcs[func[PROPERTY_PREFIX+'uid']] = func;				// store the function in the parent scope
+	// this.wrapped[func[PROPERTY_PREFIX+'uid']] = wrapped;
+
+	wrapped[PROPERTY_PREFIX+'uid'] = uid || func.name+'.'+helpers.randKey(6);		// .uid is the unique identifier within the parent scope
+	wrapped[PROPERTY_PREFIX+'uri'] = this.uri()+'/'+wrapped[PROPERTY_PREFIX+'uid'];	// .uri is the universal identifier for the global scope
+	wrapped[PROPERTY_PREFIX+'parent'] = this;						// parent is the parent scope
+	wrapped[PROPERTY_PREFIX+'protects'] = protects || null;		// the eldest scope that this function depends on
+	wrapped[PROPERTY_PREFIX+'raw'] = func;
+
+	this.funcs[wrapped[PROPERTY_PREFIX+'uid']] = wrapped;
 	
 	return wrapped;
 }
 Scope.prototype.getFunction = function(uri){
 	var tokens = uri.split('/');
 	var scope = this.getScope(tokens.slice(0, -1));
-	// if (scope) return scope.funcs[tokens[tokens.length-1]];
-	if (scope) return scope.wrapped[tokens[tokens.length-1]];
+	if (scope) return scope.funcs[tokens[tokens.length-1]];
+	// if (scope) return scope.wrapped[tokens[tokens.length-1]];
 	else throw "No Scope found for "+uri;
 }
 Scope.prototype.getRawFunction = function(uri){
@@ -1268,11 +1291,12 @@ Scope.prototype.getSerializable = function(options){
 	Object.keys(this.hoisted).forEach(function(key){
 		// safe.hoisted[key] = self.wrapped[key][PROPERTY_PREFIX+'protects'].identifier();
 		safe.hoisted[key] = self.hoisted[key][PROPERTY_PREFIX+'uid'];
-	})
+	});
+
 	Object.keys(this.funcs).forEach(function(key){
 		safe.funcs[key] = {
 			type: 'Function',
-			value: self.funcs[key].toString(),
+			value: self.funcs[key][PROPERTY_PREFIX+'raw'].toString(),
 			protects: (self.funcs[key].protects ? self.funcs[key].protects.identifier() : self.identifier()),
 			proto: makeSerializable(self.funcs[key].prototype),
 			properties: {}
@@ -1283,7 +1307,8 @@ Scope.prototype.getSerializable = function(options){
 				safe.funcs[key].properties[prop] = makeSerializable(self.funcs[key][prop]);
 			}
 		});
-	})
+	});
+
 	Object.keys(this.refs).forEach(function(key){
 		if (self.refs[key] &amp;&amp; self.refs[key].__uri){
 		// if (options.processed.indexOf(self.refs[key].__uri) > -1){
@@ -1345,7 +1370,8 @@ Scope.generateCode = function(obj, parent){
 		})
 		var props = obj.funcs[key].properties;
 		Object.keys(props).forEach(function(prop){
-			code += identifier+'.wrapped["'+key+'"].'+prop+' = '+identifier+'.funcs["'+key+'"].'+prop+' = '+makeCode(props[prop])+';';
+			// code += identifier+'.wrapped["'+key+'"].'+prop+' = '+identifier+'.funcs["'+key+'"].'+prop+' = '+makeCode(props[prop])+';';
+			code += identifier+'.funcs["'+key+'"].'+prop+' = '+makeCode(props[prop])+';';
 		})
 	});
 
@@ -1415,13 +1441,27 @@ RootScope.prototype.snapshot = function(){
 	return serialize_safe
 }
 RootScope.prototype.createObject = function(){
-	var args = Array.prototype.slice.call(arguments);
-	var Constructor = this.getRawFunction(args[0]);
-	var created = new Constructor(args.slice(1));
-	return created;
+	var args = Array.prototype.slice.call(arguments);	// args[0] is a wrapped function.
+	function Constructor(){
+		// return args[0][PROPERTY_PREFIX+'raw'].apply(this, args.slice(1));
+		return args[0].apply(this, args.slice(1));
+	}
+	// if (typeof args[0][PROPERTY_PREFIX+'raw'].prototype === 'object'){
+	if (typeof args[0].prototype === 'object'){
+		// partial.prototype = Object.create(Constructor.prototype);
+		// Constructor.prototype = args[0][PROPERTY_PREFIX+'raw'].prototype;
+		Constructor.prototype = args[0].prototype;
+	}
+	return new Constructor;
+
+	// var args = Array.prototype.slice.call(arguments);
+	// var Constructor = this.getRawFunction(args[0]);
+	// var created = new Constructor(args.slice(1));
+	// return created;
 }
 RootScope.prototype.restoreObject = function(obj, proto_uri){
-	var proto = this.getRawFunction(proto_uri).prototype;
+	// var proto = this.getRawFunction(proto_uri).prototype;
+	var proto = this.getFunction(proto_uri).prototype;
 	var created = Object.create(proto);
 	Object.keys(obj).forEach(function(prop){
 		created[prop] = obj[prop];
@@ -1476,7 +1516,7 @@ RootScope.prototype.pauseTimers = function(){
 };
 RootScope.prototype.resumeTimers = function(){
 	Object.values(this.timers).forEach(function(timer){
-		timer.unfreeze();	//Experimental
+		// timer.unfreeze();	//Experimental
 		timer.resume();
 	});
 	this.gc_timer.resume();
@@ -1578,13 +1618,13 @@ module.exports = Code;</code></pre>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Code.html">Code</a></li><li><a href="Scope.html">Scope</a></li></ul><h3>Global</h3><ul><li><a href="global.html#AstHook">AstHook</a></li><li><a href="global.html#NATIVE_TRANSFORMERS">NATIVE_TRANSFORMERS</a></li><li><a href="global.html#RootScope">RootScope</a></li><li><a href="global.html#StaticScope">StaticScope</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Code.html">Code</a></li><li><a href="Scope.html">Scope</a></li></ul><h3>Global</h3><ul><li><a href="global.html#AstHook">AstHook</a></li><li><a href="global.html#DummyPubsub">DummyPubsub</a></li><li><a href="global.html#NATIVE_TRANSFORMERS">NATIVE_TRANSFORMERS</a></li><li><a href="global.html#RootScope">RootScope</a></li><li><a href="global.html#StaticScope">StaticScope</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Apr 30 2018 18:44:46 GMT-0700 (PDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue May 01 2018 23:05:07 GMT-0700 (PDT)
 </footer>
 
 <script> prettyPrint(); </script>
