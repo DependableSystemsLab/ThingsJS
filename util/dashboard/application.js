@@ -8,6 +8,7 @@ const things_js = require('../../lib/things.js');
 const helpers = require('../../lib/helpers.js');
 const MqttWsBridge = require('../../lib/util/MqttWsBridge.js');
 const Database = require('./db.js');
+const FSServer = require('../gfs/FSServer.js');
 
 const DEBUG_MODE = false;
 
@@ -21,12 +22,13 @@ const CONFIG_SCHEMA = {
 	        service_host: { type: 'string' },
 	        service_port: { type: 'number' },
 	        database_url: { type: 'string' },
+	        filesystem_db_url: { type: 'string' },
 	        node_id: { type: 'string' },
 	    },
-	    required: ['pubsub_url', 'service_host', 'service_port', 'database_url'],
+	    required: ['pubsub_url', 'service_host', 'service_port', 'database_url', 'filesystem_db_url'],
 	}
 
-const DEFAULT_CONFIG = helpers.validateJSON(path.resolve(__dirname, '../../bin/things-dashboard-default.conf'), CONFIG_SCHEMA);
+const DEFAULT_CONFIG = helpers.validateJSON(path.resolve(__dirname, './things-dashboard-default.conf'), CONFIG_SCHEMA);
 
 function start(config){
 	if (!config){
@@ -38,227 +40,14 @@ function start(config){
 
 	//create express app annd http server
 	const app = express();
-	const server = http.createServer(app);
 	const db = new Database(config.database_url);
+	const gfs_router = express.Router()
+	const gfs = new FSServer(config.filesystem_db_url, gfs_router);
+	const server = http.createServer(app);
+	const bridge = new MqttWsBridge();
 
-	//subscribe to these topics
-	var watchTopics = ['things-engine-registry',
-	                   'things-stats',
-	                   'things-videostream/raw',
-	                   'things-videostream/motion',
-	                   'things-videostream/alarm' ];
-
-	//declare dispatcher variable for migrating code to the nodes
-	var dispatcher = new things_js.Dispatcher(config);
-
-	//create websocket server and serve it at url: /websocket
-	var sock = new WebSocket.Server({ server: server, path: '/websocket' });
-	var clients = {};
-	var subscriptions = {};
-
-	//define broadcast function for the websocket
-	sock.broadcast = function broadcast(topic, data) {
-		if (!subscriptions[topic]) subscriptions[topic] = [];
-		var subscribers = subscriptions[topic].map(function(client_id){ return clients[client_id].ws });
-		
-		subscribers.map(function(ws){
-			ws.send(data);
-		})
-	};
-
-	//attach event handlers on new websocket connection
-	sock.on('connection', function connection(ws, request){
-		console.log("\n>>> WebSocket connected from "+request.connection.remoteAddress);
-		var client_id = helpers.randKey();
-		clients[client_id] = {
-			ws: ws,
-			subscribed: []
-		}
-		ws.on('message', function incoming(message){
-			//parse the message
-			var data = JSON.parse(message);
-			console.log(data);
-			
-			//available actions
-			if (data.action === 'ping'){
-				var response = JSON.stringify({ action: 'ping', response: 'pong' }); 
-				console.log("--> "+response);
-				ws.send(response);
-			}
-			else if (data.action === 'get-topics'){
-				//serialize and send list of topics
-				ws.send(JSON.stringify({ action: 'get-topics', response: watchTopics }));
-			}
-			else if (data.action === 'pubsub'){
-				if (data.command === "subscribe"){
-					if (!subscriptions[data.topic]) subscriptions[data.topic] = [];
-					if (subscriptions[data.topic].indexOf(client_id) < 0){
-						subscriptions[data.topic].push(client_id);
-						clients[client_id].subscribed.push(data.topic);
-						
-						//If data.option.backtrack is set, fetch older records from database
-						if (data.option && data.option.backtrack){
-							db.getMessages(data.topic, data.option.backtrack)
-								.then(function(messages){
-									ws.send(JSON.stringify({ action: data.action, topic: data.topic, messages: messages }));
-								});
-						} else {
-							db.getMessages(data.topic)
-								.then(function(messages){
-									ws.send(JSON.stringify({ action: data.action, topic: data.topic, messages: messages }));
-								});
-						}
-					}
-					
-					if (watchTopics.indexOf(data.topic) < 0){
-						pubsub.subscribe(data.topic, function onNewMessage(msg){
-				            var wsResponse = {
-				            	action: data.action,
-				            	topic: data.topic,
-				            	message: msg
-				            };
-				            console.log('['+data.topic+'] : '+JSON.stringify(msg));
-				            
-				            //broadcast new message to all websocket clients
-				            sock.broadcast(data.topic, JSON.stringify(wsResponse));
-				        });
-					}
-				}
-				else if (data.command === "unsubscribe"){
-					var cindex = clients[client_id].subscribed.indexOf(data.topic);
-					if (cindex > -1){
-						clients[client_id].subscribed.splice(cindex, 1);
-					}
-					cindex = subscriptions[data.topic].indexOf(client_id);
-					if (cindex > -1){
-						subscriptions[data.topic].splice(cindex, 1);
-					}
-				}
-			}
-			else if (data.action === 'dispatcher'){
-				if (data.command === "run_code"){
-					dispatcher.runCode(data.args.nodeId, data.args.code, "raw-code")
-						.then(function(result){
-							ws.send(JSON.stringify({ action: 'dispatcher', nodeId: result.nodeId, codeId: result.codeId }));
-						});
-				}
-				else if (data.command === "pause_code"){
-					dispatcher.pauseCode(data.args.nodeId, data.args.codeId);
-				}
-				else if (data.command === "migrate_code"){
-					dispatcher.migrateCode(data.args.from, data.args.to, data.args.codeId, DEBUG_MODE)
-						.then(function(result){
-							ws.send(JSON.stringify({ action: 'dispatcher', nodeId: result.to, codeId: result.codeId }));
-						})
-				}
-			}
-			else if (data.action === 'code-db'){
-				if (data.command === "save"){
-					db.saveCode(data.name, data.code)
-						.then(function(result){
-							ws.send(JSON.stringify({ action: data.action, command: 'save', code: result }));
-						});
-				}
-				else if (data.command === "get"){
-					db.getCode(data.name)
-						.then(function(code){
-							ws.send(JSON.stringify({ action: data.action, command: 'get', code: code }));
-						});
-				}
-				else if (data.command === "get_all"){
-					db.getAllCode()
-						.then(function(codes){
-							ws.send(JSON.stringify({ action: data.action, command: 'get_all', codes: codes }));
-						});
-				}
-				else if (data.command === "delete"){
-					db.deleteCode(data.name)
-						.then(function(result){
-							ws.send(JSON.stringify({ action: data.action, command: 'delete', code: result }));
-						});
-				}				
-			}
-		});
-		ws.on('close', function onSocketClose(){
-			console.log("<<< WebSocket closed...");
-			for (var i=0; i < clients[client_id].subscribed.length; i++){
-				var topic = clients[client_id].subscribed[i];
-				if (subscriptions[topic]){
-					var cindex = subscriptions[topic].indexOf(client_id);
-					if (cindex > -1){
-						subscriptions[topic].splice(cindex, 1);
-					}
-				}
-			}
-			delete clients[client_id];
-		});
-	});
-
-	var pubsub = new things_js.Pubsub(config.pubsub_url);
-	watchTopics.forEach(function(topic){
-		pubsub.subscribe(topic, function onNewMessage(msg){
-			//console.log(JSON.stringify(msg));
-			if (msg instanceof Buffer){
-				msg = msg.toString('base64');
-				console.log('<'+topic+'> : [ RAW BUFFER DATA ]');
-			}
-			else {
-				console.log('<'+topic+'> : '+JSON.stringify(msg));
-			}
-            var wsResponse = {
-            	action: "pubsub",
-            	topic: topic,
-            	message: msg
-            };
-            
-            if (['things-stats', 'things-videostream/raw', 'things-videostream/motion'].indexOf(topic) < 0){
-            	//Not saving stats in database for now, as the amount of data increases really fast
-            	db.onMessage(topic, msg);	
-            }
-            sock.broadcast(topic, JSON.stringify(wsResponse));
-            
-        });
-	});
-	pubsub.on('ready', function(){
-		console.log("[things-dashboard] : Connected to MQTT Server at "+config.pubsub_url);
-	})
-
-	// pubsub.connect().then(function(){
-	// 	console.log("[things-dashboard] : Connected to MQTT Server at "+config.pubsub_url);
-		
-	// 	//loop through the topics and subscribe to it
-	// 	for (var i=0; i < watchTopics.length; i++){
-	// 		(function subscribeToTopic(){
-	// 			var topic = watchTopics[i];
-	// 			pubsub.subscribe(topic, function onNewMessage(msg){
-	// 				//console.log(JSON.stringify(msg));
-	// 				if (msg instanceof Buffer){
-	// 					msg = msg.toString('base64');
-	// 					console.log('<'+topic+'> : [ RAW BUFFER DATA ]');
-	// 				}
-	// 				else {
-	// 					console.log('<'+topic+'> : '+JSON.stringify(msg));
-	// 				}
-	// 	            var wsResponse = {
-	// 	            	action: "pubsub",
-	// 	            	topic: topic,
-	// 	            	message: msg
-	// 	            };
-	// 	            if (['things-stats',
-	// 	            	 'things-videostream/raw',
-	// 	            	 'things-videostream/motion',
-	// 	            	 'things-videostream/alarm'].indexOf(topic) < 0){
-	// 	            	//Not saving stats in database for now, as the amount of data increases really fast
-	// 	            	db.onMessage(topic, msg);	
-	// 	            }
-	// 	            sock.broadcast(topic, JSON.stringify(wsResponse));
-	// 	        });
-	// 		})();
-	// 	}
-	// }, function(err){
-	// 	console.log(err);
-	// });
-
+	app.use('/file-system', gfs_router);
+	
 	// route url: /
 	// just serving the directory as a static web root
 	app.use('/', express.static(STATIC_PATH));
@@ -267,8 +56,6 @@ function start(config){
 	server.listen(config.service_port, function startApp(){
 		console.log(">>> Starting ThingsJS Dashboard on PORT "+config.service_port);
 	});
-
-	var bridge = new MqttWsBridge()
 }
 
 module.exports = start

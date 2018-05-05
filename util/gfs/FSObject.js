@@ -5,7 +5,7 @@ mongoose.Promise = global.Promise;
 /* An fs object
  */
 var FileSystemSchema = new Schema({
-	_id     : Schema.Types.ObjectId,
+	// _id     : Schema.Types.ObjectId,
 	name    : String,
 	created : {type: Date, default: Date.now },
 	updated : Date,
@@ -81,7 +81,14 @@ FileSystemSchema.methods.deleteFileObject = function(id){
 /* Retrieve the children of a directory 
  * @param id : _id field of the directory
  */
-FileSystemSchema.methods.getChildren = function(id){
+FileSystemSchema.methods.getChildren = function(){
+	return this.model('FSObject')
+		.find({ parent: this._id })
+		.lean()
+		.exec();
+}
+
+FileSystemSchema.statics.getChildrenOf = function(id){
 	return this.model('FSObject')
 		.find({ parent: id })
 		.lean()
@@ -108,6 +115,33 @@ FileSystemSchema.methods.updateName = function(id, newName){
 		.find({ _id: id })
 		.update({ $set: { name: newName } })
 		.exec();
+}
+
+FileSystemSchema.methods.getOffspring = function(rel_path){
+	var self = this;
+	console.log(rel_path);
+	var tokens = rel_path.split('/');
+	if (tokens[tokens.length-1] === '') tokens.pop();
+	
+	if (tokens.length === 0){
+		return Promise.resolve(this);
+	}
+	else {
+		return new Promise(function(resolve, reject){
+			// console.log("Getting "+tokens[0]);
+			self.model('FSObject')
+				.findOne({ parent: self._id, name: tokens[0] })
+				.exec(function(err, obj){
+					if (obj){
+						obj.getOffspring(tokens.slice(1).join('/'))
+						.then(resolve, reject);	
+					}
+					else {
+						reject("Not Found")
+					}
+				})
+		}) 
+	}
 }
 
 var FSObject = mongoose.model('FSObject', FileSystemSchema);

@@ -12,6 +12,11 @@
 		});
 		return deferred;
 	}
+	function joinPath(p1, p2){
+		if (p1[p1.length-1] === '/') p1 = p1.substring(0,p1.length-1);
+		if (p2[0] === '/') p2 = p2.substring(1);
+		return p1+'/'+p2;
+	}
 
 	function EventEmitter(){
 		this.__eventHandlers = {};
@@ -95,7 +100,9 @@
 		self.socket.onmessage = function(event){
 			var data = JSON.parse(event.data);
 			if (data.topic in self.subscriptions){
-				self.subscriptions[data.topic](data.topic, data.message);
+				self.subscriptions[data.topic].handler(data.topic, data.message);
+				// self.subscriptions[data.topic].messages.push(data.message);
+				// if (self.subscriptions[data.topic].messages.length > 200) self.subscriptions[data.topic].messages.shift();
 			}
 		};
 
@@ -106,9 +113,13 @@
 	}
 	MqttWsClient.prototype.subscribe = function(topic, handler){
 		if (!(topic in this.subscriptions)){
-			this.subscriptions[topic] = handler;
+			this.subscriptions[topic] = {
+				handler: handler,
+				messages: []
+			}
 			if (this.socket.readyState === WebSocket.OPEN){
 				this.socket.send(JSON.stringify({ action: 'subscribe', topic: topic }));
+				console.log("Subscribed to "+topic+" at "+this.endpoint);
 			}
 			else {
 				console.log("WebSocket is closed, cannot subscribe to ["+topic+"]");
@@ -221,16 +232,18 @@
 	}
 
 	/** Program */
-	function Program(pubsub, code_name, instance_id){
+	function Program(pubsub, code_name, instance_id, source){
 		EventEmitter.call(this);
 		var self = this;
 		this.pubsub = pubsub;
 		this.code_name = code_name;
 		this.id = instance_id;
+		this.source = source;
 		this.status = undefined;
 
 		this.stats = [];
 		this.console = [];
+		this.snapshots = [];
 
 		this.pubsub.subscribe(this.code_name+'/'+this.id+'/resource', function(topic, message){
 			self.stats.push(message);
@@ -243,7 +256,12 @@
 			});
 			self.emit('update');
 			// console.log(message);
-		})
+		});
+		this.pubsub.subscribe(this.code_name+'/'+this.id+'/snapshots', function(topic, message){
+			self.snapshots.push(message);
+			self.emit('update');
+			console.log(message);
+		});
 	}
 	Program.prototype = new EventEmitter();
 
@@ -253,7 +271,7 @@
 	function Dashboard(pubsub_url){
 		EventEmitter.call(this);
 		var self = this;
-		var pubsub = new MqttWsClient(pubsub_url || 'ws://localhost:8000');
+		var pubsub = this.pubsub = new MqttWsClient(pubsub_url || 'ws://localhost:8000');
 
 		this.engines = {};
 		this.programs = {};
@@ -277,33 +295,136 @@
 		pubsub.subscribe(PROGRAM_MONITOR_NAMESPACE, function(topic, message){
 			console.log(topic, message);
 			if (!(message.instance_id in self.programs)){
-				self.programs[message.instance_id] = new Program(pubsub, message.code_name, message.instance_id);
-				self.programs[message.instance_id].on('update', function(){
+				var program = new Program(pubsub, message.code_name, message.instance_id, message.source);
+				program.on('update', function(){
 					self.emit('update');
 				})
+				self.programs[message.instance_id] = program;
 			}
 			// self.programs[message.instance_id].engine = message.engine;
 			self.programs[message.instance_id].status = message.status;
+			if (message.source) self.programs[message.instance_id].source = message.source;
 		});
 
 		pubsub.on('connect', function(){
 			setTimeout(function(){
 				pubsub.publish(ENGINE_REGISTRY_NAMESPACE+'/bcast', { ctrl: 'report' });
 			}, 250);
-		})
+		});
+
+		this.showSource = function(instance_id){
+			alert(self.programs[instance_id].source);
+		}
 	}
 	Dashboard.prototype = new EventEmitter();
+
+	/** Code Repository - an abstraction for the RESTful endpoint */
+	function CodeRepository(base_url){
+		EventEmitter.call(this);
+		this.base_url = base_url;
+	}
+	CodeRepository.prototype = new EventEmitter();
+	CodeRepository.prototype.get = function(abs_path){
+		var self = this;
+		return new Promise(function(resolve, reject){
+			$.ajax(joinPath(self.base_url, abs_path))
+				.done(function(data, status, xhr){
+					console.log(status, data);
+					var info = Object.keys(data.children)
+						.reduce(function(acc, key){
+							if (data.children[key].type === 'directory') acc.dirs.push(key);
+							else if (data.children[key].type === 'file') acc.files.push(key);
+							return acc
+						}, {
+							dirs: [],
+							files: []
+						});
+					Object.assign(data, info);
+					
+					resolve(data || {});
+				})
+				.fail(function(xhr, status, error){
+					console.log(status, error);
+					reject(error);
+				})
+		})
+	}
+	/** 
+	 * @param {Object} file_data - File data
+	 * @param {string} file_data.name - Name of the file
+	 * @param {string} file_data.content - File content (utf-8 string)
+	 */
+	CodeRepository.prototype.writeFile = function(abs_path, file_data){
+		var self = this;
+		return new Promise(function(resolve, reject){
+			file_data.type = 'file';
+			$.ajax({
+				type: 'POST',
+				url: joinPath(self.base_url, abs_path),
+				data: JSON.stringify(file_data),
+				contentType: 'application/json; charset=utf-8'
+			})
+			.done(function(data, status, xhr){
+				console.log(status, data);
+				resolve(data || {});
+			})
+			.fail(function(xhr, status, error){
+				console.log(status, error);
+				reject(error);
+			})
+		})
+	}
+	CodeRepository.prototype.makeDir = function(abs_path, dir_name){
+		var self = this;
+		return new Promise(function(resolve, reject){
+			var dir = {
+				type: 'directory',
+				name: dir_name
+			}
+			$.ajax({
+				type: 'POST',
+				url: joinPath(self.base_url, abs_path),
+				data: JSON.stringify(dir),
+				contentType: 'application/json; charset=utf-8'
+			})
+			.done(function(data, status, xhr){
+				console.log(status, data);
+				resolve(data || {});
+			})
+			.fail(function(xhr, status, error){
+				console.log(status, error);
+				reject(error);
+			})
+		})
+	}
+	CodeRepository.prototype.delete = function(abs_path, ids){
+		var self = this;
+		return new Promise(function(resolve, reject){
+			$.ajax({
+				type: 'DELETE',
+				url: joinPath(self.base_url, abs_path)+'?ids='+ids.join(',')
+			})
+			.done(function(data, status, xhr){
+				console.log(status, data);
+				resolve(data || {});
+			})
+			.fail(function(xhr, status, error){
+				console.log(status, error);
+				reject(error);
+			})
+		})
+	}
 
 var things = angular.module('things.js', []);
 
 things.factory('Dashboard', ['$rootScope', function($rootScope){
-	var Dash = Dashboard;
+	// var Dash = Dashboard;
 	var dash = undefined;
 
 	return {
 		create: function(pubsub_url){
 			if (!dash){
-				dash = new Dash(pubsub_url);
+				dash = new Dashboard(pubsub_url);
 				dash.on('update', function(){
 					$rootScope.$apply();
 				})
@@ -312,6 +433,25 @@ things.factory('Dashboard', ['$rootScope', function($rootScope){
 		},
 		get: function(){
 			return dash;
+		}
+	}
+}])
+things.factory('CodeRepository', ['$rootScope', function($rootScope){
+	// var CodeRepository = CodeRepository;
+	var repo = undefined;
+
+	return {
+		create: function(repo_url){
+			if (!repo){
+				repo = new CodeRepository(repo_url);
+				// repo.on('update', function(){
+				// 	$rootScope.$apply();
+				// })
+			}
+			return repo;
+		},
+		get: function(){
+			return repo;
 		}
 	}
 }])
@@ -476,286 +616,67 @@ things.factory('Dashboard', ['$rootScope', function($rootScope){
 		}
 	}
 })
-.directive('devicePanel', ['Dashboard', 'DashboardService', function(Dashboard, DashboardService){
+.directive('devicePanel', ['Dashboard', 'CodeRepository', function(Dashboard, CodeRepository){
 	return {
 		restrict: 'E',
 		scope: {
 			node: '='
 		},
 		controller: ['$scope', function($scope){
-			$scope.$service = DashboardService;
+			// $scope.$service = DashboardService;
 			$scope.$dash = Dashboard.get();
+			$scope.$repo = CodeRepository.get();
+
+			var self = this;
+
+			self.showSource = {}
+
+			self.refresh = function(){
+				$scope.$repo.get('/')
+					.then(function(fsObject){
+						console.log(fsObject);
+						self.codes = {};
+						fsObject.files.forEach(function(name){
+							self.codes[name] = fsObject.children[name];
+						})
+
+						$scope.$apply();
+					})
+			}
+
+			self.refresh();
 		}],
 		controllerAs: '$ctrl',
 		templateUrl: 'components/device-panel.html'
 	}
 }])
+.directive('onEnterKey', function(){
+	return function(scope, element, attrs){
+		element.bind("keyup", function(e){
+			if (e.which === 13){
+				e.preventDefault();
+				scope.$apply(function(){
+					scope.$eval( attrs.onEnterKey );
+				})
+			}
+		})
+	}
+})
 
-.directive('topicTable', ['DashboardService', function(DashboardService){
+.directive('topicTable', [function(){
 	return {
 		restrict: 'E',
 		scope: {},
 		controller: function($scope){
 			var self = this;
 			
-			self.subscriptions = DashboardService.subscriptions;
-			self.messages = DashboardService.messages;
-			self.selectedTopic = Object.keys(self.subscriptions)[0];
+			// self.subscriptions = DashboardService.subscriptions;
+			// self.messages = DashboardService.messages;
+			// self.selectedTopic = Object.keys(self.subscriptions)[0];
 			self.msgSearch = "";
 		},
 		controllerAs: '$ctrl',
 		templateUrl: 'components/topic-table.html' 
-	}
-}])
-
-// .factory('WebSocketService', ["CONFIG", function(CONFIG){
-// 	return {
-// 		create: function(config){
-// 			return new EasyWebSocket(CONFIG.websocket_url, config);
-// 		}
-// 	}
-// }])
-.factory('DashboardService', ['$q', '$rootScope', 'CONFIG', function($q, $rootScope, CONFIG){
-	var TOPICS = {
-		'node-registry': 'things-engine-registry'
-	}
-	
-	var _SOCKET = undefined;
-	
-	var _SUBSCRIPTIONS = {};
-	var _MESSAGES = {};
-	
-	var _NODES = {};
-	var _CODES = {};
-	
-	var _VIDEOSTREAM = {};
-	
-	function handleNodeRunning(data){
-		var nodeId = data.topic.split("/")[0];
-		_NODES[nodeId].running = data.message;
-//		console.log("NODE "+nodeId+" now running "+data.message);
-//		console.log(data.message);
-		if (data.message){
-			subscribe(data.message+"/console", function(logText){
-				_NODES[nodeId].console.push(logText.message);
-			});	
-		}
-	}
-	function handleNodeStats(data){
-		var nodeId = data.topic.split("/")[0];
-		if (!_NODES[nodeId].stats) _NODES[nodeId].stats = [];
-		if (data.message) _NODES[nodeId].stats.push(data.message);
-	}
-	function handleVideoStream(data){
-		if (data.message){
-			_VIDEOSTREAM.raw = "data:image/png;base64,"+data.message;	
-		}
-		else {
-			//Empty image
-			_VIDEOSTREAM.raw= "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
-		}
-	}
-	function handleVideoMotion(data){
-		if (data.message){
-			_VIDEOSTREAM.motion = "data:image/png;base64,"+data.message;	
-		}
-		else {
-			//Empty image
-			_VIDEOSTREAM.motion = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
-		}
-	}
-	
-	//Subscribe to MQTT via WS backend
-	function subscribe(topic, handler){
-		_SUBSCRIPTIONS[topic] = { subscribed: true, handler: handler };
-		_SOCKET.send({ action: "pubsub", command: "subscribe", topic: topic });
-		_SUBSCRIPTIONS[topic].subscribed = true;
-	}
-	function unsubscribe(topic){
-		if (!_SUBSCRIPTIONS[topic]) _SUBSCRIPTIONS[topic] = { subscribed: false };
-		_SOCKET.send({ action: "pubsub", command: "unsubscribe", topic: topic });
-		_SUBSCRIPTIONS[topic].subscribed = false;
-	}
-	
-	//Send RUN command to dispatcher
-	function runCode(nodeId, code){
-		if (nodeId && code){
-			_SOCKET.send({ action: "dispatcher", command: "run_code", args: { nodeId: nodeId, code: code } });
-		}
-		else {
-			alert("You need to select the node AND provide the code");
-		}
-	}
-	//Send PAUSE command to dispatcher
-	function pauseCode(nodeId, codeId){
-		if (nodeId && _NODES[nodeId].status === 'busy'){
-			_SOCKET.send({ action: "dispatcher", command: "pause_code", args: { nodeId: nodeId, codeId: codeId } });
-		}
-	}
-	//Send MIGRATE command to dispatcher
-	function migrateCode(fromId, toId, codeId){
-		if (fromId && _NODES[fromId].status === 'busy' && toId && _NODES[toId].status === 'idle' && codeId){
-			_SOCKET.send({ action: "dispatcher", command: "migrate_code", args: { from: fromId, to: toId, codeId: codeId } });
-		}
-		else {
-			console.log(fromId, toId, codeId);
-		}
-	}
-	
-	return {
-		start: function(){
-			var self = this;
-			var deferred = $q.defer();
-			if (_SOCKET){
-				console.error("Dashboard service already started");
-				deferred.reject("Dashboard service already started");
-				return deferred.promise;
-			}
-			
-			// _SOCKET = WebSocketService.create({
-			// 	retry_rate: 5000,
-			// 	on_open: function(socket){
-			// 		console.log("Websocket Open");
-					
-			// 		//perform initial actions on connect
-			// 		socket.send({ action: "get-topics" });
-			// 		console.log("    requesting list of topics");
-					
-			// 		//subscribe to things-engine-registry, and fetch all available codes
-			// 		socket.send({ action: "pubsub", command: "subscribe", topic: TOPICS['node-registry'] });
-			// 		socket.send({ action: "code-db", command: "get_all" });
-					
-			// 		subscribe('things-videostream/raw', handleVideoStream);
-			// 		subscribe('things-videostream/motion', handleVideoMotion);
-			// 		subscribe('things-videostream/alarm', function(alarm){
-			// 			_VIDEOSTREAM.alarm = alarm.message;
-			// 		});
-					
-			// 		deferred.resolve(socket);
-			// 	}
-			// });
-
-			_SOCKET = new EasyWebSocket(CONFIG.websocket_url, {
-				retry_rate: 5000,
-				on_open: function(socket){
-					console.log("Websocket Open");
-					
-					//perform initial actions on connect
-					socket.send({ action: "get-topics" });
-					console.log("    requesting list of topics");
-					
-					//subscribe to things-engine-registry, and fetch all available codes
-					socket.send({ action: "pubsub", command: "subscribe", topic: TOPICS['node-registry'] });
-					socket.send({ action: "code-db", command: "get_all" });
-					
-					subscribe('things-videostream/raw', handleVideoStream);
-					subscribe('things-videostream/motion', handleVideoMotion);
-					subscribe('things-videostream/alarm', function(alarm){
-						_VIDEOSTREAM.alarm = alarm.message;
-					});
-					
-					deferred.resolve(socket);
-				}
-			})
-
-			_SOCKET.addEventListener('onMessage', function(event, data){
-				if (data.action === 'get-topics'){
-					data.response.map(function(item){
-						if (!_SUBSCRIPTIONS[item]){
-							_SUBSCRIPTIONS[item] = { subscribed: false };	
-						}
-					})
-				}
-				// else if (data.action === 'pubsub'){
-				// 	if (data.topic && data.messages){
-				// 		if (!_MESSAGES[data.topic]) _MESSAGES[data.topic] = [];
-				// 		data.messages.map(function(msg){ _MESSAGES[data.topic].unshift(msg); });
-						
-				// 		if (data.topic === TOPICS['node-registry']){
-				// 			data.messages.map(function(node){
-								
-				// 				if (!_NODES[node.id]){
-				// 					_NODES[node.id] = CodeEngine.create(node);
-				// 					self.subscribe(node.id+"/running", handleNodeRunning);
-				// 					self.subscribe(node.id+"/stats", handleNodeStats);	
-				// 				}
-				// 				else {
-				// 					_NODES[node.id].update(node);
-				// 				}
-								
-				// 			});
-				// 		}
-				// 	}
-				// 	else {
-				// 		if (!_MESSAGES[data.topic]) _MESSAGES[data.topic] = [];
-				// 		_MESSAGES[data.topic].unshift(data.message);
-						
-				// 		if (data.topic === TOPICS['node-registry']){
-				// 			if (!_NODES[data.message.id]){
-				// 				_NODES[data.message.id] = CodeEngine.create(data.message);
-				// 				self.subscribe(data.message.id+"/running", handleNodeRunning);
-				// 				self.subscribe(data.message.id+"/stats", handleNodeStats);	
-				// 			}
-				// 			else {
-				// 				_NODES[data.message.id].update(data.message);
-				// 			}
-				// 		}
-				// 	}
-					
-				// 	//If extra handler attached, execute it
-				// 	if (_SUBSCRIPTIONS[data.topic].handler){
-				// 		_SUBSCRIPTIONS[data.topic].handler(data);
-				// 	}
-				// }
-				else if (data.action === 'code-db'){
-					if (data.codes){
-						data.codes.map(function(code){ _CODES[code.name] = code; });
-					}
-					else if (data.code){
-						_CODES[data.code.name] = data.code;
-					}
-					if (data.command === 'save'){
-						alert(data.code.name+" saved successfully!");
-					}
-					if (data.command === 'delete'){
-						delete _CODES[data.code.name];
-						alert(data.code.name+" deleted successfully!");
-					}
-				}
-				$rootScope.$apply();
-//				console.log(data);
-			});
-			return deferred.promise;
-		},
-		messages: _MESSAGES,
-		subscriptions: _SUBSCRIPTIONS,
-		toggleSubscription: function(topic){
-			_SUBSCRIPTIONS[topic].subscribed = !_SUBSCRIPTIONS[topic].subscribed;
-			if (_SUBSCRIPTIONS[topic].subscribed){
-				this.subscribe(topic);
-			}
-			else {
-				this.unsubscribe(topic);
-			}
-		},
-		subscribe: subscribe,
-		unsubscribe: unsubscribe,
-		allNodes: _NODES,
-		saveCode: function(name, code){
-			_SOCKET.send({ action: "code-db", command: "save", name: name, code: code });
-		},
-		deleteCode: function(name){
-			var result = confirm("Are you sure you want to delete " + name + "?");
-			if(result){
-				_SOCKET.send({ action: "code-db", command: "delete", name: name });
-			}
-		},
-		allCodes: _CODES,
-		runCode: runCode,
-		sendCode: runCode,
-		pauseCode: pauseCode,
-		migrateCode: migrateCode,
-		videostream: _VIDEOSTREAM
 	}
 }])
 

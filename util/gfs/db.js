@@ -36,7 +36,7 @@ ThingsDatabase.prototype._tokenizePath = function(path){
 	var tokens = path.split('/');
 	// ignore excess deliminators that leave empty elements
 	for(var i = 0; i < tokens.length; i++){
-		if(tokens[i] == ''){
+		if (tokens[i] == ''){
 			tokens.splice(i, 1);
 		}
 	}
@@ -217,7 +217,7 @@ ThingsDatabase.prototype.createFile = function(name, parentId, isFile, content, 
 	if(isFile){
 		fsobj.content = content;
 	}
-	fsobj.save(function(err){
+	return fsobj.save(function(err){
 		if(err){
 			console.log('<E> db.js -- createFile: ' + err);
 			return true;
