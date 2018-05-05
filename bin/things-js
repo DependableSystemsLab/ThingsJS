@@ -113,3 +113,7 @@ program
   });
 
 program.parse(process.argv);
+if (process.argv.length === 2){
+  var things = require('../lib/things.js');
+  var shell = new things.Shell;
+}

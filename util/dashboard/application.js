@@ -244,13 +244,14 @@ function start(config){
 	// 	            	topic: topic,
 	// 	            	message: msg
 	// 	            };
-		            
-	// 	            if (['things-stats', 'things-videostream/raw', 'things-videostream/motion'].indexOf(topic) < 0){
+	// 	            if (['things-stats',
+	// 	            	 'things-videostream/raw',
+	// 	            	 'things-videostream/motion',
+	// 	            	 'things-videostream/alarm'].indexOf(topic) < 0){
 	// 	            	//Not saving stats in database for now, as the amount of data increases really fast
 	// 	            	db.onMessage(topic, msg);	
 	// 	            }
 	// 	            sock.broadcast(topic, JSON.stringify(wsResponse));
-		            
 	// 	        });
 	// 		})();
 	// 	}
