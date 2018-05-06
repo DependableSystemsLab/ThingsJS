@@ -33,10 +33,15 @@ This repository is organized thus:
 
 ## Dependencies
 
-* The ThingsJS framework uses MQTT Pub/Sub as its main communication mechanism and assumes the existence of an active MQTT service. Either **Mosquitto**, or **Mosca** will do. The Pub/Sub service is referenced only by the URL (e.g. `mqtt://localhost`) within the ThingsJS framework and does not assume any specific implementation of the service.
+* The ThingsJS framework uses MQTT Pub/Sub as its main communication mechanism and assumes the existence of an active MQTT service. Either **Mosquitto**, or **Mosca** will do. ThingsJS provides a basic Mosca server that can be started with `things-js pubsub` command. The Pub/Sub service is referenced only by the URL (e.g. `mqtt://localhost`) within the ThingsJS framework and does not assume any specific implementation of the service.
+```
+~$ things-js pubsub
+```
 
 * For running the Dashboard web-application, **MongoDB** is required as the Dashboard uses it to store the end-user code.
-
+```
+~$ service mongod start
+```
 
 ## Getting Started
 
