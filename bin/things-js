@@ -3,6 +3,7 @@
 var path = require('path');
 var program = require('commander');
 var jsBeautify = require('js-beautify').js_beautify;
+var readline = require('readline');
 
 program
   .version('0.0.1')
@@ -65,28 +66,35 @@ program
     if (options.save) code.save(options.save);
     code.run()
     .then(function(instance){
-      process.stdin.setRawMode( true );
+      if(process.stdin.isTTY){
+        process.stdin.setRawMode( true );
+      }
       process.stdin.setEncoding('utf8');
       process.stdin.on('data', function(key){
-        if (key === 'p'){
-          code.pause(instance.id);
+        switch(key.trim()){
+            case 'p':
+                code.pause(instance.id);
+                break;
+
+            case 'r':
+                code.resume(instance.id);
+                break;
+
+            case 's':
+              code.snapshot(instance.id, true).then(function(snap){
+                console.log(jsBeautify(JSON.stringify(snap)));
+                code.saveLastSnapshot(file_path+'.snap.json')
+              })
+              break;
+
+            case '\u0003':
+                code.kill();
+                process.exit();
+
+            default:
+                console.log(key);
         }
-        else if (key === 'r'){
-          code.resume(instance.id);
-        }
-        else if (key === 's'){
-          code.snapshot(instance.id, true).then(function(snap){
-            console.log(jsBeautify(JSON.stringify(snap)));
-            code.saveLastSnapshot(file_path+'.snap.json')
-          })
-        }
-        else if (key === '\u0003'){
-          code.kill();
-          process.exit();
-        }
-        else {
-          console.log(key);
-        }
+
       });
     })
     
