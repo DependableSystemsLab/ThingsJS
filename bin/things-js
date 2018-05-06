@@ -3,7 +3,6 @@
 var path = require('path');
 var program = require('commander');
 var jsBeautify = require('js-beautify').js_beautify;
-var readline = require('readline');
 
 program
   .version('0.0.1')
