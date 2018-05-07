@@ -116,7 +116,7 @@ program
   .option('-p, --port <port>', 'Port to Listen to')
   .option('-d, --debug', 'Set environment variable DEBUG to "true" and see debug output')
   .description('Start a Pubsub Server')
-  .action(function(port, options){
+  .action(function(options){
     process.env['DEBUG'] = options.debug ? "true": "false";
     var things = require('../lib/things.js');
     var server = new things.Pubsub.Server();
