@@ -1,0 +1,102 @@
+<div class="row">
+	<div class="col-md-5">
+	
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				Applications
+			</div>
+			<div class="panel-body">
+				<div class="dashboard-device-list">
+					<div ng-repeat="node in $service.allNodes"
+						ng-if="node.status === 'idle'"
+						class="dashboard-device"
+						ng-class="{ 'dead': (node.status === 'dead'), 'idle': (node.status === 'idle'), 'busy': (node.status === 'busy') }"
+						uib-popover-template="'deviceMenu.html'"
+						popover-placement="bottom">
+						<img alt="{{ node.device }}" ng-src="{{ node.icon }}"/>
+						<span>{{ node.id }}</span>
+						<span class="pull-right">IDLE</span>
+					</div>
+					<div ng-repeat="node in $service.allNodes"
+						ng-if="node.status === 'busy'"
+						class="dashboard-device"
+						ng-class="{ 'dead': (node.status === 'dead'), 'idle': (node.status === 'idle'), 'busy': (node.status === 'busy') }"
+						uib-popover-template="'deviceMenu.html'"
+						popover-placement="bottom">
+						<img alt="{{ node.device }}" ng-src="{{ node.icon }}"/>
+						<span>{{ node.id }}</span>
+						<span class="pull-right">RUNNING</span>
+					</div>
+				<script type="text/ng-template" id="deviceMenu.html">
+				<ul class="list-group" style="margin: -11px -16px">
+					<li ng-if="node.status === 'idle'" class="list-group-item">
+						<div class="form-inline">
+							<select ng-model="selectedCode" class="form-control">
+								<option value="">--- Select Device ---</option>
+								<option ng-repeat="(codeName, data) in $service.allCodes" ng-value="data.code">{{ codeName }}</option>
+							</select>
+							<button ng-click="$service.runCode(node.id, selectedCode)" class="btn btn-danger">Run</button>
+						</div>
+					</li>
+					<li ng-if="node.status === 'busy'" class="list-group-item">
+						{{ node.running }}
+						<button ng-click="$service.pauseCode(node.id, node.running)" class="btn btn-danger">Stop</a>
+					</li>
+					<li ng-if="node.status === 'busy'" class="list-group-item">
+						<div class="form-inline">
+							<select ng-model="selectedNode" class="form-control">
+								<option value="">--- Select Applications ---</option>
+								<option ng-repeat="(target, data) in $service.allNodes" ng-value="target" ng-if="data.status === 'idle' && data.id !== node.id">{{ target }}</option>
+							</select>
+							<button class="btn btn-warning btn-sm"
+									ng-click="$service.migrateCode(node.id, selectedNode, node.running)">
+								Move
+							</button>
+						</div>
+					</li>
+					<a ng-click="$view.topDevice = node;" href="javascript:;" class="list-group-item">Display at Top pane</a>
+					<a ng-click="$view.middleDevice = node;" href="javascript:;" class="list-group-item">Display at Middle pane</a>
+					<a ng-click="$view.bottomDevice = node;" href="javascript:;" class="list-group-item">Display at Bottom pane</a>
+					<a ui-sref="nodes.view({ nodeId: node.id })" class="list-group-item">View Application Detail</a>
+				</ul>
+				</script>
+					
+				</div>
+				
+			</div>
+		</div>
+		
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<div class="btn-group" ng-init="videoChannel = 'raw'">
+					<button ng-click="videoChannel = 'raw'" class="btn btn-default" ng-class="{ active: videoChannel === 'raw' }">Raw</button>
+					<button ng-click="videoChannel = 'motion'" class="btn btn-default" ng-class="{ active: videoChannel === 'motion' }">Motion</button>
+				</div>
+				<span>Video Stream</span>
+				<span class="pull-right boolean-lamp" ng-class="{ high: $service.videostream.alarm }" style="padding: 5px;">Motion</span>
+			</div>
+			<div class="panel-body">
+				<div ng-show="videoChannel === 'raw'">
+					<img ng-src="{{ $service.videostream.raw }}" class="img-responsive"/>
+				</div>
+				<div ng-show="videoChannel === 'motion'">
+					<img ng-src="{{ $service.videostream.motion }}" class="img-responsive"/>
+				</div>
+			</div>
+		</div>	
+		
+	</div>
+	
+	<div class="col-md-7">
+		
+		<!-- Top Pane -->
+		<device-panel node="$view.topDevice"></device-panel>
+		
+		<!-- Middle Pane -->
+		<device-panel node="$view.middleDevice"></device-panel>
+		
+		<!-- Bottom Pane -->
+		<device-panel node="$view.bottomDevice"></device-panel>
+		
+	</div>
+</div>

@@ -92,6 +92,26 @@ dashApp.constant("CONFIG", {
 			controllerAs: '$vm',
 			templateUrl: 'views/node-view.html'
 		})
+		.state('applications',{
+			parent: 'init',
+			url: '/applications',
+			controller: ['$scope', 'socket', 'DashboardService', function($scope, socket, DashboardService){
+				var self = this;
+				$scope.$service = DashboardService;
+				
+				self.allNodes = DashboardService.allNodes;
+
+				self.allCodes = DashboardService.allCodes;
+				
+				self.pauseNode = DashboardService.pauseCode;
+				
+				self.watchCode = function(codeId){
+					socket.send({ action: "pubsub", command: "subscribe", topic: codeId+"/running" });
+				};
+			}],
+			controllerAs: '$view',
+			templateUrl: 'views/applications.html'
+		})
 		.state('codes', {
 			parent: 'init',
 			url: '/codes',
