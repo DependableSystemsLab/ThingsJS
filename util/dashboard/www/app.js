@@ -73,6 +73,33 @@ dashApp.constant("CONFIG", {
 			controllerAs: '$view',
 			templateUrl: 'views/main.html'
 		})
+		.state('applications',{
+			parent: 'init',
+			url: '/applications',
+			controller: ['$scope','DashboardService', function($scope, DashboardService){
+				var self = this;
+				$scope.$dash = DashboardService;
+				
+				// self.allNodes = DashboardService.allNodes;
+
+				// self.allCodes = DashboardService.allCodes;
+				
+				// self.pauseNode = DashboardService.pauseCode;
+				
+				// self.watchCode = function(codeId){
+				// 	socket.send({ action: "pubsub", command: "subscribe", topic: codeId+"/running" });
+				// };
+
+				//got programs from things-js Dashboard 
+
+
+				self.topProgram = undefined;
+				self.middleProgram = undefined;
+				self.bottomProgram = undefined;
+			}],
+			controllerAs: '$view',
+			templateUrl: 'views/applications.html'
+		})
 		.state('nodes', {
 			parent: 'init',
 			url: '/nodes',
@@ -91,26 +118,6 @@ dashApp.constant("CONFIG", {
 			}],
 			controllerAs: '$vm',
 			templateUrl: 'views/node-view.html'
-		})
-		.state('applications',{
-			parent: 'init',
-			url: '/applications',
-			controller: ['$scope', 'socket', 'DashboardService', function($scope, socket, DashboardService){
-				var self = this;
-				$scope.$service = DashboardService;
-				
-				self.allNodes = DashboardService.allNodes;
-
-				self.allCodes = DashboardService.allCodes;
-				
-				self.pauseNode = DashboardService.pauseCode;
-				
-				self.watchCode = function(codeId){
-					socket.send({ action: "pubsub", command: "subscribe", topic: codeId+"/running" });
-				};
-			}],
-			controllerAs: '$view',
-			templateUrl: 'views/applications.html'
 		})
 		.state('codes', {
 			parent: 'init',

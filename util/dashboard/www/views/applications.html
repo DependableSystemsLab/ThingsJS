@@ -1,41 +1,32 @@
 <div class="row">
 	<div class="col-md-5">
-	
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				Applications
+				Nodes
 			</div>
 			<div class="panel-body">
 				<div class="dashboard-device-list">
-					<div ng-repeat="node in $service.allNodes"
-						ng-if="node.status === 'idle'"
+					<div ng-repeat="(id, code) in $dash.programs"
 						class="dashboard-device"
-						ng-class="{ 'dead': (node.status === 'dead'), 'idle': (node.status === 'idle'), 'busy': (node.status === 'busy') }"
+						ng-class="{ 'running': (code.status === 'running'), 'idle': (code.status === 'idle')}"
 						uib-popover-template="'deviceMenu.html'"
 						popover-placement="bottom">
 						<img alt="{{ node.device }}" ng-src="{{ node.icon }}"/>
 						<span>{{ node.id }}</span>
 						<span class="pull-right">IDLE</span>
 					</div>
-					<div ng-repeat="node in $service.allNodes"
-						ng-if="node.status === 'busy'"
-						class="dashboard-device"
-						ng-class="{ 'dead': (node.status === 'dead'), 'idle': (node.status === 'idle'), 'busy': (node.status === 'busy') }"
-						uib-popover-template="'deviceMenu.html'"
-						popover-placement="bottom">
-						<img alt="{{ node.device }}" ng-src="{{ node.icon }}"/>
-						<span>{{ node.id }}</span>
-						<span class="pull-right">RUNNING</span>
-					</div>
+
+					
 				<script type="text/ng-template" id="deviceMenu.html">
 				<ul class="list-group" style="margin: -11px -16px">
 					<li ng-if="node.status === 'idle'" class="list-group-item">
 						<div class="form-inline">
-							<select ng-model="selectedCode" class="form-control">
-								<option value="">--- Select Device ---</option>
-								<option ng-repeat="(codeName, data) in $service.allCodes" ng-value="data.code">{{ codeName }}</option>
+							<select ng-model="selectedCode" class="form-control" ng-change="console.log(selectedCode)">
+								<option value="">--- Select Code ---</option>
+								<option ng-repeat="(codeName, data) in $service.allCodes" ng-value="codeName">{{ codeName }}</option>
 							</select>
-							<button ng-click="$service.runCode(node.id, selectedCode)" class="btn btn-danger">Run</button>
+							<!-- <button ng-click="$service.runCode(node.id, selectedCode)" class="btn btn-danger">Run</button> -->
+							<button ng-click="node.runCode(selectedCode, $service.allCodes[selectedCode].code)" class="btn btn-danger">Run</button>
 						</div>
 					</li>
 					<li ng-if="node.status === 'busy'" class="list-group-item">
@@ -45,7 +36,7 @@
 					<li ng-if="node.status === 'busy'" class="list-group-item">
 						<div class="form-inline">
 							<select ng-model="selectedNode" class="form-control">
-								<option value="">--- Select Applications ---</option>
+								<option value="">--- Select Device ---</option>
 								<option ng-repeat="(target, data) in $service.allNodes" ng-value="target" ng-if="data.status === 'idle' && data.id !== node.id">{{ target }}</option>
 							</select>
 							<button class="btn btn-warning btn-sm"
@@ -54,10 +45,10 @@
 							</button>
 						</div>
 					</li>
-					<a ng-click="$view.topDevice = node;" href="javascript:;" class="list-group-item">Display at Top pane</a>
-					<a ng-click="$view.middleDevice = node;" href="javascript:;" class="list-group-item">Display at Middle pane</a>
-					<a ng-click="$view.bottomDevice = node;" href="javascript:;" class="list-group-item">Display at Bottom pane</a>
-					<a ui-sref="nodes.view({ nodeId: node.id })" class="list-group-item">View Application Detail</a>
+					<a ng-click="$view.topProgram = code;" href="javascript:;" class="list-group-item">Display at Top pane</a>
+					<a ng-click="$view.middleProgram = code;" href="javascript:;" class="list-group-item">Display at Middle pane</a>
+					<a ng-click="$view.bottomProgram = code;" href="javascript:;" class="list-group-item">Display at Bottom pane</a>
+					<a ui-sref="nodes.view({ nodeId: node.id })" class="list-group-item">View Node Detail</a>
 				</ul>
 				</script>
 					
@@ -77,10 +68,10 @@
 			</div>
 			<div class="panel-body">
 				<div ng-show="videoChannel === 'raw'">
-					<img ng-src="{{ $service.videostream.raw }}" class="img-responsive"/>
+					<img ng-src="{{ $view.video_raw }}" class="img-responsive"/>
 				</div>
 				<div ng-show="videoChannel === 'motion'">
-					<img ng-src="{{ $service.videostream.motion }}" class="img-responsive"/>
+					<img ng-src="{{ $view.video_motion  }}" class="img-responsive"/>
 				</div>
 			</div>
 		</div>	
@@ -90,13 +81,13 @@
 	<div class="col-md-7">
 		
 		<!-- Top Pane -->
-		<device-panel node="$view.topDevice"></device-panel>
+		<code-panel code="$view.topProgram"></code-panel>
 		
 		<!-- Middle Pane -->
-		<device-panel node="$view.middleDevice"></device-panel>
+		<code-panel code="$view.middleProgram"></code-panel>
 		
 		<!-- Bottom Pane -->
-		<device-panel node="$view.bottomDevice"></device-panel>
+		<code-panel code="$view.bottomProgram"></code-panel>
 		
 	</div>
 </div>

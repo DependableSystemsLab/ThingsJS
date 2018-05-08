@@ -1,8 +1,8 @@
 <div class="panel panel-default">
 	<div class="panel-heading">
 		<span class="form-inline">
-			<select ng-model="node" ng-options="data as target for (target, data) in $dash.engines" class="form-control">
-				<option value="">--- Select Device ---</option>
+			<select ng-model="code" ng-options="data as target for (target, data) in $dash.engines" class="form-control">
+				<option value="">--- Select Code ---</option>
 				<option ng-repeat="(target, data) in $dash.engines" ng-value="data">{{ target }}</option>
 			</select>
 		</span>
@@ -18,17 +18,17 @@
 		
 		<!-- Status View -->
 		<div ng-show="viewMode === 'status'">
-			<h4>{{ node.id }}</h4>
+			<h4>{{ code.id }}</h4>
 			
 			<table class="table table-bordered">
 				<tbody ng-if="node">
 					<tr>
 						<th>Status</th>
-						<td>{{ node.status }}</td>
+						<td>{{ code.status }}</td>
 					</tr>
 					<tr>
 						<th>Device</th>
-						<td>{{ node.info.device }}</td>
+						<td>{{ code.info }}</td>
 					</tr>
 					<!-- <tr>
 						<th>Running</th>
@@ -78,7 +78,7 @@
 
 							<span ng-show="status === 'Running' || status === 'Paused'" class="form-inline">
 								<select ng-model="selectedNode" class="form-control">
-									<option value="">--- Select Code ---</option>
+									<option value="">--- Select Device ---</option>
 									<option ng-repeat="(target, data) in $dash.engines" ng-value="target" ng-if="data.id !== node.id">{{ target }}</option>
 								</select>
 								<button class="btn btn-warning btn-sm"
