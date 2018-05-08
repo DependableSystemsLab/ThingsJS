@@ -2,18 +2,18 @@
 	<div class="col-md-5">
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				Nodes
+				Running Applications
 			</div>
 			<div class="panel-body">
 				<div class="dashboard-device-list">
-					<div ng-repeat="(id, code) in $dash.programs"
+					<div ng-repeat="program in $dash.programs"
 						class="dashboard-device"
-						ng-class="{ 'running': (code.status === 'running'), 'idle': (code.status === 'idle')}"
+			   			ng-class="{ 'RUNNING': (program.status === 'Running'), 'EXITED': (program.status === 'Exited')}"
 						uib-popover-template="'deviceMenu.html'"
 						popover-placement="bottom">
-						<img alt="{{ node.device }}" ng-src="{{ node.icon }}"/>
-						<span>{{ node.id }}</span>
-						<span class="pull-right">IDLE</span>
+						<span>CODE_NAME:{{ program.code_name}}</span>
+						<span>RUNNING_ID:{{ program.id }}</span>  <!-- Runtime ID -->
+                        <span>STATUS:{{ program.status}}</span>
 					</div>
 
 					
@@ -23,7 +23,7 @@
 						<div class="form-inline">
 							<select ng-model="selectedCode" class="form-control" ng-change="console.log(selectedCode)">
 								<option value="">--- Select Code ---</option>
-								<option ng-repeat="(codeName, data) in $service.allCodes" ng-value="codeName">{{ codeName }}</option>
+								<option ng-repeat="program in $dash.programs" ng-value="codeName">{{ program.code_name }}</option>
 							</select>
 							<!-- <button ng-click="$service.runCode(node.id, selectedCode)" class="btn btn-danger">Run</button> -->
 							<button ng-click="node.runCode(selectedCode, $service.allCodes[selectedCode].code)" class="btn btn-danger">Run</button>
@@ -48,7 +48,7 @@
 					<a ng-click="$view.topProgram = code;" href="javascript:;" class="list-group-item">Display at Top pane</a>
 					<a ng-click="$view.middleProgram = code;" href="javascript:;" class="list-group-item">Display at Middle pane</a>
 					<a ng-click="$view.bottomProgram = code;" href="javascript:;" class="list-group-item">Display at Bottom pane</a>
-					<a ui-sref="nodes.view({ nodeId: node.id })" class="list-group-item">View Node Detail</a>
+					<a ui-sref="nodes.view({ nodeId: node.id })" class="list-group-item">View Program Workflow</a>
 				</ul>
 				</script>
 					

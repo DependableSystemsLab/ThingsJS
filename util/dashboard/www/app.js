@@ -76,9 +76,9 @@ dashApp.constant("CONFIG", {
 		.state('applications',{
 			parent: 'init',
 			url: '/applications',
-			controller: ['$scope','DashboardService', function($scope, DashboardService){
+			controller: ['$scope','dashboard', function($scope, dashboard){
 				var self = this;
-				$scope.$dash = DashboardService;
+				$scope.$dash = dashboard;
 				
 				// self.allNodes = DashboardService.allNodes;
 
