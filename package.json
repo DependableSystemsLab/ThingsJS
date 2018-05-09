@@ -35,7 +35,8 @@
     "mongoose": "^5.0.17",
     "mosca": "^2.8.1",
     "mqtt": "^2.14.0",
-    "pidusage": "^1.2.0"
+    "pidusage": "^1.2.0",
+    "ws": "^5.1.1"
   },
   "devDependencies": {
     "gulp": "^3.9.1",
