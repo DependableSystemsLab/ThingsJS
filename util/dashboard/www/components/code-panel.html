@@ -1,9 +1,9 @@
 <div class="panel panel-default">
 	<div class="panel-heading">
 		<span class="form-inline">
-			<select ng-model="code" ng-options="data as target for (target, data) in $dash.engines" class="form-control">
-				<option value="">--- Select Code ---</option>
-				<option ng-repeat="(target, data) in $dash.engines" ng-value="data">{{ target }}</option>
+			<select ng-model="code" ng-options='code as (program.code_name+": "+program.id)  for program in $dash.programs' class="form-control">
+				<option value="" selected="selected">--- Select Program ---</option>
+				<option ng-repeat='(program.code_name+":"+program.id)  for program in $dash.programs' ng-value="program.id">{{ program.code_name }}+": "+program.id</option>
 			</select>
 		</span>
 		
@@ -28,7 +28,8 @@
 					</tr>
 					<tr>
 						<th>Device</th>
-						<td>{{ code.info }}</td>
+						<td></td>
+						<!-- <td>{{ node.info.device }}</td> -->
 					</tr>
 					<!-- <tr>
 						<th>Running</th>
@@ -78,7 +79,7 @@
 
 							<span ng-show="status === 'Running' || status === 'Paused'" class="form-inline">
 								<select ng-model="selectedNode" class="form-control">
-									<option value="">--- Select Device ---</option>
+									<option value="">--- Select Code ---</option>
 									<option ng-repeat="(target, data) in $dash.engines" ng-value="target" ng-if="data.id !== node.id">{{ target }}</option>
 								</select>
 								<button class="btn btn-warning btn-sm"

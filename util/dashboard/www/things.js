@@ -262,8 +262,20 @@
 			self.emit('update');
 			console.log(message);
 		});
+
 	}
 	Program.prototype = new EventEmitter();
+	Program.prototype.findDevice = function(code_id,devices){
+		for (device in devices){
+			console.log("######devices codes:" + device.codes.toString());
+			for (code in device.codes){
+				if (code_id === code.id){
+					return device.id
+				}
+			}
+		}
+		return "can't find such device";
+	};
 
 	/** Dashboard */
 	var ENGINE_REGISTRY_NAMESPACE = 'engine-registry';
@@ -620,7 +632,7 @@ things.factory('CodeRepository', ['$rootScope', function($rootScope){
 	return {
 		restrict: 'E',
 		scope: {
-			node: '='
+			node: '=',
 		},
 		controller: ['$scope', function($scope){
 			// $scope.$service = DashboardService;
@@ -648,6 +660,52 @@ things.factory('CodeRepository', ['$rootScope', function($rootScope){
 		}],
 		controllerAs: '$ctrl',
 		templateUrl: 'components/device-panel.html'
+	}
+}])
+.directive('codePanel', ['Dashboard', 'CodeRepository', function(Dashboard, CodeRepository){
+	return {
+		restrict: 'E',
+		scope: {
+			code: '='
+		},
+		controller: ['$scope', function($scope){
+			// $scope.$service = DashboardService;
+			$scope.$dash = Dashboard.get();
+			$scope.$repo = CodeRepository.get();
+	// 		$scope.findDevice = function(code_id,devices){
+	// 			for (device in devices){
+	// 		console.log("######devices codes:" + device.codes.toString());
+	// 		for (code in device.codes){
+	// 			if (code_id === code.id){
+	// 				return device.id
+	// 			}
+	// 		}
+
+	// 	}
+	// 	return "can't find such device";
+	// };
+
+			var self = this;
+
+			self.showSource = {}
+
+			self.refresh = function(){
+				$scope.$repo.get('/')
+					.then(function(fsObject){
+						console.log(fsObject);
+						self.codes = {};
+						fsObject.files.forEach(function(name){
+							self.codes[name] = fsObject.children[name];
+						})
+
+						$scope.$apply();
+					})
+			}
+
+			self.refresh();
+		}],
+		controllerAs: '$ctrl',
+		templateUrl: 'components/code-panel.html'
 	}
 }])
 .directive('onEnterKey', function(){

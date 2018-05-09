@@ -52,10 +52,10 @@
 						<div class="form-inline">
 							<select ng-model="selectedCode" class="form-control" ng-change="console.log(selectedCode)">
 								<option value="">--- Select Code ---</option>
-								<option ng-repeat="(codeName, data) in $service.allCodes" ng-value="codeName">{{ codeName }}</option>
+								<option ng-repeat="(code_name, data) in $dash.Programs" ng-value="code_name">{{ code_name }}</option>
 							</select>
 							<!-- <button ng-click="$service.runCode(node.id, selectedCode)" class="btn btn-danger">Run</button> -->
-							<button ng-click="node.runCode(selectedCode, $service.allCodes[selectedCode].code)" class="btn btn-danger">Run</button>
+							<button ng-click="node.runCode(selectedCode, $dash.Programss[selectedCode].code)" class="btn btn-danger">Run</button>
 						</div>
 					</li>
 					<li ng-if="node.status === 'busy'" class="list-group-item">
