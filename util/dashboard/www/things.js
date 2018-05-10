@@ -12,6 +12,16 @@
 		});
 		return deferred;
 	}
+	function randKey(length, charset){
+		var text = "";
+		if (!length) length = 8;
+		if (!charset) charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+	    for( var i=0; i < length; i++ ){
+	    	text += charset.charAt(Math.floor(Math.random() * charset.length));
+	    }
+	    return text;
+	};
+
 	function joinPath(p1, p2){
 		if (p1[p1.length-1] === '/') p1 = p1.substring(0,p1.length-1);
 		if (p2[0] === '/') p2 = p2.substring(1);
@@ -54,6 +64,7 @@
 	/* MqttWsClient */
 	function MqttWsClient(endpoint, noInitialize, noRetryOnClose){
 		EventEmitter.call(this);
+		this.id = randKey();
 		this.endpoint = endpoint;
 		this.socket = undefined;
 		
@@ -169,12 +180,23 @@
 		this.meta = meta;
 
 		this.status = "unknown";
-		// this.running = undefined;
-		// this.info = data.info || {};
+		
 		this.stats = [];
 		this.console = [];
 
 		this.codes = {};
+
+		this._requests = {};
+		this.pubsub.subscribe(this.pubsub.id+'/'+this.id, function(message, topic){
+			if (message.reply_id in self._requests){
+				self._requests[message.reply_id].resolve(message.payload);
+				clearTimeout(self._requests[message.reply_id].timer);
+				delete self._requests[message.reply_id];
+			}
+			else {
+				console.log(chalk.red('[Dispatcher:'+this.dispatcher.id+'] Received unexpected message'));
+			}
+		});
 
 		this.pubsub.subscribe(this.id+'/resource', function(topic, message){
 			self.stats.push(message);
@@ -192,43 +214,51 @@
 		if (meta.device) this.icon = ENGINE_ICONS[meta.device];
 	}
 	CodeEngine.prototype = new EventEmitter();
-	CodeEngine.prototype.runCode = function(code_name, source){
+	CodeEngine.prototype.sendCommand = function(ctrl, kwargs){
+		var self = this;
+		var deferred = defer();
+		var request_id = randKey(16);
+		this._requests[request_id] = deferred;
 		this.pubsub.publish(this.id+'/cmd', {
-			ctrl: 'run_code',
-			kwargs: {
+			request_id: request_id,
+			reply_to: this.pubsub.id+'/'+this.id,
+			ctrl: ctrl,
+			kwargs: kwargs
+		})
+		deferred.timer = setTimeout(function(){
+			if (request_id in self._requests){
+				deferred.reject('PubsubCommandTimeout');
+				delete self._requests[request_id];
+			}
+		}, 10000); // assume failure if reply not received
+		return deferred.promise
+	}
+
+	CodeEngine.prototype.runCode = function(code_name, source){
+		return this.sendCommand('run_code', {
 				mode: 'raw',
 				code_name: code_name,
 				source: source
-			}
-		})
+			})
 	}
 	CodeEngine.prototype.pauseCode = function(code_name, instance_id){
-		this.pubsub.publish(this.id+'/cmd', {
-			ctrl: 'pause_code',
-			kwargs: {
+		return this.sendCommand('pause_code', {
 				code_name: code_name,
 				instance_id: instance_id
-			}
-		})
+			})
 	}
 	CodeEngine.prototype.resumeCode = function(code_name, instance_id){
-		this.pubsub.publish(this.id+'/cmd', {
-			ctrl: 'resume_code',
-			kwargs: {
+		return this.sendCommand('resume_code', {
 				code_name: code_name,
 				instance_id: instance_id
-			}
-		})
+			})
 	}
 	CodeEngine.prototype.migrateCode = function(code_name, instance_id, target_engine){
-		this.pubsub.publish(this.id+'/cmd', {
-			ctrl: 'migrate_code',
-			kwargs: {
+		return this.sendCommand('migrate_code', {
 				code_name: code_name,
 				instance_id: instance_id,
 				engine: target_engine
-			}
-		})
+			})
 	}
 
 	/** Program */

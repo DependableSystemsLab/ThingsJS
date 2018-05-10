@@ -86,6 +86,11 @@ program
               })
               break;
 
+            case 'q':
+                code.kill();
+                process.exit();
+                break;
+
             case '\u0003':
                 code.kill();
                 process.exit();
