@@ -265,17 +265,35 @@
 
 	}
 	Program.prototype = new EventEmitter();
-	Program.prototype.findDevice = function(code_id,devices){
-		for (device in devices){
-			console.log("######devices codes:" + device.codes.toString());
-			for (code in device.codes){
-				if (code_id === code.id){
-					return device.id
+	Program.prototype.findRunningDevice = function(code_id,devices){
+		console.log("jump to device function:");
+		var i, code_name, instance_id; 
+		for (i in devices){			
+			var codes = devices[i].codes; 
+			for (code_name in codes){
+				// console.log("code_id: " + code_id);
+				// console.log("codes name :" + code_name);
+				// console.log("device id :" + devices[i].id);
+				// console.log("code id :"+ codes[code_name].toString());
+				for (instance_id in codes[code_name]){
+					// console.log("code status :"+codes[code_name][instance_id])
+					if(instance_id === code_id && codes[code_name][instance_id]== "Running")
+						return devices[i].id;
 				}
+
+			// Object.keys(codes).forEach(function(codename){
+			// Object.keys(codes[codename]).forEach(function(instance_id){
+			// 		if(instance_id === code_id){
+			// 			return devices[i].id;
+			// 		}
+			// 	})
+			// })
+
 			}
 		}
 		return "can't find such device";
 	};
+
 
 	/** Dashboard */
 	var ENGINE_REGISTRY_NAMESPACE = 'engine-registry';
@@ -672,18 +690,10 @@ things.factory('CodeRepository', ['$rootScope', function($rootScope){
 			// $scope.$service = DashboardService;
 			$scope.$dash = Dashboard.get();
 			$scope.$repo = CodeRepository.get();
-	// 		$scope.findDevice = function(code_id,devices){
-	// 			for (device in devices){
-	// 		console.log("######devices codes:" + device.codes.toString());
-	// 		for (code in device.codes){
-	// 			if (code_id === code.id){
-	// 				return device.id
-	// 			}
-	// 		}
+			// $scope.getProgramStatus = function(code_id){
+			// 	return $dash.programs[code_id].status;
+			// }
 
-	// 	}
-	// 	return "can't find such device";
-	// };
 
 			var self = this;
 
