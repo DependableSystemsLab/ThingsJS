@@ -6,36 +6,6 @@ var dashApp = window.angular.module('dashApp', ['ngResource',
                                          'ui.ace',
 										 'nvd3'] );
 
-/* Keeps all checked items */
-var checkedArray = [];
-
-/* Keeps all copied items */
-var copied = [];
-
-/* Keeps all cut items */
-var cut = [];	
-
-/* Keeps track of visited pages for the back button */
-var visitedPages = [];
-
-/* Commonly replaced string in a url */
-var replace = "http://localhost:5000/";
-
-/* To determine visibility of the update button */
-var showUpdate = 0;
-
-/* Current file */
-var currentFile;
-
-/* REST API endpoints */
-var url = "http://localhost:5000/root/";
-var createFSUrl = "http://localhost:5000/makeFromPath";
-var deleteFSUrl = "http://localhost:5000/deleteFromPath";
-var moveFSUrl = "http://localhost:5000/moveFromPath";
-var cloneFSUrl = "http://localhost:5000/cloneFromPath";
-var updateFSUrl = "http://localhost:5000/updateFromPath";
-var renameFSUrl = "http://localhost:5000/renameFromPath";
-
 var options = ["Run", "Delete"];
 
 dashApp.constant("CONFIG", {
@@ -553,22 +523,36 @@ dashApp.constant("CONFIG", {
 		.state('codes', {
 			parent: 'init',
 			url: '/codes',
-			controller: ['$scope', 'socket', 'DashboardService', '$http', function($scope, socket, DashboardService, $http){
+			controller: ['$scope', '$rootScope', 'socket', 'DashboardService', '$http', function($scope, $rootScope, socket, DashboardService, $http){
 				var self = this;
 				$scope.$service = DashboardService;
-			
 				self.idleNodes = DashboardService.allNodes;
 				self.allCodes = DashboardService.allCodes;
+
 				
-
-
 				/**
 				 * @function init Function called when the page loads: initializes the file menu
 				 * @author Atif Mahmud
 				 */ 
 				self.init = function(){
-					self.renderMenu(url);
-					visitedPages.push(url);
+					$scope.checkedArray = [];
+					$scope.cut = [];
+					$scope.copied = [];
+					$scope.visitedPages = [];
+					$scope.showUpdate = false;
+					$scope.showBackButton = false;
+					$scope.currentPath;
+					$scope.currentFile;
+					$scope.replace = "http://localhost:5000/";
+					$scope.url = "http://localhost:5000/root/";
+					$scope.createFSUrl = "http://localhost:5000/makeFromPath";
+					$scope.deleteFSUrl = "http://localhost:5000/deleteFromPath";
+					$scope.moveFSUrl = "http://localhost:5000/moveFromPath"; 
+					$scope.cloneFSUrl = "http://localhost:5000/cloneFromPath";
+					$scope.updateFSUrl = "http://localhost:5000/updateFromPath";
+					$scope.renameFSUrl = "http://localhost:5000/renameFromPath";
+					self.renderMenu($scope.url);
+					$scope.visitedPages.push($scope.url);
 				},
 				
 
@@ -579,9 +563,9 @@ dashApp.constant("CONFIG", {
 				self.clearAll = function(){
 					self.codeName = "";
 					self.code = "";
-					currentFile= "";
+					$scope.currentFile= "";
 					self.selectedNode = undefined;
-					showUpdate = 0;
+					$scope.showUpdate = false;
 				},
 
 
@@ -593,9 +577,9 @@ dashApp.constant("CONFIG", {
 				 */
 				self.renderMenu = function(menuUrl){
 
-					url = menuUrl;
+					$scope.url = menuUrl;
 
-					$http.get(url).then(function(response){
+					$http.get($scope.url).then(function(response){
 						
 						console.log("http get request response");
 						console.log(response);
@@ -623,14 +607,15 @@ dashApp.constant("CONFIG", {
 				 */
 				self.menuClick = function(codeName, content){
 					if (content.type === "directory"){
-						url += codeName + "/";
-						self.renderMenu(url);
-						visitedPages.push(url);
+						$scope.url += codeName + "/";
+						self.renderMenu($scope.url);
+						$scope.visitedPages.push($scope.url);
 					} 
+
 					else if (content.type === "file"){
 						self.code = self.allCodes[codeName].content;
-						currentFile =  self.allCodes[codeName].name;
-						showUpdate = 1;
+						$scope.currentFile =  self.allCodes[codeName].name;
+						$scope.showUpdate = true;
 					}
 				}, 
 				
@@ -648,14 +633,16 @@ dashApp.constant("CONFIG", {
 					var checkedObject = {
 						"name" : name,
 						"content" : content,
-						"url" : url
+						"url" : $scope.url
 					};
 
 					if(value){
 						console.log(checkedObject);
-						checkedArray.push(checkedObject);
+						console.log("Copied: " + $scope.copied);
+						console.log("Cute: " + $scope.cut);
+						$scope.checkedArray.push(checkedObject);
 					} else {
-						checkedArray.splice( checkedArray.indexOf(name), 1 );
+						$scope.checkedArray.splice($scope.checkedArray.indexOf(name), 1 );
 					}	
 				},
 
@@ -671,14 +658,14 @@ dashApp.constant("CONFIG", {
 				
 					var postData = {
 						"file_name" : name,
-						"parent_path" : url.replace(replace, ""),
+						"parent_path" : $scope.url.replace($scope.replace, ""),
 						"is_file" : true,
 						"content" : code
 					};
 					
-					$http.post(createFSUrl, postData).then(function(){
+					$http.post($scope.createFSUrl, postData).then(function(){
 						window.alert("File saved successfully using http POST");
-						self.renderMenu(url);
+						self.renderMenu($scope.url);
 					}, function(){
 						alert("File save was unsuccessful");
 					});
@@ -695,13 +682,13 @@ dashApp.constant("CONFIG", {
 					
 					var postData = {
 						"file_name" : name,
-						"parent_path" : url.replace(replace, ""),
+						"parent_path" : $scope.url.replace($scope.replace, ""),
 						"is_file" : false,
 					};
 					
-					$http.post(createFSUrl, postData).then(function(){
+					$http.post($scope.createFSUrl, postData).then(function(){
 						alert("Folder saved succesfully using http POST");
-						self.renderMenu(url);
+						self.renderMenu($scope.url);
 					}, function(){
 						console.log("Folder save failed");
 					});
@@ -718,13 +705,13 @@ dashApp.constant("CONFIG", {
 					var result = confirm("Are you sure you want to delete " + name + "?");
 
 					var postBody = {
-						"file_path" :  url.replace(replace, "") + name
+						"file_path" :  $scope.url.replace($scope.replace, "") + name
 					};
 
 					if(result){
-						$http.post(deleteFSUrl, postBody).then(function(){
+						$http.post($scope.deleteFSUrl, postBody).then(function(){
 							console.log(name + " deleted successfully");
-							self.renderMenu(url);
+							self.renderMenu($scope.url);
 						}, function(){
 							alert("File delete was unsuccessful");
 						});
@@ -739,12 +726,12 @@ dashApp.constant("CONFIG", {
 				 */
 				self.copySelected = function(){
 
-					for (var e in checkedArray){
-						var toPush = checkedArray[e];
-						copied.push(toPush);
+					for (var e in $scope.checkedArray){
+						var toPush = $scope.checkedArray[e];
+						$scope.copied.push(toPush);
 					}
 
-					checkedArray = [];
+					$scope.checkedArray = [];
 		
 				},
 
@@ -756,17 +743,27 @@ dashApp.constant("CONFIG", {
 				 */
 				self.cutSelected = function(){
 
-					for (var e in checkedArray){
-						var toPush = checkedArray[e];
-						cut.push(toPush);
-						console.log(cut);
+					for (var e in $scope.checkedArray){
+						var toPush = $scope.checkedArray[e];
+						$scope.cut.push(toPush);
 					}
 
-					checkedArray = [];
+					$scope.checkedArray = [];
 
 				},
 
 
+
+				/**
+				 * @function cutSelected "Cuts" folders/files for pasting
+				 * @author Atif Mahmud
+				 */
+				self.clearSelected = function(){
+					$scope.cut = [];
+					$scope.copied = [];
+				},
+
+				
 
 				/**
 				 * @function deleteSelected Deletes all the checked/selected files
@@ -774,12 +771,12 @@ dashApp.constant("CONFIG", {
 				 */
 				self.deleteSelected = function(){
 
-					for (var e in checkedArray){
-						var toDelete = checkedArray[e].name;
+					for (var e in $scope.checkedArray){
+						var toDelete = $scope.checkedArray[e].name;
 						self.deleteObject(toDelete);
 					}
 
-					checkedArray = [];
+					$scope.checkedArray = [];
 				},
 
 
@@ -790,21 +787,21 @@ dashApp.constant("CONFIG", {
 				 */
 				self.pasteSelected = function(){
 
-					for (var e in copied){
-						var filepath = (copied[e].url).replace(replace, "") + copied[e].name;
-						self.cloneObject(filepath, copied[e].content.name + "_copied", url.replace(replace, ""));
+					for (var e in $scope.copied){
+						var filepath = ($scope.copied[e].url).replace($scope.replace, "") + $scope.copied[e].name;
+						self.cloneObject(filepath, $scope.copied[e].content.name + "_copied", $scope.url.replace($scope.replace, ""));
 					}
 
-					copied = [];
+					$scope.copied = [];
 
-					for (var e in cut){
-						var toMove = cut[e].name;
-						var objectPath = cut[e].url;
-						self.moveObject(toMove, currentPath);
+					for (var e in $scope.cut){
+						var toMove = $scope.cut[e].name;
+						var objectPath = $scope.cut[e].url;
+						self.moveObject(toMove, objectPath);
 					}
 
-					cut = [];
-					self.renderMenu(url);
+					$scope.cut = [];
+					self.renderMenu($scope.url);
 				
 				},
 
@@ -819,13 +816,13 @@ dashApp.constant("CONFIG", {
 				self.moveObject = function(name, path){
 
 					var movePostBody = {
-						"file_path" :  path.replace(replace, "") + name, 
-						"parent_path": url.replace(replace, "")
+						"file_path" :  path.replace($scope.replace, "") + name, 
+						"parent_path": $scope.url.replace($scope.replace, "")
 					};
 
-					$http.post(moveFSUrl, movePostBody).then(function(){
+					$http.post($scope.moveFSUrl, movePostBody).then(function(){
 						console.log("File move successful");
-						self.renderMenu(url);
+						self.renderMenu($scope.url);
 					}, function(){
 						alert("File move was unsuccessful");
 					});
@@ -848,9 +845,9 @@ dashApp.constant("CONFIG", {
 						"parent_path" : path
 					};
 
-					$http.post(cloneFSUrl, postObject).then(function(){
+					$http.post($scope.cloneFSUrl, postObject).then(function(){
 						console.log("Copy/paste successful");
-						self.renderMenu(url);
+						self.renderMenu($scope.url);
 					}, function(){
 						alert("Copy/paste was unsuccessful");
 					});
@@ -865,13 +862,13 @@ dashApp.constant("CONFIG", {
 				self.updateFile = function(content){
 				
 					var postBody = {
-						"file_path" : url.replace(replace, "") + currentFile,
+						"file_path" : $scope.url.replace($scope.replace, "") + $scope.currentFile,
 						"content" 	: content
 					};
 		
-					$http.post(updateFSUrl, postBody).then(function(){
+					$http.post($scope.updateFSUrl, postBody).then(function(){
 						console.log("Updated");
-						self.renderMenu(url);
+						self.renderMenu($scope.url);
 					}, function(){
 						alert("Update was unsuccessful");
 					});
@@ -886,15 +883,15 @@ dashApp.constant("CONFIG", {
 				self.renameFile = function(name){
 
 					var postBody = {
-						"file_path" : url.replace(replace, "") + currentFile,
+						"file_path" : $scope.url.replace($scope.replace, "") + $scope.currentFile,
 						"file_name" : name
 					};
 					
 					console.log(postBody);
 					
-					$http.post(renameFSUrl, postBody).then(function(){
+					$http.post($scope.renameFSUrl, postBody).then(function(){
 						console.log("Renamed");
-						self.renderMenu(url);
+						self.renderMenu($scope.url);
 					}, function(){
 						alert("Rename was unsuccessful");
 					});
@@ -906,33 +903,15 @@ dashApp.constant("CONFIG", {
 				 * @function moveBackFolder Moves back up in the directory navigation path
 				 */
 				self.moveBackFolder = function(){
-					console.log("Now in url: " + url);
-					var newUrl = visitedPages[visitedPages.length - 2];
+					console.log("Now in url: " + $scope.url);
+					var newUrl = $scope.visitedPages[$scope.visitedPages.length - 2];
 					console.log("Going to url " + newUrl);
-					visitedPages.pop();
+					$scope.visitedPages.pop();
 					self.renderMenu(newUrl);
-				},
 
-
-
-				/**
-				 * @function isEmpty Determines visibility of HTML components based on contents of checkedArray
-				 * @returns {Boolean} true if files have been checked, copied, or cut
-				 * @author Atif Mahmud
-				 */
-				self.isEmpty = function(){
-					return ( !(checkedArray.length === 0) || !(copied.length === 0) || !(cut.length === 0) );
-				},
-
-
-
-				/**
-				 * @function showPaste Determines visibility of the "Paste" button
-				 * @returns {Boolean} true if any file has been copied or cut
-				 * @author Atif Mahmud
-				 */
-				self.showPaste = function(){
-					return ( !(copied.length === 0) || !(cut.length === 0) );
+					if ($scope.visitedPages.length <= 1){
+						$scope.showBackButton = false;
+					}
 				},
 
 
@@ -943,60 +922,15 @@ dashApp.constant("CONFIG", {
 				 * @author Atif Mahmud
 				 */
 				self.listStyle = function(name){
-					for (var e in cut){
-						if(cut[e].name == name){
+					for (var e in $scope.cut){
+						if($scope.cut[e].name == name){
 							return {"opacity" : 0.5};
 						}
 					}
 				},
 
 
-
-				/**
-				 * @function showBackButton Determines visibility of the back button
-				 * @returns {Boolean} 1 if more than one page has been visited (if you go back all the way to first page, back button disappears)
-				 * @author Atif Mahmud
-				 */
-				self.showBackButton = function(){
-					return (visitedPages.length > 1);
-				},
-
-
-
-				/**
-				 * @function showOpenButtons Determines the visibility of the buttons when file open
-				 * @returns {Boolean} true if a file is open and hence the update button needs to be shown
-				 */
-				self.showOpenButtons = function(){
-					if (showUpdate === 1){
-						return true;
-					} else {
-						return false;
-					}
-				},
-
-
-
-				/**
-				 * @function showNewButtons Determines the visibility of buttons for actions for new file
-				 * @returns {Boolean} true if code name filled
-				 */
-				self.showNewButtons = function(){
-					return self.codeName && !self.showOpenButtons();
-				},
-
-
-				
-				/**
-				 * @function showRenameButton Determines the visibility of the rename button
-				 * @returns {Boolean} true if and only if both file open and codename filled
-				 */
-				self.showRenameButton = function(){
-					return (self.codeName && self.showOpenButtons() );
-				},
-
-
-
+			
 				/**
 				 * @function getIcon Determines which icon is to be shown in the file menu
 				 * @param {Array} content Content of the filesystem object
