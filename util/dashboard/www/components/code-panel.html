@@ -1,24 +1,25 @@
 <div class="panel panel-default">
 	<div class="panel-heading">
 		<span class="form-inline">
-			<select ng-model="code" ng-options='code as (program.code_name+": "+program.id)  for program in $dash.programs' class="form-control">
-				<option value="" selected="selected">--- Select Program ---</option>
-				<option ng-repeat='(program.code_name+":"+program.id)  for program in $dash.programs' ng-value="program.id">{{ program.code_name }}+": "+program.id</option>
+			<select ng-model="code" ng-options= "data as target for (target, data) in $dash.programs"  class="form-control">
+				<option value="">--- Select Program ---</option>
+<!-- 				<option ng-repeat='(program.code_name+":"+program.id)  for program in $dash.programs' ng-value= program>{{ program.code_name }}+": "+program.id</option> -->
+			<option ng-repeat="(target, data) in $dash.programs track by $index" ng-value="data">{{ data.code_name }}+": "+data.id</option>
 			</select>
 		</span>
 		
 		<div class="btn-group" ng-init="viewMode = 'status'">
-			<button ng-click="viewMode = 'status'" class="btn btn-default" ng-class="{ active: viewMode === 'status' }">Status</button>
+			<button ng-click="viewMode = 'workflow'" class="btn btn-default" ng-class="{ active: viewMode === 'workflow' }">Workflow</button>
 			<button ng-click="viewMode = 'graph'" class="btn btn-default" ng-class="{ active: viewMode === 'graph' }">Graph</button>
 			<button ng-click="viewMode = 'console'" class="btn btn-default" ng-class="{ active: viewMode === 'console' }">Console</button>
 		</div>
 		
 	</div>
-	<div class="panel-body" style="min-height:204px;">
+	<div class="panel-body" style="min-height:204px;" ng-model="code">
 		
-		<!-- Status View -->
-		<div ng-show="viewMode === 'status'">
-			<h4>{{ code.id }}</h4>
+		<!-- Workflow View -->
+		<div ng-show="viewMode === 'workflow'">
+			<h4>Program Run time ID:{{code.id}}</h4>
 			
 			<table class="table table-bordered">
 				<tbody ng-if="code">
@@ -26,48 +27,39 @@
 						<th>Status</th>
 						<td>{{ code.status }}</td>
 					</tr>
-					<tr>
-						<th>Device</th>
-						<td></td>
-						<!-- <td>{{ node.info.device }}</td> -->
-					</tr>
-					<!-- <tr>
-						<th>Running</th>
-						<td>
-							<span>{{ node.running || '-' }}</span>
-							<button ng-if="node.status === 'busy'" class="btn btn-danger btn-sm" ng-click="$service.pauseCode(node.id, node.running)">
-								<i class="fa fa-stop"></i> Stop
-							</button>
-						</td>
-					</tr> -->
 				</tbody>
-				<tbody ng-if="!node">
+				<tbody ng-if="!code">
 					<tr>
-						<td class="text-center">Device not selected</td>
+						<td class="text-center">Fail to find program Stat </td>
 					</tr>
 				</tbody>
 			</table>
 			
-			<h4 ng-if="node">Processes</h4>
-			<table class="table table-bordered" ng-if="node">
+			<h4 ng-if="code">PROGRAM HISTORY </h4>
+			<table class="table table-bordered" ng-if="code">
 				<thead>
 					<tr>
-						<th>Code</th>
-						<th>Runtime ID</th>
-						<th>Status</th>
-						<th></th>
+						<th>Device</th>
+						<th>Start Time</th>
+						<th>End time</th>
+						<th>Status on device</th>
 					</tr>
 				</thead>
-				<tbody ng-repeat="(code_name, instances) in node.codes">
-					<tr ng-repeat-start="(instance_id, status) in instances">
+				<tbody ng-repeat="device in code.findHistoryDevices(code.id,$dash.engines) track by $index">
+					<tr >
 						<th>
-							<a ng-click="$ctrl.showSource[instance_id] = !$ctrl.showSource[instance_id]">{{ code_name }}</a>
+							{{ device.id }}
+						</th>
+						<th>
+							00:00
+						</th>
+						<th>
+							00:00
 						</th>
 						<td>
-							{{ instance_id }}
-						</td>
-						<td>
-							{{ status }}
+							{{ device.codes[code.code_name][code.id] }}
+						<!-- 	<span th:if device = code.findHistoryDevices(code.id,$dash.engines)[0]> Running </span>
+							<span th:unless=code.findHistoryDevices(code.id,$dash.engines)[0]> Paused </span> -->
 						</td>
 						<td>
 							<button ng-show="status === 'Running'" ng-click="node.pauseCode(code_name, instance_id)" class="btn btn-danger">

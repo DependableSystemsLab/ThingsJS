@@ -71,10 +71,13 @@
 							</button>
 						</div>
 					</li> -->
-					<a ng-click="$view.topProgram = node;" href="javascript:;" class="list-group-item">Display at Top pane</a>
+					<a ng-click="$view.topProgram = code;" href="javascript:;" class="list-group-item">Display at Top pane</a>
 					<a ng-click="$view.middleProgram = code;" href="javascript:;" class="list-group-item">Display at Middle pane</a>
 					<a ng-click="$view.bottomProgram = code;" href="javascript:;" class="list-group-item">Display at Bottom pane</a>
 					<a ui-sref="nodes.view({ nodeId: node.id })" class="list-group-item">View Program Workflow</a>
+					<a ng-click="runCode" href="javascript:;" class="list-group-item">Run Program</a>
+					<a ng-click="pauseCode" href="javascript:;" class="list-group-item">Pause Program</a>
+					<a ng-click="migrateCode" href="javascript:;" class="list-group-item">Migrate Program</a>
 				</ul>
 				</script>
 

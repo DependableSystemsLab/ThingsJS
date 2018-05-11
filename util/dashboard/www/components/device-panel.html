@@ -78,7 +78,7 @@
 
 							<span ng-show="status === 'Running' || status === 'Paused'" class="form-inline">
 								<select ng-model="selectedNode" class="form-control">
-									<option value="">--- Select Code ---</option>
+									<option value="">--- Select Device ---</option>
 									<option ng-repeat="(target, data) in $dash.engines" ng-value="target" ng-if="data.id !== node.id">{{ target }}</option>
 								</select>
 								<button class="btn btn-warning btn-sm"

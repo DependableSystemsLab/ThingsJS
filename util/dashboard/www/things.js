@@ -296,7 +296,7 @@
 	}
 	Program.prototype = new EventEmitter();
 	Program.prototype.findRunningDevice = function(code_id,devices){
-		console.log("jump to device function:");
+		
 		var i, code_name, instance_id; 
 		for (i in devices){			
 			var codes = devices[i].codes; 
@@ -322,6 +322,38 @@
 			}
 		}
 		return "can't find such device";
+	};
+
+
+	Program.prototype.findHistoryDevices = function(code_id,devices){
+		var i, code_name, instance_id; 
+		var return_result = [];
+		for (i in devices){			
+			var codes = devices[i].codes; 
+			for (code_name in codes){
+				// console.log("code_id: " + code_id);
+				// console.log("codes name :" + code_name);
+				// console.log("device id :" + devices[i].id);
+				// console.log("code id :"+ codes[code_name].toString());
+				for (instance_id in codes[code_name]){
+					console.log("code status :"+ codes[code_name][instance_id]);
+					// console.log("corresponding code status " + codes[code.code_name][code.id].status )
+					if(instance_id === code_id)
+						return_result.push(devices[i]);
+				}
+
+			// Object.keys(codes).forEach(function(codename){
+			// Object.keys(codes[codename]).forEach(function(instance_id){
+			// 		if(instance_id === code_id){
+			// 			return devices[i].id;
+			// 		}
+			// 	})
+			// })
+
+			}
+		}
+		console.log("devices length: " + return_result.length);
+		return return_result;
 	};
 
 
@@ -652,7 +684,7 @@ things.factory('CodeRepository', ['$rootScope', function($rootScope){
 			
 		}],
 		controllerAs: '$ctrl',
-		templateUrl: 'components/device-graph.html'
+		templateUrl: 'components/ -graph.html'
 	}
 }])
 .directive('deviceConsole', function(){
@@ -717,13 +749,9 @@ things.factory('CodeRepository', ['$rootScope', function($rootScope){
 			code: '='
 		},
 		controller: ['$scope', function($scope){
-			// $scope.$service = DashboardService;
+ 
 			$scope.$dash = Dashboard.get();
 			$scope.$repo = CodeRepository.get();
-			// $scope.getProgramStatus = function(code_id){
-			// 	return $dash.programs[code_id].status;
-			// }
-
 
 			var self = this;
 
