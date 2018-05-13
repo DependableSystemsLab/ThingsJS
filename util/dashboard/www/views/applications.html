@@ -6,18 +6,10 @@
 			</div>
 			<div class="panel-body">
 				<div class="dashboard-device-list">
-
-
-<!-- 				<div ng-repeat="prgram in $dash.programs"
-						class="dashboard-device"
+					<div 		
 						uib-popover-template="'deviceMenu.html'"
 						popover-placement="bottom">
-						<span> {{ program.code_name}} </span>
-						<span>	{{ program.id }}  </span><
-						<span>	{{ program.status }} </span>
-					</div> -->
-			<div> 
-				<table class="table table-bordered ">
+			<table class="table table-bordered">
 				<thead>
 					<tr>
 						<th>Code Name</th>
@@ -25,14 +17,14 @@
 						<th>Status</th>
 						<th>Device</th>
 					</tr>
-				</thead>
-				<tbody ng-repeat="program in $dash.programs" ng-model=program>
+				</thead>		
+				<tbody ng-repeat="program in $dash.programs">
 					<tr>
 						<th>
 						   {{ program.code_name}}
 						</th>
 						<td>
-							{{ program.id }} <!-- Runtime ID -->
+							{{ program.id }}
 						</td>
 						<td>
 							{{ program.status }}
@@ -42,47 +34,19 @@
 						</td>
 					</tr>
 				</tbody>
-				</table>
-			</div>							
-				<script type="text/ng-template" id="deviceMenu.html">
+			</table>
+					</div>
+						<script type="text/ng-template" id="deviceMenu.html">
 				<ul class="list-group" style="margin: -11px -16px">
-<!-- 					<li ng-if="program.status === 'running'" class="list-group-item">
-						<div class="form-inline">
-							<select ng-model="selectedCode" class="form-control" ng-change="console.log(selectedCode)">
-								<option value="">--- Select Code ---</option>
-								<option ng-repeat="program in $dash.programs" ng-value="codeName">{{ program.code_name }}</option>
-							</select>
-							<button ng-click="node.runCode(selectedCode, $service.allCodes[selectedCode].code)" class="btn btn-danger">Run</button>
-						</div>
-					</li>
-					<li ng-if="node.status === 'busy'" class="list-group-item">
-						{{ node.running }}
-						<button ng-click="$service.pauseCode(node.id, node.running)" class="btn btn-danger">Stop</a>
-					</li>
-					<li ng-if="node.status === 'busy'" class="list-group-item">
-						<div class="form-inline">
-							<select ng-model="selectedNode" class="form-control">
-								<option value="">--- Select Device ---</option>
-								<option ng-repeat="(target, data) in $service.allNodes" ng-value="target" ng-if="data.status === 'idle' && data.id !== node.id">{{ target }}</option>
-							</select>
-							<button class="btn btn-warning btn-sm"
-									ng-click="$service.migrateCode(node.id, selectedNode, node.running)">
-								Move
-							</button>
-						</div>
-					</li> -->
-					<a ng-click="$view.topProgram = code;" href="javascript:;" class="list-group-item">Display at Top pane</a>
-					<a ng-click="$view.middleProgram = code;" href="javascript:;" class="list-group-item">Display at Middle pane</a>
-					<a ng-click="$view.bottomProgram = code;" href="javascript:;" class="list-group-item">Display at Bottom pane</a>
-					<a ui-sref="nodes.view({ nodeId: node.id })" class="list-group-item">View Program Workflow</a>
-					<a ng-click="runCode" href="javascript:;" class="list-group-item">Run Program</a>
+					<a ng-click="$view.topProgram = program;" href="javascript:;" class="list-group-item">Display at Top pane</a>
+					<a ng-click="$view.middleProgram = program;" href="javascript:;" class="list-group-item">Display at Middle pane</a>
+					<a ng-click="$view.bottomProgram = program;" href="javascript:;" class="list-group-item">Display at Bottom pane</a>
+					<a ng-click="program.findRunningDevice(program.id,$dash.engines).runCode" href="javascript:;" class="list-group-item">Run Program</a>
 					<a ng-click="pauseCode" href="javascript:;" class="list-group-item">Pause Program</a>
 					<a ng-click="migrateCode" href="javascript:;" class="list-group-item">Migrate Program</a>
 				</ul>
-				</script>
-
-				</div>
-				
+			</script>		
+				</div>			
 			</div>
 		</div>
 			<div class="panel panel-default">

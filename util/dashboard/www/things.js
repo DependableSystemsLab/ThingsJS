@@ -336,7 +336,7 @@
 				// console.log("device id :" + devices[i].id);
 				// console.log("code id :"+ codes[code_name].toString());
 				for (instance_id in codes[code_name]){
-					console.log("code status :"+ codes[code_name][instance_id]);
+					//console.log("code status :"+ codes[code_name][instance_id]);
 					// console.log("corresponding code status " + codes[code.code_name][code.id].status )
 					if(instance_id === code_id)
 						return_result.push(devices[i]);
@@ -352,7 +352,7 @@
 
 			}
 		}
-		console.log("devices length: " + return_result.length);
+		//console.log("devices length: " + return_result.length);
 		return return_result;
 	};
 
@@ -569,6 +569,7 @@ things.factory('CodeRepository', ['$rootScope', function($rootScope){
 		restrict: 'E',
 		scope: {
 			node: '=',
+			code: '=',
 			mode: '=?',
 			height: '=?'
 		},
@@ -684,7 +685,7 @@ things.factory('CodeRepository', ['$rootScope', function($rootScope){
 			
 		}],
 		controllerAs: '$ctrl',
-		templateUrl: 'components/ -graph.html'
+		templateUrl: 'components/device-graph.html'
 	}
 }])
 .directive('deviceConsole', function(){
@@ -755,7 +756,7 @@ things.factory('CodeRepository', ['$rootScope', function($rootScope){
 
 			var self = this;
 
-			self.showSource = {}
+			self.showSource = {};
 
 			self.refresh = function(){
 				$scope.$repo.get('/')
@@ -768,7 +769,13 @@ things.factory('CodeRepository', ['$rootScope', function($rootScope){
 
 						$scope.$apply();
 					})
-			}
+			};
+
+			self.convertDatetime = function(timestamp){
+				var date = new Date(timestamp);
+				return date;
+			};
+
 
 			self.refresh();
 		}],

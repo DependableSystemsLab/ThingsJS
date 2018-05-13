@@ -79,19 +79,8 @@ dashApp.constant("CONFIG", {
 			controller: ['$scope','dashboard', function($scope, dashboard){
 				var self = this;
 				$scope.$dash = dashboard;
-				
-				// self.allNodes = DashboardService.allNodes;
-
-				// self.allCodes = DashboardService.allCodes;
-				
-				// self.pauseNode = DashboardService.pauseCode;
-				
-				// self.watchCode = function(codeId){
-				// 	socket.send({ action: "pubsub", command: "subscribe", topic: codeId+"/running" });
-				// };
 
 				//got programs from things-js Dashboard 
-
 
 				self.topProgram = undefined;
 				self.middleProgram = undefined;

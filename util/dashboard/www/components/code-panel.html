@@ -8,7 +8,7 @@
 			</select>
 		</span>
 		
-		<div class="btn-group" ng-init="viewMode = 'status'">
+		<div class="btn-group" ng-init="viewMode = 'workflow'">
 			<button ng-click="viewMode = 'workflow'" class="btn btn-default" ng-class="{ active: viewMode === 'workflow' }">Workflow</button>
 			<button ng-click="viewMode = 'graph'" class="btn btn-default" ng-class="{ active: viewMode === 'graph' }">Graph</button>
 			<button ng-click="viewMode = 'console'" class="btn btn-default" ng-class="{ active: viewMode === 'console' }">Console</button>
@@ -51,16 +51,14 @@
 							{{ device.id }}
 						</th>
 						<th>
-							00:00
+							{{ $ctrl.convertDatetime(device.stats[0].timestamp)}} 
 						</th>
 						<th>
-							00:00
+							{{ $ctrl.convertDatetime(device.stats[device.stats.length-1].timestamp) }}
 						</th>
-						<td>
+						<th>
 							{{ device.codes[code.code_name][code.id] }}
-						<!-- 	<span th:if device = code.findHistoryDevices(code.id,$dash.engines)[0]> Running </span>
-							<span th:unless=code.findHistoryDevices(code.id,$dash.engines)[0]> Paused </span> -->
-						</td>
+						</th>
 						<td>
 							<button ng-show="status === 'Running'" ng-click="node.pauseCode(code_name, instance_id)" class="btn btn-danger">
 								Pause
@@ -100,7 +98,7 @@
 		<!-- Graph View -->
 		<div ng-show="viewMode === 'graph'">
 			
-			<device-graph node="node" height="174"></device-graph>
+			<device-graph node="code.findRunningDevice(code.id,$dash.engines)" height="174"></device-graph>
 										
 		</div>
 		<!-- End Graph View -->
@@ -108,8 +106,8 @@
 		<!-- Console View -->
 		<div ng-show="viewMode === 'console'">
 			
-			<device-console lines="node.console" height="144px"></device-console>
-			<button ng-if="node.console.length > 0" class="btn btn-info btn-sm pull-right" ng-click="node.console = []">Clear Console</button>
+			<device-console lines="code.findRunningDevice(code.id,$dash.engines).console" height="144px"></device-console>
+			<button ng-if="code.findRunningDevice(code.id,$dash.engines).console.length > 0" class="btn btn-info btn-sm pull-right" ng-click="code.findRunningDevice(code.id,$dash.engines).console = []">Clear Console</button>
 										
 		</div>
 		<!-- End Console View -->
