@@ -6,7 +6,7 @@
 			</div>
 			<div class="panel-body">
 				<div class="dashboard-device-list">
-					<div ng-repeat="(id, node) in $dash.engines"
+					<div ng-repeat="(id,node) in $dash.engines"
 						class="dashboard-device"
 						ng-class="{ 'dead': (node.status === 'dead'), 'idle': (node.status === 'idle'), 'busy': (node.status === 'busy') }"
 						uib-popover-template="'deviceMenu.html'"
@@ -77,6 +77,7 @@
 					<a ng-click="$view.topDevice = node;" href="javascript:;" class="list-group-item">Display at Top pane</a>
 					<a ng-click="$view.middleDevice = node;" href="javascript:;" class="list-group-item">Display at Middle pane</a>
 					<a ng-click="$view.bottomDevice = node;" href="javascript:;" class="list-group-item">Display at Bottom pane</a>
+					<a ng-click="$view.bottomDevice = node;" href="javascript:;" class="list-group-item">{{node.id}}</a>
 					<a ui-sref="nodes.view({ nodeId: node.id })" class="list-group-item">View Node Detail</a>
 				</ul>
 				</script>

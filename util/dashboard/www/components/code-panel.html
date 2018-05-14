@@ -59,7 +59,7 @@
 						<th>
 							{{ device.codes[code.code_name][code.id] }}
 						</th>
-						<td>
+						<!-- <td>
 							<button ng-show="status === 'Running'" ng-click="node.pauseCode(code_name, instance_id)" class="btn btn-danger">
 								Pause
 							</button>
@@ -77,9 +77,9 @@
 									<i class="fa fa-exchange"></i> Migrate
 								</button>
 							</span>
-						</td>
+						</td> -->
 					</tr>
-					<tr ng-show="$ctrl.showSource[instance_id]">
+		<!-- 			<tr ng-show="$ctrl.showSource[instance_id]">
 						<td colspan=4 style="white-space: pre-wrap">
 							{{ $dash.programs[instance_id].snapshots[0] }}
 						</td>
@@ -88,7 +88,7 @@
 						<td colspan=4 style="white-space: pre-wrap">
 							{{ $dash.programs[instance_id].source }}
 						</td>
-					</tr>
+					</tr> -->
 				</tbody>
 			</table>
 										
@@ -112,7 +112,7 @@
 		</div>
 		<!-- End Console View -->
 		
-	</div>
+<!-- 	</div>
 	<div class="panel-footer">
 		<div ng-show="node" class="form-inline">
 			<select ng-model="selectedCode" class="form-control">
@@ -122,7 +122,7 @@
 			<button ng-click="node.runCode(selectedCode, $ctrl.codes[selectedCode].content)" class="btn btn-danger">
 				<i class="fa fa-play"></i> Run
 			</button>
-		</div>
+		</div> -->
 		
 		<!-- Node Controls -->
 		<!-- <div ng-if="node.status === 'idle'" class="form-inline">

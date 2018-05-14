@@ -308,6 +308,7 @@
 				for (instance_id in codes[code_name]){
 					// console.log("code status :"+codes[code_name][instance_id])
 					if(instance_id === code_id && codes[code_name][instance_id]== "Running")
+						// console.log("#####device id"+ devices[i].id);
 						return devices[i].id;
 				}
 
