@@ -529,7 +529,6 @@ dashApp.constant("CONFIG", {
 				self.idleNodes = DashboardService.allNodes;
 				self.allCodes = DashboardService.allCodes;
 
-				
 				/**
 				 * @function init Function called when the page loads: initializes the file menu
 				 * @author Atif Mahmud
@@ -555,8 +554,6 @@ dashApp.constant("CONFIG", {
 					$scope.visitedPages.push($scope.url);
 				},
 				
-
-
 				/**
 				 * @function clearAll Function clears out the text fields
 				 */
@@ -568,36 +565,26 @@ dashApp.constant("CONFIG", {
 					$scope.showUpdate = false;
 				},
 
-
-
 				/**
 				 * @function renderMenu Refreshes the filemenu with all filesystem objects from current url
 				 * @param {String} menuUrl endpoint to refresh the file menu from 
 				 * @author Atif Mahmud
 				 */
 				self.renderMenu = function(menuUrl){
-
 					$scope.url = menuUrl;
-
 					$http.get($scope.url).then(function(response){
-						
 						console.log("http get request response");
 						console.log(response);
 						self.allCodes = {};
-
 						for(var i = 0; i < response.data.content.length; i++){
 							var child = response.data.content[i];
 							self.allCodes[child.name] = child;
 						}
-
 						self.clearAll();
-
 					}, function(){
 						console.log("An error occured");
 					});
 				},
-
-
 
 				/**
 				 * @function menuClick Navigates to directory or displays file contents on code window
@@ -611,7 +598,6 @@ dashApp.constant("CONFIG", {
 						self.renderMenu($scope.url);
 						$scope.visitedPages.push($scope.url);
 					} 
-
 					else if (content.type === "file"){
 						self.code = self.allCodes[codeName].content;
 						$scope.currentFile =  self.allCodes[codeName].name;
@@ -619,8 +605,6 @@ dashApp.constant("CONFIG", {
 					}
 				}, 
 				
-
-
 				/**
 				 * @function checked Adds the checked object to checkedArray
 				 * @param {String} name Name of the filesystem object 
@@ -628,14 +612,12 @@ dashApp.constant("CONFIG", {
 				 * @param {Boolean} value Status of checkbox (1 if checked)
 				 * @author Atif Mahmud
 				 */
-				self.checked = function(name, content, value){
-					
+				self.checked = function(name, content, value){	
 					var checkedObject = {
 						"name" : name,
 						"content" : content,
 						"url" : $scope.url
 					};
-
 					if(value){
 						console.log(checkedObject);
 						console.log("Copied: " + $scope.copied);
@@ -646,23 +628,19 @@ dashApp.constant("CONFIG", {
 					}	
 				},
 
-
-
 				/**
 				 * @function saveCode Saves a file in the current directory
 				 * @param {String} name Name of the file 
 				 * @param {String} code Contents of the file
 				 * @author Atif Mahmud
 				 */
-				self.saveCode = function(name, code){
-				
+				self.saveCode = function(name, code){				
 					var postData = {
 						"file_name" : name,
 						"parent_path" : $scope.url.replace($scope.replace, ""),
 						"is_file" : true,
 						"content" : code
 					};
-					
 					$http.post($scope.createFSUrl, postData).then(function(){
 						window.alert("File saved successfully using http POST");
 						self.renderMenu($scope.url);
@@ -671,21 +649,17 @@ dashApp.constant("CONFIG", {
 					});
 				},
 
-
-
 				/**
 				 * @function saveFolder Saves a new folder in the current directory
 				 * @param {String} name Name of the folder
 				 * @author Atif Mahmud 
 				 */
-				self.saveFolder = function(name){
-					
+				self.saveFolder = function(name){					
 					var postData = {
 						"file_name" : name,
 						"parent_path" : $scope.url.replace($scope.replace, ""),
 						"is_file" : false,
 					};
-					
 					$http.post($scope.createFSUrl, postData).then(function(){
 						alert("Folder saved succesfully using http POST");
 						self.renderMenu($scope.url);
@@ -694,8 +668,6 @@ dashApp.constant("CONFIG", {
 					});
 				}, 
 
-
-
 				/**
 				 * @function deleteObject Deletes a filesystem object
 				 * @param {String} name Name of the filesystem object to delete
@@ -703,11 +675,9 @@ dashApp.constant("CONFIG", {
 				 */
 				self.deleteObject = function(name){
 					var result = confirm("Are you sure you want to delete " + name + "?");
-
 					var postBody = {
 						"file_path" :  $scope.url.replace($scope.replace, "") + name
 					};
-
 					if(result){
 						$http.post($scope.deleteFSUrl, postBody).then(function(){
 							console.log(name + " deleted successfully");
@@ -718,41 +688,29 @@ dashApp.constant("CONFIG", {
 					}
 				},
 
-
-
 				/**
 				 * @function copySelected Copies filesystem objects into copied array
 				 * @author Atif Mahmud
 				 */
 				self.copySelected = function(){
-
 					for (var e in $scope.checkedArray){
 						var toPush = $scope.checkedArray[e];
 						$scope.copied.push(toPush);
 					}
-
 					$scope.checkedArray = [];
-		
 				},
-
-
 
 				/**
 				 * @function cutSelected "Cuts" folders/files for pasting
 				 * @author Atif Mahmud
 				 */
 				self.cutSelected = function(){
-
 					for (var e in $scope.checkedArray){
 						var toPush = $scope.checkedArray[e];
 						$scope.cut.push(toPush);
 					}
-
 					$scope.checkedArray = [];
-
 				},
-
-
 
 				/**
 				 * @function cutSelected "Cuts" folders/files for pasting
@@ -763,49 +721,39 @@ dashApp.constant("CONFIG", {
 					$scope.copied = [];
 				},
 
-				
-
 				/**
 				 * @function deleteSelected Deletes all the checked/selected files
 				 * @author Atif Mahmud
 				 */
 				self.deleteSelected = function(){
-
 					for (var e in $scope.checkedArray){
 						var toDelete = $scope.checkedArray[e].name;
 						self.deleteObject(toDelete);
 					}
-
 					$scope.checkedArray = [];
 				},
-
-
 
 				/**
 				 * @function pasteSelected Pastes the filesystem objects after cut/copy
 				 * @author Atif Mahmud
 				 */
 				self.pasteSelected = function(){
-
 					for (var e in $scope.copied){
 						var filepath = ($scope.copied[e].url).replace($scope.replace, "") + $scope.copied[e].name;
-						self.cloneObject(filepath, $scope.copied[e].content.name + "_copied", $scope.url.replace($scope.replace, ""));
+						var newName = $scope.copied[e].content.name + "_copied";
+						var pasteUrl = $scope.url.replace($scope.replace, "");
+						self.cloneObject(filepath, newName, pasteUrl);
 					}
-
 					$scope.copied = [];
-
+					self.renderMenu($scope.url);
 					for (var e in $scope.cut){
 						var toMove = $scope.cut[e].name;
 						var objectPath = $scope.cut[e].url;
 						self.moveObject(toMove, objectPath);
 					}
-
 					$scope.cut = [];
 					self.renderMenu($scope.url);
-				
 				},
-
-
 
 				/**
 				 * @function moveObject Moves filesystem objects
@@ -814,12 +762,10 @@ dashApp.constant("CONFIG", {
 				 * @author Atif Mahmud
 				 */
 				self.moveObject = function(name, path){
-
 					var movePostBody = {
 						"file_path" :  path.replace($scope.replace, "") + name, 
 						"parent_path": $scope.url.replace($scope.replace, "")
 					};
-
 					$http.post($scope.moveFSUrl, movePostBody).then(function(){
 						console.log("File move successful");
 						self.renderMenu($scope.url);
@@ -828,8 +774,6 @@ dashApp.constant("CONFIG", {
 					});
 				},
 				
-
-
 				/**
 				 * @function cloneObject Makes a clone of a filesystem object (used in copy-paste) 
 				 * @param {String} name Name of the filesystem object 
@@ -837,35 +781,29 @@ dashApp.constant("CONFIG", {
 				 * @param {String} path Path from where it is being cloned
 				 * @author Atif Mahmud
 				 */
-				self.cloneObject = function(name, newName, path){
-					
+				self.cloneObject = function(name, newName, path){	
 					var postObject = {
 						"file_path"   : name,
 						"file_name"   : newName,
 						"parent_path" : path
 					};
-
 					$http.post($scope.cloneFSUrl, postObject).then(function(){
-						console.log("Copy/paste successful");
+						console.log("Copy/paste successful ", name);
 						self.renderMenu($scope.url);
 					}, function(){
 						alert("Copy/paste was unsuccessful");
 					});
 				},
 
-
-
 				/**
 				 * @function updateFile Updates the contents of a file
 				 * @param {String} content New contents of the file
 				 */
-				self.updateFile = function(content){
-				
+				self.updateFile = function(content){				
 					var postBody = {
 						"file_path" : $scope.url.replace($scope.replace, "") + $scope.currentFile,
 						"content" 	: content
 					};
-		
 					$http.post($scope.updateFSUrl, postBody).then(function(){
 						console.log("Updated");
 						self.renderMenu($scope.url);
@@ -874,21 +812,16 @@ dashApp.constant("CONFIG", {
 					});
 				},
 
-
-
 				/**
 				 * @function renameFile Renames the file
 				 * @param {String} name The new name of the file
 				 */
 				self.renameFile = function(name){
-
 					var postBody = {
 						"file_path" : $scope.url.replace($scope.replace, "") + $scope.currentFile,
 						"file_name" : name
 					};
-					
 					console.log(postBody);
-					
 					$http.post($scope.renameFSUrl, postBody).then(function(){
 						console.log("Renamed");
 						self.renderMenu($scope.url);
@@ -896,8 +829,6 @@ dashApp.constant("CONFIG", {
 						alert("Rename was unsuccessful");
 					});
 				},
-
-
 
 				/**
 				 * @function moveBackFolder Moves back up in the directory navigation path
@@ -908,13 +839,10 @@ dashApp.constant("CONFIG", {
 					console.log("Going to url " + newUrl);
 					$scope.visitedPages.pop();
 					self.renderMenu(newUrl);
-
 					if ($scope.visitedPages.length <= 1){
 						$scope.showBackButton = false;
 					}
 				},
-
-
 
 				/**
 				 * @function listStyle Grays out filesystem objects that have been cut
@@ -928,8 +856,6 @@ dashApp.constant("CONFIG", {
 						}
 					}
 				},
-
-
 			
 				/**
 				 * @function getIcon Determines which icon is to be shown in the file menu
@@ -945,21 +871,16 @@ dashApp.constant("CONFIG", {
 					}
 				},
 
-
-
 				/**
 				 * @function sendCode Run code on a node 
 				 */
 				self.sendCode = DashboardService.runCode;
-
-
 				
 				/**
 				 * @function onKeyDown Action on keyboard shortcut events
 				 * @param {Event} event Keyboard event 
 				 */
 				self.onKeyDown = function(event){
-
 					// Ctrl + S
 					if (event.ctrlKey && event.which === 83){
 						event.preventDefault();
