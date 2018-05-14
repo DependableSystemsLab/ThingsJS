@@ -242,12 +242,14 @@
 			})
 	}
 	CodeEngine.prototype.pauseCode = function(code_name, instance_id){
+			console.log("inside running function" + code_name) ;
 		return this.sendCommand('pause_code', {
 				code_name: code_name,
 				instance_id: instance_id
 			})
 	}
 	CodeEngine.prototype.resumeCode = function(code_name, instance_id){
+		console.log("#####resume code "+ instance_id);
 		return this.sendCommand('resume_code', {
 				code_name: code_name,
 				instance_id: instance_id
@@ -309,7 +311,7 @@
 					// console.log("code status :"+codes[code_name][instance_id])
 					if(instance_id === code_id && codes[code_name][instance_id]== "Running")
 						// console.log("#####device id"+ devices[i].id);
-						return devices[i].id;
+						return devices[i];
 				}
 
 			// Object.keys(codes).forEach(function(codename){

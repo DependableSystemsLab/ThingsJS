@@ -32,7 +32,7 @@
 							{{ program.status }}
 						</td>
 						<td>
-							{{ program.findRunningDevice(program.id,$dash.engines) }} 
+							{{ program.findRunningDevice(program.id,$dash.engines).id }} 
 						</td>
 					</tr>
 				</tbody>
@@ -44,9 +44,33 @@
 					<a ng-click="$view.topProgram = program;" href="javascript:;" class="list-group-item">Display at Top pane</a>
 					<a ng-click="$view.middleProgram = program;" href="javascript:;" class="list-group-item">Display at Middle pane</a>
 					<a ng-click="$view.bottomProgram = program;" href="javascript:;" class="list-group-item">Display at Bottom pane</a>
-					<a ng-click="program.findRunningDevice(program.id,$dash.engines).runCode" href="javascript:;" class="list-group-item">Run Program</a>
-					<a ng-click="pauseCode" href="javascript:;" class="list-group-item">Pause Program</a>
-					<a ng-click="migrateCode" href="javascript:;" class="list-group-item">Migrate Program</a>
+					<a ng-click="program.findRunningDevice(program.id,$dash.engines).pauseCode(program.code_name, program.id)" href="javascript:;" class="list-group-item">Pause Program</a>
+					<li class="list-group-item">
+						<div class="form-inline">
+							<select ng-model="selectedNode1" class="form-control">
+								<option value="">--- Select Device ---</option>
+								<option ng-repeat="(target, data) in $dash.engines" ng-value="target">{{ target }}</option>
+							</select>
+							<button class="btn btn-success btn-sm"
+									ng-click="selectedNode1.resumeCode(program.code_name, program.id)">
+								Resume Program on Selected Device
+							</button>
+						</div>
+					</li>
+				<!-- 	<a ng-click="program.findRunningDevice(program.id,$dash.engines).resumeCode(program.code_name, program.id)" href="javascript:;" class="list-group-item">Resum Program on device</a> -->
+
+					<li class="list-group-item">
+						<div class="form-inline">
+							<select ng-model="selectedNode2" class="form-control">
+								<option value="">--- Select Device ---</option>
+								<option ng-repeat="(target, data) in $dash.engines" ng-value="target">{{ target }}</option>
+							</select>
+							<button class="btn btn-warning btn-sm"
+									ng-click="program.findRunningDevice(program.id,$dash.engines).migrateCode(program.code_name, program.id, selectedNode2)">
+								Migrate Running Program
+							</button>
+						</div>
+					</li>
 				</ul>
 			</script>		
 				</div>			
