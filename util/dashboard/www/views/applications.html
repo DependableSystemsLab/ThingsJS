@@ -47,9 +47,9 @@
 					<a ng-click="program.findRunningDevice(program.id,$dash.engines).pauseCode(program.code_name, program.id)" href="javascript:;" class="list-group-item">Pause Program</a>
 					<li class="list-group-item">
 						<div class="form-inline">
-							<select ng-model="selectedNode1" class="form-control">
+							<select ng-model="selectedNode1"  ng-options = "data as target for (target, data) in $dash.engines" class="form-control">
 								<option value="">--- Select Device ---</option>
-								<option ng-repeat="(target, data) in $dash.engines" ng-value="target">{{ target }}</option>
+								<option ng-repeat="(target,data) in $dash.engines" ng-value="data">{{target}}</option>
 							</select>
 							<button class="btn btn-success btn-sm"
 									ng-click="selectedNode1.resumeCode(program.code_name, program.id)">

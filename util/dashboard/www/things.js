@@ -256,6 +256,7 @@
 			})
 	}
 	CodeEngine.prototype.migrateCode = function(code_name, instance_id, target_engine){
+		console.log("#####inside migrating "+ instance_id);
 		return this.sendCommand('migrate_code', {
 				code_name: code_name,
 				instance_id: instance_id,
