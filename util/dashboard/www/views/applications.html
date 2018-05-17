@@ -51,7 +51,8 @@
 								<option value="">--- Select Device ---</option>
 								<option ng-repeat="(target,data) in $dash.engines" ng-value="data">{{target}}</option>
 							</select>
-							<button class="btn btn-success btn-sm"
+							<button class="btn btn-sm"
+							ng-class = "{'btn-danger': (program.status !== 'Paused'),'btn-success':(program.status ==='Paused')}"
 									ng-click="selectedNode1.resumeCode(program.code_name, program.id)">
 								Resume Program on Selected Device
 							</button>
@@ -65,8 +66,11 @@
 								<option value="">--- Select Device ---</option>
 								<option ng-repeat="(target, data) in $dash.engines" ng-value="target">{{ target }}</option>
 							</select>
-							<button class="btn btn-warning btn-sm"
-									ng-click="program.findRunningDevice(program.id,$dash.engines).migrateCode(program.code_name, program.id, selectedNode2)">
+							<button 
+									class="btn btn-sm"
+									ng-class = "{'btn-danger': (program.status !== 'Running'),'btn-success':(program.status ==='Running')}"
+									ng-click="program.findRunningDevice(program.id,$dash.engines).migrateCode(program.code_name, program.id, selectedNode2)"
+									>
 								Migrate Running Program
 							</button>
 						</div>

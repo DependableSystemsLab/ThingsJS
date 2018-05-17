@@ -37,6 +37,12 @@
 			
 			<h4 ng-if="code">PROGRAM HISTORY </h4>
 			<table class="table table-bordered" ng-if="code">
+				<span class ="form-control-static">show <select ng-model="limit" class="form-control" style="width: 60px;">
+					<option ng-value = "1">1</option>
+					<option ng-value = "2">2</option>
+					<option ng-value = "0">Hide</option>
+					</select>lines
+				</span>
 				<thead>
 					<tr>
 						<th>Device</th>
@@ -45,7 +51,7 @@
 						<th>Status on device</th>
 					</tr>
 				</thead>
-				<tbody ng-repeat="device in code.findHistoryDevices(code.id,$dash.engines) track by $index">
+				<tbody ng-repeat="device in code.findHistoryDevices(code.id,$dash.engines) | limitTo: limit">
 					<tr >
 						<th>
 							{{ device.id }}

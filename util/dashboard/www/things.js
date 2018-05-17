@@ -277,6 +277,7 @@
 		this.stats = [];
 		this.console = [];
 		this.snapshots = [];
+		//this.device = ;
 
 		this.pubsub.subscribe(this.code_name+'/'+this.id+'/resource', function(topic, message){
 			self.stats.push(message);
@@ -311,7 +312,6 @@
 				for (instance_id in codes[code_name]){
 					// console.log("code status :"+codes[code_name][instance_id])
 					if(instance_id === code_id && codes[code_name][instance_id]== "Running")
-						// console.log("#####device id"+ devices[i].id);
 						return devices[i];
 				}
 
@@ -335,28 +335,13 @@
 		for (i in devices){			
 			var codes = devices[i].codes; 
 			for (code_name in codes){
-				// console.log("code_id: " + code_id);
-				// console.log("codes name :" + code_name);
-				// console.log("device id :" + devices[i].id);
-				// console.log("code id :"+ codes[code_name].toString());
 				for (instance_id in codes[code_name]){
 					//console.log("code status :"+ codes[code_name][instance_id]);
-					// console.log("corresponding code status " + codes[code.code_name][code.id].status )
 					if(instance_id === code_id)
 						return_result.push(devices[i]);
 				}
-
-			// Object.keys(codes).forEach(function(codename){
-			// Object.keys(codes[codename]).forEach(function(instance_id){
-			// 		if(instance_id === code_id){
-			// 			return devices[i].id;
-			// 		}
-			// 	})
-			// })
-
 			}
 		}
-		//console.log("devices length: " + return_result.length);
 		return return_result;
 	};
 
@@ -672,6 +657,7 @@ things.factory('CodeRepository', ['$rootScope', function($rootScope){
 			}, function(codes){
 				console.log("New codes", codes);
 			})
+
 
 			// Watch for node being dynamically resassigned to the directive
 			$scope.$watch(function(){
