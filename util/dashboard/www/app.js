@@ -8,9 +8,10 @@ var dashApp = angular.module('dashApp', ['ngResource',
                                          'things.js'] );
 
 dashApp.constant("CONFIG", {
-	service_url: (window.location.hostname+':'+window.location.port),
-	websocket_url: (window.location.hostname+':'+window.location.port+'/websocket'),
-	pubsub_url: ('ws://'+window.location.hostname+':8000')
+	service_url: window.location.origin,
+	pubsub_url: ('ws://'+window.location.hostname+':8000'),
+	repo_url: (window.location.origin+'/file-system'),
+	websocket_url: (window.location.origin+'/websocket'),
 })
 .config(['$stateProvider', '$urlRouterProvider', 
     function($stateProvider, $urlRouterProvider){
@@ -19,9 +20,8 @@ dashApp.constant("CONFIG", {
 			url: '',
 			abstract: true,
 			resolve: {
-				socket: ['DashboardService', function(DashboardService){
-					// console.log(Dashboard);
-					return DashboardService.start();
+				code_repo: ['CodeRepository', 'CONFIG', function(CodeRepository, CONFIG){
+					return CodeRepository.create(CONFIG.repo_url);
 				}],
 				dashboard: ['Dashboard', 'CONFIG', function(Dashboard, CONFIG){
 					return Dashboard.create(CONFIG.pubsub_url);
@@ -36,21 +36,38 @@ dashApp.constant("CONFIG", {
 		.state('main', {
 			parent: 'init',
 			url: '/',
-			controller: ['$scope', '$rootScope', 'socket', 'dashboard', 'DashboardService', function($scope, $rootScope, socket, dashboard, DashboardService){
+			controller: ['$scope', '$rootScope', 'dashboard', function($scope, $rootScope, dashboard){
 				var self = this;
-				$scope.$service = DashboardService;
+				// $scope.$service = DashboardService;
 				$scope.$dash = dashboard;
-				console.log($scope.$dash, DashboardService.allCodes);
+				// console.log($scope.$dash, DashboardService.allCodes);
+
+				self.video_raw = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
+
+				dashboard.pubsub.subscribe('things-videostream/raw', function(topic, message){
+					if (message){
+						self.video_raw = "data:image/png;base64,"+message;
+					}
+					else {
+						//Empty image
+						self.video_raw = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
+					}
+					$scope.$apply();
+				});
+				dashboard.pubsub.subscribe('things-videostream/motion', function(topic, message){
+					if (message){
+						self.video_motion = "data:image/png;base64,"+message;
+					}
+					else {
+						//Empty image
+						self.video_motion = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
+					}
+					$scope.$apply();
+				});
 
 				self.topDevice = undefined;
 				self.middleDevice = undefined;
 				self.bottomDevice = undefined;
-				
-				self.subscriptions = DashboardService.subscriptions;
-				
-				self.stopWS = function(){
-					self.socket.close();
-				}
 				
 			}],
 			controllerAs: '$view',
@@ -59,26 +76,18 @@ dashApp.constant("CONFIG", {
 		.state('nodes', {
 			parent: 'init',
 			url: '/nodes',
-			controller: ['$scope', 'socket', 'DashboardService', function($scope, socket, DashboardService){
+			controller: ['$scope', function($scope){
 				var self = this;
-				$scope.$service = DashboardService;
-				
-				self.allNodes = DashboardService.allNodes;
-				
-				self.pauseNode = DashboardService.pauseCode;
-				
-				self.watchNode = function(nodeId){
-					socket.send({ action: "pubsub", command: "subscribe", topic: nodeId+"/running" });
-				};
+
 			}],
 			controllerAs: '$view',
 			templateUrl: 'views/nodes.html'
 		})
 		.state('nodes.view', {
 			url: '/:nodeId',
-			controller: ['$scope', '$stateParams', 'DashboardService', function($scope, $stateParams, DashboardService){
+			controller: ['$scope', '$stateParams', function($scope, $stateParams){
 				var self = this;
-				self.node = DashboardService.allNodes[$stateParams.nodeId];
+				
 			}],
 			controllerAs: '$vm',
 			templateUrl: 'views/node-view.html'
@@ -86,35 +95,106 @@ dashApp.constant("CONFIG", {
 		.state('codes', {
 			parent: 'init',
 			url: '/codes',
-			controller: ['$scope', 'socket', 'DashboardService', function($scope, socket, DashboardService){
+			controller: ['$scope', 'CodeRepository', function($scope, CodeRepository){
 				var self = this;
-				$scope.$service = DashboardService;
-				
-				self.idleNodes = DashboardService.allNodes;
-				
-				self.allCodes = DashboardService.allCodes;
+				$scope.$repo = CodeRepository.get();
+
+				self.cur_path = '/';
+				self.cur_path_tokens = [];
+				self.cur_dir = {};
+				self.cur_code = undefined;
+				self.cur_selection = {};
+
+				self.refresh = function(){
+					$scope.$repo.get(self.cur_path)
+						.then(function(fsObject){
+							console.log(fsObject);
+							self.cur_dir = fsObject;
+							self.cur_path_tokens = self.cur_path.split('/').slice(1);
+							$scope.$apply();
+						})
+				}
+
+				self.saveFile = function(){
+					$scope.$repo.writeFile(self.cur_path, self.cur_code)
+						.then(function(file){
+							console.log("file saved", file);
+							self.cur_code._id = file._id;
+							self.refresh();
+						});
+				}
+
+				self.makeDir = function(dir_name){
+					$scope.$repo.makeDir(self.cur_path, dir_name)
+						.then(function(dir){
+							console.log("directory saved", dir);
+							self.refresh();
+						})
+				}
+
+				self.navigateTo = function(dir_name){
+					if (dir_name === '..'){
+						self.cur_path = '/'+self.cur_path_tokens.slice(0,-1).join('/');
+					}
+					else if (dir_name[0] === '/'){
+						self.cur_path = dir_name;
+					}
+					else if (self.cur_path === '/'){
+						self.cur_path = self.cur_path+dir_name;
+					}
+					else {
+						self.cur_path = self.cur_path+'/'+dir_name;	
+					}
+					console.log(self.cur_path)
+					self.clearAll();
+					self.refresh();
+				}
+
+				self.deleteSelection = function(){
+					var ids = Object.keys(self.cur_selection)
+						.map(function(key){
+							return self.cur_dir.children[key]._id;
+						})
+					console.log(ids);
+
+					$scope.$repo.delete(self.cur_path, ids)
+						.then(function(){
+							console.log(ids.length+' items deleted');
+							self.refresh();
+						})
+				}
 				
 				self.clearAll = function(){
-					self.codeName = "";
-					self.code = "";
-					self.selectedNode = undefined;
+					self.cur_code = {
+						name: '',
+						content: ''
+					};
+					self.cur_selection = {};
 				}
 				self.clearAll();
 
-				self.selectCode = function(codeName){
-					self.codeName = codeName;
-					self.code = self.allCodes[codeName].code;
+				self.selectCode = function(code){
+					self.cur_code._id = code._id;
+					self.cur_code.name = code.name;
+					self.cur_code.content = code.content;
 				}
-
-				self.sendCode = DashboardService.runCode;
 				
 				self.onKeyDown = function(event){
 					if (event.ctrlKey && event.which === 83){
 						/* Pressed Ctrl + S */
 						event.preventDefault();
-						$scope.$service.saveCode(self.codeName, self.code);
+						self.saveFile();
 					}
 				};
+
+				$scope.$watch(function(){ return self.cur_selection },
+					function(selection){
+						self.hasSelection = Object.values(selection).reduce(function(acc, item){ return acc || !!item }, false);
+						console.log(selection);
+					}, true)
+
+				// initialize view
+				self.refresh();
 			}],
 			controllerAs: '$view',
 			templateUrl: 'views/codes.html'
@@ -122,12 +202,12 @@ dashApp.constant("CONFIG", {
 		.state('debug', {
 			parent: 'init',
 			url: '/debug',
-			controller: ['$scope', 'socket', function($scope, socket){
+			controller: ['$scope', function($scope){
 				var self = this;
 				
-				self.subscribe = function(topic){
-					socket.send({ action: "subscribe", topic: topic });
-				}
+				// self.subscribe = function(topic){
+				// 	socket.send({ action: "subscribe", topic: topic });
+				// }
 			}],
 			controllerAs: '$view',
 			templateUrl: 'views/debug.html'

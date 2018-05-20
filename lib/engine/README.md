@@ -1,4 +1,4 @@
-** This documentation is outdated **
+** This directory is deprecated - use [`core`](/lib/core/) **
 
 # engine
 
