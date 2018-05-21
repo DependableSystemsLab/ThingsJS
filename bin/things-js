@@ -51,7 +51,21 @@ program
   });
 
 program
+  .command('restore <file_path>')
+  .option('-s, --save <save_path>', 'File path to optionally save instrumented code')
+  .option('-d, --debug', 'Set environment variable DEBUG to "true" and see debug output')
+  .description('Instrument raw JavaScript code to make it migrate-able')
+  .action(function(file_path, options){
+    process.env['DEBUG'] = options.debug ? "true": "false";
+    var things = require('../lib/things.js');
+    var code = things.Code.fromSnapshotFile(file_path, true);
+    if (options.save) code.save(options.save);
+    else console.log(code.source);
+  });
+
+program
   .command('run <file_path>')
+  .option('-r, --restore', 'Restore from snapshot and run')
   .option('-p, --pubsub <pubsub_url>', 'Pubsub URL')
   .option('-s, --save <save_path>', 'File path to optionally save instrumented code')
   .option('-d, --debug', 'Set environment variable DEBUG to "true" and see debug output')
@@ -59,9 +73,14 @@ program
   .action(function(file_path, options){
     process.env['DEBUG'] = options.debug ? "true": "false";
     var things = require('../lib/things.js');
-    // var pubsub = { url: (options.pubsub_url || 'mqtt://localhost') }; // use a dummy pubsub, no need to connect
-    var pubsub = new things.Pubsub(options.pubsub_url || 'mqtt://localhost');
-    var code = things.Code.fromFile(pubsub, file_path);
+    if (options.restore){
+      var code = things.Code.fromSnapshotFile(file_path);
+    }
+    else {
+      var pubsub = new things.Pubsub(options.pubsub_url || 'mqtt://localhost');
+      var code = things.Code.fromFile(pubsub, file_path);
+    }
+
     if (options.save) code.save(options.save);
     code.run()
     .then(function(instance){
