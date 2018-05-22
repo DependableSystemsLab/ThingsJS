@@ -43,7 +43,7 @@
 					<option ng-value = "0">0</option>
 					<option ng-value = "1">1</option>
 					<option ng-value = "2">2</option>
-					<option ng-value = code.findHistoryDevices(code.id,$dash.engines).length>All</option>
+					<option ng-value = code.historyDevices.length>All</option>
 					</select> lines
 				</span>
 				<thead>
@@ -54,13 +54,14 @@
 						<th>Status on device</th>
 					</tr>
 				</thead>
-				<tbody ng-repeat="device in code.findHistoryDevices(code.id,$dash.engines) | limitTo: limit">
+				<tbody ng-repeat="device in code.historyDevices| limitTo: limit">
 					<tr >
 						<th>
 							{{ device.id }}
 						</th>
 						<th>
-							{{ $ctrl.convertDatetime(device.stats[0].timestamp)}} 
+						<!-- 	{{ $ctrl.convertDatetime(device.stats[0].timestamp)}}  -->
+						{{device.stats[0].timestamp|date:"medium"}}
 						</th>
 						<th>
 							<!-- {{ $ctrl.convertDatetime(device.stats[device.stats.length-1].timestamp) }} -->
@@ -123,8 +124,8 @@
 		<!-- Console View -->
 		<div ng-show="viewMode === 'console'">
 			
-			<device-console lines="code.findRunningDevice(code.id,$dash.engines).console" height="144px"></device-console>
-			<button ng-if="code.findRunningDevice(code.id,$dash.engines).console.length > 0" class="btn btn-info btn-sm pull-right" ng-click="code.findRunningDevice(code.id,$dash.engines).console = []">Clear Console</button>
+			<device-console lines="code.engine.console" height="144px"></device-console>
+			<button ng-if="code.engine.console.length > 0" class="btn btn-info btn-sm pull-right" ng-click="code.engine.console = []">Clear Console</button>
 										
 		</div>
 		<!-- End Console View -->

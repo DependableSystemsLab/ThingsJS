@@ -5,7 +5,8 @@ var dashApp = angular.module('dashApp', ['ngResource',
                                          'ui.bootstrap',
                                          'ui.ace',
                                          'nvd3',
-                                         'things.js'] );
+                                         'things.js',
+                                         'ngTable'] );
 
 dashApp.constant("CONFIG", {
 	service_url: window.location.origin,
@@ -85,6 +86,7 @@ dashApp.constant("CONFIG", {
 				self.topProgram = undefined;
 				self.middleProgram = undefined;
 				self.bottomProgram = undefined;
+
 			}],
 			controllerAs: '$view',
 			templateUrl: 'views/applications.html'

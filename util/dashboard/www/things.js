@@ -277,7 +277,8 @@
 		this.stats = [];
 		this.console = [];
 		this.snapshots = [];
-		this.devices = [];
+		this.engine = undefined;
+		this.historyDevices =[];
 
 		this.pubsub.subscribe(this.code_name+'/'+this.id+'/resource', function(topic, message){
 			self.stats.push(message);
@@ -299,52 +300,6 @@
 
 	}
 	Program.prototype = new EventEmitter();
-	Program.prototype.findRunningDevice = function(code_id,devices){
-		
-		var i, code_name, instance_id; 
-		for (i in devices){			
-			var codes = devices[i].codes; 
-			for (code_name in codes){
-				// console.log("code_id: " + code_id);
-				// console.log("codes name :" + code_name);
-				// console.log("device id :" + devices[i].id);
-				// console.log("code id :"+ codes[code_name].toString());
-				for (instance_id in codes[code_name]){
-					// console.log("code status :"+codes[code_name][instance_id])
-					if(instance_id === code_id && codes[code_name][instance_id]== "Running")
-						return devices[i];
-				}
-
-			// Object.keys(codes).forEach(function(codename){
-			// Object.keys(codes[codename]).forEach(function(instance_id){
-			// 		if(instance_id === code_id){
-			// 			return devices[i].id;
-			// 		}
-			// 	})
-			// })
-
-			}
-		}
-		return "can't find such device";
-	};
-
-
-	Program.prototype.findHistoryDevices = function(code_id,devices){
-		var i, code_name, instance_id; 
-		var return_result = [];
-		for (i in devices){			
-			var codes = devices[i].codes; 
-			for (code_name in codes){
-				for (instance_id in codes[code_name]){
-					//console.log("code status :"+ codes[code_name][instance_id]);
-					if(instance_id === code_id)
-						return_result.push(devices[i]);
-				}
-			}
-		}
-		return return_result;
-	};
-
 
 	/** Dashboard */
 	var ENGINE_REGISTRY_NAMESPACE = 'engine-registry';
@@ -391,11 +346,17 @@
 				// });
 				// self.programs[message.instance_id] = program;
 				self.programs[message.instance_id] = new Program(pubsub, message.code_name, message.instance_id, message.source);
+				// self.programs[message.instance_id].engine = self.findRunningDevice(message.instance_id);
+				// self.programs[message.instance_id].historyDevices = self.findHistoryDevices(message.instance_id);
 				self.programs[message.instance_id].on('update',function(){
+					// self.programs[message.instance_id].engine = self.findRunningDevice(message.instance_id);
+					// self.programs[message.instance_id].historyDevices = self.findHistoryDevices(message.instance_id);
 					self.emit('update');
 				});
 			}
 			// self.programs[message.instance_id].engine = message.engine;
+			self.programs[message.instance_id].engine = self.findRunningDevice(message.instance_id);
+			self.programs[message.instance_id].historyDevices = self.findHistoryDevices(message.instance_id);
 			self.programs[message.instance_id].status = message.status;
 			if (message.source) self.programs[message.instance_id].source = message.source;
 		});
@@ -405,6 +366,7 @@
 		pubsub.on('connect', function(){
 			setTimeout(function(){
 				pubsub.publish(ENGINE_REGISTRY_NAMESPACE+'/bcast', { ctrl: 'report' });
+				pubsub.publish(PROGRAM_MONITOR_NAMESPACE+'/bcast', { ctrl: 'report' });
 			}, 250);
 		});
 
@@ -413,6 +375,42 @@
 		}
 	}
 	Dashboard.prototype = new EventEmitter();
+	Dashboard.prototype.findRunningDevice = function(code_id){
+		console.log("inside Dashboard function "+code_id);
+		var i, code_name, instance_id; 
+		for (i in this.engines){			
+			var codes = this.engines[i].codes; 
+			for (code_name in codes){
+				console.log("code_id: " + code_id);
+				console.log("codes name :" + code_name);
+				console.log("device id :" + this.engines[i].id);
+
+				for (instance_id in codes[code_name]){
+					if(instance_id === code_id && codes[code_name][instance_id] === "Running")
+						return this.engines[i]
+				}
+			}
+		}
+		return "unknown";
+	};
+
+
+	Dashboard.prototype.findHistoryDevices = function(code_id){
+		var i, code_name, instance_id; 
+		var return_result = [];
+		for (i in this.engines){			
+			var codes = this.engines[i].codes; 
+			for (code_name in codes){
+				for (instance_id in codes[code_name]){
+					//console.log("code status :"+ codes[code_name][instance_id]);
+					if(instance_id === code_id)
+						return_result.push(this.engines[i]);
+				}
+			}
+		}
+		return return_result;
+	};
+
 
 	/** Code Repository - an abstraction for the RESTful endpoint */
 	function CodeRepository(base_url){
@@ -715,7 +713,6 @@ things.factory('CodeRepository', ['$rootScope', function($rootScope){
 	return {
 		restrict: 'E',
 		scope: {
-			// node: '=',
 			code: '=',
 			mode: '=?',
 			height: '=?'
@@ -799,7 +796,7 @@ things.factory('CodeRepository', ['$rootScope', function($rootScope){
 			self.initData();
 			self.setMode($scope.mode);
 			
-			// Watch changes in node.stats
+			// Watch changes in code.stats
 			$scope.$watch(function(){
 				return $scope.code ? $scope.code.stats.length : undefined;
 			}, function(length){
@@ -812,15 +809,15 @@ things.factory('CodeRepository', ['$rootScope', function($rootScope){
 				}
 			});
 
-			// Watch changes in node.codes
+			// Watch changes in code.devices
 			$scope.$watch(function(){
-				return $scope.code ? $scope.code.findHistoryDevicess : undefined;
+				return $scope.code ? $scope.code.findHistoryDevices : undefined;
 			}, function(codes){
 				console.log("New codes", codes);
 			})
 
 
-			// Watch for node being dynamically resassigned to the directive
+			// Watch for code being dynamically resassigned to the directive
 			$scope.$watch(function(){
 				return $scope.code ? $scope.code.instance_id : undefined;
 			}, function(instance_id){
