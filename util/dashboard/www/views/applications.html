@@ -2,20 +2,17 @@
 	<div class="col-md-5">
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				Running Applications
+				Applications
 			</div>
 			<div class="panel-body">
 				<div class="dashboard-device-list">
-					<!-- <div 		
-						uib-popover-template="'deviceMenu.html'"
-						popover-placement="bottom"> -->
 			<table class="table table-bordered">
 				<thead>
 					<tr>
 						<th>Code Name</th>
 						<th>Runtime ID</th>
 						<th>Status</th>
-						<th>Device</th>
+						<th>Running Device</th>
 					</tr>
 				</thead>
 				<div >	
@@ -38,7 +35,7 @@
 				</tbody>
 			</div>
 			</table>
-					<!-- </div> -->
+
 						<script type="text/ng-template" id="deviceMenu.html">
 				<ul class="list-group" style="margin: -11px -16px">
 					<a ng-click="$view.topProgram = program;" href="javascript:;" class="list-group-item">Display at Top pane</a>
@@ -58,8 +55,6 @@
 							</button>
 						</div>
 					</li>
-				<!-- 	<a ng-click="program.findRunningDevice(program.id,$dash.engines).resumeCode(program.code_name, program.id)" href="javascript:;" class="list-group-item">Resum Program on device</a> -->
-
 					<li class="list-group-item">
 						<div class="form-inline">
 							<select ng-model="selectedNode2" class="form-control">

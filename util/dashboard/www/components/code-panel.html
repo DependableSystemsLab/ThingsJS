@@ -24,6 +24,8 @@
 			<table class="table table-bordered">
 				<tbody ng-if="code">
 					<tr>
+						<th>Code Name</th>
+						<td>{{ code.code_name }}</td>
 						<th>Status</th>
 						<td>{{ code.status }}</td>
 					</tr>
@@ -37,11 +39,12 @@
 			
 			<h4 ng-if="code">PROGRAM HISTORY </h4>
 			<table class="table table-bordered" ng-if="code">
-				<span class ="form-control-static">show <select ng-model="limit" class="form-control" style="width: 60px;">
+				<span class ="form-control-static">show <select ng-model="limit" style="width: 40px;">
+					<option ng-value = "0">0</option>
 					<option ng-value = "1">1</option>
 					<option ng-value = "2">2</option>
-					<option ng-value = "0">Hide</option>
-					</select>lines
+					<option ng-value = code.findHistoryDevices(code.id,$dash.engines).length>All</option>
+					</select> lines
 				</span>
 				<thead>
 					<tr>
@@ -60,7 +63,8 @@
 							{{ $ctrl.convertDatetime(device.stats[0].timestamp)}} 
 						</th>
 						<th>
-							{{ $ctrl.convertDatetime(device.stats[device.stats.length-1].timestamp) }}
+							<!-- {{ $ctrl.convertDatetime(device.stats[device.stats.length-1].timestamp) }} -->
+							"Fake"
 						</th>
 						<th>
 							{{ device.codes[code.code_name][code.id] }}
@@ -102,9 +106,16 @@
 		<!-- End Status View -->
 		
 		<!-- Graph View -->
-		<div ng-show="viewMode === 'graph'">
+<!-- 		<div ng-show="viewMode === 'graph'">
 			
 			<device-graph node="code.findRunningDevice(code.id,$dash.engines)" height="174"></device-graph>
+										
+		</div> -->
+
+
+		<div ng-show="viewMode === 'graph'">
+			
+			<program-graph code="code" height="174"></program-graph>
 										
 		</div>
 		<!-- End Graph View -->

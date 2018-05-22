@@ -277,7 +277,7 @@
 		this.stats = [];
 		this.console = [];
 		this.snapshots = [];
-		//this.device = ;
+		this.devices = [];
 
 		this.pubsub.subscribe(this.code_name+'/'+this.id+'/resource', function(topic, message){
 			self.stats.push(message);
@@ -375,17 +375,32 @@
 
 		pubsub.subscribe(PROGRAM_MONITOR_NAMESPACE, function(topic, message){
 			console.log(topic, message);
+			console.log(message);
 			if (!(message.instance_id in self.programs)){
-				var program = new Program(pubsub, message.code_name, message.instance_id, message.source);
-				program.on('update', function(){
+				// var program = new Program(pubsub, message.code_name, message.instance_id, message.source);
+				// // var pushed_device;
+				// // if(message.status === "Running")
+				// // { 
+				// // 	pushed_device = {"id":message.engine,"onDeviceStatus":message.status,"startTime": Date.now(),"endTime":"---"};
+				// // 	program.devices.push(pushed_device);
+				// // 	console.log("##device");
+				// // 	console.log(program.devices);
+				// // } 			
+				// program.on('update', function(){
+				// 	self.emit('update');
+				// });
+				// self.programs[message.instance_id] = program;
+				self.programs[message.instance_id] = new Program(pubsub, message.code_name, message.instance_id, message.source);
+				self.programs[message.instance_id].on('update',function(){
 					self.emit('update');
-				})
-				self.programs[message.instance_id] = program;
+				});
 			}
 			// self.programs[message.instance_id].engine = message.engine;
 			self.programs[message.instance_id].status = message.status;
 			if (message.source) self.programs[message.instance_id].source = message.source;
 		});
+				console.log(self.programs);
+				console.log("jump in program subscribe function #######");
 
 		pubsub.on('connect', function(){
 			setTimeout(function(){
@@ -612,6 +627,7 @@ things.factory('CodeRepository', ['$rootScope', function($rootScope){
 						   		   'cpu': [{ values: cpuData, key: modes['cpu'] }] };
 
 				if ($scope.node){
+					console.log("#####graph program"+$scope.node.id);
 					Object.keys($scope.node.codes).forEach(function(code_name){
 						Object.keys($scope.node.codes[code_name]).forEach(function(instance_id){
 							var memData = [], cpuData = [];
@@ -676,6 +692,151 @@ things.factory('CodeRepository', ['$rootScope', function($rootScope){
 		}],
 		controllerAs: '$ctrl',
 		templateUrl: 'components/device-graph.html'
+	}
+}])
+.directive('programGraph', ['$filter', 'Dashboard', function($filter, Dashboard){
+	var modes = {
+		'cpu': 'CPU',
+		'memory': 'Memory Usage'
+	}
+	var units = {
+		'cpu': '%',
+		'memory': 'MB'
+	}
+	function getData(datum, mode){
+		if (mode === 'memory'){
+			return (Math.round(datum.memory.heapUsed/10000)/100);
+		}
+		else if (mode === 'cpu') {
+			return (datum.cpu < 100) ? (Math.round(100*datum.cpu)/100) : 100.0;
+		}
+	}
+	
+	return {
+		restrict: 'E',
+		scope: {
+			// node: '=',
+			code: '=',
+			mode: '=?',
+			height: '=?'
+		},
+		controller: ['$scope', function($scope){
+			var self = this;
+			var $dash = Dashboard.get();
+			$scope.mode = angular.isDefined($scope.mode) ? $scope.mode : 'cpu';
+			
+			self.graphOptions = {
+					chart: {
+						type: 'lineChart',
+						height: ($scope.height || 200),
+						margin: {
+							top: 25,
+							right: 30,
+							bottom: 30,
+							left: 80
+						},
+						x: function(d){ return d.x },
+						y: function(d){ return d.y },
+						useInteractiveGuideline: true,
+						duration: 0,
+						xAxis: {
+							tickFormat: function(d){
+								return $filter('date')(d, 'HH:mm:ss');
+							}
+						},
+						yAxis: {
+							tickFormat: function(d){
+								return d+' '+units[$scope.mode];
+							}
+						}
+					}
+				};
+			self.setMode = function(mode){
+				
+				$scope.mode = mode;
+				if (mode === 'cpu') self.graphOptions.chart.yDomain = [0, 100];
+				else if (mode === 'memory') delete self.graphOptions.chart.yDomain;
+			};
+			self.initData = function(data){
+				var memData = [], cpuData = [];
+				if (data){
+					memData = data.map(function(datum){
+						return { x: datum.timestamp, y: getData(datum, 'memory') }
+					});
+					cpuData = data.map(function(datum){
+						return { x: datum.timestamp, y: getData(datum, 'cpu') };
+					})
+				}
+				self.graphData = { 'memory': [{ values: memData, key: modes['memory'] }],
+						   		   'cpu': [{ values: cpuData, key: modes['cpu'] }] };
+
+
+				if ($scope.code){
+					console.log("#####graph program"+$scope.code.stats[0].timestamp);
+					Object.keys($scope.code.findHistoryDevices).forEach(function(id){
+						// Object.keys($scope.node.findHistoryDevices[id]).forEach(function(instance_id){
+							var memData = [], cpuData = [];
+							memData = $scope.code.stats.map(function(datum){
+								return { x: datum.timestamp, y: getData(datum, 'memory') }
+							});
+							cpuData = $scope.code.stats.map(function(datum){
+								return { x: datum.timestamp, y: getData(datum, 'cpu') }
+							});
+
+							self.graphData['memory'].push({
+								values: memData,
+								key: id+' Memory'
+							});
+							self.graphData['cpu'].push({
+								values: cpuData,
+								key: id+' CPU'
+							});
+						})
+					// })
+				}
+			};
+			
+			self.initData();
+			self.setMode($scope.mode);
+			
+			// Watch changes in node.stats
+			$scope.$watch(function(){
+				return $scope.code ? $scope.code.stats.length : undefined;
+			}, function(length){
+				if (length){
+					var datum = $scope.code.stats[length-1];
+					self.graphData['memory'][0].values.push({ x: datum.timestamp, y: getData(datum, 'memory') });
+					if (self.graphData['memory'][0].values.length > 60) self.graphData['memory'][0].values.shift();
+					self.graphData['cpu'][0].values.push({ x: datum.timestamp, y: getData(datum, 'cpu') });
+					if (self.graphData['cpu'][0].values.length > 60) self.graphData['cpu'][0].values.shift();
+				}
+			});
+
+			// Watch changes in node.codes
+			$scope.$watch(function(){
+				return $scope.code ? $scope.code.findHistoryDevicess : undefined;
+			}, function(codes){
+				console.log("New codes", codes);
+			})
+
+
+			// Watch for node being dynamically resassigned to the directive
+			$scope.$watch(function(){
+				return $scope.code ? $scope.code.instance_id : undefined;
+			}, function(instance_id){
+				if (instance_id){
+					var slen = $scope.code.stats.length;
+					var data = (slen > 60) ? $scope.code.stats.slice(slen-61) : $scope.code.stats.slice(0);
+					self.initData(data);
+				}
+				else {
+					self.initData();
+				}
+			});
+			
+		}],
+		controllerAs: '$ctrl',
+		templateUrl: 'components/program-graph.html'
 	}
 }])
 .directive('deviceConsole', function(){
