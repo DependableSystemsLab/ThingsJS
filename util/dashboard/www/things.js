@@ -339,6 +339,7 @@
 		pubsub.on('connect', function(){
 			setTimeout(function(){
 				pubsub.publish(ENGINE_REGISTRY_NAMESPACE+'/bcast', { ctrl: 'report' });
+				pubsub.publish(PROGRAM_MONITOR_NAMESPACE+'/bcast', { ctrl: 'report' });
 			}, 250);
 		});
 
