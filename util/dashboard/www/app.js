@@ -77,7 +77,7 @@ dashApp.constant("CONFIG", {
 		.state('applications',{
 			parent: 'init',
 			url: '/applications',
-			controller: ['$scope','dashboard', function($scope, dashboard){
+			controller: ['$scope','dashboard','NgTableParams',function($scope,dashboard,NgTableParams){
 				var self = this;
 				$scope.$dash = dashboard;
 
@@ -87,6 +87,12 @@ dashApp.constant("CONFIG", {
 				self.middleProgram = undefined;
 				self.bottomProgram = undefined;
 
+
+				$scope.sortType     = 'code_name'; // set the default sort type
+  				$scope.sortReverse  = false;  // set the default sort order
+  				$scope.search   = '';     // set the default search/filter term  
+
+				// $scope.dataarray = Object.keys($scope.$dash.programs).map(function (key) { return $scope.$dash.programs[key]; });
 			}],
 			controllerAs: '$view',
 			templateUrl: 'views/applications.html'

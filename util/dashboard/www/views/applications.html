@@ -1,12 +1,27 @@
 <div class="row">
+		<div class="col-md-7">
+		
+		<!-- Top Pane -->
+		<code-panel code="$view.topProgram"></code-panel>
+		
+		<!-- Middle Pane -->
+		<code-panel code="$view.middleProgram"></code-panel>
+		
+		<!-- Bottom Pane -->
+		<code-panel code="$view.bottomProgram"></code-panel>
+		
+	</div>
+
+
+
 	<div class="col-md-5">
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				Applications
 			</div>
 			<div class="panel-body">
-				<div class="dashboard-device-list">
-			<table class="table table-bordered">
+				<div class="dashboard-program-list">
+	<!-- 		<table class="table table-bordered">
 				<thead>
 					<tr>
 						<th>Code Name</th>
@@ -29,14 +44,98 @@
 							{{ program.status }}
 						</td>
 						<td>
-							{{ program.engine.id }}
-
-							
+							{{ $dash.findRunningDevice(program.id).id }}							
 						</td>
 					</tr>
 				</tbody>
 			</div>
-			</table>
+			</table> -->
+						<!-- show-filter="true" -->
+<!-- 			<table  ng-table="tableParams" class="table table-bordered" show-filter="true" >
+			<tr ng-repeat="program in $dataarray track by $index" uib-popover-template="'deviceMenu.html'"
+						popover-placement="bottom">
+        <td title="'Code Name'"  sortable="'code_name'">
+            {{program.code_name}}</td>
+        <td title="'Runtime ID'"  sortable="'id'">
+            {{program.id}}</td>
+        <td title="'Status'"  sortable="'status'">
+            {{program.status }}</td>
+        <td title="'Running Device'" sortable="'engine.id'">
+           {{$dash.findRunningDevice(program.id).id}} 
+        </td> -->
+
+
+	<form>
+    <div class="form-group">
+      <div class="input-group">
+        <div class="input-group-addon"><i class="fa fa-search"></i></div>
+        <input type="text" class="form-control" placeholder="Search Program" ng-model="searchProgram">
+      </div>      
+    </div>
+  	</form>
+
+        <table class="table table-bordered table-striped">
+    
+    <thead>
+      <tr>
+        <td>
+          <a  ng-click="sortType = 'code_name'; sortReverse = !sortReverse">
+            Code Name
+            <span ng-show="sortType == 'code_name' && !sortReverse" class="fa fa-caret-down"></span>
+            <span ng-show="sortType == 'code_name' && sortReverse" class="fa fa-caret-up"></span>
+          </a>
+        </td>
+        <td>
+          <a  ng-click="sortType = 'id'; sortReverse = !sortReverse">
+          Runtime ID 
+            <span ng-show="sortType == 'id' && !sortReverse" class="fa fa-caret-down"></span>
+            <span ng-show="sortType == 'id' && sortReverse" class="fa fa-caret-up"></span>
+          </a>
+        </td>
+        <td>
+          <a ng-click="sortType = 'status'; sortReverse = !sortReverse">
+          Status
+            <span ng-show="sortType == 'status' && !sortReverse" class="fa fa-caret-down"></span>
+            <span ng-show="sortType == 'status' && sortReverse" class="fa fa-caret-up"></span>
+          </a>
+        </td>
+         <td>
+          <a ng-click="sortType = '$dash.findRunningDevice(program.id).id'; sortReverse = !sortReverse">
+          Running Device
+            <span ng-show="sortType == '$dash.findRunningDevice(program.id).id' && !sortReverse" class="fa fa-caret-down"></span>
+            <span ng-show="sortType == '$dash.findRunningDevice(program.id).id' && sortReverse" class="fa fa-caret-up"></span>
+          </a>
+        </td>
+      </tr>
+    </thead>
+    
+    <tbody>
+   <!--    <tr ng-repeat="roll in sushi | orderBy:sortType:sortReverse | filter:searchFish">
+        <td>{{ roll.name }}</td>
+        <td>{{ roll.fish }}</td>
+        <td>{{ roll.tastiness }}</td>
+ -->
+
+        <tr ng-repeat="program in $dash.programArray| orderBy:sortType:sortReverse | filter:searchProgram"" uib-popover-template="'deviceMenu.html'"
+						popover-placement="bottom">
+					<td>
+						   {{ program.code_name}}
+					</td>	
+						<td>
+							{{ program.id }}
+						</td>
+						<td>
+							{{ program.status }}
+						</td>
+						<td>
+							{{ $dash.findRunningDevice(program.id).id }}							
+						</td>
+					</tr>
+      </tr>
+    </tbody>
+    
+  </table>
+  
 
 						<script type="text/ng-template" id="deviceMenu.html">
 				<ul class="list-group" style="margin: -11px -16px">
@@ -77,7 +176,7 @@
 				</div>			
 			</div>
 		</div>
-			<div class="panel panel-default">
+			<!-- <div class="panel panel-default">
 			<div class="panel-heading">
 				<div class="btn-group" ng-init="videoChannel = 'raw'">
 					<button ng-click="videoChannel = 'raw'" class="btn btn-default" ng-class="{ active: videoChannel === 'raw' }">Raw</button>
@@ -97,18 +196,6 @@
 		</div>	
 		
 	</div>
-		
-		
-	<div class="col-md-7">
-		
-		<!-- Top Pane -->
-		<code-panel code="$view.topProgram"></code-panel>
-		
-		<!-- Middle Pane -->
-		<code-panel code="$view.middleProgram"></code-panel>
-		
-		<!-- Bottom Pane -->
-		<code-panel code="$view.bottomProgram"></code-panel>
-		
-	</div>
+		 -->
+	
 </div>

@@ -332,25 +332,12 @@
 			console.log(topic, message);
 			console.log(message);
 			if (!(message.instance_id in self.programs)){
-				// var program = new Program(pubsub, message.code_name, message.instance_id, message.source);
-				// // var pushed_device;
-				// // if(message.status === "Running")
-				// // { 
-				// // 	pushed_device = {"id":message.engine,"onDeviceStatus":message.status,"startTime": Date.now(),"endTime":"---"};
-				// // 	program.devices.push(pushed_device);
-				// // 	console.log("##device");
-				// // 	console.log(program.devices);
-				// // } 			
-				// program.on('update', function(){
-				// 	self.emit('update');
-				// });
-				// self.programs[message.instance_id] = program;
+
 				self.programs[message.instance_id] = new Program(pubsub, message.code_name, message.instance_id, message.source);
-				// self.programs[message.instance_id].engine = self.findRunningDevice(message.instance_id);
-				// self.programs[message.instance_id].historyDevices = self.findHistoryDevices(message.instance_id);
+
 				self.programs[message.instance_id].on('update',function(){
-					// self.programs[message.instance_id].engine = self.findRunningDevice(message.instance_id);
-					// self.programs[message.instance_id].historyDevices = self.findHistoryDevices(message.instance_id);
+					self.programs[message.instance_id].engine = self.findRunningDevice(message.instance_id);
+					self.programs[message.instance_id].historyDevices = self.findHistoryDevices(message.instance_id);
 					self.emit('update');
 				});
 			}
@@ -358,6 +345,7 @@
 			self.programs[message.instance_id].engine = self.findRunningDevice(message.instance_id);
 			self.programs[message.instance_id].historyDevices = self.findHistoryDevices(message.instance_id);
 			self.programs[message.instance_id].status = message.status;
+			self.programArray = Object.keys(self.programs).map(function (key) { return self.programs[key]; });
 			if (message.source) self.programs[message.instance_id].source = message.source;
 		});
 				console.log(self.programs);

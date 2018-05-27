@@ -42,6 +42,12 @@
 	overflow: auto;
 }
 
+.dashboard-program-list {
+	height: 750px;
+	overflow: auto;
+}
+
+
 .dashboard-device-list>.dashboard-device {
 	border-radius: 5px;
 	border: 1px solid rgba(0,0,0,0.3);

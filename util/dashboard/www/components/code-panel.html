@@ -12,6 +12,7 @@
 			<button ng-click="viewMode = 'workflow'" class="btn btn-default" ng-class="{ active: viewMode === 'workflow' }">Workflow</button>
 			<button ng-click="viewMode = 'graph'" class="btn btn-default" ng-class="{ active: viewMode === 'graph' }">Graph</button>
 			<button ng-click="viewMode = 'console'" class="btn btn-default" ng-class="{ active: viewMode === 'console' }">Console</button>
+			<button ng-click="viewMode = 'output'" class="btn btn-default" ng-class="{ active: viewMode === 'output' }">Output</button>
 		</div>
 		
 	</div>
@@ -43,7 +44,7 @@
 					<option ng-value = "0">0</option>
 					<option ng-value = "1">1</option>
 					<option ng-value = "2">2</option>
-					<option ng-value = code.historyDevices.length>All</option>
+					<option ng-value = $dash.findHistoryDevices(code.id).length>All</option>
 					</select> lines
 				</span>
 				<thead>
@@ -54,7 +55,8 @@
 						<th>Status on device</th>
 					</tr>
 				</thead>
-				<tbody ng-repeat="device in code.historyDevices| limitTo: limit">
+	<!-- 			<tbody ng-repeat="device in code.historyDevices| limitTo: limit"> -->
+					<tbody ng-repeat="device in $dash.findHistoryDevices(code.id)| limitTo: limit">
 					<tr >
 						<th>
 							{{ device.id }}
@@ -70,25 +72,6 @@
 						<th>
 							{{ device.codes[code.code_name][code.id] }}
 						</th>
-						<!-- <td>
-							<button ng-show="status === 'Running'" ng-click="node.pauseCode(code_name, instance_id)" class="btn btn-danger">
-								Pause
-							</button>
-							<button ng-show="status === 'Paused'" ng-click="node.resumeCode(code_name, instance_id)" class="btn btn-success">
-								Resume
-							</button>
-
-							<span ng-show="status === 'Running' || status === 'Paused'" class="form-inline">
-								<select ng-model="selectedNode" class="form-control">
-									<option value="">--- Select Code ---</option>
-									<option ng-repeat="(target, data) in $dash.engines" ng-value="target" ng-if="data.id !== node.id">{{ target }}</option>
-								</select>
-								<button class="btn btn-warning btn-sm"
-										ng-click="node.migrateCode(code_name, instance_id, selectedNode)">
-									<i class="fa fa-exchange"></i> Migrate
-								</button>
-							</span>
-						</td> -->
 					</tr>
 		<!-- 			<tr ng-show="$ctrl.showSource[instance_id]">
 						<td colspan=4 style="white-space: pre-wrap">
@@ -129,7 +112,45 @@
 										
 		</div>
 		<!-- End Console View -->
-		
+
+		<!-- Output View -->
+			<div ng-show="viewMode === 'output'">
+			<table class="table table-bordered">
+				<thead>
+					<tr>
+						<th>Topic</th>
+						<th>Type</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody ng-repeat="output in code.outputs" uib-popover-template="'deviceMenu.html'"
+						popover-placement="bottom">
+					<tr>
+						<th>
+						   {{ output.topic}}
+						</th>
+						<td>
+							{{ output.type }}
+						</td>
+						<td>
+							{{ output.action }}     
+						</td> 
+					</tr>
+				</tbody>
+
+			</table>
+			
+										
+		</div>
+
+
+
+
+
+		<!-- End Output View  -->
+
+
+
 <!-- 	</div>
 	<div class="panel-footer">
 		<div ng-show="node" class="form-inline">
