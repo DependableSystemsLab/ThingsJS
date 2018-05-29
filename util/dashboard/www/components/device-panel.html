@@ -69,10 +69,10 @@
 							{{ status }}
 						</td>
 						<td>
-							<button ng-show="status === 'Running'" ng-click="node.pauseCode(code_name, instance_id)" class="btn btn-danger">
+							<button ng-show="status === 'Running'" ng-click="$dash.programs[instance_id].pause()" class="btn btn-danger">
 								Pause
 							</button>
-							<button ng-show="status === 'Paused'" ng-click="node.resumeCode(code_name, instance_id)" class="btn btn-success">
+							<button ng-show="status === 'Paused'" ng-click="$dash.programs[instance_id].resume()" class="btn btn-success">
 								Resume
 							</button>
 
