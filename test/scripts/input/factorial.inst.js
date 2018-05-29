@@ -1,49 +1,66 @@
 (function(Σ) {
-    Σ.refs.startTime = null, Σ.refs.endTime = null;
-    Σ.refs.target = 20000;
-    Σ.refs.timer = undefined;
-    Σ.refs.count = 0;
-    Σ.refs.digits = [1];
-    Σ.refs.factorial = Σ.addFunction(function αV9Qf() {
-        var Σ_0 = new Σ.Scope(this, αV9Qf, '0', Σ, {}, []);
-        Σ.refs.count++;
-        Σ_0.refs.carry = 0;
-        Σ_0.refs.product = 0;
-        for (Σ_0.refs.i = 0; Σ_0.refs.i < Σ.refs.digits.length; Σ_0.refs.i++) {
-            Σ_0.refs.product = Σ.refs.digits[Σ_0.refs.i] * Σ.refs.count;
-            Σ_0.refs.product += Σ_0.refs.carry;
-            Σ.refs.digits[Σ_0.refs.i] = Σ_0.refs.product % 10;
-            Σ_0.refs.carry = Math.floor(Σ_0.refs.product / 10);
+    Σ.setExtractor(function() {
+        return this.capture({}, {
+            startTime: startTime,
+            endTime: endTime,
+            target: target,
+            timer: timer,
+            count: count,
+            digits: digits,
+            factorial: factorial,
+            printInterval: printInterval
+        });
+    });
+    var startTime = null,
+        endTime = null;
+    var target = 30000;
+    var timer;
+    var count = 0;
+    var digits = [1];
+    var factorial = Σ.addFunction(function α22vH() {
+        var Σ_α22vH = new Σ.Scope(this, Σ, α22vH, function() {
+            return this.capture({}, {});
+        });
+        count++;
+        var carry = 0;
+        var product = 0;
+        for (var i = 0; i < digits.length; i++) {
+            product = digits[i] * count;
+            product += carry;
+            digits[i] = product % 10;
+            carry = Math.floor(product / 10);
         }
-        while (Σ_0.refs.carry > 0) {
-            Σ.refs.digits.push(Σ_0.refs.carry % 10);
-            Σ_0.refs.carry = Math.floor(Σ_0.refs.carry / 10);
+        while (carry > 0) {
+            digits.push(carry % 10);
+            carry = Math.floor(carry / 10);
         }
-        if (Σ.refs.count < Σ.refs.target) {
-            if (Σ.refs.count === Σ.refs.target / 2){
+        if (count < target) {
+            if (count === target / 2){
                 Σ.pauseTimers();
                 var started = Date.now();
                 var safe = Σ.snapshot();
                 var elapsed = Date.now() - started;
                 process.send({ time_taken: elapsed, snapshot: safe });
             }
-            Σ.setImmediate(Σ.refs.factorial);
+            Σ.setImmediate(factorial);
         } else {
-            Σ.refs.digits.reverse();
-            Σ_0.refs.value = Σ.refs.digits.join('');
-            Σ.clearInterval(Σ.refs.timer);
-            Σ.log('<<< Computation Finished >>>');
-            Σ.log('factorial(' + Σ.refs.target + ') = ' + Σ_0.refs.value);
-            Σ.refs.endTime = Date.now();
-            Σ.log('Time taken : ' + (Σ.refs.endTime - Σ.refs.startTime) + ' ms');
+            digits.reverse();
+            var value = digits.join('');
+            Σ.clearInterval(timer);
+            Σ.console.log('<<< Computation Finished >>>');
+            Σ.console.log('factorial(' + target + ') = ' + value);
+            endTime = Date.now();
+            Σ.console.log('Time taken : ' + (endTime - startTime) + ' ms');
             process.exit();
         }
     }, Σ);
-    Σ.refs.startTime = Date.now();
-    Σ.setImmediate(Σ.refs.factorial);
-    Σ.refs.printInterval = Σ.addFunction(function αwRK0() {
-        var Σ_1 = new Σ.Scope(this, αwRK0, '1', Σ, {}, []);
-        Σ.log('Currently computing n = ' + Σ.refs.count + ', number of digits = ' + Σ.refs.digits.length);
+    startTime = Date.now();
+    Σ.setImmediate(factorial);
+    var printInterval = Σ.addFunction(function αNkJz() {
+        var Σ_αNkJz = new Σ.Scope(this, Σ, αNkJz, function() {
+            return this.capture({}, {});
+        });
+        Σ.console.log('Currently computing n = ' + count + ', number of digits = ' + digits.length);
     }, Σ);
-    Σ.refs.timer = Σ.setInterval(Σ.refs.printInterval, 500);
+    timer = Σ.setInterval(printInterval, 500);
 }(require('things-js').bootstrap('mqtt://localhost', 'factorial.js')));

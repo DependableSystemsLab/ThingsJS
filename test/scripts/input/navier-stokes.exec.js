@@ -386,10 +386,6 @@ function BM_Start() {
 				});
 				setTimeout(report, Math.round(Math.random()*200 + 100));
 			})();
-			// process.on('message', function(message){
-			// 	process.send({ memory: process.memoryUsage() });
-			// });
-			// process.send({ ctrl: 'midpoint' });
 		}
 		BM_RunFunc();
 		elapsed = Date.now() - start;

@@ -15,7 +15,7 @@ var pubsub = new things.Pubsub('mqtt://localhost');
 pubsub.on('ready', function(){
 
 	var original = things.Code.fromFile(pubsub, codePath);
-	var restored;
+	var singleHop, multiHop;
 
 	original.save(path.join(__dirname, 'temp/1-original.inst.js'))
 	.then(function(){
@@ -24,27 +24,50 @@ pubsub.on('ready', function(){
 	.then(function(instance){
 		return new Promise(function(resolve, reject){
 			setTimeout(function(){
-				original.snapshot(instance.id, true)
-					.then(resolve, reject);
-			}, 3000);
+				instance.snapshot(true)
+					.then(function(snapshot){
+						instance.saveLastSnapshot(path.join(__dirname, 'temp/2-original.snap.json'));
+						return snapshot;
+					}, reject)
+					.then(resolve, reject)
+			}, 2000);
 		})
 	})
 	.then(function(snapshot){
-		original.saveLastSnapshot(path.join(__dirname, 'temp/2-original.snap.json'));
-		restored = things.Code.fromSnapshot(snapshot);
-		return restored.save(path.join(__dirname, 'temp/3-restored.js'))
+		original.kill();
+		singleHop = things.Code.fromSnapshot(snapshot);
+		return singleHop.save(path.join(__dirname, 'temp/3-restored.js'))
 			.then(function(){
-				return restored.run();
+				return singleHop.run();
+			})
+	})
+	.then(function(instance){
+		return new Promise(function(resolve, reject){
+			setTimeout(function(){
+				instance.snapshot(true)
+					.then(function(snapshot){
+						instance.saveLastSnapshot(path.join(__dirname, 'temp/4-restored.snap.json'));
+						return snapshot;
+					}, reject)
+					.then(resolve, reject)
+			}, 2000);
+		})
+	})
+	.then(function(snapshot){
+		singleHop.kill();
+		multiHop = things.Code.fromSnapshot(snapshot);
+		return multiHop.save(path.join(__dirname, 'temp/5-restored.js'))
+			.then(function(){
+				return multiHop.run();
 			})
 	})
 	.then(function(instance){
 		setTimeout(function(){
-			restored.pause(instance.id)
+			instance.pause()
 			.then(function(){
-				original.kill();
-				restored.kill();	
+				multiHop.kill();
 			})
-		}, 3000);
+		}, 2000);
 	})
 
 });

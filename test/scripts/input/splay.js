@@ -228,7 +228,7 @@ var BM_RunFunc = SplayRun;
 var BM_SetupFunc = SplaySetup;
 var BM_TearDownFunc = SplayTearDown;
 var BM_RMS = SplayRMS;
-var BM_Iterations = 100;
+var BM_Iterations = 300;
 var BM_Min_Iterations = 16;
 var BM_Results = [];
 function BM_Start() {

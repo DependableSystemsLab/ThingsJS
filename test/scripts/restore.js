@@ -38,6 +38,7 @@ CODES.forEach(function(code_name){
 		var measured = helpers.measureSync(things.Code.fromSnapshot, [ snapshot, true ]);
 		// console.log(measured.result);
 		result[code_name].times.push(measured.elapsed);
+		measured.result.pubsub.kill();
 	}
 
 	var size_before = Buffer.from(raw).length;
