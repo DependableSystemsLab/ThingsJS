@@ -17,8 +17,8 @@ var BASE_DIR = path.resolve(__dirname, './input');
 var RESULT_DIR = path.resolve(__dirname, './output');
 var CODES = [
 	'navier-stokes',
-	// 'splay',
-	// 'factorial'
+	'splay',
+	'factorial'
 ]
 
 var result = {};
