@@ -335,10 +335,16 @@
 		return deferred.promise
 	}
 	Program.prototype.pause = function(code_name, instance_id){
-		return this.sendCommand('pause')
+		return this.sendCommand('pause',{
+			code_name: this.code_name,
+	 		instance_id: this.id
+		});
 	}
 	Program.prototype.resume = function(code_name, instance_id){
-		return this.sendCommand('resume')
+		return this.sendCommand('resume',{
+			code_name: this.code_name,
+	 		instance_id: this.id
+		});
 	}
 
 	/** Dashboard */

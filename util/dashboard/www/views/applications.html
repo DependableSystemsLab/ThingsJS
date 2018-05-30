@@ -142,17 +142,22 @@
 					<a ng-click="$view.topProgram = program;" href="javascript:;" class="list-group-item">Display at Top pane</a>
 					<a ng-click="$view.middleProgram = program;" href="javascript:;" class="list-group-item">Display at Middle pane</a>
 					<a ng-click="$view.bottomProgram = program;" href="javascript:;" class="list-group-item">Display at Bottom pane</a>
-					<a ng-click="program.engine.pauseCode(program.code_name, program.id)" href="javascript:;" class="list-group-item">Pause Program</a>
+<!-- 					<a ng-click="program.pause()" href="javascript:;" class="list-group-item">Pause Program</a> -->
 					<li class="list-group-item">
 						<div class="form-inline">
-							<select ng-model="selectedNode1"  ng-options = "data as target for (target, data) in $dash.engines" class="form-control">
-								<option value="">--- Select Device ---</option>
-								<option ng-repeat="(target,data) in $dash.engines" ng-value="data">{{target}}</option>
-							</select>
+							<button class="btn btn-sm"
+							ng-class = "{'btn-danger': (program.status !== 'Running'),'btn-success':(program.status ==='Running')}"
+									ng-click="program.pause()">
+								Pause Program 
+							</button>
+						</div>
+					</li>
+					<li class="list-group-item">
+						<div class="form-inline">
 							<button class="btn btn-sm"
 							ng-class = "{'btn-danger': (program.status !== 'Paused'),'btn-success':(program.status ==='Paused')}"
-									ng-click="selectedNode1.resumeCode(program.code_name, program.id)">
-								Resume Program on Selected Device
+									ng-click="program.resume()">
+								Resume Program 
 							</button>
 						</div>
 					</li>
