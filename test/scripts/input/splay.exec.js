@@ -229,7 +229,7 @@ var BM_RunFunc = SplayRun;
 var BM_SetupFunc = SplaySetup;
 var BM_TearDownFunc = SplayTearDown;
 var BM_RMS = SplayRMS;
-var BM_Iterations = 100;
+var BM_Iterations = 300;
 var BM_Min_Iterations = 16;
 var BM_Results = [];
 function BM_Start() {
@@ -241,23 +241,23 @@ function BM_Start() {
 	function doRun(){
 		BM_SetupFunc();
 		console.log("Iteration : "+i);
-    if (i === BM_Iterations / 2){
-      (function report(){
-        pidusage.stat(process.pid, function(err, stat) {
-          process.send({
-            timestamp: Date.now(),
-            memory: process.memoryUsage(),
-            cpu: stat.cpu
-          })
-        });
-        setTimeout(report, Math.round(Math.random()*200 + 100));
-      })();
-    }
 		BM_RunFunc();
 		elapsed = Date.now() - start;
 		BM_TearDownFunc();
 		i ++;
 		if (i < BM_Iterations){
+      if (i === BM_Iterations / 2 + 1){
+        (function report(){
+          pidusage.stat(process.pid, function(err, stat) {
+            process.send({
+              timestamp: Date.now(),
+              memory: process.memoryUsage(),
+              cpu: stat.cpu
+            })
+          });
+          setTimeout(report, Math.round(Math.random()*200 + 100));
+        })();
+      }
 			setImmediate(doRun);
 		}
 		else {

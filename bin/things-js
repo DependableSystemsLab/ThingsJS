@@ -1,5 +1,6 @@
 #! /usr/bin/env node
 
+var fs = require('fs');
 var path = require('path');
 var program = require('commander');
 var jsBeautify = require('js-beautify').js_beautify;
@@ -84,6 +85,10 @@ program
     if (options.save) code.save(options.save);
     code.run()
     .then(function(instance){
+      instance.on('finished', function(){
+        code.kill();
+        process.exit();
+      })
       if(process.stdin.isTTY){
         process.stdin.setRawMode( true );
       }
@@ -91,17 +96,17 @@ program
       process.stdin.on('data', function(key){
         switch(key.trim()){
             case 'p':
-                code.pause(instance.id);
+                instance.pause();
                 break;
 
             case 'r':
-                code.resume(instance.id);
+                instance.resume();
                 break;
 
             case 's':
-              code.snapshot(instance.id, true).then(function(snap){
+              instance.snapshot(true).then(function(snap){
                 console.log(jsBeautify(JSON.stringify(snap)));
-                code.saveLastSnapshot(file_path+'.snap.json')
+                //code.saveLastSnapshot(file_path+'.snap.json')
               })
               break;
 
@@ -127,12 +132,20 @@ program
   .command('dispatch <file_path> <pubsub_url> <worker_id>')
   .description('Dispatch code to a worker')
   .action(function(file_path, pubsub_url, worker_id){
+    var things = require('../lib/things.js');
     var dispatcher = new things.Dispatcher({ pubsub_url: pubsub_url });
-        dispatcher.runCode(worker_id, file_path)
-        .then(function(result){
-          console.log(">> Running Code ["+result.codeId+"] on CodeEngine ["+result.nodeId+"]");
-          process.exit();
-        });
+    fs.readFile(file_path, function(err, data){
+      if (err) throw err;
+      var source = data.toString();
+      setTimeout(function(){
+        dispatcher.runCode(worker_id, path.basename(file_path), source)
+          .then(function(result){
+            console.log(">> Running Code ["+result.codeId+"] on CodeEngine ["+result.nodeId+"]");
+            process.exit();
+          });
+      }, 500);
+
+    });
   });
 
 program

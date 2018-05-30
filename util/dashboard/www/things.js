@@ -187,14 +187,15 @@
 		this.codes = {};
 
 		this._requests = {};
-		this.pubsub.subscribe(this.pubsub.id+'/'+this.id, function(message, topic){
+		this.pubsub.subscribe(this.pubsub.id+'/'+this.id, function(topic, message){
 			if (message.reply_id in self._requests){
 				self._requests[message.reply_id].resolve(message.payload);
 				clearTimeout(self._requests[message.reply_id].timer);
 				delete self._requests[message.reply_id];
 			}
 			else {
-				console.log(chalk.red('[Dispatcher:'+this.dispatcher.id+'] Received unexpected message'));
+				console.log('[Engine:'+self.id+'] Received unexpected message');
+				console.log(message);
 			}
 		});
 
@@ -241,20 +242,21 @@
 				source: source
 			})
 	}
-	CodeEngine.prototype.pauseCode = function(code_name, instance_id){
-			console.log("inside running function" + code_name) ;
-		return this.sendCommand('pause_code', {
-				code_name: code_name,
-				instance_id: instance_id
-			})
-	}
-	CodeEngine.prototype.resumeCode = function(code_name, instance_id){
-		console.log("#####resume code "+ instance_id);
-		return this.sendCommand('resume_code', {
-				code_name: code_name,
-				instance_id: instance_id
-			})
-	}
+
+
+	// CodeEngine.prototype.pauseCode = function(code_name, instance_id){
+	// 	return this.sendCommand('pause_code', {
+	// 			code_name: code_name,
+	// 			instance_id: instance_id
+	// 		})
+	// }
+	// CodeEngine.prototype.resumeCode = function(code_name, instance_id){
+	// 	return this.sendCommand('resume_code', {
+	// 			code_name: code_name,
+	// 			instance_id: instance_id
+	// 		})
+	// }
+
 	CodeEngine.prototype.migrateCode = function(code_name, instance_id, target_engine){
 		console.log("#####inside migrating "+ instance_id);
 		return this.sendCommand('migrate_code', {
@@ -280,6 +282,19 @@
 		this.engine = undefined;
 		this.historyDevices =[];
 
+		this._requests = {};
+		this.pubsub.subscribe(this.pubsub.id+'/'+this.id, function(topic, message){
+			if (message.reply_id in self._requests){
+				self._requests[message.reply_id].resolve(message.payload);
+				clearTimeout(self._requests[message.reply_id].timer);
+				delete self._requests[message.reply_id];
+			}
+			else {
+				console.log('[Program:'+self.code_name+'/'+self.id+'] Received unexpected message');
+				console.log(message);
+			}
+		});
+
 		this.pubsub.subscribe(this.code_name+'/'+this.id+'/resource', function(topic, message){
 			self.stats.push(message);
 			self.emit('update');
@@ -300,6 +315,31 @@
 
 	}
 	Program.prototype = new EventEmitter();
+	Program.prototype.sendCommand = function(ctrl, kwargs){
+		var self = this;
+		var deferred = defer();
+		var request_id = randKey(16);
+		this._requests[request_id] = deferred;
+		this.pubsub.publish(this.code_name+'/'+this.id+'/cmd', {
+			request_id: request_id,
+			reply_to: this.pubsub.id+'/'+this.id,
+			ctrl: ctrl,
+			kwargs: kwargs
+		})
+		deferred.timer = setTimeout(function(){
+			if (request_id in self._requests){
+				deferred.reject('PubsubCommandTimeout');
+				delete self._requests[request_id];
+			}
+		}, 10000); // assume failure if reply not received
+		return deferred.promise
+	}
+	Program.prototype.pause = function(code_name, instance_id){
+		return this.sendCommand('pause')
+	}
+	Program.prototype.resume = function(code_name, instance_id){
+		return this.sendCommand('resume')
+	}
 
 	/** Dashboard */
 	var ENGINE_REGISTRY_NAMESPACE = 'engine-registry';

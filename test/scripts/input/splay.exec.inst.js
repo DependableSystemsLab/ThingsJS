@@ -1,59 +1,38 @@
 var pidusage = require('pidusage');
 (function(Σ) {
-    Σ.hoist([
-        [
-            GeneratePayloadTree,
-            Σ
-        ],
-        [
-            GenerateKey,
-            Σ
-        ],
-        [
-            SplayRMS,
-            Σ
-        ],
-        [
-            SplayUpdateStats,
-            Σ
-        ],
-        [
-            InsertNewNode,
-            Σ
-        ],
-        [
-            SplaySetup,
-            Σ
-        ],
-        [
-            SplayTearDown,
-            Σ
-        ],
-        [
-            SplayRun,
-            Σ
-        ],
-        [
-            SplayTree,
-            Σ
-        ],
-        [
-            BM_Start,
-            Σ
-        ]
-    ]);
-    Σ.refs.kSplayTreeSize = 1000;
-    Σ.refs.kSplayTreeModifications = 10;
-    Σ.refs.kSplayTreePayloadDepth = 3;
-    Σ.refs.splayTree = null;
-    Σ.refs.splaySampleTimeStart = 0;
+    Σ.setExtractor(function() {
+        return this.capture({}, {
+            kSplayTreeSize: kSplayTreeSize,
+            kSplayTreeModifications: kSplayTreeModifications,
+            kSplayTreePayloadDepth: kSplayTreePayloadDepth,
+            splayTree: splayTree,
+            splaySampleTimeStart: splaySampleTimeStart,
+            splaySamples: splaySamples,
+            splaySumOfSquaredPauses: splaySumOfSquaredPauses,
+            performance: performance,
+            BM_RunFunc: BM_RunFunc,
+            BM_SetupFunc: BM_SetupFunc,
+            BM_TearDownFunc: BM_TearDownFunc,
+            BM_RMS: BM_RMS,
+            BM_Iterations: BM_Iterations,
+            BM_Min_Iterations: BM_Min_Iterations,
+            BM_Results: BM_Results
+        });
+    }).hoist(GeneratePayloadTree, Σ).hoist(GenerateKey, Σ).hoist(SplayRMS, Σ).hoist(SplayUpdateStats, Σ).hoist(InsertNewNode, Σ).hoist(SplaySetup, Σ).hoist(SplayTearDown, Σ).hoist(SplayRun, Σ).hoist(SplayTree, Σ).hoist(BM_Start, Σ);
+    var kSplayTreeSize = 1000;
+    var kSplayTreeModifications = 10;
+    var kSplayTreePayloadDepth = 3;
+    var splayTree = null;
+    var splaySampleTimeStart = 0;
 
     function GeneratePayloadTree(depth, tag) {
-        var Σ_0 = new Σ.Scope(this, GeneratePayloadTree, '0', Σ, {
-            depth: depth,
-            tag: tag
-        }, []);
-        if (Σ_0.refs.depth == 0) {
+        var Σ_GeneratePayloadTree = new Σ.Scope(this, Σ, GeneratePayloadTree, function() {
+            return this.capture({
+                depth: depth,
+                tag: tag
+            }, {});
+        });
+        if (depth == 0) {
             return {
                 array: [
                     0,
@@ -67,182 +46,207 @@ var pidusage = require('pidusage');
                     8,
                     9
                 ],
-                string: 'String for key ' + Σ_0.refs.tag + ' in leaf node'
+                string: 'String for key ' + tag + ' in leaf node'
             };
         } else {
             return {
-                left: GeneratePayloadTree.τwrapped(Σ_0.refs.depth - 1, Σ_0.refs.tag),
-                right: GeneratePayloadTree.τwrapped(Σ_0.refs.depth - 1, Σ_0.refs.tag)
+                left: GeneratePayloadTree(depth - 1, tag),
+                right: GeneratePayloadTree(depth - 1, tag)
             };
         }
     }
 
     function GenerateKey() {
-        var Σ_1 = new Σ.Scope(this, GenerateKey, '1', Σ, {}, []);
+        var Σ_GenerateKey = new Σ.Scope(this, Σ, GenerateKey, function() {
+            return this.capture({}, {});
+        });
         return Math.random();
     }
-    Σ.refs.splaySamples = 0;
-    Σ.refs.splaySumOfSquaredPauses = 0;
+    var splaySamples = 0;
+    var splaySumOfSquaredPauses = 0;
 
     function SplayRMS() {
-        var Σ_2 = new Σ.Scope(this, SplayRMS, '2', Σ, {}, []);
-        return Math.round(Math.sqrt(Σ.refs.splaySumOfSquaredPauses / Σ.refs.splaySamples) * 10000);
+        var Σ_SplayRMS = new Σ.Scope(this, Σ, SplayRMS, function() {
+            return this.capture({}, {});
+        });
+        return Math.round(Math.sqrt(splaySumOfSquaredPauses / splaySamples) * 10000);
     }
 
     function SplayUpdateStats(time) {
-        var Σ_3 = new Σ.Scope(this, SplayUpdateStats, '3', Σ, {
-            time: time
-        }, []);
-        Σ_3.refs.pause = Σ_3.refs.time - Σ.refs.splaySampleTimeStart;
-        Σ.refs.splaySampleTimeStart = Σ_3.refs.time;
-        Σ.refs.splaySamples++;
-        Σ.refs.splaySumOfSquaredPauses += Σ_3.refs.pause * Σ_3.refs.pause;
+        var Σ_SplayUpdateStats = new Σ.Scope(this, Σ, SplayUpdateStats, function() {
+            return this.capture({
+                time: time
+            }, {
+                pause: pause
+            });
+        });
+        var pause = time - splaySampleTimeStart;
+        splaySampleTimeStart = time;
+        splaySamples++;
+        splaySumOfSquaredPauses += pause * pause;
     }
 
     function InsertNewNode() {
-        var Σ_4 = new Σ.Scope(this, InsertNewNode, '4', Σ, {}, []);
-        Σ_4.refs.key = undefined;
+        var Σ_InsertNewNode = new Σ.Scope(this, Σ, InsertNewNode, function() {
+            return this.capture({}, {
+                key: key,
+                payload: payload
+            });
+        });
+        var key;
         do {
-            Σ_4.refs.key = Σ.refs.GenerateKey();
-        } while (Σ.refs.splayTree.find(Σ_4.refs.key) != null);
-        Σ_4.refs.payload = Σ.refs.GeneratePayloadTree(Σ.refs.kSplayTreePayloadDepth, String(Σ_4.refs.key));
-        Σ.refs.splayTree.insert(Σ_4.refs.key, Σ_4.refs.payload);
-        return Σ_4.refs.key;
+            key = GenerateKey();
+        } while (splayTree.find(key) != null);
+        var payload = GeneratePayloadTree(kSplayTreePayloadDepth, String(key));
+        splayTree.insert(key, payload);
+        return key;
     }
 
     function SplaySetup() {
-        var Σ_5 = new Σ.Scope(this, SplaySetup, '5', Σ, {}, []);
-        if (!Σ.refs.performance.now) {
+        var Σ_SplaySetup = new Σ.Scope(this, Σ, SplaySetup, function() {
+            return this.capture({}, {});
+        });
+        if (!performance.now) {
             throw 'PerformanceNowUnsupported';
         }
-        Σ.refs.splayTree = new Σ.refs.SplayTree();
-        Σ.refs.splaySampleTimeStart = Σ.refs.performance.now();
-        for (Σ_5.refs.i = 0; Σ_5.refs.i < Σ.refs.kSplayTreeSize; Σ_5.refs.i++) {
-            Σ.refs.InsertNewNode();
-            if ((Σ_5.refs.i + 1) % 20 == 19) {
-                Σ.refs.SplayUpdateStats(Σ.refs.performance.now());
+        splayTree = new SplayTree();
+        splaySampleTimeStart = performance.now();
+        for (var i = 0; i < kSplayTreeSize; i++) {
+            InsertNewNode();
+            if ((i + 1) % 20 == 19) {
+                SplayUpdateStats(performance.now());
             }
         }
     }
 
     function SplayTearDown() {
-        var Σ_6 = new Σ.Scope(this, SplayTearDown, '6', Σ, {}, []);
-        Σ_6.refs.keys = Σ.refs.splayTree.exportKeys();
-        Σ.refs.splayTree = null;
-        Σ.refs.splaySamples = 0;
-        Σ.refs.splaySumOfSquaredPauses = 0;
-        Σ_6.refs.length = Σ_6.refs.keys.length;
-        if (Σ_6.refs.length != Σ.refs.kSplayTreeSize) {
+        var Σ_SplayTearDown = new Σ.Scope(this, Σ, SplayTearDown, function() {
+            return this.capture({}, {
+                keys: keys,
+                length: length
+            });
+        });
+        var keys = splayTree.exportKeys();
+        splayTree = null;
+        splaySamples = 0;
+        splaySumOfSquaredPauses = 0;
+        var length = keys.length;
+        if (length != kSplayTreeSize) {
             throw new Error('Splay tree has wrong size');
         }
-        for (Σ_6.refs.i = 0; Σ_6.refs.i < Σ_6.refs.length - 1; Σ_6.refs.i++) {
-            if (Σ_6.refs.keys[Σ_6.refs.i] >= Σ_6.refs.keys[Σ_6.refs.i + 1]) {
+        for (var i = 0; i < length - 1; i++) {
+            if (keys[i] >= keys[i + 1]) {
                 throw new Error('Splay tree not sorted');
             }
         }
     }
 
     function SplayRun() {
-        var Σ_7 = new Σ.Scope(this, SplayRun, '7', Σ, {}, []);
-        for (Σ_7.refs.i = 0; Σ_7.refs.i < Σ.refs.kSplayTreeModifications; Σ_7.refs.i++) {
-            Σ_7.refs.key = Σ.refs.InsertNewNode();
-            Σ_7.refs.greatest = Σ.refs.splayTree.findGreatestLessThan(Σ_7.refs.key);
-            if (Σ_7.refs.greatest == null) {
-                Σ.refs.splayTree.remove(Σ_7.refs.key);
+        var Σ_SplayRun = new Σ.Scope(this, Σ, SplayRun, function() {
+            return this.capture({}, {});
+        });
+        for (var i = 0; i < kSplayTreeModifications; i++) {
+            var key = InsertNewNode();
+            var greatest = splayTree.findGreatestLessThan(key);
+            if (greatest == null) {
+                splayTree.remove(key);
             } else {
-                Σ.refs.splayTree.remove(Σ_7.refs.greatest.key);
+                splayTree.remove(greatest.key);
             };
         }
-        Σ.refs.SplayUpdateStats(Σ.refs.performance.now());
+        SplayUpdateStats(performance.now());
     }
 
     function SplayTree() {
-        var Σ_8 = new Σ.Scope(this, SplayTree, '8', Σ, {}, []);
+        var Σ_SplayTree = new Σ.Scope(this, Σ, SplayTree, function() {
+            return this.capture({}, {});
+        });
     };
-    Σ.refs.SplayTree.prototype.root_ = null;
-    Σ.refs.SplayTree.prototype.isEmpty = Σ.addFunction(function αxkSw() {
-        var Σ_9 = new Σ.Scope(this, αxkSw, '9', Σ, {}, []);
+    SplayTree.prototype.root_ = null;
+    SplayTree.prototype.isEmpty = Σ.addFunction(function αZTeD() {
+        var Σ_αZTeD = new Σ.Scope(this, Σ, αZTeD, function() {
+            return this.capture({}, {});
+        });
         return !this.root_;
     }, Σ);
-    Σ.refs.SplayTree.prototype.insert = Σ.addFunction(function αiFLm(key, value) {
-        var Σ_10 = new Σ.Scope(this, αiFLm, '10', Σ, {
-            key: key,
-            value: value
-        }, []);
+    SplayTree.prototype.insert = Σ.addFunction(function αEXEt(key, value) {
+        var Σ_αEXEt = new Σ.Scope(this, Σ, αEXEt, function() {
+            return this.capture({}, {});
+        });
         if (this.isEmpty()) {
-            this.root_ = new Σ.refs.SplayTree.Node(Σ_10.refs.key, Σ_10.refs.value);
+            this.root_ = new SplayTree.Node(key, value);
             return;
         }
-        this.splay_(Σ_10.refs.key);
-        if (this.root_.key == Σ_10.refs.key) {
+        this.splay_(key);
+        if (this.root_.key == key) {
             return;
         }
-        Σ_10.refs.node = new Σ.refs.SplayTree.Node(Σ_10.refs.key, Σ_10.refs.value);
-        if (Σ_10.refs.key > this.root_.key) {
-            Σ_10.refs.node.left = this.root_;
-            Σ_10.refs.node.right = this.root_.right;
+        var node = new SplayTree.Node(key, value);
+        if (key > this.root_.key) {
+            node.left = this.root_;
+            node.right = this.root_.right;
             this.root_.right = null;
         } else {
-            Σ_10.refs.node.right = this.root_;
-            Σ_10.refs.node.left = this.root_.left;
+            node.right = this.root_;
+            node.left = this.root_.left;
             this.root_.left = null;
         }
-        this.root_ = Σ_10.refs.node;
+        this.root_ = node;
     }, Σ);
-    Σ.refs.SplayTree.prototype.remove = Σ.addFunction(function αLspp(key) {
-        var Σ_11 = new Σ.Scope(this, αLspp, '11', Σ, {
-            key: key
-        }, []);
+    SplayTree.prototype.remove = Σ.addFunction(function α9gU4(key) {
+        var Σ_α9gU4 = new Σ.Scope(this, Σ, α9gU4, function() {
+            return this.capture({}, {});
+        });
         if (this.isEmpty()) {
-            throw Error('Key not found: ' + Σ_11.refs.key);
+            throw Error('Key not found: ' + key);
         }
-        this.splay_(Σ_11.refs.key);
-        if (this.root_.key != Σ_11.refs.key) {
-            throw Error('Key not found: ' + Σ_11.refs.key);
+        this.splay_(key);
+        if (this.root_.key != key) {
+            throw Error('Key not found: ' + key);
         }
-        Σ_11.refs.removed = this.root_;
+        var removed = this.root_;
         if (!this.root_.left) {
             this.root_ = this.root_.right;
         } else {
-            Σ_11.refs.right = this.root_.right;
+            var right = this.root_.right;
             this.root_ = this.root_.left;
-            this.splay_(Σ_11.refs.key);
-            this.root_.right = Σ_11.refs.right;
+            this.splay_(key);
+            this.root_.right = right;
         }
-        return Σ_11.refs.removed;
+        return removed;
     }, Σ);
-    Σ.refs.SplayTree.prototype.find = Σ.addFunction(function αQ82c(key) {
-        var Σ_12 = new Σ.Scope(this, αQ82c, '12', Σ, {
-            key: key
-        }, []);
+    SplayTree.prototype.find = Σ.addFunction(function αccui(key) {
+        var Σ_αccui = new Σ.Scope(this, Σ, αccui, function() {
+            return this.capture({}, {});
+        });
         if (this.isEmpty()) {
             return null;
         }
-        this.splay_(Σ_12.refs.key);
-        return this.root_.key == Σ_12.refs.key ? this.root_ : null;
+        this.splay_(key);
+        return this.root_.key == key ? this.root_ : null;
     }, Σ);
-    Σ.refs.SplayTree.prototype.findMax = Σ.addFunction(function αnX6I(opt_startNode) {
-        var Σ_13 = new Σ.Scope(this, αnX6I, '13', Σ, {
-            opt_startNode: opt_startNode
-        }, []);
+    SplayTree.prototype.findMax = Σ.addFunction(function αi3KN(opt_startNode) {
+        var Σ_αi3KN = new Σ.Scope(this, Σ, αi3KN, function() {
+            return this.capture({}, {});
+        });
         if (this.isEmpty()) {
             return null;
         }
-        Σ_13.refs.current = Σ_13.refs.opt_startNode || this.root_;
-        while (Σ_13.refs.current.right) {
-            Σ_13.refs.current = Σ_13.refs.current.right;
+        var current = opt_startNode || this.root_;
+        while (current.right) {
+            current = current.right;
         }
-        return Σ_13.refs.current;
+        return current;
     }, Σ);
-    Σ.refs.SplayTree.prototype.findGreatestLessThan = Σ.addFunction(function α0xQF(key) {
-        var Σ_14 = new Σ.Scope(this, α0xQF, '14', Σ, {
-            key: key
-        }, []);
+    SplayTree.prototype.findGreatestLessThan = Σ.addFunction(function αUURb(key) {
+        var Σ_αUURb = new Σ.Scope(this, Σ, αUURb, function() {
+            return this.capture({}, {});
+        });
         if (this.isEmpty()) {
             return null;
         }
-        this.splay_(Σ_14.refs.key);
-        if (this.root_.key < Σ_14.refs.key) {
+        this.splay_(key);
+        if (this.root_.key < key) {
             return this.root_;
         } else if (this.root_.left) {
             return this.findMax(this.root_.left);
@@ -250,165 +254,173 @@ var pidusage = require('pidusage');
             return null;
         }
     }, Σ);
-    Σ.refs.SplayTree.prototype.exportKeys = Σ.addFunction(function αTTPS() {
-        var Σ_15 = new Σ.Scope(this, αTTPS, '15', Σ, {}, []);
-        Σ_15.refs.result = [];
+    SplayTree.prototype.exportKeys = Σ.addFunction(function αv8wj() {
+        var Σ_αv8wj = new Σ.Scope(this, Σ, αv8wj, function() {
+            return this.capture({}, {});
+        });
+        var result = [];
         if (!this.isEmpty()) {
-            this.root_.traverse_(Σ_15.addFunction(function αlXpK(node) {
-                var Σ_15_0 = new Σ.Scope(this, αlXpK, '0', Σ_15, {
-                    node: node
-                }, []);
-                Σ_15.refs.result.push(Σ_15_0.refs.node.key);
-            }, Σ_15));
+            this.root_.traverse_(Σ_αv8wj.addFunction(function αNqyg(node) {
+                var Σ_αv8wj_αNqyg = new Σ.Scope(this, Σ_αv8wj, αNqyg, function() {
+                    return this.capture({}, {});
+                });
+                result.push(node.key);
+            }, Σ_αv8wj));
         }
-        return Σ_15.refs.result;
+        return result;
     }, Σ);
-    Σ.refs.SplayTree.prototype.splay_ = Σ.addFunction(function α4pEW(key) {
-        var Σ_16 = new Σ.Scope(this, α4pEW, '16', Σ, {
-            key: key
-        }, []);
+    SplayTree.prototype.splay_ = Σ.addFunction(function αOyq9(key) {
+        var Σ_αOyq9 = new Σ.Scope(this, Σ, αOyq9, function() {
+            return this.capture({}, {});
+        });
         if (this.isEmpty()) {
             return;
         }
-        Σ_16.refs.dummy = undefined, Σ_16.refs.left = undefined, Σ_16.refs.right = undefined;
-        Σ_16.refs.dummy = Σ_16.refs.left = Σ_16.refs.right = new Σ.refs.SplayTree.Node(null, null);
-        Σ_16.refs.current = this.root_;
+        var dummy, left, right;
+        dummy = left = right = new SplayTree.Node(null, null);
+        var current = this.root_;
         while (true) {
-            if (Σ_16.refs.key < Σ_16.refs.current.key) {
-                if (!Σ_16.refs.current.left) {
+            if (key < current.key) {
+                if (!current.left) {
                     break;
                 }
-                if (Σ_16.refs.key < Σ_16.refs.current.left.key) {
-                    Σ_16.refs.tmp = Σ_16.refs.current.left;
-                    Σ_16.refs.current.left = Σ_16.refs.tmp.right;
-                    Σ_16.refs.tmp.right = Σ_16.refs.current;
-                    Σ_16.refs.current = Σ_16.refs.tmp;
-                    if (!Σ_16.refs.current.left) {
+                if (key < current.left.key) {
+                    var tmp = current.left;
+                    current.left = tmp.right;
+                    tmp.right = current;
+                    current = tmp;
+                    if (!current.left) {
                         break;
                     }
                 }
-                Σ_16.refs.right.left = Σ_16.refs.current;
-                Σ_16.refs.right = Σ_16.refs.current;
-                Σ_16.refs.current = Σ_16.refs.current.left;
-            } else if (Σ_16.refs.key > Σ_16.refs.current.key) {
-                if (!Σ_16.refs.current.right) {
+                right.left = current;
+                right = current;
+                current = current.left;
+            } else if (key > current.key) {
+                if (!current.right) {
                     break;
                 }
-                if (Σ_16.refs.key > Σ_16.refs.current.right.key) {
-                    Σ_16.refs.tmp = Σ_16.refs.current.right;
-                    Σ_16.refs.current.right = Σ_16.refs.tmp.left;
-                    Σ_16.refs.tmp.left = Σ_16.refs.current;
-                    Σ_16.refs.current = Σ_16.refs.tmp;
-                    if (!Σ_16.refs.current.right) {
+                if (key > current.right.key) {
+                    var tmp = current.right;
+                    current.right = tmp.left;
+                    tmp.left = current;
+                    current = tmp;
+                    if (!current.right) {
                         break;
                     }
                 }
-                Σ_16.refs.left.right = Σ_16.refs.current;
-                Σ_16.refs.left = Σ_16.refs.current;
-                Σ_16.refs.current = Σ_16.refs.current.right;
+                left.right = current;
+                left = current;
+                current = current.right;
             } else {
                 break;
             }
         }
-        Σ_16.refs.left.right = Σ_16.refs.current.left;
-        Σ_16.refs.right.left = Σ_16.refs.current.right;
-        Σ_16.refs.current.left = Σ_16.refs.dummy.right;
-        Σ_16.refs.current.right = Σ_16.refs.dummy.left;
-        this.root_ = Σ_16.refs.current;
+        left.right = current.left;
+        right.left = current.right;
+        current.left = dummy.right;
+        current.right = dummy.left;
+        this.root_ = current;
     }, Σ);
-    Σ.refs.SplayTree.Node = Σ.addFunction(function αSDyB(key, value) {
-        var Σ_17 = new Σ.Scope(this, αSDyB, '17', Σ, {
-            key: key,
-            value: value
-        }, []);
-        this.key = Σ_17.refs.key;
-        this.value = Σ_17.refs.value;
+    SplayTree.Node = Σ.addFunction(function αnAKA(key, value) {
+        var Σ_αnAKA = new Σ.Scope(this, Σ, αnAKA, function() {
+            return this.capture({}, {});
+        });
+        this.key = key;
+        this.value = value;
     }, Σ);
-    Σ.refs.SplayTree.Node.prototype.left = null;
-    Σ.refs.SplayTree.Node.prototype.right = null;
-    Σ.refs.SplayTree.Node.prototype.traverse_ = Σ.addFunction(function α5QBS(f) {
-        var Σ_18 = new Σ.Scope(this, α5QBS, '18', Σ, {
-            f: f
-        }, []);
-        Σ_18.refs.current = this;
-        while (Σ_18.refs.current) {
-            Σ_18.refs.left = Σ_18.refs.current.left;
-            if (Σ_18.refs.left) {
-                Σ_18.refs.left.traverse_(Σ_18.refs.f);
+    SplayTree.Node.prototype.left = null;
+    SplayTree.Node.prototype.right = null;
+    SplayTree.Node.prototype.traverse_ = Σ.addFunction(function αNp38(f) {
+        var Σ_αNp38 = new Σ.Scope(this, Σ, αNp38, function() {
+            return this.capture({}, {});
+        });
+        var current = this;
+        while (current) {
+            var left = current.left;
+            if (left) {
+                left.traverse_(f);
             }
-            Σ_18.refs.f(Σ_18.refs.current);
-            Σ_18.refs.current = Σ_18.refs.current.right;
+            f(current);
+            current = current.right;
         }
     }, Σ);
-    Σ.refs.performance = {};
-    Σ.refs.performance.now = Σ.addFunction(function αW4ZL() {
-        var Σ_19 = new Σ.Scope(this, αW4ZL, '19', Σ, {}, []);
+    var performance = {};
+    performance.now = Σ.addFunction(function αpPuY() {
+        var Σ_αpPuY = new Σ.Scope(this, Σ, αpPuY, function() {
+            return this.capture({}, {});
+        });
         return Date.now();
     }, Σ);
-    Σ.refs.BM_RunFunc = Σ.refs.SplayRun;
-    Σ.refs.BM_SetupFunc = Σ.refs.SplaySetup;
-    Σ.refs.BM_TearDownFunc = Σ.refs.SplayTearDown;
-    Σ.refs.BM_RMS = Σ.refs.SplayRMS;
-    Σ.refs.BM_Iterations = 100;
-    Σ.refs.BM_Min_Iterations = 16;
-    Σ.refs.BM_Results = [];
+    var BM_RunFunc = SplayRun;
+    var BM_SetupFunc = SplaySetup;
+    var BM_TearDownFunc = SplayTearDown;
+    var BM_RMS = SplayRMS;
+    var BM_Iterations = 300;
+    var BM_Min_Iterations = 16;
+    var BM_Results = [];
 
     function BM_Start() {
-        var Σ_20 = new Σ.Scope(this, BM_Start, '20', Σ, {}, [
-            [
-                doRun,
-                Σ_20
-            ]
-        ]);
-        Σ_20.refs.data = {
+        var Σ_BM_Start = new Σ.Scope(this, Σ, BM_Start, function() {
+            return this.capture({}, {
+                data: data,
+                elapsed: elapsed,
+                start: start,
+                end: end,
+                i: i
+            });
+        }).hoist(doRun, Σ_BM_Start);
+        var data = {
             runs: 0,
             elapsed: 0
         };
-        Σ_20.refs.elapsed = 0;
-        Σ_20.refs.start = Date.now();
-        Σ_20.refs.end = null;
-        Σ_20.refs.i = 0;
+        var elapsed = 0;
+        var start = Date.now();
+        var end = null;
+        var i = 0;
 
         function doRun() {
-            var Σ_20_0 = new Σ.Scope(this, doRun, '0', Σ_20, {}, []);
-            Σ.refs.BM_SetupFunc();
-            Σ.log('Iteration : ' + Σ_20.refs.i);
-            if (Σ_20.refs.i === Σ.refs.BM_Iterations / 2){
-                (function report(){
-                    pidusage.stat(process.pid, function(err, stat) {
-                        process.send({
-                            timestamp: Date.now(),
-                            memory: process.memoryUsage(),
-                            cpu: stat.cpu
-                        })
-                    });
-                    setTimeout(report, Math.round(Math.random()*200 + 100));
-                })();
-            }
-            Σ.refs.BM_RunFunc();
-            Σ_20.refs.elapsed = Date.now() - Σ_20.refs.start;
-            Σ.refs.BM_TearDownFunc();
-            Σ_20.refs.i++;
-            if (Σ_20.refs.i < Σ.refs.BM_Iterations) {
-                Σ.setImmediate(doRun.τwrapped);
-            } else {
-                if (Σ_20.refs.data != null) {
-                    Σ_20.refs.data.runs += Σ_20.refs.i;
-                    Σ_20.refs.data.elapsed += Σ_20.refs.elapsed;
+            var Σ_BM_Start_doRun = new Σ.Scope(this, Σ_BM_Start, doRun, function() {
+                return this.capture({}, {});
+            });
+            BM_SetupFunc();
+            Σ.console.log('Iteration : ' + i);
+            BM_RunFunc();
+            elapsed = Date.now() - start;
+            BM_TearDownFunc();
+            i++;
+            if (i < BM_Iterations) {
+                if (i === BM_Iterations / 2 + 1){
+                    (function report(){
+                        pidusage.stat(process.pid, function(err, stat) {
+                            process.send({
+                                timestamp: Date.now(),
+                                memory: process.memoryUsage(),
+                                cpu: stat.cpu
+                            })
+                        });
+                        setTimeout(report, Math.round(Math.random()*200 + 100));
+                    })();
                 }
-                Σ.log('Runs: ' + Σ_20.refs.data.runs + '\t|\tElapsed: ' + Σ_20.refs.data.elapsed);
-                Σ_20.refs.end = Date.now();
-                Σ.log('Total time : ' + (Σ_20.refs.end - Σ_20.refs.start) + ' ms');
-                Σ_20_0.refs.usec = Σ_20.refs.data.elapsed * 1000 / Σ_20.refs.data.runs;
-                Σ_20_0.refs.rms = Σ.refs.BM_RMS ? Σ.refs.BM_RMS() : 0;
-                Σ.refs.BM_Results.push({
-                    time: Σ_20_0.refs.usec,
-                    latency: Σ_20_0.refs.rms
+                Σ.setImmediate(doRun);
+            } else {
+                if (data != null) {
+                    data.runs += i;
+                    data.elapsed += elapsed;
+                }
+                Σ.console.log('Runs: ' + data.runs + '\t|\tElapsed: ' + data.elapsed);
+                end = Date.now();
+                Σ.console.log('Total time : ' + (end - start) + ' ms');
+                var usec = data.elapsed * 1000 / data.runs;
+                var rms = BM_RMS ? BM_RMS() : 0;
+                BM_Results.push({
+                    time: usec,
+                    latency: rms
                 });
                 process.exit();
             }
         }
-        Σ.setImmediate(Σ_20.refs.doRun);
+        Σ.setImmediate(doRun);
     }
-    Σ.refs.BM_Start();
+    BM_Start();
 }(require('things-js').bootstrap('mqtt://localhost', 'splay.js')));
