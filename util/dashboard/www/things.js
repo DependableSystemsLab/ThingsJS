@@ -395,7 +395,7 @@
 			if (message.source) self.programs[message.instance_id].source = message.source;
 		});
 				console.log(self.programs);
-				console.log("jump in program subscribe function #######");
+				// console.log("jump in program subscribe function #######");
 
 		pubsub.on('connect', function(){
 			setTimeout(function(){
@@ -410,14 +410,14 @@
 	}
 	Dashboard.prototype = new EventEmitter();
 	Dashboard.prototype.findRunningDevice = function(code_id){
-		console.log("inside Dashboard function "+code_id);
+
 		var i, code_name, instance_id; 
 		for (i in this.engines){			
 			var codes = this.engines[i].codes; 
 			for (code_name in codes){
-				console.log("code_id: " + code_id);
-				console.log("codes name :" + code_name);
-				console.log("device id :" + this.engines[i].id);
+				// console.log("code_id: " + code_id);
+				// console.log("codes name :" + code_name);
+				// console.log("device id :" + this.engines[i].id);
 
 				for (instance_id in codes[code_name]){
 					if(instance_id === code_id && codes[code_name][instance_id] === "Running")
@@ -816,11 +816,11 @@ things.factory('CodeRepository', ['$rootScope', function($rootScope){
 
 							self.graphData['memory'].push({
 								values: memData,
-								key: id+' Memory'
+								key: code_name+'/'+instance_id+' Memory'
 							});
 							self.graphData['cpu'].push({
 								values: cpuData,
-								key: id+' CPU'
+								key: code_name+'/'+instance_id+' CPU'
 							});
 						})
 					// })

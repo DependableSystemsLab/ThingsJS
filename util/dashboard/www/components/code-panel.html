@@ -107,8 +107,8 @@
 		<!-- Console View -->
 		<div ng-show="viewMode === 'console'">
 			
-			<device-console lines="code.engine.console" height="144px"></device-console>
-			<button ng-if="code.engine.console.length > 0" class="btn btn-info btn-sm pull-right" ng-click="code.engine.console = []">Clear Console</button>
+			<device-console lines="code.console" height="144px"></device-console>
+			<button ng-if="code.console.length > 0" class="btn btn-info btn-sm pull-right" ng-click="code.console = []">Clear Console</button>
 										
 		</div>
 		<!-- End Console View -->
