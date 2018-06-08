@@ -10,7 +10,7 @@ var pubsub_url = 'mqtt://localhost';
 var pubsub_topic = 'thingsjs/IoTBench/ETL/SenMLSpout';
 var publish_interval = 1000;
 
-var pubsub = new things.Pubsub('ETLSenMLSpout', pubsub_url);
+var pubsub = new things.Pubsub(pubsub_url);
 
 /* SenML Lines */
 var lines = [];
@@ -48,14 +48,12 @@ function publishLine() {
 	   currentLine = 0;
 	}
 	console.log("Publishing line " + currentLine);
-	pubsub.publish(pubsub_topic, lines[currentLine], true);
+	pubsub.publish(pubsub_topic, lines[currentLine]);
 	currentLine++;
 }
 
-/* Connect pubsub */
-pubsub.connect(function(){
-    console.log("Pubsub connected");
-    
-	// Start processing
-	startSpout();
+pubsub.on('ready', function(){
+    console.log("Beginning spout");
+    startSpout();
 });
+
