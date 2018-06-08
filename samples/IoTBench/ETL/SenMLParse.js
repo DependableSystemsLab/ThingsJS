@@ -9,7 +9,7 @@ var things = require('../../../lib/things.js')
 var pubsub_url = 'mqtt://localhost';
 var pubsub_topic = 'thingsjs/IoTBench/ETL/SenMLSpout';
 
-var pubsub = new things.Pubsub('SenMLParse', pubsub_url);
+var pubsub = new things.Pubsub(pubsub_url);
 
 function processMessage(data) {
 	var line = data.toString();
@@ -57,8 +57,7 @@ function processMessage(data) {
 }
 
 /* Connect pubsub */
-pubsub.connect(function(){
-    console.log("Pubsub connected");
+pubsub.on('ready', function(){
     
 	// Subscribe to spout publications
 	pubsub.subscribe(pubsub_topic, processMessage);
