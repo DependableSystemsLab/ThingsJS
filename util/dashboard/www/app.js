@@ -116,6 +116,16 @@ dashApp.constant("CONFIG", {
 			controllerAs: '$vm',
 			templateUrl: 'views/node-view.html'
 		})
+		.state('schedule', {
+			parent: 'init',
+			url: '/:schedule',
+			controller: ['$scope', '$stateParams', function($scope, $stateParams){
+				var self = this;
+				
+			}],
+			controllerAs: '$vm',
+			templateUrl: 'views/schedule.html'
+		})
 		.state('codes', {
 			parent: 'init',
 			url: '/codes',

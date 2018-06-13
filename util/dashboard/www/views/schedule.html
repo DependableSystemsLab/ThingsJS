@@ -1,0 +1,41 @@
+<div class="col-md-11">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				 {{selected_schedule}}
+			</div>
+			<div class="panel-body">
+				<div class="dashboard-program-list">
+					Select schedule 
+			<select ng-model="selected_schedule" >
+				<option ng-value = "Current schedule"> Current Schedlue </option>
+				<option ng-value = "Schedule1"> Schedule 1 </option>
+				<option ng-value = "Schedule2"> Schedule 2 </option>
+			</select>
+
+
+      <div class="input-group">
+        <div class="input-group-addon"><i class="fa fa-search"></i></div>
+        <input type="text" class="form-control" placeholder="Search device" ng-model="searchDevice">
+      </div>      
+
+
+  	<div class="row">
+		<div class="col-md-11">
+		
+		<!-- Top Pane -->
+		<code-panel code="$view.topProgram"></code-panel>
+		
+		<!-- Middle Pane -->
+		<code-panel code="$view.middleProgram"></code-panel>
+		
+		<!-- Bottom Pane -->
+		<code-panel code="$view.bottomProgram"></code-panel>
+		
+	</div>
+
+	
+				</div>			
+			</div>
+		</div>
+			
+</div>
