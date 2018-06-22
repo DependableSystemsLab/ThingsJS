@@ -8,6 +8,7 @@ var things = require('../../../lib/things.js')
 /* configurable variables */
 var pubsub_url = 'mqtt://localhost';
 var pubsub_topic = 'thingsjs/IoTBench/ETL/SenMLSpout';
+var publish_topic = 'thingsjs/IoTBench/ETL/SenMLParse';
 
 var pubsub = new things.Pubsub(pubsub_url);
 
@@ -52,8 +53,8 @@ function processMessage(data) {
 	
 	
 	// Publish the output
-	
 	console.log(mapkeyvalues);
+    pubsub.publish(publish_topic, mapkeyvalues);
 }
 
 /* Connect pubsub */
