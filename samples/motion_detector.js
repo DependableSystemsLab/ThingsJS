@@ -22,6 +22,11 @@ var threshold = 0.10;
 
 var pubsub = new things.Pubsub(pubsub_url);
 
+pubsub.on('ready', function() {
+    console.log("Pubsub connected");
+    pubsub.subscribe(source_channel, getFrame);
+});
+
 function formatTime(ms){
 	return ('00'+Math.floor((ms/1000) / 60).toString()).slice(-2)+":"+('00'+(Math.floor(ms/1000) % 60).toString()).slice(-2)+"."+('000'+(ms%1000)).slice(-3)
 }
@@ -30,6 +35,8 @@ var frames = [];
 
 function detectMotion(bufs){
 	if (bufs.length > 3){
+		var b64 = Buffer.from(bufs[0], 'base64');
+		console.log(b64.length);
 		var frame1 = jimp.read(Buffer.from(bufs[0], 'base64')); // jimp.read returns a promise
 		var frame2 = jimp.read(Buffer.from(bufs[1], 'base64'));
 		var frame3 = jimp.read(Buffer.from(bufs[2], 'base64'));
@@ -61,13 +68,16 @@ function getFrame(data){
 	if (frames.length > 3){
 		frames.shift();
 	}
+	//console.log(data);
 	frames.push(data.toString('base64'));
 }
 
+/*
 pubsub.connect(function(){
     console.log("Pubsub connected");
     pubsub.subscribe(source_channel, getFrame);
 });
+*/
 
 setInterval(function(){
 	detectMotion(frames);

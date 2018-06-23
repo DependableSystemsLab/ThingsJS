@@ -24,9 +24,14 @@ var channel = 'things-videostream/raw';	//Change this topic to publish to anothe
 var fps = 5;
 /* end of configurable variables */
 
-var pubsub = new things.Pubsub('stream-worker-1', pubsub_url);
+var pubsub = new things.Pubsub(pubsub_url);
 //ffmpeg.setFfmpegPath('/usr/bin/avconv');		//Uncomment this line to run on raspberry pi
 //ffmpeg.setFfprobePath('/usr/bin/avprobe');	//Uncomment this line to run on raspberry pi
+
+pubsub.on('ready', function() {
+    console.log("Pubsub connected");
+    streamVideo(300, 0, fps);
+});
 
 function formatTime(ms){
 	return ('00'+Math.floor((ms/1000) / 60).toString()).slice(-2)+":"+('00'+(Math.floor(ms/1000) % 60).toString()).slice(-2)+"."+('000'+(ms%1000)).slice(-3)
@@ -66,7 +71,9 @@ function streamVideo(duration, start, fps, callback){
 	function capture(){
 		captureFrame(counter+offset)
 			.then(function(frame){
+				//console.log(frame.length);
 				pubsub.publish(channel, frame, true);
+				//pubsub.publish(channel, "BOB", true);
 			})
 		counter += interval;
 		
@@ -78,8 +85,3 @@ function streamVideo(duration, start, fps, callback){
 	}
 	capture();
 }
-
-pubsub.connect(function(){
-    console.log("Pubsub connected");
-    streamVideo(300, 0, fps);
-});
