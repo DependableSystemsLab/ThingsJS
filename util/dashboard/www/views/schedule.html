@@ -1,41 +1,79 @@
+<div class="row">
 <div class="col-md-11">
-		<div class="panel panel-default">
+		<div class="panel panel-default">		
 			<div class="panel-heading">
-				 {{selected_schedule}}
+			<span class="form-inline">
+			<select ng-model="selected_schedule" class="form-control">
+				<option value="">--- Select Schedule ---</option>
+				<option ng-value = "Current schedule"> Current Schedlue </option>
+				<option ng-value = "Schedule1"> Schedule 1 </option>
+				<option ng-value = "Schedule2"> Schedule 2 </option>
+				<!-- <option ng-repeat="(target, data) in $dash.engines" ng-value="data">{{ target }}</option> -->
+			</select>
+		</span>
+
+
+<!-- 
+				<span class="form-inline">
+				{{selected_schedule}}
+			</span> -->
+
+			<div class="btn-group" ng-init="viewMode = 'device'">
+			<button ng-click="viewMode = 'device'" class="btn btn-default" ng-class="{ active: viewMode === 'device' }">Device-view Mode</button>
+			<button ng-click="viewMode = 'application'" class="btn btn-default" ng-class="{ active: viewMode === 'application' }">Application-view Mode</button>
+
+		</div>
 			</div>
 			<div class="panel-body">
 				<div class="dashboard-program-list">
-					Select schedule 
+<!-- 					Select Schedule 
 			<select ng-model="selected_schedule" >
 				<option ng-value = "Current schedule"> Current Schedlue </option>
 				<option ng-value = "Schedule1"> Schedule 1 </option>
 				<option ng-value = "Schedule2"> Schedule 2 </option>
-			</select>
+			</select> -->
 
-
+				<div ng-show="viewMode === 'device'">
+				<form>
+    <div class="form-group">
       <div class="input-group">
         <div class="input-group-addon"><i class="fa fa-search"></i></div>
-        <input type="text" class="form-control" placeholder="Search device" ng-model="searchDevice">
+        <input type="text" class="form-control" placeholder="Search Device" ng-model="searchDevice">
       </div>      
+    </div>
+</form>
+    
+		<schedule-panel schedule="test"></schedule-panel>
 
+		<schedule-panel schedule="test"></schedule-panel>
 
-  	<div class="row">
-		<div class="col-md-11">
-		
-		<!-- Top Pane -->
-		<code-panel code="$view.topProgram"></code-panel>
-		
-		<!-- Middle Pane -->
-		<code-panel code="$view.middleProgram"></code-panel>
-		
-		<!-- Bottom Pane -->
-		<code-panel code="$view.bottomProgram"></code-panel>
-		
-	</div>
+		<schedule-panel schedule="test"></schedule-panel>
 
-	
-				</div>			
-			</div>
 		</div>
-			
+		
+
+<div ng-show="viewMode === 'application'">
+				<form>
+    <div class="form-group">
+      <div class="input-group">
+        <div class="input-group-addon"><i class="fa fa-search"></i></div>
+        <input type="text" class="form-control" placeholder="Search Application" ng-model="searchApplication">
+      </div>      
+    </div>
+</form>
+    
+		<schedule-panel schedule="test"></schedule-panel>
+
+		<schedule-panel schedule="test"></schedule-panel>
+
+		<schedule-panel schedule="test"></schedule-panel>
+
+		</div>
+			</div>
+			</div>
+
+
+		</div>				
+	</div>
+</div>
 </div>

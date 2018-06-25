@@ -118,12 +118,17 @@ dashApp.constant("CONFIG", {
 		})
 		.state('schedule', {
 			parent: 'init',
-			url: '/:schedule',
-			controller: ['$scope', '$stateParams', function($scope, $stateParams){
+			url: '/schedule',
+			controller: ['$scope','dashboard', '$stateParams', function($scope, dashboard, $stateParams){
 				var self = this;
+				$scope.$dash = dashboard;
+
+				self.topDeviceSchedule  = undefined;
+				self.middleDeviceSchedule  = undefined;
+				self.bottomDeviceSchedule  = undefined;
 				
 			}],
-			controllerAs: '$vm',
+			controllerAs: '$view',
 			templateUrl: 'views/schedule.html'
 		})
 		.state('codes', {
