@@ -965,7 +965,7 @@ things.factory('CodeRepository', ['$rootScope', function($rootScope){
 		templateUrl: 'components/code-panel.html'
 	}
 }])
-.directive('schedulePanel', ['Dashboard', 'CodeRepository', function(Dashboard, CodeRepository){
+.directive('scheduleDevicePanel', ['Dashboard', 'CodeRepository', function(Dashboard, CodeRepository){
 	return {
 		restrict: 'E',
 		scope: {
@@ -1002,7 +1002,47 @@ things.factory('CodeRepository', ['$rootScope', function($rootScope){
 			self.refresh();
 		}],
 		controllerAs: '$ctrl',
-		templateUrl: 'components/schedule-panel.html'
+		templateUrl: 'components/schedule-device-panel.html'
+	}
+}])
+.directive('scheduleAppPanel', ['Dashboard', 'CodeRepository', function(Dashboard, CodeRepository){
+	return {
+		restrict: 'E',
+		scope: {
+			schedule: '='
+		},
+		controller: ['$scope', function($scope){
+ 
+			$scope.$dash = Dashboard.get();
+			$scope.$repo = CodeRepository.get();
+
+			var self = this;
+
+			self.showSource = {};
+
+			self.refresh = function(){
+				$scope.$repo.get('/')
+					.then(function(fsObject){
+						console.log(fsObject);
+						self.codes = {};
+						fsObject.files.forEach(function(name){
+							self.codes[name] = fsObject.children[name];
+						})
+
+						$scope.$apply();
+					})
+			};
+
+			self.convertDatetime = function(timestamp){
+				var date = new Date(timestamp);
+				return date;
+			};
+
+
+			self.refresh();
+		}],
+		controllerAs: '$ctrl',
+		templateUrl: 'components/schedule-app-panel.html'
 	}
 }])
 .directive('onEnterKey', function(){
