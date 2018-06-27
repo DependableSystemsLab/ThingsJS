@@ -20,7 +20,7 @@ var alarm_channel = 'things-videostream/alarm';
 var threshold = 0.10;
 /* end of configurable variables */
 
-var pubsub = new things.Pubsub('motion-worker-1', pubsub_url);
+var pubsub = new things.Pubsub(pubsub_url);
 
 function formatTime(ms){
 	return ('00'+Math.floor((ms/1000) / 60).toString()).slice(-2)+":"+('00'+(Math.floor(ms/1000) % 60).toString()).slice(-2)+"."+('000'+(ms%1000)).slice(-3)
