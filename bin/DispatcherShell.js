@@ -102,7 +102,6 @@ DispatcherShell.prototype.eval = function(input, context, filename, callback){
 	}
 	else{
 		callback(null, 'Unrecognized command: ' + parse.cmd);
-		context.queue.pop();
 	}
 }
 
