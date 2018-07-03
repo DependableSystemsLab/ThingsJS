@@ -26,8 +26,10 @@ dashApp.constant("CONFIG", {
 				}],
 				dashboard: ['Dashboard', 'CONFIG', function(Dashboard, CONFIG){
 					return Dashboard.create(CONFIG.pubsub_url);
-				}]
-
+				}],
+				// schedule: ['Schedule', 'CONFIG',function(Schedule,CONFIG){
+				// 	return Schedule.create(CONFIG.repo_url);
+				// }]
 			},
 			controller: ['$scope', '$rootScope', 'CONFIG', function($scope, $rootScope, CONFIG){
 				$scope.service_url = CONFIG.service_url;
@@ -74,6 +76,29 @@ dashApp.constant("CONFIG", {
 			controllerAs: '$view',
 			templateUrl: 'views/main.html'
 		})
+		.state('components',{
+			parent: 'init',
+			url: '/components',
+			controller: ['$scope','dashboard','NgTableParams',function($scope,dashboard,NgTableParams){
+				var self = this;
+				$scope.$dash = dashboard;
+
+				//got programs from things-js Dashboard 
+
+				self.topProgram = undefined;
+				self.middleProgram = undefined;
+				self.bottomProgram = undefined;
+
+
+				$scope.sortType     = 'code_name'; // set the default sort type
+  				$scope.sortReverse  = false;  // set the default sort order
+  				$scope.search   = '';     // set the default search/filter term  
+
+				// $scope.dataarray = Object.keys($scope.$dash.programs).map(function (key) { return $scope.$dash.programs[key]; });
+			}],
+			controllerAs: '$view',
+			templateUrl: 'views/components.html'
+		})		
 		.state('applications',{
 			parent: 'init',
 			url: '/applications',
@@ -82,6 +107,22 @@ dashApp.constant("CONFIG", {
 				$scope.$dash = dashboard;
 
 				//got programs from things-js Dashboard 
+					self.cur_path = '/';
+				self.cur_path_tokens = [];
+				self.cur_dir = {};
+				self.cur_code = undefined;
+				self.cur_selection = {};
+
+				self.refresh = function(){
+					$scope.$repo.get(self.cur_path)
+						.then(function(fsObject){
+							console.log(fsObject);
+							self.cur_dir = fsObject;
+							self.cur_path_tokens = self.cur_path.split('/').slice(1);
+							$scope.$apply();
+						})
+				}
+
 
 				self.topProgram = undefined;
 				self.middleProgram = undefined;
@@ -119,13 +160,34 @@ dashApp.constant("CONFIG", {
 		.state('schedule', {
 			parent: 'init',
 			url: '/schedule',
-			controller: ['$scope','dashboard', '$stateParams', function($scope, dashboard, $stateParams){
+			controller: ['$scope','dashboard','CodeRepository','$stateParams', function($scope, dashboard, CodeRepository,$stateParams){
 				var self = this;
+				//access file system
+				$scope.repo = CodeRepository.get();
 				$scope.$dash = dashboard;
+				// $scope.schedule = Schedule.get();
 
-				self.topDeviceSchedule  = undefined;
-				self.middleDeviceSchedule  = undefined;
-				self.bottomDeviceSchedule  = undefined;
+				$scope.sortType     = 'id'; // set the default sort type
+  				$scope.sortReverse  = false;  // set the default sort order
+  				$scope.search   = '';     // set the default search/filter term  
+
+				self.cur_path = "/schedule"; // tentative path
+				self.cur_path_tokens = [];
+				self.schedules = [];
+
+				// self.refresh = function(){
+				// 	$scope.$repo.get(self.cur_path)
+				// 		.then(function(fsObject){
+				// 			console.log(fsObject);
+				// 			self.cur_dir = fsObject;
+				// 			self.cur_path_tokens = self.cur_path.split('/').slice(1);
+				// 			$scope.$apply();
+				// 		})
+				// }
+
+				// self.topDeviceSchedule  = undefined;
+				// self.middleDeviceSchedule  = undefined;
+				// self.bottomDeviceSchedule  = undefined;
 				
 			}],
 			controllerAs: '$view',

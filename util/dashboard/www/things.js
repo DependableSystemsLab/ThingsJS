@@ -28,6 +28,11 @@
 		return p1+'/'+p2;
 	}
 
+
+
+
+
+
 	function EventEmitter(){
 		this.__eventHandlers = {};
 	}
@@ -347,6 +352,63 @@
 		});
 	}
 
+	// /** Application */
+	// function Application(name,components,numbersofI){
+	// 	EventEmitter.call(this);
+	// 	var self = this;
+	// 	//random generate id
+	// 	this.id = randKey(16);
+	// 	this.name = name;
+	// 	this.components = components;
+	// 	this.numbersofI = numbersofI;
+	// 	this.status = undefined;
+	// 	//save info to file system in database 
+	// }
+
+	// Application.prototype = new EventEmitter();
+	// //inovke schedluer to start and stop the execosen 
+	// Application.prototype.start = function(){
+
+	// };
+	// Application.prototype.stop = function(){
+
+	// };
+
+	/** Schedule*/
+	// function Schedule(pubsub,id){
+	// 	EventEmitter.call(this);
+	// 	var self = this;
+	// 	this.id = id;
+	// 	this.name = undefined; 
+	// 	this.schedule = { 'pi0-1': [ 'sprinkler.js/0', 'shade-contr.js/1' ],
+ //  			'pi3-3': [ 'sprinkler.js/1', 'shade-contr.js/2' ],
+ //  			'pi3-1': [ 'sprinkler.js/2', 'shade-contr.js/3' ],
+ //  			'pi3-2': [ 'sprinkler.js/3', 'temp-reg.js/0' ],
+ //  			'i7-1': [ 'shade-contr.js/0', 'temp-reg.js/1' ]};
+	// 	this.pubsub = pubsub;
+	// 	console.log("schedule id" + id);
+	// 	console.log("schedule schedule" + schedule);
+	// }
+
+	// Schedule.prototype = new EventEmitter();
+
+
+
+
+
+	// Schedule.prototype.get = function(id){
+	// 	return Schedule; 
+
+	// };
+
+
+
+// grab from file system
+	// var schedules = {};
+	// self.schedules[message.id] = new Schedule(pubsub, message.id);
+
+	// var applications = {};
+
 	/** Dashboard */
 	var ENGINE_REGISTRY_NAMESPACE = 'engine-registry';
 	var PROGRAM_MONITOR_NAMESPACE = 'program-monitor';
@@ -493,6 +555,8 @@
 				contentType: 'application/json; charset=utf-8'
 			})
 			.done(function(data, status, xhr){
+				console.log("connected path");
+				console.log(self.base_url);
 				console.log(status, data);
 				resolve(data || {});
 			})
@@ -542,6 +606,37 @@
 			})
 		})
 	}
+
+// user defined application 
+// function CustomApplication(){
+// 	EventEmitter.call(this);
+// 	this.base_url = base_url;
+// };
+// CustomApplication.prototype = new EventEmitter();
+// /** 
+// 	 * @param {Object} file_data - File data
+// 	 * @param {string} file_data.name - Name of the file
+// 	 * @param {string} file_data.content - File content (utf-8 string)
+// 	 */
+// CustomApplication.prototype.getAll = function(abs_path){};
+// CustomApplication.prototype.saveNewApp = function(abs_path){};
+// CustomApplication.prototype.deleteNewApp = function(abs_path){};
+
+// //schedule grab from filesystem 
+// function Schedule(){
+// 	EventEmitter.call(this);
+// 	this.base_url = base_url;
+// };
+// Schedule.prototype = new EventEmitter();
+// /** 
+// 	 * @param {Object} file_data - File data
+// 	 * @param {string} file_data.name - Name of the file
+// 	 * @param {string} file_data.content - File content (utf-8 string)
+// 	 */
+// Schedule.prototype.getAll = function(abs_path){};
+// Schedule.prototype.saveNewApp = function(abs_path){};
+// Schedule.prototype.deleteNewApp = function(abs_path){};
+
 
 var things = angular.module('things.js', []);
 

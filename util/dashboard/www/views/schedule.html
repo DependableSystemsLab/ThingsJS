@@ -5,10 +5,10 @@
 			<span class="form-inline">
 			<select ng-model="selected_schedule" class="form-control">
 				<option value="">--- Select Schedule ---</option>
-				<option ng-value = "Current schedule"> Current Schedlue </option>
+				<option ng-value = "Currentschedule"> Current Schedlue </option>
 				<option ng-value = "Schedule1"> Schedule 1 </option>
 				<option ng-value = "Schedule2"> Schedule 2 </option>
-				<!-- <option ng-repeat="(target, data) in $dash.engines" ng-value="data">{{ target }}</option> -->
+				<!-- <option ng-repeat="(id, data) in $view.schedules" ng-value="data">{{ id }}</option> -->
 			</select>
 		</span>
 
@@ -19,8 +19,8 @@
 			</span> -->
 
 			<div class="btn-group" ng-init="viewMode = 'device'">
-			<button ng-click="viewMode = 'device'" class="btn btn-default" ng-class="{ active: viewMode === 'device' }">Device-view Mode</button>
-			<button ng-click="viewMode = 'application'" class="btn btn-default" ng-class="{ active: viewMode === 'application' }">Application-view Mode</button>
+			<button ng-click="viewMode = 'device'" class="btn btn-default" ng-class="{ active: viewMode === 'device' }">Device-View Mode</button>
+			<button ng-click="viewMode = 'application'" class="btn btn-default" ng-class="{ active: viewMode === 'application' }">Component-View Mode</button>
 
 		</div>
 			</div>
@@ -42,13 +42,73 @@
       </div>      
     </div>
 </form>
-    
-		<schedule-device-panel schedule="test"></schedule-device-panel>
 
-		<schedule-device-panel schedule="test"></schedule-device-panel>
+<!-- div ng-repeat = device in selected_schedule.devices -->
 
-		<schedule-device-panel schedule="test"></schedule-device-panel>
-
+<div class="panel panel-default col-md-11">
+	<div class="panel-body" style="min-height:204px;" ng-model="schedule">
+		<h4>{{device.device_id}}</h4>
+		<table class="table table-bordered">
+			<thead>
+			<tr>
+				<th>CodeName</th>
+				<th>Instance ID</th>
+				<th>Status</th>
+			</tr>
+			</thead>
+				<tbody>
+					<tr ng-repeat="component in device.components| orderBy:sortType:sortReverse | filter:searchDevice"" uib-popover-template="'deviceMenu.html'"
+						popover-placement="bottom" >
+						<td>{{component.code_name}}</td>
+						<td>{{component.instance_id}}</td>
+						<td>{{component.status}}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+</div>
+<div class="panel panel-default col-md-11">
+	<div class="panel-body" style="min-height:204px;" ng-model="schedule">
+		<h4>device-rasppberry-pi0</h4>
+		<table class="table table-bordered">
+			<thead>
+			<tr>
+				<th>CodeName</th>
+				<th>Instance ID</th>
+				<th>Status</th>
+			</tr>
+			</thead>
+				<tbody>
+					<tr>
+						<td>factorial.js</td>
+						<td>fnkldfna</td>
+						<td>Running</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+</div>
+<!-- <div class="panel panel-default col-md-11">
+	<div class="panel-body" style="min-height:204px;" ng-model="schedule">
+		<h4>device-rasppberry-pi0</h4>
+		<table class="table table-bordered">
+			<thead>
+			<tr>
+				<th>CodeName</th>
+				<th>Instance ID</th>
+				<th>Status</th>
+			</tr>
+			</thead>
+				<tbody>
+					<tr>
+						<td>factorial.js</td>
+						<td>fnkldfna</td>
+						<td>Running</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+</div> -->
 		</div>
 		
 
@@ -57,7 +117,7 @@
     <div class="form-group">
       <div class="input-group">
         <div class="input-group-addon"><i class="fa fa-search"></i></div>
-        <input type="text" class="form-control" placeholder="Search Application" ng-model="searchApplication">
+        <input type="text" class="form-control" placeholder="Search Component" ng-model="searchApplication">
       </div>      
     </div>
 </form>
@@ -71,8 +131,6 @@
 		</div>
 			</div>
 			</div>
-
-
 		</div>				
 	</div>
 </div>
