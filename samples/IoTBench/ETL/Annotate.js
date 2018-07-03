@@ -3,8 +3,8 @@ var fs = require('fs');
 var readline = require('readline');
 
 var pubsub_url = 'mqtt://localhost';
-var pubsub_topic = 'thingsjs/IoTBench/ETL/SenMLParse';
-var publish_topic = 'thingsJS/IoTBench/ETL/Annotate';
+var pubsub_topic = 'thingsjs/IoTBench/ETL/Interpolation';
+var publish_topic = 'thingsjs/IoTBench/ETL/Annotate';
 
 var pubsub = new things.Pubsub(pubsub_url);
 
@@ -16,9 +16,9 @@ function setup(){
 	var args = process.argv.slice(2);
 	var properties;
 
+	// default to TAXI property set if no specific property file is given
 	if(!args.length){
-		console.log('Please provide path for annotate properties');
-		process.exit();
+		args = ['./TAXI_properties.json'];
 	}
 
 	try{

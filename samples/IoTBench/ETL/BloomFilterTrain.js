@@ -57,6 +57,9 @@ function createBloomFilter(){
 	populateBloomFilter();
 }
 
+/**
+ * Currently populates with values below range/2 
+ */
 function populateBloomFilter(){
 	for(var i = 0; i < testingRange + 1; i++){
 		bloomFilter.add(String(i));

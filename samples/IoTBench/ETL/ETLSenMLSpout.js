@@ -3,7 +3,8 @@
  */
 
 //var things = require('things-js');
-var things = require('../../../lib/things.js')
+var things = require('../../../lib/things.js');
+var readline = require('readline');
 
 /* configurable variables */
 var pubsub_url = 'mqtt://localhost';
@@ -17,9 +18,8 @@ var lines = [];
 var currentLine = 0;
 
 function startSpout() {
-
 	
-	var lineReader = require('readline').createInterface({
+	var lineReader = readline.createInterface({
 		input: require('fs').createReadStream('TAXI_sample_data_senml.csv')
 	});
 
@@ -32,8 +32,7 @@ function startSpout() {
 		// File ended
 		console.log('Done reading file... Starting to publish');
 		setInterval(publishLine, publish_interval);
-	});
-	
+	});	
 }
 
 /* Publish a SenML line */

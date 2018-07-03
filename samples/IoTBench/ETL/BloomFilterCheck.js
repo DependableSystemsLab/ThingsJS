@@ -4,7 +4,7 @@ var fs = require('fs');
 
 var pubsub_url = 'mqtt://localhost';
 var pubsub_topic = 'thingsjs/IoTBench/ETL/RangeFilterCheck';
-var publish_topic = 'thingsJS/IoTBench/ETL/BloomFilterCheck';
+var publish_topic = 'thingsjS/IoTBench/ETL/BloomFilterCheck';
 
 /* bloom filter properties */
 var DEFAULT_FALSEPOSITIVE = 0.1;
@@ -25,9 +25,9 @@ function createBloomFilter(){
 	var args = process.argv.slice(2);
 	var properties;
 
+	// default to TAXI property set if no specific property file is given
 	if(!args.length){
-		console.log('Please provide path for bloom filter properties');
-		process.exit();
+		args = ['./TAXI_properties.json'];
 	}
 	try{
 		properties = JSON.parse(fs.readFileSync(args[0], 'utf-8'));

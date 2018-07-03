@@ -20,9 +20,10 @@ function MinMax(min, max){
 
 function getRange(){
 	var args = process.argv.slice(2);
+
+	// default to TAXI property set if no specific property file is given
 	if(!args.length){
-		console.log('Please pass a valid properties file');
-		process.exit();
+		args = ['./TAXI_properties.json'];
 	}
 	try{
 		var properties = JSON.parse(fs.readFileSync(args[0], 'utf-8'));
@@ -63,7 +64,7 @@ function checkRange(data){
 
 pubsub.on('ready', function(){
 	getRange();
-	console.log('Beginning filtering');
+	console.log('Beginning range filter');
     // subscribe to parsed senml data
     pubsub.subscribe(pubsub_topic, checkRange);
 });

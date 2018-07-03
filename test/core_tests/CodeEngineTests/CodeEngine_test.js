@@ -18,6 +18,7 @@ const fork = require('child_process').fork;
  */
 describe('simple code engine test suite', function(){
 	var self = this;
+	var ENGINE_REGISTRY_NAMESPACE = 'engine-registry';
 	const NUMFORKS = 2;
 
 	if(!process.env.C0 || !process.env.C1 || !process.env.C2){

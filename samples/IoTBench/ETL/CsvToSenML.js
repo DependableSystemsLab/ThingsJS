@@ -3,7 +3,7 @@ var fs = require('fs');
 var readline = require('readline');
 
 var pubsub_url = 'mqtt://localhost';
-var pubsub_topic = 'thingsJS/IoTBench/ETL/Annotate';
+var pubsub_topic = 'thingsjs/IoTBench/ETL/Annotate';
 var publish_topic = 'thingsjs/IoTBench/ETL/CsvToSenML';
 
 var pubsub = new things.Pubsub(pubsub_url);
@@ -17,9 +17,9 @@ function setup(){
 	var args = process.argv.slice(2);
 	var properties;
 
+	// default to TAXI property set if no specific property file is given
 	if(!args.length){
-		console.log('Please provide a properties file');
-		process.exit();
+		args = ['./TAXI_properties.json'];
 	}
 	try{
 		properties = JSON.parse(fs.readFileSync(args[0], 'utf-8'));
@@ -91,7 +91,7 @@ function convertToSenML(data){
 
 		arr.push(senml);
 	});
-	
+	console.log(JSON.stringify(arr));
 	pubsub.publish(publish_topic, JSON.stringify({"e": arr}));
 }
 

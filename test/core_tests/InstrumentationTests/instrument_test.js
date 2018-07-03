@@ -1,3 +1,4 @@
+var things = require('../../../lib/things.js');
 var expect = require('chai').expect;
 var should = require('chai').should();
 var assert = require('chai').assert;
@@ -6,16 +7,52 @@ var mosca = require('mosca');
 const spawn = require('child_process').spawn;
 
 
-/* A framework for testing instrumentation
- * usage: env KEY=<folder with tests> mocha --delay instrument_basic.js
- *
- */
 describe('instrumentation test suite', function(){
 	var self = this;
 
 	if(!process.env.KEY){
-		console.log('usage: env KEY=<folder with test files> mocha instrument_basic.js');
+		console.log('usage: env KEY=<folder path> mocha instrument_test.js');
 		process.exit();
+	}
+
+	function getOutput(file){
+		var output = '';
+		var rawExec = spawn('node', [file], { cwd: process.cwd() });
+		rawExec.stdout.on('data', function(data){
+			output += data;
+		});
+		return new Promise(function(resolve, reject){
+			rawExec.on('exit', function(){
+				resolve(output);
+			});
+
+			rawExec.stderr.on('data', function(data){
+				reject(data);
+			});
+		});
+	}
+
+	function runInst(file){
+		var tempFile = file + '.temp.inst';
+		var output = '';
+
+		var instCode = things.Code.fromFile({ url: 'mqtt://localhost' }, file);
+		return new Promise(function(resolve){
+			instCode.save(tempFile).then(function(){
+				getOutput(tempFile).then(function(data){
+					resolve(data);
+				});
+			});
+		});
+	}
+
+	function compareOutput(regOutput, instOutput){
+		// remove pubsub output
+		var inst = instOutput.trim();
+		inst = inst.substring(inst.indexOf('\n') + 1);
+		var reg = regOutput.trim();
+
+		expect(inst).to.equal(reg);
 	}
 
 	before(function(){
@@ -23,38 +60,10 @@ describe('instrumentation test suite', function(){
 		if(self.testfolder.charAt(self.testfolder.length-1) !== '/'){
 			self.testfolder += '/';
 		}
-		self.files = fs.readdirSync(process.env.KEY);
 	});
 
-	/**
-	 * this object is used to compare the logs of instrumented vs normal code
-	 * @todo fix how the output is cleaned
-	 */
-	function TestInst(regLog, instLog){
-		// retrieve output of the logs
-		var regOutput = fs.readFileSync(regLog, 'utf-8');
-		var instOutput = fs.readFileSync(instLog, 'utf-8');
 
-		regOutput = regOutput.replace(/\n| /g, '');
-
-		// hacky method of removing pubsub output
-		instOutput = instOutput.split('\n').splice(2, instOutput.length-1);
-		instOutput = instOutput.join('').replace(/\n| /g, '');
-
-		this.reg = regOutput
-		this.inst = instOutput
-	}
-
-	/**
-	 * this method compares the output of the instrumented code
-	 * and the regular code line-by-line
-	 */
-	TestInst.prototype.compare = function(){
-		expect(this.reg).to.equal(this.inst);
-	}	
-
-	describe('Begin instrumentation tests', function(){
-
+	describe('===Begin instrumentation tests===', function(){
 		before(function(){
 			self.server = new mosca.Server({port: 1883});
 			return new Promise(function(resolve){
@@ -67,28 +76,29 @@ describe('instrumentation test suite', function(){
 		function runTest(filename){
 			it(filename, function(){
 				this.timeout(16000);
-				var file = self.testfolder + filename;
-				var regLog = filename + '.regular.log';
-				var instLog = filename + '.inst.log';
-				var child = spawn('sh', ['testinstrument.sh', file, regLog, instLog], {cwd: process.cwd()});
 
+				var filePath = self.testfolder + filename;
 				return new Promise(function(resolve, reject){
-					setTimeout(function(){
-						test = new TestInst(regLog, instLog);
-						resolve(test);
-					}, 14000);
+					var regPromise = getOutput(filePath);
+					var instPromise = runInst(filePath);
+
+					Promise.all([regPromise, instPromise]).then(function(vals){
+						resolve(vals);
+					});
 				}).then(function(data){
-					data.compare();
+					compareOutput(data[0], data[1]);
 				});
-			});	
+
+			});
 		}
 
-		for(var i = 0; i < self.files.length; i++){
-			if(self.files[i] == 'node_modules' || self.files[i] == 'package-lock.json'){
+		var files = fs.readdirSync(process.env.KEY);
+		for(var i = 0; i < files.length; i++){
+			if(files[i] == 'node_modules' || files[i] == 'package-lock.json'){
 				continue;
 			}
-			runTest(self.files[i]);
-		} 
+			runTest(files[i]);
+		}
 
 		after(function(){
 			self.server.close();

@@ -9,11 +9,11 @@ inst_output=$3
 node ${file} > ${reg_output}
 
 # instrumented file
-things-js instrument ${file} -o inst.things.js
-(node inst.things.js > ${inst_output})&
-pid=$!
+things-js inst ${file} -s inst.things.js
+node inst.things.js > ${inst_output}
+#pid=$!
 
 # kill and cleanup after x seconds 
-sleep 12
-kill ${pid}
+#sleep 12
+#kill ${pid}
 rm inst.things.js

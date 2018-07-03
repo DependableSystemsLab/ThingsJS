@@ -2,8 +2,8 @@ var things = require('../../../lib/things.js');
 var fs = require('fs');
 
 var pubsub_url = 'mqtt://localhost';
-var pubsub_topic = 'thingsjs/IoTBench/ETL/BloomFilterCheck';
-var publish_topic = 'thingsJS/IoTBench/ETL/Interpolation';
+var pubsub_topic = 'thingsjS/IoTBench/ETL/BloomFilterCheck';
+var publish_topic = 'thingsjs/IoTBench/ETL/Interpolation';
 
 var pubsub = new things.Pubsub(pubsub_url);
 
@@ -17,9 +17,9 @@ function setup(){
 	var args = process.argv.slice(2);
 	var properties;
 
+	// default to TAXI property set if no specific property file is given
 	if(!args.length){
-		console.log('Please provide path for interpolation properties');
-		process.exit();
+		args = ['./TAXI_properties.json'];
 	}
 	try{
 		properties = JSON.parse(fs.readFileSync(args[0], 'utf-8'));
@@ -41,6 +41,7 @@ function interpolate(data){
 
 	if(WINDOW_SIZE === 0){
 		// do nothing with the data
+		console.log('No interpolation needed. Publishing data');
 		pubsub.publish(publish_topic, data);
 		return;
 	}
