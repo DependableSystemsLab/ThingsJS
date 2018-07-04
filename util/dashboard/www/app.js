@@ -127,8 +127,9 @@ dashApp.constant("CONFIG", {
 
 				function Application(id,name,components){
 					this.name = name;
-					this.components = components;
 					this.id = id;
+					this.components = components;
+					
 				}
 
 				function remove(array, element) {
@@ -185,16 +186,12 @@ dashApp.constant("CONFIG", {
 				var app = 
 				{'name' : name,
 				'content':JSON.stringify(app_content)};
-			    // var json_file = JSON.stringify(app);
 			    self.saveFile(app);
 			    // console.log(json_file);
 			    self.code_selection =[];
 			    self.app_content = {};
 				}					
 
-				// self.getAppsInfo =  function(){
-
-				// }
 
 				$scope.$watch(function(){ return self.cur_selection },
 					function(selection){
@@ -226,14 +223,20 @@ dashApp.constant("CONFIG", {
 		})
 		.state('app_component', {
 			parent: 'init',
-			url: '/app_component',
+			url: '/app_component/:app_name/:app_content',
 			params:{
-				app:null,
+				app_name:null,
+				app_content:null,
 			},
-			controller: ['$scope', '$stateParams',function($scope,$stateParams){
+			controller: ['$scope', '$stateParams','CodeRepository',function($scope,$stateParams,CodeRepository){
 				var self = this;
-				$scope.$app = $stateParams.app;
-				console.log($scope.app);
+				$scope.$repo = CodeRepository.get();
+				$scope.$app_name = $stateParams.app_name;
+				$scope.$app_content = $stateParams.app_content;
+				// self.app_code = {};
+				console.log($scope.$app_content);
+
+
 			}],
 			controllerAs: '$view',
 			templateUrl: 'views/app_component.html'
@@ -284,7 +287,6 @@ dashApp.constant("CONFIG", {
 					'pi3-12': [ 'sprinklertest.js/28', 'shade-contr.js/3' ],
 					'pi3-2': [ 'sprinkler.js/32', 'temp-regettd.js/0' ],
 					'i7-1': [ 'shade-contr.js/89', 'temp-reg.js/12' ]};
-
 
 			function Device(device_id,components_id,components_name){
   				this.device_id =device_id;

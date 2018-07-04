@@ -51,10 +51,10 @@
 			<div class="panel-body">
 			<div class="dashboard-device-list">
 			<li ng-repeat="appName in $view.app_dir.files" class="list-group-item">	
-				
+		
 				{{ appName }}
 				 &emsp;
-				 <a ui-sref="app_component({ app:{{appName}} })"> Detailed Component </a> 
+				 <a ui-sref="app_component({app_name:appName,app_content:$view.app_dir.children[appName].content})" > Detailed Component </a> 
 				<button class="btn btn-danger btn-xs pull-right" > stop </button> 
 				  &emsp;&emsp;&emsp; <button class="btn btn-success btn-xs pull-right" > start </button>  
 			</li>
