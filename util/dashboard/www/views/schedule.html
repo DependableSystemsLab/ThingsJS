@@ -3,24 +3,18 @@
 		<div class="panel panel-default">		
 			<div class="panel-heading">
 			<span class="form-inline">
-			<select ng-model="selected_schedule" class="form-control">
+			<select ng-model="selectedSchedule" class="form-control">
 				<option value="">--- Select Schedule ---</option>
-				<option ng-value = "Currentschedule"> Current Schedlue </option>
-				<option ng-value = "Schedule1"> Schedule 1 </option>
-				<option ng-value = "Schedule2"> Schedule 2 </option>
-				<!-- <option ng-repeat="(id, data) in $view.schedules" ng-value="data">{{ id }}</option> -->
+		<!-- 		<option ng-value = "currentschedule"> Current Schedlue </option>
+				<option ng-value = "schedule1"> Schedule 1 </option>
+				<option ng-value = "schedule2"> Schedule 2 </option> -->
+				<option ng-repeat = "schedule in $schedules" ng-value = "schedule.id"> {{schedule.id}}
+				</option>
 			</select>
 		</span>
-
-
-<!-- 
-				<span class="form-inline">
-				{{selected_schedule}}
-			</span> -->
-
 			<div class="btn-group" ng-init="viewMode = 'device'">
 			<button ng-click="viewMode = 'device'" class="btn btn-default" ng-class="{ active: viewMode === 'device' }">Device-View Mode</button>
-			<button ng-click="viewMode = 'application'" class="btn btn-default" ng-class="{ active: viewMode === 'application' }">Component-View Mode</button>
+			<button ng-click="viewMode = 'application'" class="btn btn-default" ng-class="{ active: viewMode === 'application' }">Code-View Mode</button>
 
 		</div>
 			</div>
@@ -37,9 +31,7 @@
     </div>
 </form>
 
-<!-- <div ng-repeat = device in $schedule.devices> -->
-
-<div ng-repeat = "device in $schedule.devices track by $index" class="panel panel-default col-md-11">
+<div ng-repeat = "device in $schedules[selectedSchedule].devices track by $index" class="panel panel-default col-md-11">
 	<div class="panel-body" style="min-height:204px;" >
 		<h4>{{device.device_id}}</h4>
 		<table class="table table-bordered">
@@ -51,60 +43,15 @@
 			</tr>
 			</thead>
 				<tbody>
-					<tr ng-repeat="component_id in device.components_id">
-						<td>{{component_id }}</td>
+					<tr ng-repeat="component_id in device.components_id">						
 						<td>{{device.components_name[$index] }}</td>
+						<td>{{component_id }}</td>
 					</tr>
 				</tbody>
 			</table>
 		</div>
+	</div>
 </div>
-<!-- <div class="panel panel-default col-md-11">
-	<div class="panel-body" style="min-height:204px;" ng-model="schedule">
-		<h4>device-rasppberry-pi0</h4>
-		<table class="table table-bordered">
-			<thead>
-			<tr>
-				<th>CodeName</th>
-				<th>Instance ID</th>
-				<th>Status</th>
-			</tr>
-			</thead>
-				<tbody>
-					<tr>
-						<td>factorial.js</td>
-						<td>fnkldfna</td>
-						<td>Running</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-</div> -->
-
-
-</div>
-<!-- <div class="panel panel-default col-md-11">
-	<div class="panel-body" style="min-height:204px;" ng-model="schedule">
-		<h4>device-rasppberry-pi0</h4>
-		<table class="table table-bordered">
-			<thead>
-			<tr>
-				<th>CodeName</th>
-				<th>Instance ID</th>
-				<th>Status</th>
-			</tr>
-			</thead>
-				<tbody>
-					<tr>
-						<td>factorial.js</td>
-						<td>fnkldfna</td>
-						<td>Running</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-</div> -->
-		</div>
 		
 
 <div ng-show="viewMode === 'application'">
@@ -117,16 +64,15 @@
     </div>
 </form>
     
-		<schedule-app-panel schedule="test"></schedule-app-panel>
+		<schedule-app-panel ></schedule-app-panel>
 
-		<schedule-app-panel schedule="test"></schedule-app-panel>
+		<schedule-app-panel ></schedule-app-panel>
 
-		<schedule-app-panel schedule="test"></schedule-app-panel>
+		<schedule-app-panel ></schedule-app-panel>
 
 		</div>
 			</div>
-			</div>
+<!-- 			</div>
 		</div>				
 	</div>
-</div>
-</div>
+</div> -->

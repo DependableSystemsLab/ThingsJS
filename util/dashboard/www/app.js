@@ -102,38 +102,30 @@ dashApp.constant("CONFIG", {
 		.state('applications',{
 			parent: 'init',
 			url: '/applications',
-			controller: ['$scope','dashboard','NgTableParams',function($scope,dashboard,NgTableParams){
+			controller: ['$scope','dashboard',function($scope,dashboard){
 				var self = this;
 				$scope.$dash = dashboard;
 
 				//got programs from things-js Dashboard 
-					self.cur_path = '/';
+				self.cur_path = '/applications';
 				self.cur_path_tokens = [];
 				self.cur_dir = {};
-				self.cur_code = undefined;
-				self.cur_selection = {};
+				self.makeDir() = function(){
 
-				self.refresh = function(){
-					$scope.$repo.get(self.cur_path)
-						.then(function(fsObject){
-							console.log(fsObject);
-							self.cur_dir = fsObject;
-							self.cur_path_tokens = self.cur_path.split('/').slice(1);
-							$scope.$apply();
-						})
+
+				}
+
+				self.writeFile = function(){
+
 				}
 
 
-				self.topProgram = undefined;
-				self.middleProgram = undefined;
-				self.bottomProgram = undefined;
+
 
 
 				$scope.sortType     = 'code_name'; // set the default sort type
   				$scope.sortReverse  = false;  // set the default sort order
   				$scope.search   = '';     // set the default search/filter term  
-
-				// $scope.dataarray = Object.keys($scope.$dash.programs).map(function (key) { return $scope.$dash.programs[key]; });
 			}],
 			controllerAs: '$view',
 			templateUrl: 'views/applications.html'
@@ -167,11 +159,23 @@ dashApp.constant("CONFIG", {
 				$scope.$dash = dashboard;
 				// $scope.schedule = Schedule.get();
 
-				var schedule =  { 'pi0-1': [ 'sprinkler.js/0', 'shade-contr.js/1' ],
+				var schedule1 =  { 'pi0-1': [ 'fractorial.js/0', 'shade-contr.js/1' ],
 					'pi3-3': [ 'sprinkler.js/1', 'shade-contr.js/2' ],
 					'pi3-1': [ 'sprinkler.js/2', 'shade-contr.js/3' ],
 					'pi3-2': [ 'sprinkler.js/3', 'temp-reg.js/0' ],
 					'i7-1': [ 'shade-contr.js/0', 'temp-reg.js/1' ]};
+
+				var schedule2 =  { 'pi0-1': [ 'sprinkler.js/2', 'shade-contr.js/1' ],
+					'pi3-3': [ 'sprinkler.js/1', 'shade-contr.js/2' ],
+					'pi3-1': [ 'sprinklertest.js/28', 'shade-contr.js/3' ],
+					'pi3-2': [ 'sprinkler.js/32', 'temp-regettd.js/0' ],
+					'i7-1': [ 'shade-contr.js/09', 'temp-reg.js/12' ]};
+
+				var currentschedule = { 'pi0-21': [ 'sprinkler.js/27', 'shade-test.js/12' ],
+					'pi3-3': [ 'sprinkler.js/1', 'shade-contr.js/2' ],
+					'pi3-12': [ 'sprinklertest.js/28', 'shade-contr.js/3' ],
+					'pi3-2': [ 'sprinkler.js/32', 'temp-regettd.js/0' ],
+					'i7-1': [ 'shade-contr.js/89', 'temp-reg.js/12' ]};
 
 
 			function Device(device_id,components_id,components_name){
@@ -179,8 +183,6 @@ dashApp.constant("CONFIG", {
   				this.components_id = components_id;
   				this.components_name = components_name; 
 			}
-
-
 
 			function Schedule(id,data){ 
    				this.id = id;
@@ -199,9 +201,14 @@ dashApp.constant("CONFIG", {
 			    });
 			}
 
-				$scope.$schedule = new Schedule('fnsdklas',schedule);
-				console.log($scope.$schedule.devices);
-
+				$scope.$schedules = {};
+				$scope.$schedules['currentschedule'] = new Schedule('currentschedule',currentschedule);
+				$scope.$schedules['schedule1'] = new Schedule('schedule1',schedule1);
+				$scope.$schedules['schedule2'] = new Schedule('schedule2',schedule2);
+			
+			
+				$scope.$scheduleArray = Object.keys($scope.$schedules).map(function (key) { return $scope.$schedules[key]; });
+				
 				$scope.sortType     = 'id'; // set the default sort type
   				$scope.sortReverse  = false;  // set the default sort order
   				$scope.search   = '';     // set the default search/filter term  
@@ -209,16 +216,6 @@ dashApp.constant("CONFIG", {
 				self.cur_path = "/schedule"; // tentative path
 				self.cur_path_tokens = [];
 				self.schedules = [];
-
-				// self.refresh = function(){
-				// 	$scope.$repo.get(self.cur_path)
-				// 		.then(function(fsObject){
-				// 			console.log(fsObject);
-				// 			self.cur_dir = fsObject;
-				// 			self.cur_path_tokens = self.cur_path.split('/').slice(1);
-				// 			$scope.$apply();
-				// 		})
-				// }
 			}],
 			controllerAs: '$view',
 			templateUrl: 'views/schedule.html'
