@@ -167,6 +167,41 @@ dashApp.constant("CONFIG", {
 				$scope.$dash = dashboard;
 				// $scope.schedule = Schedule.get();
 
+				var schedule =  { 'pi0-1': [ 'sprinkler.js/0', 'shade-contr.js/1' ],
+					'pi3-3': [ 'sprinkler.js/1', 'shade-contr.js/2' ],
+					'pi3-1': [ 'sprinkler.js/2', 'shade-contr.js/3' ],
+					'pi3-2': [ 'sprinkler.js/3', 'temp-reg.js/0' ],
+					'i7-1': [ 'shade-contr.js/0', 'temp-reg.js/1' ]};
+
+
+			function Device(device_id,components_id,components_name){
+  				this.device_id =device_id;
+  				this.components_id = components_id;
+  				this.components_name = components_name; 
+			}
+
+
+
+			function Schedule(id,data){ 
+   				this.id = id;
+			    
+        		this.devices ={}; 
+        		var that = this;
+			    Object.keys(data).forEach(function(element){
+			    var id_array = []; 
+        		var name_array = [];
+			       data[element].forEach(function(ele){
+			       // console.log(ele.split(".js/")[1]);
+			        id_array.push(ele.split("/")[1]);
+            		name_array.push(ele.split("/")[0]);
+			      })
+         		that.devices[element] = new Device(element,id_array,name_array);
+			    });
+			}
+
+				$scope.$schedule = new Schedule('fnsdklas',schedule);
+				console.log($scope.$schedule.devices);
+
 				$scope.sortType     = 'id'; // set the default sort type
   				$scope.sortReverse  = false;  // set the default sort order
   				$scope.search   = '';     // set the default search/filter term  
@@ -184,11 +219,6 @@ dashApp.constant("CONFIG", {
 				// 			$scope.$apply();
 				// 		})
 				// }
-
-				// self.topDeviceSchedule  = undefined;
-				// self.middleDeviceSchedule  = undefined;
-				// self.bottomDeviceSchedule  = undefined;
-				
 			}],
 			controllerAs: '$view',
 			templateUrl: 'views/schedule.html'

@@ -374,23 +374,40 @@
 
 	// };
 
-	/** Schedule*/
-	// function Schedule(pubsub,id){
-	// 	EventEmitter.call(this);
-	// 	var self = this;
-	// 	this.id = id;
-	// 	this.name = undefined; 
-	// 	this.schedule = { 'pi0-1': [ 'sprinkler.js/0', 'shade-contr.js/1' ],
- //  			'pi3-3': [ 'sprinkler.js/1', 'shade-contr.js/2' ],
- //  			'pi3-1': [ 'sprinkler.js/2', 'shade-contr.js/3' ],
- //  			'pi3-2': [ 'sprinkler.js/3', 'temp-reg.js/0' ],
- //  			'i7-1': [ 'shade-contr.js/0', 'temp-reg.js/1' ]};
-	// 	this.pubsub = pubsub;
-	// 	console.log("schedule id" + id);
-	// 	console.log("schedule schedule" + schedule);
-	// }
+  /** Schedule*/
+ function Schedule(id,data){
+    EventEmitter.call(this);
+    var self = this;
+    this.id = id;
+    this.name = undefined; 
+    this.devices = Object.keys(data);
+    this.pubsub = pubsub;
+    this.components_id ={};
+    Object.keys(data).forEach(function(element){
+    var array=[]; 
+       data[element].forEach(function(ele){
+       // console.log(ele.split(".js/")[1]);
+        array.push(ele.split("/")[1]);
+      })
+      this.components_id[element]=array;
+    });
+    this.components_name ={};
+    Object.keys(data).forEach(function(element2){
+    var array2=[]; 
+       data[element2].forEach(function(ele2){
+       // console.log(ele.split(".js/")[1]);
+        array2.push(ele2.split("/")[0]);
+      })
+     this.components_name[element2]=array2;
+    });
 
-	// Schedule.prototype = new EventEmitter();
+    console.log("components id: \n");
+    console.log(this.components_id);
+    console.log("components name: \n");
+    console.log(this.components_name);
+}
+
+	Schedule.prototype = new EventEmitter();
 
 
 
@@ -419,6 +436,7 @@
 
 		this.engines = {};
 		this.programs = {};
+		this.schedules = {};
 
 		pubsub.subscribe(ENGINE_REGISTRY_NAMESPACE, function(topic, message){
 			console.log(topic, message);
@@ -458,6 +476,14 @@
 		});
 				console.log(self.programs);
 				// console.log("jump in program subscribe function #######");
+
+
+		// var schedule =  { 'pi0-1': [ 'sprinkler.js/0', 'shade-contr.js/1' ],
+		// 			'pi3-3': [ 'sprinkler.js/1', 'shade-contr.js/2' ],
+		// 			'pi3-1': [ 'sprinkler.js/2', 'shade-contr.js/3' ],
+		// 			'pi3-2': [ 'sprinkler.js/3', 'temp-reg.js/0' ],
+		// 			'i7-1': [ 'shade-contr.js/0', 'temp-reg.js/1' ]};
+		// this.schedules['test1'] = new Schedule('nfslkda',schedule);
 
 		pubsub.on('connect', function(){
 			setTimeout(function(){

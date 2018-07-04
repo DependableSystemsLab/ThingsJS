@@ -20,7 +20,7 @@
 						class="dashboard-device"
 						ng-class="{ 'dead': (node.status === 'dead'), 'idle': (node.status === 'idle'), 'busy': (node.status === 'busy') }"
 						uib-popover-template="'deviceMenu.html'"
-						popover-placement="bottom">
+						popover-placement="bottom"> 
 						<img alt="{{ node.device }}" ng-src="{{ node.icon }}"/>
 						<span>{{ node.id }}</span>
 						<span class="pull-right">IDLE</span>
