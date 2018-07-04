@@ -477,14 +477,6 @@
 				console.log(self.programs);
 				// console.log("jump in program subscribe function #######");
 
-
-		// var schedule =  { 'pi0-1': [ 'sprinkler.js/0', 'shade-contr.js/1' ],
-		// 			'pi3-3': [ 'sprinkler.js/1', 'shade-contr.js/2' ],
-		// 			'pi3-1': [ 'sprinkler.js/2', 'shade-contr.js/3' ],
-		// 			'pi3-2': [ 'sprinkler.js/3', 'temp-reg.js/0' ],
-		// 			'i7-1': [ 'shade-contr.js/0', 'temp-reg.js/1' ]};
-		// this.schedules['test1'] = new Schedule('nfslkda',schedule);
-
 		pubsub.on('connect', function(){
 			setTimeout(function(){
 				pubsub.publish(ENGINE_REGISTRY_NAMESPACE+'/bcast', { ctrl: 'report' });

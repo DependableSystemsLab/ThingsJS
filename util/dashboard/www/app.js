@@ -27,9 +27,7 @@ dashApp.constant("CONFIG", {
 				dashboard: ['Dashboard', 'CONFIG', function(Dashboard, CONFIG){
 					return Dashboard.create(CONFIG.pubsub_url);
 				}],
-				// schedule: ['Schedule', 'CONFIG',function(Schedule,CONFIG){
-				// 	return Schedule.create(CONFIG.repo_url);
-				// }]
+
 			},
 			controller: ['$scope', '$rootScope', 'CONFIG', function($scope, $rootScope, CONFIG){
 				$scope.service_url = CONFIG.service_url;
@@ -102,33 +100,143 @@ dashApp.constant("CONFIG", {
 		.state('applications',{
 			parent: 'init',
 			url: '/applications',
-			controller: ['$scope','dashboard',function($scope,dashboard){
+			controller: ['$scope','dashboard','CodeRepository',function($scope,dashboard,CodeRepository){
 				var self = this;
 				$scope.$dash = dashboard;
+				$scope.$repo = CodeRepository.get();
 
-				//got programs from things-js Dashboard 
-				self.cur_path = '/applications';
+				self.cur_path = '/';
 				self.cur_path_tokens = [];
 				self.cur_dir = {};
-				self.makeDir() = function(){
+				self.cur_code = undefined;
+				self.cur_selection ={};
+				self.code_selection = [];
+				self.app_path ='/application';
+				self.app_dir = {};
+				self.app_content={};
 
-
+				function randKey(length, charset){
+					var text = "";
+					if (!length) length = 8;
+					if (!charset) charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+				    for( var i=0; i < length; i++ ){
+				    	text += charset.charAt(Math.floor(Math.random() * charset.length));
+				    }
+				    return text;
 				}
 
-				self.writeFile = function(){
-
+				function Application(id,name,components){
+					this.name = name;
+					this.components = components;
+					this.id = id;
 				}
 
+				function remove(array, element) {
+   					array.splice(array.indexOf(element), 1);
+				}
 
+				self.refresh = function(){
+					$scope.$repo.get(self.cur_path)
+						.then(function(fsObject){
+							console.log(fsObject);
+							self.cur_dir = fsObject;
+							self.cur_path_tokens = self.cur_path.split('/').slice(1);
+							$scope.$apply();
+						})
+					$scope.$repo.get(self.app_path)
+						.then(function(fsObject){
+							console.log("apppath");
+							console.log(fsObject);
+							self.app_dir = fsObject;
+							self.app_path_tokens = self.app_path.split('/').slice(1);
+							$scope.$apply();
+						})
+				}
 
+				self.clearCodeSelection = function(){
+					self.code_selection = [];
+				}
+				self.selectCode = function(code){
+					if (!(self.code_selection.includes(code))){
+						self.code_selection.push(code);
+						}
+					console.log(self.code_selection);
+				}
 
+				self.removeCode = function(code){
+					if (self.code_selection.includes(code)){
+						remove(self.code_selection,code);
+						delete self.app_content[code];
+						}
+					console.log(self.code_selection);
+				}
 
-				$scope.sortType     = 'code_name'; // set the default sort type
-  				$scope.sortReverse  = false;  // set the default sort order
-  				$scope.search   = '';     // set the default search/filter term  
+				self.instanceChange = function(code,instanceNumber){
+					console.log("code:"+instanceNumber);
+					self.app_content[code]=instanceNumber;
+				}
+
+				self.generateApp =  function(name){			
+				//generate app id
+				var id = randKey(10);
+				//save to file system
+				//how to avoid duplicate??
+				var app_content = new Application(id,name,self.app_content);
+				var app = 
+				{'name' : name,
+				'content':JSON.stringify(app_content)};
+			    // var json_file = JSON.stringify(app);
+			    self.saveFile(app);
+			    // console.log(json_file);
+			    self.code_selection =[];
+			    self.app_content = {};
+				}					
+
+				// self.getAppsInfo =  function(){
+
+				// }
+
+				$scope.$watch(function(){ return self.cur_selection },
+					function(selection){
+						self.hasSelection = Object.values(selection).reduce(function(acc, item){ return acc || !!item }, false);
+						console.log(selection);
+					}, true);
+
+				// initialize view
+				$scope.$repo.makeDir(self.cur_path, "application")
+						.then(function(dir){
+							console.log("lsfda;ssaa");
+							console.log("directory saved", dir);
+							self.refresh();
+						});
+				self.refresh();
+
+				self.saveFile = function(app){
+					$scope.$repo.writeFile(self.app_path,app)
+						.then(function(file){
+							console.log("file saved", file);
+							self.cur_selection._id = file._id;
+							self.refresh();
+						});
+				}
+
 			}],
 			controllerAs: '$view',
 			templateUrl: 'views/applications.html'
+		})
+		.state('app_component', {
+			parent: 'init',
+			url: '/app_component',
+			params:{
+				app:null,
+			},
+			controller: ['$scope', '$stateParams',function($scope,$stateParams){
+				var self = this;
+				$scope.$app = $stateParams.app;
+				console.log($scope.app);
+			}],
+			controllerAs: '$view',
+			templateUrl: 'views/app_component.html'
 		})
 		.state('nodes', {
 			parent: 'init',
@@ -206,7 +314,7 @@ dashApp.constant("CONFIG", {
 				$scope.$schedules['schedule1'] = new Schedule('schedule1',schedule1);
 				$scope.$schedules['schedule2'] = new Schedule('schedule2',schedule2);
 			
-			
+
 				$scope.$scheduleArray = Object.keys($scope.$schedules).map(function (key) { return $scope.$schedules[key]; });
 				
 				$scope.sortType     = 'id'; // set the default sort type

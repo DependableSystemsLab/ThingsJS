@@ -6,16 +6,13 @@
 				List of Code
 			</div>
 			<div class="panel-body">
-				<div class="dashboard-device-list">
+			<div class="dashboard-device-list">
+			<li ng-repeat="fileName in $view.cur_dir.files"
+				class="list-group-item">
+				{{ fileName }}
+				<button class="btn btn-success btn-xs pull-right" ng-click=$view.selectCode(fileName)> select </button> 	
+			</li>
 
-
-				<p>component1.js <button class="btn btn-success btn-xs pull-right" > add </button> </p>      
-				<p>component2.js <button class="btn btn-success btn-xs pull-right" > add </button>  </p>      
-				<p>component3.js <button class="btn btn-success btn-xs pull-right" > add </button>  </p>
-
-
-
-			
 				</div>
 			</div>
 		</div>
@@ -25,17 +22,20 @@
 		<div class="panel panel-default">
 			<div class="panel-heading" >
 		Selected Components 
+		<button  class="btn btn-default btn-sm pull-right" ng-click="$view.clearCodeSelection()">Clear All</button>
 			</div>
 			<div class="panel-body">
-				<div class="dashboard-device-list">
-				<p>component1  <button class="btn btn-danger btn-xs pull-right" > remove </button> </p>      
-				<p>component2 <button class="btn btn-danger btn-xs pull-right" > remove </button>  </p>      
-				<p>component3 <button class="btn btn-danger btn-xs pull-right" > remove </button>  </p>      
+			<div class="dashboard-device-list">
+			<li ng-repeat="code in $view.code_selection track by $index"
+				class="list-group-item">
+				{{ code }} &emsp;&emsp; Number of instances: <input id="instance" type="text" maxlength="10" size="4" ng-model="instanceNumber[$index]" ng-change="$view.instanceChange(code,instanceNumber[$index])"/>
 
+				<button class="btn btn-danger btn-xs pull-right" ng-click=$view.removeCode(code)> remove </button> 	
 
-
-				<button style="text-align:center" class="btn btn-primary" >Confirm</button>  
-				<!-- add ng-click later -->
+			</li>
+			{{instanceNumber1}}
+				Name:<input id="appname" type="text" maxlength="60" size="10" ng-model="appName"/>
+				<button style="text-align:center" class="btn btn-primary pull-right" ng-click=$view.generateApp(appName) onclick="document.getElementById('appname').value = ''" >Confirm</button>  
 			</div>
 			</div>
 		</div>			
@@ -47,11 +47,17 @@
 			<div class="panel-heading" style="text-align:center">
          <p pos="center"> Defined Application</p>
 			</div>
+
 			<div class="panel-body">
 			<div class="dashboard-device-list">
-				<p>App1  components <button class="btn btn-success btn-xs pull-right" > start </button>  <button class="btn btn-danger btn-xs pull-right" > stop </button> </p>
-				<p>App2  components <button class="btn btn-success btn-xs pull-right" > start </button>  <button class="btn btn-danger btn-xs pull-right" > stop </button> </p>
-				<p>App3  components <button class="btn btn-success btn-xs pull-right" > start </button>  <button class="btn btn-danger btn-xs pull-right" > stop </button> </p>
+			<li ng-repeat="appName in $view.app_dir.files" class="list-group-item">	
+				
+				{{ appName }}
+				 &emsp;
+				 <a ui-sref="app_component({ app:{{appName}} })"> Detailed Component </a> 
+				<button class="btn btn-danger btn-xs pull-right" > stop </button> 
+				  &emsp;&emsp;&emsp; <button class="btn btn-success btn-xs pull-right" > start </button>  
+			</li>
 			</div>
 			</div>
 	</div>
