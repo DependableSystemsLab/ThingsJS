@@ -135,6 +135,8 @@ DispatcherShell.ERRORS = {
 
 	EDNE: 'Error: It looks like this code engine does not exist',
 
+	IDNE: 'Error: It looks like this code instance does not exist',
+
 	TIMEOUT: 'Error: Timeout occured'
 }
 
@@ -229,6 +231,95 @@ DispatcherShell.prototype.sendCodeCommand = function(codeName, instanceId, ctrl)
 	});
 }
 
+DispatcherShell.prototype.getResourceUsage = function(engineId){
+	if(!this.dispatcher.engines[engineId]){
+		return DispatcherShell.ERRORS['EDNE'];
+	}
+	var stats = this.dispatcher.engines[engineId].stats;
+	return JSON.stringify(stats[stats.length-1]);
+}
+
+DispatcherShell.prototype.getPrograms = function(){
+	var self = this;
+	console.log('[DispatcherShell] Please wait while I collect programs...\n');
+	return new Promise(function(resolve){
+		var instances = [];
+		self.pubsub.publish('program-monitor/bcast', { ctrl: 'report' });
+		self.pubsub.subscribe('program-monitor', function(data){
+			instances.push(data);
+		});
+
+		setTimeout(function(){
+			self.pubsub.unsubscribe('program-monitor');
+			var instanceResources = {};
+
+			instances.forEach(function(instance){
+				var name = instance.code_name;
+				var id = instance.instance_id;
+
+				self.pubsub.subscribe(name + '/' + id + '/resource', function(data){
+					instanceResources[id] = { code_name: name, resource: data};
+				});
+
+				setTimeout(function(){
+					instances.forEach(function(instance){
+						self.pubsub.unsubscribe(instance.code_name +'/'+instance.instance_id+'/resource');
+					});
+					resolve(JSON.stringify(instanceResources));
+				}, 2000);
+			});
+		}, 2000);
+
+	});
+}
+
+/* uses pubsub broadcast command */
+DispatcherShell.prototype.getDevices = function(){
+	var self = this;
+	console.log('[DispatcherShell] Please wait while I collect devices...\n');
+	return new Promise(function(resolve){
+		var devices = [];
+		self.pubsub.publish('engine-registry/bcast', { ctrl: 'report' });
+		self.pubsub.subscribe('engine-registry', function(data){
+			devices.push(data);
+		});
+
+		setTimeout(function(){
+			self.pubsub.unsubscribe('engine-registry');
+			var deviceRes = {};
+
+			devices.forEach(function(device){
+				self.pubsub.subscribe(device.id + '/resource', function(data){
+					deviceRes[device.id] = data;
+					self.pubsub.unsubscribe(device.id + '/resource');
+				});
+			});
+
+			setTimeout(function(){
+				resolve(JSON.stringify(deviceRes));
+			}, 2000);
+
+		}, 2000);
+	});
+}
+
+DispatcherShell.prototype.getProgramResourceUsage = function(codeName, instanceId){
+	var self = this;
+	return new Promise(function(resolve){
+		var channel = codeName + '/' + instanceId + '/resource';
+		var timeout = setTimeout(function(){
+			self.pubsub.unsubscribe(channel);
+			resolve(DispatcherShell.ERRORS['TIMEOUT']);
+		}, 5000);
+
+		self.pubsub.subscribe(channel, function(data){
+			self.pubsub.unsubscribe(channel);
+			clearTimeout(timeout);
+			resolve(JSON.stringify(data));
+		});
+	});
+}
+
 DispatcherShell.prototype.pauseCode = function(codeName, instanceId){
 	return this.sendCodeCommand(codeName, instanceId, 'pause');
 }
@@ -304,6 +395,24 @@ DispatcherShell.prototype.executeScript = function(scriptFile){
  * All available commands on the shell
  */
 DispatcherShell.COMMANDS = {
+	devices: function(){
+		return this.getDevices();
+	},
+	programs: function(){
+		return this.getPrograms();
+	},
+	presource: function(arg1, arg2){
+		if(arguments.length < 2){
+			return DispatcherShell.ERRORS['ARGS'](['code name', 'instance id']);
+		}
+		return this.getProgramResourceUsage(arg1, arg2);
+	},
+	resource: function(arg1){
+		if(arguments.length < 1){
+			return DispatcherShell.ERRORS['ARGS'](['engine id']);
+		}
+		return this.getResourceUsage(arg1);
+	},
 	script: function(arg1){
 		if(arguments.length < 1){
 			return DispatcherShell.ERRORS['ARGS'](['path to script']);
