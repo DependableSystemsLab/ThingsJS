@@ -3,7 +3,7 @@ var fs = require('fs');
 
 var pubsub_url = 'mqtt://localhost';
 var pubsub_topic = 'thingsjs/IoTBench/ETL/SenMLParse';
-var publish_topic = 'thingsjs/IoTBench/STATS/KalmnaFilter';
+var publish_topic = 'thingsjs/IoTBench/STATS/KalmanFilter';
 
 var pubsub = new things.Pubsub(pubsub_url);
 
@@ -16,11 +16,10 @@ function setup(){
 	var args = process.argv.slice(2);
 	var properties;
 
+	// default to TAXI property set if no specific property file is given
 	if(!args.length){
-		console.log('Please provide a properties file');
-		process.exit();
+		args = ['../ETL/TAXI_properties.json'];
 	}
-
 	try{
 		properties = JSON.parse(fs.readFileSync(args[0], 'utf-8'));
 	}

@@ -17,9 +17,9 @@ function setup(){
 	var args = process.argv.slice(2);
 	var properties;
 
+	// default to TAXI property set if no specific property file is given
 	if(!args.length){
-		console.log('Please provide a properties file');
-		process.exit();
+		args = ['../ETL/TAXI_properties.json'];
 	}
 	try{
 		properties = JSON.parse(fs.readFileSync(args[0], 'utf-8'));
@@ -42,7 +42,6 @@ function setup(){
 	for(var i = 0; i < numBuckets; i++){
 		maxZeroes[i] = 0;
 	}
-
 }
 
 function doUniqueCount(data){
@@ -60,10 +59,12 @@ function doUniqueCount(data){
 		var ranIndex = Math.ceil( Math.random() * keys.length );
 		field = keys[ranIndex];
 	}
-	console.log('Using field: ' + field);
-	countUniqueItems(data[field]);
+	var count = countUniqueItems(data[field]);
+	var uniqueCountJSON = {};
+	uniqueCountJSON[field + '_distinctCount'] = count;
 
-	pubsub.publish(data, publish_topic);
+	console.log('Approx ' + count + ' unique items in ' + field);
+	pubsub.publish(publish_topic, uniqueCountJSON);
 }
 
 function countUniqueItems(item){
@@ -71,14 +72,10 @@ function countUniqueItems(item){
 	function sha1(str){
 		var sha = crypto.createHash('sha1');
 		var hex = sha.update(str).digest('hex');
-		console.log
 		return hex;
-		//return parseInt(hex, 10);
 	}
 	var magicNum = 0.79402;
-	var hashValue = sha1(item);
-	console.log('Hash: ' + hashValue);
-
+	var hashValue = parseInt(sha1(item), 16);
 	var bucketId = hashValue & (numBuckets - 1);
 
 	var currMax = maxZeroes[bucketId];
@@ -90,7 +87,7 @@ function countUniqueItems(item){
 	}
 
 	var E = (magicNum * numBuckets * Math.pow(2, sumMaxZeroes / numBuckets));
-	console.log('E: ' + E); 
+	return E;
 }
 
 function countTrailZeroes(val){

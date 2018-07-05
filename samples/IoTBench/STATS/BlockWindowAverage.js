@@ -15,9 +15,9 @@ function setup(){
 	var args = process.argv.slice(2);
 	var properties;
 
+	// default to TAXI property set if no specific property file is given
 	if(!args.length){
-		console.log('Please provide a properties file');
-		process.exit();
+		args = ['../ETL/TAXI_properties.json'];
 	}
 	try{
 		properties = JSON.parse(fs.readFileSync(args[0], 'utf-8'));
@@ -44,7 +44,6 @@ function average(data){
 		var ranIndex = Math.ceil( Math.random() * keys.length );
 		field = keys[ranIndex];
 	}
-
 	try{
 		aggSum += Number(data[field]);
 	}
@@ -59,8 +58,11 @@ function average(data){
 		aggCount = 0;
 		aggSum = 0;
 
-		console.log('Averaged ' + field + ' over ' + BLOCK_AVG + ' values: ' + aggRes);
-		pubsub.publish(publish_topic, { field: aggRes });
+		console.log('Average ' + field + ' over ' + BLOCK_AVG + ' values: ' + aggRes);
+		var avgJSON = {};
+		avgJSON[field + '_average'] = aggRes;
+
+		pubsub.publish(publish_topic, avgJSON);
 	}
 }
 
