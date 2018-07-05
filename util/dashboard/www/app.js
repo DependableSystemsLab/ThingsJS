@@ -294,6 +294,7 @@ dashApp.constant("CONFIG", {
   				this.components_name = components_name; 
 			}
 
+
 			function Schedule(id,data){ 
    				this.id = id;
 			    
