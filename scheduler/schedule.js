@@ -1,22 +1,14 @@
-
+function Schedule(){
 var id= 1;
 var status = "idle";
 var pubsub='topic1';
-var data= {
-		
-		'pi-3': ['factorial.js','test.js'],
-		'pi-1': ['temp-reg.js','temp1.js'],
-		'xeon1':['temp.js']
-	};
-var CurrentSchedule= {
-		
-		'pi-3': ['factorial.js','test.js'],
-		'pi-1': ['temp1.js','motion.js','toto'],
-		'xeon1':['temp-reg.js']
-	};
 var run=[], stop=[], continueRun=[], migrate=[];
+}
 
-function programList(schedule, CurrentSchedule){
+Schedule.prototype.constructor= Schedule;
+
+Scheduler.prototype.programList= function(schedule, CurrentSchedule){
+//function programList(schedule, CurrentSchedule){
 
 var scheduleValues= Object.values(schedule);
 var CurrentScheduleValues= Object.values(CurrentSchedule);
@@ -41,8 +33,8 @@ return(list);
 };	
 
 //var list= programList(data, CurrentSchedule);
-
-function deviceForProgram(program, schedule){
+Schedule.prototype.deviceForProgram = function(program, schedule){
+//function deviceForProgram(program, schedule){
 	var scheduleValues= Object.values(schedule);
 	var scheduleKeys= Object.keys(schedule);
 	var device="";	
@@ -59,8 +51,8 @@ if(device === ""){return ("");}
 	else {return(device);}
 };
 //var test= deviceForProgram('test.js', data);
-
-function computeDifference (schedule, CurrentSchedule){
+Schedule.prototype.computeDifference= function(schedule, CurrentSchedule){
+//function computeDifference (schedule, CurrentSchedule){
 	var newSchedule={};
 	var list= programList(schedule, CurrentSchedule);
 	//console.log(list);
@@ -88,17 +80,14 @@ function computeDifference (schedule, CurrentSchedule){
 	}
 }
 
-/*newSchedule.push(run);
-newSchedule.push(stop);
-newSchedule.push(continueRun);
-newSchedule.push(migrate);*/
 newSchedule["run"]= run;
 newSchedule["stop"]= stop;
 newSchedule["continueRun"]= continueRun;
 newSchedule["migrate"]= migrate;
 return(newSchedule);
 };
-console.log(computeDifference 
+var schedule= computeDifference(data, CurrentSchedule) 
+//console.log(schedule);
 
-	(data, CurrentSchedule));
+module.exports = Schedule ;
 
