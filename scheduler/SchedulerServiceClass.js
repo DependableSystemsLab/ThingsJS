@@ -182,7 +182,6 @@ SchedulerService.prototype._listDevices = function(){
 	var currentDevicesKeys= Object.keys(currentDevices);
 	for (var i = 0; i < keys.length; i++) {
 		var availableRam= (currentDevicesValues[i].device_memory) - (currentDevicesValues[i].memory['heapUsed']);
-	//console.log(availableRam);
  		listDevices.push({id: currentDevicesKeys[i],
  				memory: availableRam});
 	}
@@ -191,59 +190,17 @@ SchedulerService.prototype._listDevices = function(){
 
 };
 
-// still not functioning
 SchedulerService.prototype._listComponents = function(){
 	var self= this;
+	var currentComponents = _currentComponents();
 	var currentComponentsValues= Object.values(currentComponents);
 	var currentComponentsKeys= Object.keys(currentComponents);
 	var listComponents = [];
-	var nameArr =[];
-	var countArr= {}, myObj= {};
+	for (var i = 0; i < currentComponentsKeys.length; i++) {
 
-		for (var i = 0; i < currentComponentsKeys.length; i++) {
-
-			var index= currentComponentsKeys[i].indexOf("/");
-			var appName= currentComponentsKeys[i].substring(0, index);
-			nameArr.push(appName);
-		}
-
-	function count(array, name){
-		var nb = 0;
-		for (var i=0; i < array.length; i++ ){
-			if (array[i] === name)
-				{ nb++;}	
-		}
-		return (nb);
-	}
-
-	for (var i=0; i< nameArr.length; i++){
-		var test = count(nameArr, nameArr[i]) 
-		countArr[nameArr[i]]= test;
-	}
-
-	for(var j =0; j<Object.keys(countArr).length; j++){
-	var arrMemory = {};
-		for (var i = 0; i < currentComponentsKeys.length; i++) {
-			if (currentComponentsKeys[i].startsWith(Object.keys(countArr)[j])){
-				arrMemory[currentComponentsKeys[i]] = currentComponentsValues[i];
-			}	
-		}
-	var max = Object.values(arrMemory)[0].heapUsed;
-		for( var i =0; i<Object.keys(arrMemory).length; i++){
-			if (Object.values(arrMemory)[i].heapUsed > max){
-				max= Object.values(arrMemory)[i].heapUsed;
-			}
-		}
-	myObj[Object.keys(countArr)[j]] = max;
-
-	}
-
-	for (var i = 0; i < Object.keys(countArr).length; i++) {
-
-		listComponents.push({ name: Object.keys(countArr)[i],
-							count: Object.values(countArr)[i],
-							required_memory: Object.values(myObj)[i] 
-						});	
+		listComponents.push({ name: currentComponentsKeys[i],
+						required_memory: currentComponentsValues[i].heapUsed
+					});	
 	}
 
 	return (listComponents)
@@ -257,6 +214,7 @@ SchedulerService.prototype.apply= function(schedule){
 		SchedulerHelper.runSchedule(newSchedule);
 	}
 	else{
+		// will get current schedule from FS
 	var diffSchedule= Schedule.computeDifference(newSchedule, currentSchedule);
 	SchedulerHelper.reSchedule(diffSchedule);
 	appendToHistory(newSchedule);
