@@ -181,9 +181,9 @@ SchedulerService.prototype._listDevices = function(){
 	var currentDevicesValues= Object.values(currentDevices);
 	var currentDevicesKeys= Object.keys(currentDevices);
 	for (var i = 0; i < keys.length; i++) {
-		var availableRam= (currentDevicesValues[i].device_memory) - (currentDevicesValues[i].memory['heapUsed']);
+		//var availableRam= (currentDevicesValues[i].device_memory) - (currentDevicesValues[i].memory['heapUsed']);
  		listDevices.push({id: currentDevicesKeys[i],
- 				memory: availableRam});
+ 				memory: currentDevicesValues[i].device_memory});
 	}
 
 	return (listDevices)
@@ -209,6 +209,7 @@ SchedulerService.prototype._listComponents = function(){
 
 SchedulerService.prototype.apply= function(schedule){
 	var newSchedule = schedule();
+	var currentSchedule = currentSchedule(); 
 	// if first call runSchedule otherwise reschedule
 	if (currentScheduleNumber === 0){
 		SchedulerHelper.runSchedule(newSchedule);
