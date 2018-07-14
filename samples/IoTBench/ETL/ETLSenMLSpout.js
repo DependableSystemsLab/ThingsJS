@@ -18,7 +18,8 @@ var lines = [];
 var currentLine = 0;
 
 function startSpout() {
-	
+	process.chdir("../ETL");
+	console.log("#########currentdirectory"+ process.cwd());
 	var lineReader = readline.createInterface({
 		input: require('fs').createReadStream('TAXI_sample_data_senml.csv')
 	});

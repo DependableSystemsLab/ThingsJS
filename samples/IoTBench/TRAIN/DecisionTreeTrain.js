@@ -15,6 +15,7 @@ var MODEL_UPDATE_FREQUENCY;
 var WINDOW_COUNT = 10;
 var traincount;
 var datalist;
+var processeddata;
 
 function setup(){
   var args = process.argv.slice(2);
@@ -54,23 +55,23 @@ function setup(){
 
 function decisionTreeTrain(data){
 
-    fs.writeFileSync("./parseddata.json",data["pickup_datetime"]);
+    fs.writeFileSync("./parseddata.json",data);
     var features = [ "trip_time_in_secs", "trip_distance", "pickup_longitude",
     "pickup_latitude", "dropoff_longitude", "dropoff_latitude","payment_type"];
-    var target =["fare_amount"]
+    var target = "fare_amount"
     var featureTypes = ["number","number","number","number","number","number","category"];
-    //var features = []
-   // var featureTypes = ['category','number','category'];
 
     datalist.push(data);
+    console.log("length of data" + datalist.length );
     traincount ++;
-
-    if(traincount>=WINDOW_COUNT){
+     // console.log("~~~~"+JSON.stringify(data))
+    if(traincount >= WINDOW_COUNT){
       traincount = 0;
     console.log("collect 100 data to train by decisionTree");
+    processeddata = processdata(datalist,features,target);
     var c45 = C45(); 
     c45.train({
-        data: datalist,
+        data: processeddata,
         target: target,
         features: features,
         featureTypes: featureTypes
@@ -79,12 +80,36 @@ function decisionTreeTrain(data){
         console.error(error);
         return false;
       }  
-      console.log("TRAIN DECISION TREE MODEL",c45.toJSON())   
+      console.log("tree model"+ model.toJSON());
+      console.log("TRAIN DECISION TREE MODEL",c45.toJSON());
       //pubsub.publish(publish_topic,c45.toJSON()); no pubsub to make it stateless for prediction
       fs.writeFileSync(MODEL_FILE_PATH, c45.toJSON());
     });
   }
 }
+
+
+
+function processdata(datalist,features,target){
+var resultdata =[];
+
+datalist.forEach(function(element){
+  var newdatalist = [];
+  features.forEach(function(key){
+   newdatalist.push(element[key]);
+  })
+  newdatalist.push(element[target]);
+  resultdata.push(newdatalist);
+});
+
+resultdata.forEach(function(array){
+  console.log("lalala"+array);
+});
+return resultdata;
+}
+
+
+
 
 pubsub.on('ready', function(){
   setup();

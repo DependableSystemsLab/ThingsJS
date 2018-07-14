@@ -45,25 +45,30 @@ function setup(){
     console.log('Couldn\'t fetch properties: ' + e);
     process.exit();
   }
-
-
 }
 
 
-function decisionTreePred(data){
-
-    // fs.writeFileSync("./parseddata.json",data["pickup_datetime"]);
-    // var features = [ "trip_time_in_secs", "trip_distance", "pickup_longitude",
-    // "pickup_latitude", "dropoff_longitude", "dropoff_latitude","payment_type"];
-    // var target =["fare_amount"]
-    // var featureTypes = ["number","number","number","number","number","number","category"];
-    var c45 = C45();    
+function decisionTreePred(data) {
+    console.log("((((((" + JSON.stringify(data))
+    var processeddata =[];
+    var features = ["trip_time_in_secs", "trip_distance", "pickup_longitude",
+        "pickup_latitude", "dropoff_longitude", "dropoff_latitude", "payment_type"];
+    features.forEach(function(key) {
+        processeddata.push(data[key]);
+    });
+    console.log("lalalalal" + processeddata);
+    
+    var c45 = C45();
     var state = require(MODEL_FILE_PATH);
     c45.restore(state)
     var model = c45.getModel();
-    pubsub.publish(pubsub_topic,model.classify(data)); 
-    console.log("PREDICT RESULT FOR "+ data + ": " + model.classify(data));
-  }
+    pubsub.publish(publish_topic, model.classify(processeddata));
+    console.log("PREDICT RESULT : " + model.classify(processeddata));
+}
+
+
+
+
 
 
 pubsub.on('ready', function(){

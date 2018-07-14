@@ -1,5 +1,4 @@
 var fs = require('fs');
-var csv = require('csv');
 var C45 = require('c4.5');
 var things = require('../../../lib/things.js');
 

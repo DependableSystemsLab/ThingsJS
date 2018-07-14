@@ -1,1 +1,353 @@
-{"features":["trip_time_in_secs","trip_distance","pickup_longitude","pickup_latitude","dropoff_longitude","dropoff_latitude","payment_type"],"targets":[null],"target":["fare_amount"],"model":{"type":"result"}}
+{
+  "features": [
+    "trip_time_in_secs",
+    "trip_distance",
+    "pickup_longitude",
+    "pickup_latitude",
+    "dropoff_longitude",
+    "dropoff_latitude",
+    "payment_type"
+  ],
+  "targets": [
+    "29.00",
+    "16.00",
+    "6.50",
+    "24.00",
+    "7.00",
+    "8.00",
+    "12.50",
+    "4.50",
+    "7.50",
+    "15.50",
+    "5.50",
+    "25.00",
+    "26.50",
+    "32.50",
+    "17.00"
+  ],
+  "target": "fare_amount",
+  "model": {
+    "name": "payment_type",
+    "type": "feature_category",
+    "values": [
+      {
+        "name": "CSH",
+        "type": "feature_value",
+        "child": {
+          "name": "dropoff_latitude",
+          "type": "feature_number",
+          "cut": 40.744968,
+          "values": [
+            {
+              "name": "40.744968",
+              "type": "feature_value",
+              "child": {
+                "name": "dropoff_longitude",
+                "type": "feature_number",
+                "cut": -73.959419,
+                "values": [
+                  {
+                    "name": "-73.959419",
+                    "type": "feature_value",
+                    "child": {
+                      "name": "pickup_latitude",
+                      "type": "feature_number",
+                      "cut": 40.762691,
+                      "values": [
+                        {
+                          "name": "40.762691",
+                          "type": "feature_value",
+                          "child": {
+                            "type": "result",
+                            "value": "29.00",
+                            "name": "29.00"
+                          }
+                        },
+                        {
+                          "name": "40.762691",
+                          "type": "feature_value",
+                          "child": {
+                            "type": "result",
+                            "value": "26.50",
+                            "name": "26.50"
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "name": "-73.959419",
+                    "type": "feature_value",
+                    "child": {
+                      "name": "pickup_latitude",
+                      "type": "feature_number",
+                      "cut": 40.773823,
+                      "values": [
+                        {
+                          "name": "40.773823",
+                          "type": "feature_value",
+                          "child": {
+                            "type": "result",
+                            "value": "7.00",
+                            "name": "7.00"
+                          }
+                        },
+                        {
+                          "name": "40.773823",
+                          "type": "feature_value",
+                          "child": {
+                            "name": "pickup_longitude",
+                            "type": "feature_number",
+                            "cut": -73.992882,
+                            "values": [
+                              {
+                                "name": "-73.992882",
+                                "type": "feature_value",
+                                "child": {
+                                  "type": "result",
+                                  "value": "25.00",
+                                  "name": "25.00"
+                                }
+                              },
+                              {
+                                "name": "-73.992882",
+                                "type": "feature_value",
+                                "child": {
+                                  "type": "result",
+                                  "value": "5.50",
+                                  "name": "5.50"
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "name": "40.744968",
+              "type": "feature_value",
+              "child": {
+                "name": "dropoff_longitude",
+                "type": "feature_number",
+                "cut": -73.963501,
+                "values": [
+                  {
+                    "name": "-73.963501",
+                    "type": "feature_value",
+                    "child": {
+                      "name": "pickup_latitude",
+                      "type": "feature_number",
+                      "cut": 40.732407,
+                      "values": [
+                        {
+                          "name": "40.732407",
+                          "type": "feature_value",
+                          "child": {
+                            "type": "result",
+                            "value": "17.00",
+                            "name": "17.00"
+                          }
+                        },
+                        {
+                          "name": "40.732407",
+                          "type": "feature_value",
+                          "child": {
+                            "type": "result",
+                            "value": "16.00",
+                            "name": "16.00"
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "name": "-73.963501",
+                    "type": "feature_value",
+                    "child": {
+                      "name": "pickup_latitude",
+                      "type": "feature_number",
+                      "cut": 40.741249,
+                      "values": [
+                        {
+                          "name": "40.741249",
+                          "type": "feature_value",
+                          "child": {
+                            "type": "result",
+                            "value": "15.50",
+                            "name": "15.50"
+                          }
+                        },
+                        {
+                          "name": "40.741249",
+                          "type": "feature_value",
+                          "child": {
+                            "name": "pickup_longitude",
+                            "type": "feature_number",
+                            "cut": -74.001358,
+                            "values": [
+                              {
+                                "name": "-74.001358",
+                                "type": "feature_value",
+                                "child": {
+                                  "type": "result",
+                                  "value": "4.50",
+                                  "name": "4.50"
+                                }
+                              },
+                              {
+                                "name": "-74.001358",
+                                "type": "feature_value",
+                                "child": {
+                                  "type": "result",
+                                  "value": "7.50",
+                                  "name": "7.50"
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "CRD",
+        "type": "feature_value",
+        "child": {
+          "name": "trip_distance",
+          "type": "feature_number",
+          "cut": 1.56,
+          "values": [
+            {
+              "name": "1.56",
+              "type": "feature_value",
+              "child": {
+                "name": "trip_time_in_secs",
+                "type": "feature_number",
+                "cut": 420,
+                "values": [
+                  {
+                    "name": "420",
+                    "type": "feature_value",
+                    "child": {
+                      "name": "dropoff_latitude",
+                      "type": "feature_number",
+                      "cut": 40.759781,
+                      "values": [
+                        {
+                          "name": "40.759781",
+                          "type": "feature_value",
+                          "child": {
+                            "type": "result",
+                            "value": "24.00",
+                            "name": "24.00"
+                          }
+                        },
+                        {
+                          "name": "40.759781",
+                          "type": "feature_value",
+                          "child": {
+                            "name": "dropoff_longitude",
+                            "type": "feature_number",
+                            "cut": -73.984154,
+                            "values": [
+                              {
+                                "name": "-73.984154",
+                                "type": "feature_value",
+                                "child": {
+                                  "type": "result",
+                                  "value": "12.50",
+                                  "name": "12.50"
+                                }
+                              },
+                              {
+                                "name": "-73.984154",
+                                "type": "feature_value",
+                                "child": {
+                                  "type": "result",
+                                  "value": "32.50",
+                                  "name": "32.50"
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "name": "420",
+                    "type": "feature_value",
+                    "child": {
+                      "name": "pickup_longitude",
+                      "type": "feature_number",
+                      "cut": -74.002113,
+                      "values": [
+                        {
+                          "name": "-74.002113",
+                          "type": "feature_value",
+                          "child": {
+                            "type": "result",
+                            "value": "8.00",
+                            "name": "8.00"
+                          }
+                        },
+                        {
+                          "name": "-74.002113",
+                          "type": "feature_value",
+                          "child": {
+                            "type": "result",
+                            "value": "7.50",
+                            "name": "7.50"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "name": "1.56",
+              "type": "feature_value",
+              "child": {
+                "name": "dropoff_latitude",
+                "type": "feature_number",
+                "cut": 40.745731,
+                "values": [
+                  {
+                    "name": "40.745731",
+                    "type": "feature_value",
+                    "child": {
+                      "type": "result",
+                      "value": "7.00",
+                      "name": "7.00"
+                    }
+                  },
+                  {
+                    "name": "40.745731",
+                    "type": "feature_value",
+                    "child": {
+                      "type": "result",
+                      "value": "6.50",
+                      "name": "6.50"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
