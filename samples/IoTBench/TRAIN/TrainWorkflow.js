@@ -4,7 +4,7 @@ var fs = require('fs');
 /* components need to be loaded in OPPOSITE ORDER */
 // TODO: generalize this later on for other benchmarks ... we can pass in the components as an arg
 const COMPONENTS = 
-['MultiLinearRegression.js', 'DecisionTree.js', '../ETL/SenMLParse.js', '../ETL/ETLSenMLSpout.js'];
+['DecisionTree.js', '../ETL/SenMLParse.js', '../ETL/ETLSenMLSpout.js'];
 
 var instances = {};
 var noHeader = true;
@@ -13,11 +13,11 @@ var dispatcher, pubsub, logger;
 (function begin(){
 	dispatcher = new things.Dispatcher();
 	pubsub = new things.Pubsub();
-	logger = fs.createWriteStream('PREDStats_' + Date.now() + '.csv');
+	logger = fs.createWriteStream('TRAINStats_' + Date.now() + '.csv');
 
 	dispatcher.on('ready', function(){
 		pubsub.on('ready', function(){
-			setTimeout(runPRED, 2000);
+			setTimeout(runTRAIN, 2000);
 		});
 	});
 
@@ -34,8 +34,8 @@ function memToCSV(data){
 	logger.write(values.join(',') + '\n');
 }
 
-function runPRED(){
-	// begin all the PRED components on existing code engines
+function runTRAIN(){
+	// begin all the TRAIN components on existing code engines
 	var currEngines = Object.keys(dispatcher.engines);
 	if(currEngines.length === 0){
 		console.log('Not enough engines to execute components');

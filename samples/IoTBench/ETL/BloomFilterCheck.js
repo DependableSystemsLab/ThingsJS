@@ -4,7 +4,7 @@ var fs = require('fs');
 
 var pubsub_url = 'mqtt://localhost';
 var pubsub_topic = 'thingsjs/IoTBench/ETL/RangeFilterCheck';
-var publish_topic = 'thingsjS/IoTBench/ETL/BloomFilterCheck';
+var publish_topic = 'thingsjs/IoTBench/ETL/BloomFilterCheck';
 
 /* bloom filter properties */
 var DEFAULT_FALSEPOSITIVE = 0.1;
