@@ -1,0 +1,1 @@
+{"features":["trip_time_in_secs","trip_distance","pickup_longitude","pickup_latitude","dropoff_longitude","dropoff_latitude","payment_type"],"targets":[null],"target":["fare_amount"],"model":{"type":"result"}}

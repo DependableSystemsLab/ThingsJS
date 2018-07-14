@@ -4,7 +4,8 @@ var fs = require('fs');
 /* components need to be loaded in OPPOSITE ORDER */
 // TODO: generalize this later on for other benchmarks ... we can pass in the components as an arg
 const COMPONENTS = 
-['DecisionTree.js', '../ETL/SenMLParse.js', '../ETL/ETLSenMLSpout.js'];
+['./ResidualError.js','./Average.js','./MultiLinearRegressionPred.js','./DecisionTreePred.js',
+'./MultiLinearRegressionTrain.js','./DecisionTreeTrain.js', '../ETL/SenMLParse.js', '../ETL/ETLSenMLSpout.js'];
 
 var instances = {};
 var noHeader = true;

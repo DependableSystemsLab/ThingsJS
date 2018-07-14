@@ -5,13 +5,16 @@ var things = require('../../../lib/things.js');
 
 var pubsub_url = 'mqtt://localhost';
 var pubsub_topic = 'thingsjs/IoTBench/ETL/SenMLParse';
-var publish_topic = 'thingsjs/IoTBench/TRAIN/DecisionTree';
+var publish_topic = 'thingsjs/IoTBench/TRAIN/DecisionTreeTrain';
 
 var pubsub = new things.Pubsub(pubsub_url);
 var USE_MSG_FIELD_LIST; 
 var SAMPLE_HEADER;
 var MODEL_FILE_PATH;
 var MODEL_UPDATE_FREQUENCY;
+var WINDOW_COUNT = 10;
+var traincount;
+var datalist;
 
 function setup(){
   var args = process.argv.slice(2);
@@ -24,6 +27,7 @@ function setup(){
   try{
     properties = JSON.parse(fs.readFileSync(args[0], 'utf-8'));
 
+    USE_MSG_FIELD_LIST = properties['CLASSIFICATION.DECISION_TREE.USE_MSG_FIELD_LIST'];
     USE_MSG_FIELD = properties['CLASSIFICATION.DECISION_TREE.USE_MSG_FIELD']||0;
     SAMPLE_HEADER = properties["CLASSIFICATION.DECISION_TREE.SAMPLE_HEADER"];
     MODEL_FILE_PATH = properties['CLASSIFICATION.DECISION_TREE.MODEL_PATH'];
@@ -42,27 +46,31 @@ function setup(){
     console.log('Couldn\'t fetch properties: ' + e);
     process.exit();
   }
-
-// //trainAndSaveModel
-// trainAndSaveModel();
+  traincount = 0;
+  datalist = [];
 
 }
 
 
 function decisionTreeTrain(data){
 
+    fs.writeFileSync("./parseddata.json",data["pickup_datetime"]);
+    var features = [ "trip_time_in_secs", "trip_distance", "pickup_longitude",
+    "pickup_latitude", "dropoff_longitude", "dropoff_latitude","payment_type"];
+    var target =["fare_amount"]
+    var featureTypes = ["number","number","number","number","number","number","category"];
+    //var features = []
+   // var featureTypes = ['category','number','category'];
 
-    var features = SAMPLE_HEADER.slice(1,-1); // ["attr1", "attr2", "attr3"]
-    console.log("headers"+headers);
-    var featureTypes = ['category','number','category'];
-    var trainingData = data.slice(1).map(function(d) {
-      return d.slice(1);
-    });
-    var target = headers[headers.length-1]; // "class"
-    var c45 = C45();
- 
+    datalist.push(data);
+    traincount ++;
+
+    if(traincount>=WINDOW_COUNT){
+      traincount = 0;
+    console.log("collect 100 data to train by decisionTree");
+    var c45 = C45(); 
     c45.train({
-        data: trainingData,
+        data: datalist,
         target: target,
         features: features,
         featureTypes: featureTypes
@@ -72,35 +80,14 @@ function decisionTreeTrain(data){
         return false;
       }  
       console.log("TRAIN DECISION TREE MODEL",c45.toJSON())   
-      pubsub.publish(publish_topic,c45.toJSON());
+      //pubsub.publish(publish_topic,c45.toJSON()); no pubsub to make it stateless for prediction
       fs.writeFileSync(MODEL_FILE_PATH, c45.toJSON());
-
     });
-  };
-
-
-
-
-// function decisionTreePredict(){
-//     var c45 = C45();
-//     var decisionTree = require(MODEL_FILE_PATH);
-//     c45.restore(decisionTree)
-//     var model = c45.getModel();
-//     //where to grab testdata
-//     var testData = ('./testData.json');
-
-//     testData.forEach(function(element){
-//       //write to mttq
-//        console.log(model.classify(element));
-//     });
-
-// }
-
-
-
+  }
+}
 
 pubsub.on('ready', function(){
   setup();
-  console.log('Beginning predict by decisiontree ');
+  console.log('Beginning training by decisiontree');
   pubsub.subscribe(pubsub_topic, decisionTreeTrain);
 });
