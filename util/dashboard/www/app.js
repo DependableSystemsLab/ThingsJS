@@ -105,6 +105,7 @@ dashApp.constant("CONFIG", {
 				$scope.$dash = dashboard;
 				$scope.$repo = CodeRepository.get();
 
+
 				self.cur_path = '/';
 				self.cur_path_tokens = [];
 				self.cur_dir = {};
@@ -217,6 +218,47 @@ dashApp.constant("CONFIG", {
 						});
 				}
 
+
+			//send runapplication detail 
+			self.runApplication = function(app){
+				dashboard.pubsub.publish("runApplication",app);
+				//sample app format 
+				// {
+				//     "name": "app1.json",
+				//     "id": "fnsdiolsa",
+				//     "components": {
+				//         "Factorial.js": { num_instances: 3, required_memory: 500000 },
+				//         “Test.js” { num_instances: 5, required_memory: 2394832948234 }
+				//     }
+				// }
+
+
+
+			};
+
+			self.getAppDetails = function(){
+				dashboard.pubsub.subscribe("applicationDetails",function(appdetail{
+					// update app info
+					//sample info:
+					// 					{ id: “fnsdiolsa”, 
+					// 	“Instances”: {
+					// 		“Factorial.js”: [“ABCDEFG, DKJFSDR”],
+					// 		“Test.js”: [“skERRR”, “SDFKSADF”]
+					// 	}
+					// }
+
+				}))
+			}
+
+			self.stopApplication = function(appwithdetail){
+				dashboard.pubsub.publish("stopApplication",appwithdetail);
+				//sampleinfo
+				//[{code_name: ‘one.js’, instance_id: ‘ABC’}, {code_name:__, instance_id:__},...]
+			}
+
+
+
+
 			}],
 			controllerAs: '$view',
 			templateUrl: 'views/applications.html'
@@ -265,10 +307,55 @@ dashApp.constant("CONFIG", {
 			url: '/schedule',
 			controller: ['$scope','dashboard','CodeRepository','$stateParams', function($scope, dashboard, CodeRepository,$stateParams){
 				var self = this;
+
+				function joinPath(p1, p2) {
+				    if (p1[p1.length - 1] === '/') p1 = p1.substring(0, p1.length - 1);
+				    if (p2[0] === '/') p2 = p2.substring(1);
+				    return p1 + '/' + p2;
+				}
+
 				//access file system
 				$scope.repo = CodeRepository.get();
 				$scope.$dash = dashboard;
 				// $scope.schedule = Schedule.get();
+
+				self.cur_path = "/"; // tentative path
+				self.schedule_path_tokens = [];
+				self.schedules = [];
+				self.schedule_path = "/schedule"
+				self.schedule_dir = {};
+				self.cur_schedule_selection = {};
+
+				self.refresh = function(){
+					// $scope.$repo.get(self.cur_path)
+					// 	.then(function(fsObject){
+					// 		console.log(fsObject);
+					// 		self.cur_dir = fsObject;
+					// 		self.cur_path_tokens = self.cur_path.split('/').slice(1);
+					// 		$scope.$apply();
+					// 	})
+					$scope.$repo.get(self.schedule_path)
+						.then(function(fsObject){
+							console.log("schedule_path");
+							console.log(fsObject);
+							self.schedule_dir = fsObject;
+							self.schedule_path_tokens = self.schedule_path.split('/').slice(1);
+							$scope.$apply();
+						})
+				}
+
+
+				self.getSchedule = function(scheduleName){
+					$scope.$repo.get(joinPath(self.schedule_path,scheduleName+".json"))
+						.then(function(file){
+							console.log("file get", file);
+							self.cur_schedule_selection._id = file._id;
+							self.cur_schedule_selection.name = file.name;
+							self.cur_schedule_selection.content = file.content;
+							console.log("schedule content" + self.cur_schedule_selection.content);
+							self.refresh();
+						});
+				}
 
 				var schedule1 =  { 'pi0-1': [ 'fractorial.js/0', 'shade-contr.js/1' ],
 					'pi3-3': [ 'sprinkler.js/1', 'shade-contr.js/2' ],
@@ -324,9 +411,9 @@ dashApp.constant("CONFIG", {
   				$scope.sortReverse  = false;  // set the default sort order
   				$scope.search   = '';     // set the default search/filter term  
 
-				self.cur_path = "/schedule"; // tentative path
-				self.cur_path_tokens = [];
-				self.schedules = [];
+
+
+				self.refresh();
 			}],
 			controllerAs: '$view',
 			templateUrl: 'views/schedule.html'
