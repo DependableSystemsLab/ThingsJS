@@ -49,7 +49,7 @@ function setup(){
 
 
 function decisionTreePred(data) {
-    console.log("((((((" + JSON.stringify(data))
+    console.log(" " + JSON.stringify(data))
     var processeddata =[];
     var features = ["trip_time_in_secs", "trip_distance", "pickup_longitude",
         "pickup_latitude", "dropoff_longitude", "dropoff_latitude", "payment_type"];

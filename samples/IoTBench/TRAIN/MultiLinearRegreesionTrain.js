@@ -1,6 +1,5 @@
 var fs = require('fs');
-var csv = require('csv');
-var C45 = require('c4.5');
+var MLR  = require('ml-regression-multivariate-linear');
 var things = require('../../../lib/things.js');
 
 var pubsub_url = 'mqtt://localhost';
@@ -15,6 +14,7 @@ var MODEL_UPDATE_FREQUENCY;
 var WINDOW_COUNT = 10;
 var traincount;
 var datalist;
+var processeddata;
 
 function setup(){
   var args = process.argv.slice(2);
@@ -27,11 +27,11 @@ function setup(){
   try{
     properties = JSON.parse(fs.readFileSync(args[0], 'utf-8'));
 
-    USE_MSG_FIELD_LIST = properties['CLASSIFICATION.DECISION_TREE.USE_MSG_FIELD_LIST'];
-    USE_MSG_FIELD = properties['CLASSIFICATION.DECISION_TREE.USE_MSG_FIELD']||0;
+    USE_MSG_FIELD_LIST = properties['PREDICT.MULTIPLELINEAR_REGRESSION.USE_MSG_FIELD_LIST'];
+    USE_MSG_FIELD = properties["PREDICT.MULTIPLELINEAR_REGRESSION.USE_MSG_FIELD"]||0;
     SAMPLE_HEADER = properties["CLASSIFICATION.DECISION_TREE.SAMPLE_HEADER"];
-    MODEL_FILE_PATH = properties['CLASSIFICATION.DECISION_TREE.MODEL_PATH'];
-    MODEL_UPDATE_FREQUENCY = properties["CLASSIFICATION.DECISION_TREE.TRAIN.MODEL_UPDATE_FREQUENCY"];
+    MODEL_FILE_PATH = properties["PREDICT.MULTIPLELINEAR_REGRESSION.MODEL_PATH"];
+    MODEL_UPDATE_FREQUENCY = properties["PREDICT.MULTIPLELINEAR_REGRESSION.TRAIN.MODEL_UPDATE_FREQUENCY"];
     console.log("USE_MSG_FIELD" + USE_MSG_FIELD);
     console.log("SAMPLE_HEADER" + SAMPLE_HEADER);
     console.log("MODEL_FILE_PATH" + MODEL_FILE_PATH);
@@ -52,25 +52,25 @@ function setup(){
 }
 
 
-function MLRegressionTrain(data){
+function MultiLinearRegressionTrain(data){
 
-    fs.writeFileSync("./parseddata.json",data["pickup_datetime"]);
+    // fs.writeFileSync("./parseddata2.json",data);
     var features = [ "trip_time_in_secs", "trip_distance", "pickup_longitude",
     "pickup_latitude", "dropoff_longitude", "dropoff_latitude","payment_type"];
-    var target =["fare_amount"]
+    var target = "fare_amount"
     var featureTypes = ["number","number","number","number","number","number","category"];
-    //var features = []
-   // var featureTypes = ['category','number','category'];
 
     datalist.push(data);
+    console.log("length of data" + datalist.length );
     traincount ++;
-
-    if(traincount>=WINDOW_COUNT){
+     // console.log("~~~~"+JSON.stringify(data))
+    if(traincount >= WINDOW_COUNT){
       traincount = 0;
     console.log("collect 100 data to train by decisionTree");
+    processeddata = processdata(datalist,features,target);
     var c45 = C45(); 
     c45.train({
-        data: datalist,
+        data: processeddata,
         target: target,
         features: features,
         featureTypes: featureTypes
@@ -79,33 +79,39 @@ function MLRegressionTrain(data){
         console.error(error);
         return false;
       }  
-      console.log("TRAIN Multiple Linear Regression MODEL",c45.toJSON())   
+      console.log("MULTIPLELINEAR_REGRESSION model"+ model.toJSON());
+      console.log("MULTIPLELINEAR_REGRESSION MODEL",c45.toJSON());
       //pubsub.publish(publish_topic,c45.toJSON()); no pubsub to make it stateless for prediction
       fs.writeFileSync(MODEL_FILE_PATH, c45.toJSON());
     });
-
   }
-
 }
 
 
-// function decisionTreePredict(){
-//     var c45 = C45();
-//     var decisionTree = require(MODEL_FILE_PATH);
-//     c45.restore(decisionTree)
-//     var model = c45.getModel();
-//     //where to grab testdata
-//     var testData = ('./testData.json');
 
-//     testData.forEach(function(element){
-//       //write to mttq
-//        console.log(model.classify(element));
-//     });
+function processdata(datalist,features,target){
+var resultdata =[];
 
-// }
+datalist.forEach(function(element){
+  var newdatalist = [];
+  features.forEach(function(key){
+   newdatalist.push(element[key]);
+  })
+  newdatalist.push(element[target]);
+  resultdata.push(newdatalist);
+});
+
+resultdata.forEach(function(array){
+  console.log("lalala"+array);
+});
+return resultdata;
+}
+
+
+
 
 pubsub.on('ready', function(){
   setup();
   console.log('Beginning training by decisiontree');
-  pubsub.subscribe(pubsub_topic, MLRegressionTrain);
+  pubsub.subscribe(pubsub_topic, MultiLinearRegressionTrain);
 });
