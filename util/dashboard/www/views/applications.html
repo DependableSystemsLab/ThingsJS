@@ -1,6 +1,6 @@
 
 <div class="row">
-	<div class=" col-md-6"> 
+	<div class=" col-md-5"> 
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				List of Code
@@ -18,7 +18,7 @@
 		</div>
 	 </div> 
 
-			<div class=" col-md-6"> 
+			<div class=" col-md-7"> 
 		<div class="panel panel-default">
 			<div class="panel-heading" >
 		Selected Components 
@@ -28,14 +28,14 @@
 			<div class="dashboard-device-list">
 			<li ng-repeat="code in $view.code_selection track by $index"
 				class="list-group-item">
-				{{ code }} &emsp;&emsp; Number of instances: <input id="instance" type="text" maxlength="10" size="4" ng-model="instanceNumber[$index]" ng-change="$view.instanceChange(code,instanceNumber[$index])"/>
-
+				{{ code }} &emsp; num_instances: <input id="instance" type="text" maxlength="10" size="4" ng-model="instanceNumber[$index]" >
+				&emsp; required_memory: <input id="instance_memory" type="text" maxlength="10" size="4" ng-model="requiredMemory[$index]" ng-change="$view.instanceChange(code,instanceNumber[$index],requiredMemory[$index])"/>
 				<button class="btn btn-danger btn-xs pull-right" ng-click=$view.removeCode(code)> remove </button> 	
 
 			</li>
 			{{instanceNumber1}}
 				Name:<input id="appname" type="text" maxlength="60" size="10" ng-model="appName"/>
-				<button style="text-align:center" class="btn btn-primary pull-right" ng-click=$view.generateApp(appName) onclick="document.getElementById('appname').value = ''" >Confirm</button>  
+				<button style="text-align:center" class="btn btn-primary pull-right" ng-click="$view.generateApp(appName)" onclick="document.getElementById('appname').value = ''" >Confirm</button>  
 			</div>
 			</div>
 		</div>			
@@ -55,8 +55,8 @@
 				{{ appName }}
 				 &emsp;
 				 <a ui-sref="app_component({app_name:appName,app_content:$view.app_dir.children[appName].content})" > Detailed Components </a> 
-				<button class="btn btn-danger btn-xs pull-right" style="margin-right: 50px;" > stop </button> 
-				   <button class="btn btn-success btn-xs pull-right" style="margin-right: 50px;"> start </button>  
+				<button class="btn btn-danger btn-xs pull-right" style="margin-right: 50px;"  ng-click = "$view.stopApplication($view.app_dir.children[appName].content)"> stop </button> 
+				   <button class="btn btn-success btn-xs pull-right" style="margin-right: 50px;" ng-click = "$view.runApplication($view.app_dir.children[appName].content,appName)" > start </button>  
 			</li>
 			</div>
 			</div>

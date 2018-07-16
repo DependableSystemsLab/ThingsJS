@@ -104,14 +104,21 @@ FSServer.prototype._init = function(){
 				// console.log(node);
 				if (req.body.type === 'file'){
 					if (req.body._id){
+						console.log("jump to here~~~"+req.body._id);
 						FSObject.findByIdAndUpdate(req.body._id, {
 							name: req.body.name,
 							content: req.body.content
 						}, {
 							new: true
 						}).exec(function(err, file){
-								if (err) res.json({ result: 'error', error: err });
-								else res.json({ result: 'success', data: file });
+								if (err) {
+									console.log("write file error" + err);
+									res.json({ result: 'error', error: err });
+								}
+								else{
+									console.log("write file succeed" + file);
+									res.json({ result: 'success', data: file });
+								} 
 							})
 					}
 					else {
@@ -122,8 +129,15 @@ FSServer.prototype._init = function(){
 							content: req.body.content
 						});
 						file.save(function(err){
-							if (err) res.json({ result: 'error', error: err });
-							else res.json({ result: 'success', data: file });
+							if (err){
+								console.log("write file error" + err);
+								 res.json({ result: 'error', error: err });
+
+							} 
+							else{
+								console.log("write file succeed" + file);
+								res.json({ result: 'success', data: file });
+							} 
 						})
 					}
 				}

@@ -173,9 +173,12 @@ dashApp.constant("CONFIG", {
 					console.log(self.code_selection);
 				}
 
-				self.instanceChange = function(code,instanceNumber){
+				self.instanceChange = function(code,instanceNumber,required_memory){
 					console.log("code:"+instanceNumber);
-					self.app_content[code]=instanceNumber;
+					var component_detail ={};
+					component_detail["num_instances"] = instanceNumber;
+					component_detail["required_memory"] = required_memory;
+					self.app_content[code]= component_detail;
 				}
 
 				self.generateApp =  function(name){			
@@ -184,9 +187,16 @@ dashApp.constant("CONFIG", {
 				//save to file system
 				//how to avoid duplicate??
 				var app_content = new Application(id,name,self.app_content);
-				var app = 
-				{'name' : name,
-				'content':JSON.stringify(app_content)};
+				// var content = {"setup_content":app_content,"detail_content":{}}
+				var content = {};
+				content["setup_content"] = app_content;
+				content["detail_content"] = {"233":"just a test"};
+				console.log("********content"+ JSON.stringify(content));
+				var app = {
+				    'name': name,
+				    'content': JSON.stringify(content),
+				    'type': 'file'
+				};
 			    self.saveFile(app);
 			    // console.log(json_file);
 			    self.code_selection =[];
@@ -203,7 +213,6 @@ dashApp.constant("CONFIG", {
 				// initialize view
 				$scope.$repo.makeDir(self.cur_path, "application")
 						.then(function(dir){
-							console.log("lsfda;ssaa");
 							console.log("directory saved", dir);
 							self.refresh();
 						});
@@ -220,9 +229,12 @@ dashApp.constant("CONFIG", {
 
 
 			//send runapplication detail 
-			self.runApplication = function(app){
-				dashboard.pubsub.publish("runApplication",app);
-				//sample app format 
+			self.runApplication = function(app_data, app_name){
+				var updateDetail = {};
+				console.log("pubsub publish runApplication" + JSON.parse(app_data)["setup_content"])
+				dashboard.pubsub.publish("runApplication", JSON.parse(app_data)["setup_content"]);
+
+						//sample app format 
 				// {
 				//     "name": "app1.json",
 				//     "id": "fnsdiolsa",
@@ -232,33 +244,49 @@ dashApp.constant("CONFIG", {
 				//     }
 				// }
 
+				// dashboard.pubsub.subscribe("applicationDetails",function(appdetail){
+				//	if (appdetail["id"] === JSON.parse(app_data)["setup_content"]["id"]) {
+					    var responseBody = {
+					        "Factorial.js": ["ABCDEFG", "DKJFSDR"],
+					        "Test.js": ["skERRR", "SDFKSADF"]
+					    }
+					    //console.log("+++++jump to " + app_name + "subscribe"); appdetail["Instances"]
+					    var newArray = [];
+					    Object.keys(responseBody).forEach(function(code_name) {
+					        responseBody[code_name].forEach(function(instance) {
+					            var code = { "code_name": code_name, "instance_id": instance };
+					            newArray.push(code)
+					        })
+					    });
+					    updateDetail = {"instances": newArray};
+
+				//}
+				// 	console.log("received all instance id for components" + appdetail);
+
+
+				JSON.parse(self.app_dir.children[app_name].content)["detail_content"] = updateDetail;
+
+				var content = {};
+				content["setup_content"] = JSON.parse(app_data)["setup_content"];
+				content["detail_content"] = updateDetail;
+				var updated_app = {
+				    'name': app_name,
+				    'content': JSON.stringify(content),
+				    'type': 'file'
+				};
+				updated_app["_id"] = self.app_dir.children[app_name]._id;
+				self.saveFile(updated_app);
+		
 
 
 			};
 
-			self.getAppDetails = function(){
-				dashboard.pubsub.subscribe("applicationDetails",function(appdetail{
-					// update app info
-					//sample info:
-					// 					{ id: “fnsdiolsa”, 
-					// 	“Instances”: {
-					// 		“Factorial.js”: [“ABCDEFG, DKJFSDR”],
-					// 		“Test.js”: [“skERRR”, “SDFKSADF”]
-					// 	}
-					// }
-
-				}))
-			}
-
-			self.stopApplication = function(appwithdetail){
-				dashboard.pubsub.publish("stopApplication",appwithdetail);
+			self.stopApplication = function(app_detail){
+				console.log("pubsub publish stopApplication" + JSON.parse(app_detail)["detail_content"]["instances"])
+				dashboard.pubsub.publish("stopApplication",JSON.parse(app_detail)["detail_content"]["instances"]);
 				//sampleinfo
 				//[{code_name: ‘one.js’, instance_id: ‘ABC’}, {code_name:__, instance_id:__},...]
-			}
-
-
-
-
+				};
 			}],
 			controllerAs: '$view',
 			templateUrl: 'views/applications.html'
@@ -275,9 +303,7 @@ dashApp.constant("CONFIG", {
 				$scope.$repo = CodeRepository.get();
 				$scope.$app_name = $stateParams.app_name;
 				$scope.$app_content = $stateParams.app_content;
-				// self.app_code = {};
 				console.log($scope.$app_content);
-
 
 			}],
 			controllerAs: '$view',
@@ -315,7 +341,7 @@ dashApp.constant("CONFIG", {
 				}
 
 				//access file system
-				$scope.repo = CodeRepository.get();
+				$scope.$repo = CodeRepository.get();
 				$scope.$dash = dashboard;
 				// $scope.schedule = Schedule.get();
 
@@ -334,6 +360,7 @@ dashApp.constant("CONFIG", {
 					// 		self.cur_path_tokens = self.cur_path.split('/').slice(1);
 					// 		$scope.$apply();
 					// 	})
+
 					$scope.$repo.get(self.schedule_path)
 						.then(function(fsObject){
 							console.log("schedule_path");
@@ -342,20 +369,32 @@ dashApp.constant("CONFIG", {
 							self.schedule_path_tokens = self.schedule_path.split('/').slice(1);
 							$scope.$apply();
 						})
+					// console.log("schedule length"+ self.)
+
 				}
 
 
-				self.getSchedule = function(scheduleName){
-					$scope.$repo.get(joinPath(self.schedule_path,scheduleName+".json"))
-						.then(function(file){
-							console.log("file get", file);
-							self.cur_schedule_selection._id = file._id;
-							self.cur_schedule_selection.name = file.name;
-							self.cur_schedule_selection.content = file.content;
+				self.getSchedule = function(dir_name,scheduleName){
+					// self.navigateTo(dir_name);
+					var schedule_name = scheduleName + ".json";
+					return $scope.$repo.get(joinPath(self.schedule_path,dir_name))
+						.then(function(dir){
+							console.log("dir get", dir);	 
+							self.cur_schedule_selection._id = dir.children[schedule_name]["_id"];
+							self.cur_schedule_selection.name = dir.children[schedule_name].name;
+							self.cur_schedule_selection.content = dir.children[schedule_name].content;
 							console.log("schedule content" + self.cur_schedule_selection.content);
 							self.refresh();
+							console.log("233"+self.cur_schedule_selection.content);
+							return new Schedule(scheduleName,JSON.parse(self.cur_schedule_selection.content)); 
 						});
+
+					// 	console.log("233"+self.cur_schedule_selection.content );
+					// return new Schedule(scheduleName,self.cur_schedule_selection.content); 
+					
 				}
+
+				
 
 				var schedule1 =  { 'pi0-1': [ 'fractorial.js/0', 'shade-contr.js/1' ],
 					'pi3-3': [ 'sprinkler.js/1', 'shade-contr.js/2' ],
@@ -384,7 +423,7 @@ dashApp.constant("CONFIG", {
 
 			function Schedule(id,data){ 
    				this.id = id;
-			    
+			    console.log("data to be parsed" + data);
         		this.devices ={}; 
         		var that = this;
 			    Object.keys(data).forEach(function(element){
@@ -400,10 +439,21 @@ dashApp.constant("CONFIG", {
 			}
 
 				$scope.$schedules = {};
-				$scope.$schedules['currentschedule'] = new Schedule('currentschedule',currentschedule);
-				$scope.$schedules['schedule1'] = new Schedule('schedule1',schedule1);
-				$scope.$schedules['schedule2'] = new Schedule('schedule2',schedule2);
+				self.getSchedule("current","current").then(function(data){
+					$scope.$schedules["current"] = data; 
+
+				});
+				//iterate history folder 
+				self.getSchedule("history","1").then(function(data){
+					$scope.$schedules["1"] = data; 
+				});
+
+				// $scope.$schedules["current"] = self.getSchedule("/current","current");
+				//$scope.$schedules['currentschedule'] = new Schedule('currentschedule',currentschedule);
+				// $scope.$schedules['schedule1'] = new Schedule('schedule1',schedule1);
+				// $scope.$schedules['schedule2'] = new Schedule('schedule2',schedule2);
 			
+
 
 				$scope.$scheduleArray = Object.keys($scope.$schedules).map(function (key) { return $scope.$schedules[key]; });
 				
@@ -411,6 +461,7 @@ dashApp.constant("CONFIG", {
   				$scope.sortReverse  = false;  // set the default sort order
   				$scope.search   = '';     // set the default search/filter term  
 
+  				//subscribe update channel !
 
 
 				self.refresh();
