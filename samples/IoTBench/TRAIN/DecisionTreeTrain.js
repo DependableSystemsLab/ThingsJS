@@ -84,7 +84,9 @@ function decisionTreeTrain(data){
       console.log("TRAIN DECISION TREE MODEL",c45.toJSON());
       //pubsub.publish(publish_topic,c45.toJSON()); no pubsub to make it stateless for prediction
       fs.writeFileSync(MODEL_FILE_PATH, c45.toJSON());
+
     });
+    datalist = [];
   }
 }
 

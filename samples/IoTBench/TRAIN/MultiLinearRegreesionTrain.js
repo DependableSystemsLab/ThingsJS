@@ -56,54 +56,52 @@ function MultiLinearRegressionTrain(data){
 
     // fs.writeFileSync("./parseddata2.json",data);
     var features = [ "trip_time_in_secs", "trip_distance", "pickup_longitude",
-    "pickup_latitude", "dropoff_longitude", "dropoff_latitude","payment_type"];
-    var target = "fare_amount"
-    var featureTypes = ["number","number","number","number","number","number","category"];
-
+    "pickup_latitude", "dropoff_longitude", "dropoff_latitude"];
+    var target = "fare_amount";
+    var featureTypes = ["number","number","number","number","number","number"];
+    var feature_data = [];
+    var target_data = [];
     datalist.push(data);
     console.log("length of data" + datalist.length );
     traincount ++;
-     // console.log("~~~~"+JSON.stringify(data))
+
     if(traincount >= WINDOW_COUNT){
       traincount = 0;
     console.log("collect 100 data to train by decisionTree");
-    processeddata = processdata(datalist,features,target);
-    var c45 = C45(); 
-    c45.train({
-        data: processeddata,
-        target: target,
-        features: features,
-        featureTypes: featureTypes
-    }, function(error, model) {
-      if (error) {
-        console.error(error);
-        return false;
-      }  
-      console.log("MULTIPLELINEAR_REGRESSION model"+ model.toJSON());
-      console.log("MULTIPLELINEAR_REGRESSION MODEL",c45.toJSON());
-      //pubsub.publish(publish_topic,c45.toJSON()); no pubsub to make it stateless for prediction
-      fs.writeFileSync(MODEL_FILE_PATH, c45.toJSON());
+    feature_data = processdata(datalist,features);
+    datalist.forEach(function(element){
+      var newArray = [];
+      newArray.push(Number(element[target]));
+      target_data.push(newArray);
     });
+    console.log("TARGET_DATA" + target_data);
+
+    var mlr = new MLR(feature_data, target_data);
+    console.log(mlr);
+    console.log('\n\n\n');
+    var weights = mlr.weights;
+    console.log(weights);
+      //pubsub.publish(publish_topic,c45.toJSON()); no pubsub to make it stateless for prediction
+    fs.writeFileSync(MODEL_FILE_PATH, JSON.stringify(weights));
+    datalist = [];
   }
 }
 
 
 
-function processdata(datalist,features,target){
+function processdata(datalist,features){
 var resultdata =[];
 
 datalist.forEach(function(element){
   var newdatalist = [];
   features.forEach(function(key){
-   newdatalist.push(element[key]);
+   newdatalist.push(Number(element[key]));
   })
-  newdatalist.push(element[target]);
   resultdata.push(newdatalist);
 });
 
-resultdata.forEach(function(array){
-  console.log("lalala"+array);
-});
+
+console.log(resultdata);
 return resultdata;
 }
 

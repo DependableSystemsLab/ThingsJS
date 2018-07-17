@@ -26,11 +26,11 @@ function setup(){
   try{
     properties = JSON.parse(fs.readFileSync(args[0], 'utf-8'));
 
-    USE_MSG_FIELD_LIST = properties['CLASSIFICATION.DECISION_TREE.USE_MSG_FIELD_LIST'];
-    USE_MSG_FIELD = properties['CLASSIFICATION.DECISION_TREE.USE_MSG_FIELD']||0;
+    USE_MSG_FIELD_LIST = properties['PREDICT.MULTIPLELINEAR_REGRESSION.USE_MSG_FIELD_LIST'];
+    USE_MSG_FIELD = properties["PREDICT.MULTIPLELINEAR_REGRESSION.USE_MSG_FIELD"]||0;
     SAMPLE_HEADER = properties["CLASSIFICATION.DECISION_TREE.SAMPLE_HEADER"];
-    MODEL_FILE_PATH = properties['CLASSIFICATION.DECISION_TREE.MODEL_PATH'];
-    MODEL_UPDATE_FREQUENCY = properties["CLASSIFICATION.DECISION_TREE.TRAIN.MODEL_UPDATE_FREQUENCY"];
+    MODEL_FILE_PATH = properties["PREDICT.MULTIPLELINEAR_REGRESSION.MODEL_PATH"];
+    MODEL_UPDATE_FREQUENCY = properties["PREDICT.MULTIPLELINEAR_REGRESSION.TRAIN.MODEL_UPDATE_FREQUENCY"];
     console.log("USE_MSG_FIELD" + USE_MSG_FIELD);
     console.log("SAMPLE_HEADER" + SAMPLE_HEADER);
     console.log("MODEL_FILE_PATH" + MODEL_FILE_PATH);
@@ -48,31 +48,39 @@ function setup(){
 }
 
 
-function decisionTreePred(data) {
-    console.log(" " + JSON.stringify(data))
+function MultiLinearRegressionPred(data) {
+    console.log(" " + JSON.stringify(data));
     var processeddata =[];
     var features = ["trip_time_in_secs", "trip_distance", "pickup_longitude",
-        "pickup_latitude", "dropoff_longitude", "dropoff_latitude", "payment_type"];
+        "pickup_latitude", "dropoff_longitude", "dropoff_latitude"];
+    var target = "fare_amount";
+    fs.readFile(MODEL_FILE_PATH,function(err,weights){
+    if (err) {
+        console.error(err);
+        return false;
+      }
+    weights = JSON.parse(weights);
+    console.log("FETCHED WEIGHTS" + weights);
     features.forEach(function(key) {
-        processeddata.push(data[key]);
+        processeddata.push(Number(data[key]));
     });
-    console.log("lalalalal" + processeddata);
+    processeddata.push(1);
     
-    var c45 = C45();
-    var state = require(MODEL_FILE_PATH);
-    c45.restore(state)
-    var model = c45.getModel();
-    pubsub.publish(publish_topic, model.classify(processeddata));
-    console.log("PREDICT RESULT : " + model.classify(processeddata));
+    var result = 0; 
+    var i;
+    for(i = 0; i < processeddata.length;i++){
+        result += processeddata[i]* weights[i]
+      }
+    pubsub.publish(publish_topic, result);
+    console.log("PREDICT RESULT : " + result); 
+    console.log("TRUE RESULT:" +data[target]);
+    });
+
 }
-
-
-
-
 
 
 pubsub.on('ready', function(){
   setup();
-  console.log('Beginning training by decisiontree');
-  pubsub.subscribe(pubsub_topic, decisionTreePred);
+  console.log('Beginning prediction by multivariate linear regression');
+  pubsub.subscribe(pubsub_topic, MultiLinearRegressionPred);
 });

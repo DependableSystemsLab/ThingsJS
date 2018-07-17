@@ -229,56 +229,57 @@ dashApp.constant("CONFIG", {
 
 
 			//send runapplication detail 
-			self.runApplication = function(app_data, app_name){
-				var updateDetail = {};
-				console.log("pubsub publish runApplication" + JSON.parse(app_data)["setup_content"])
-				dashboard.pubsub.publish("runApplication", JSON.parse(app_data)["setup_content"]);
+			self.runApplication = function(app_data, app_name) {
+			    var updateDetail = {};
+			    console.log("pubsub publish runApplication" + JSON.parse(app_data)["setup_content"])
+			    dashboard.pubsub.publish("runApplication", JSON.parse(app_data)["setup_content"]);
 
-						//sample app format 
-				// {
-				//     "name": "app1.json",
-				//     "id": "fnsdiolsa",
-				//     "components": {
-				//         "Factorial.js": { num_instances: 3, required_memory: 500000 },
-				//         “Test.js” { num_instances: 5, required_memory: 2394832948234 }
-				//     }
-				// }
+			    //sample app format 
+			    // {
+			    //     "name": "app1.json",
+			    //     "id": "fnsdiolsa",
+			    //     "components": {
+			    //         "Factorial.js": { num_instances: 3, required_memory: 500000,  },
+			    //         “Test.js” { num_instances: 5, required_memory: 2394832948234 }
+			    //     }
+			    // }
+			    var APPLICATION_DETAIL = "applicationDetails/" + JSON.parse(app_data)["setup_content"]["id"];
+			    dashboard.pubsub.subscribe(APPLICATION_DETAIL, function(topic, appdetail) {
+			        // console.log("subscribe channel" + topic + '\n\n');
+			        console.log("appdetail" + JSON.stringify(appdetail));
+			        console.log("appData" + JSON.stringify(app_data));
+			        alert(JSON.stringify(appdetail)+"\n"+ "EXPECTED ID" + JSON.parse(app_data)["setup_content"]["id"]+"\n"+"RECEVIED ID" + appdetail["id"]);
+			        // console.log("EXPECTED ID" + JSON.parse(app_data)["setup_content"]["id"]);
+			        // console.log("RECEVIED ID" + appdetail["id"]);
+			        if (appdetail["id"] === JSON.parse(app_data)["setup_content"]["id"]) {
+			            // var responseBody = {
+			            //     "Factorial.js": ["ABCDEFG", "DKJFSDR"],
+			            //     "Test.js": ["skERRR", "SDFKSADF"]
+			            // }
+			            console.log("+++++jump to " + app_name + "subscribe");
+			            appdetail["instances"]
+			            var newArray = [];
+			            Object.keys(appdetail["instances"]).forEach(function(code_name) {
+			                appdetail["instances"][code_name].forEach(function(instance) {
+			                    var code = { "code_name": code_name, "instance_id": instance };
+			                    newArray.push(code)
+			                })
+			            });
+			            updateDetail = { "instances": newArray };
+			        }
 
-				// dashboard.pubsub.subscribe("applicationDetails",function(appdetail){
-				//	if (appdetail["id"] === JSON.parse(app_data)["setup_content"]["id"]) {
-					    var responseBody = {
-					        "Factorial.js": ["ABCDEFG", "DKJFSDR"],
-					        "Test.js": ["skERRR", "SDFKSADF"]
-					    }
-					    //console.log("+++++jump to " + app_name + "subscribe"); appdetail["Instances"]
-					    var newArray = [];
-					    Object.keys(responseBody).forEach(function(code_name) {
-					        responseBody[code_name].forEach(function(instance) {
-					            var code = { "code_name": code_name, "instance_id": instance };
-					            newArray.push(code)
-					        })
-					    });
-					    updateDetail = {"instances": newArray};
-
-				//}
-				// 	console.log("received all instance id for components" + appdetail);
-
-
-				JSON.parse(self.app_dir.children[app_name].content)["detail_content"] = updateDetail;
-
-				var content = {};
-				content["setup_content"] = JSON.parse(app_data)["setup_content"];
-				content["detail_content"] = updateDetail;
-				var updated_app = {
-				    'name': app_name,
-				    'content': JSON.stringify(content),
-				    'type': 'file'
-				};
-				updated_app["_id"] = self.app_dir.children[app_name]._id;
-				self.saveFile(updated_app);
-		
-
-
+			        // 	console.log("received all instance id for components" + appdetail);
+			        var content = {};
+			        content["setup_content"] = JSON.parse(app_data)["setup_content"];
+			        content["detail_content"] = updateDetail;
+			        var updated_app = {
+			            'name': app_name,
+			            'content': JSON.stringify(content),
+			            'type': 'file'
+			        };
+			        updated_app["_id"] = self.app_dir.children[app_name]._id;
+			        self.saveFile(updated_app);
+			    });
 			};
 
 			self.stopApplication = function(app_detail){
@@ -368,8 +369,8 @@ dashApp.constant("CONFIG", {
 							self.schedule_dir = fsObject;
 							self.schedule_path_tokens = self.schedule_path.split('/').slice(1);
 							$scope.$apply();
+
 						})
-					// console.log("schedule length"+ self.)
 
 				}
 
@@ -389,11 +390,22 @@ dashApp.constant("CONFIG", {
 							return new Schedule(scheduleName,JSON.parse(self.cur_schedule_selection.content)); 
 						});
 
-					// 	console.log("233"+self.cur_schedule_selection.content );
-					// return new Schedule(scheduleName,self.cur_schedule_selection.content); 
-					
+
 				}
 
+				self.iterateDir = function(dir_name){
+					var files = [];
+					return $scope.$repo.get(joinPath(self.schedule_path,dir_name)).
+					then(function(dir){
+						console.log("dir get", dir);
+						// var files = dir.children;
+						Object.keys(dir.children).forEach(function(schedule_name){
+							console.log("233ITERATION" + dir.children[schedule_name].content);
+							files.push(new Schedule(schedule_name,JSON.parse(dir.children[schedule_name].content)));
+						});
+						return files;
+					});
+				}
 				
 
 				var schedule1 =  { 'pi0-1': [ 'fractorial.js/0', 'shade-contr.js/1' ],
@@ -443,15 +455,16 @@ dashApp.constant("CONFIG", {
 					$scope.$schedules["current"] = data; 
 
 				});
-				//iterate history folder 
-				self.getSchedule("history","1").then(function(data){
-					$scope.$schedules["1"] = data; 
+				
+				self.iterateDir("history").then(function(data){
+					// console.log("#####*****" + data);
+					data.forEach(function(schedule){
+						$scope.$schedules[schedule["id"]] = schedule;
+					});
+				
 				});
 
-				// $scope.$schedules["current"] = self.getSchedule("/current","current");
-				//$scope.$schedules['currentschedule'] = new Schedule('currentschedule',currentschedule);
-				// $scope.$schedules['schedule1'] = new Schedule('schedule1',schedule1);
-				// $scope.$schedules['schedule2'] = new Schedule('schedule2',schedule2);
+
 			
 
 
@@ -462,7 +475,6 @@ dashApp.constant("CONFIG", {
   				$scope.search   = '';     // set the default search/filter term  
 
   				//subscribe update channel !
-
 
 				self.refresh();
 			}],
