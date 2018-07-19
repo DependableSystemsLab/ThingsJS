@@ -30,6 +30,7 @@
       </div>      
     </div>
 </form>
+<div class="form-group"> TIMESTAMP {{$schedules[selectedSchedule].timestamp|date:"medium"}} </div>
 
 <div ng-repeat = "device in $schedules[selectedSchedule].devices track by $index" class="panel panel-default col-md-11">
 	<div class="panel-body" style="min-height:204px;" >
@@ -40,12 +41,14 @@
 				<th>CodeName</th>
 				<th>Instance ID</th>
 
+
 			</tr>
 			</thead>
 				<tbody>
 					<tr ng-repeat="component_id in device.components_id">						
 						<td>{{device.components_name[$index] }}</td>
 						<td>{{component_id }}</td>
+
 					</tr>
 				</tbody>
 			</table>
