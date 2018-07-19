@@ -378,6 +378,7 @@ dashApp.constant("CONFIG", {
                         self.getSchedule = function(dir_name, scheduleName) {
                             // self.navigateTo(dir_name);
                             var schedule_name = scheduleName + ".json";
+                            self.refresh();
                             return $scope.$repo.get(joinPath(self.schedule_path, dir_name))
                                 .then(function(dir) {
                                     console.log("dir get", dir);
@@ -385,16 +386,15 @@ dashApp.constant("CONFIG", {
                                     self.cur_schedule_selection.name = dir.children[schedule_name].name;
                                     self.cur_schedule_selection.content = dir.children[schedule_name].content;
                                     console.log("schedule content" + self.cur_schedule_selection.content);
-                                    self.refresh();
+                                   
                                     console.log("233" + self.cur_schedule_selection.content);
                                     return new Schedule(scheduleName, JSON.parse(self.cur_schedule_selection.content));
                                 });
-
-
                         }
 
                         self.iterateDir = function(dir_name) {
                             var files = [];
+                            self.refresh();
                             return $scope.$repo.get(joinPath(self.schedule_path, dir_name)).
                             then(function(dir) {
                                 console.log("dir get", dir);
@@ -464,6 +464,7 @@ dashApp.constant("CONFIG", {
                         }
 
                         $scope.$schedules = {};
+
                         self.getSchedule("current", "current").then(function(data) {
                             $scope.$schedules["current"] = data;
 

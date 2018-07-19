@@ -29,6 +29,7 @@
 	"CLASSIFICATION.DECISION_TREE.USE_MSG_FIELD":-1,
 	"CLASSIFICATION.DECISION_TREE.USE_MSG_FIELD_LIST": ["trip_time_in_secs", "trip_distance","fare_amount"],
 	"CLASSIFICATION.DECISION_TREE.SAMPLE_HEADER" :["total_amount"],
+	"CLASSIFICATION.DECISION_TREE.TRAIN.RESULT_ATTRIBUTE": ["classified_class"],
 
 
 	"PREDICT.MULTIPLELINEAR_REGRESSION.TRAIN.ARFF_PATH": "/home/shilpa/codespace/riot-bench/modules/tasks/src/main/resources/linearregressionHeaderOnly-TAXI.arff",

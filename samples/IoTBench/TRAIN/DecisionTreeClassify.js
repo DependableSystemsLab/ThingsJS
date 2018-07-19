@@ -13,6 +13,7 @@ var SAMPLE_HEADER;
 var MODEL_FILE_PATH;
 var MODEL_UPDATE_FREQUENCY;
 var WINDOW_COUNT = 10;
+var TRAIN_RESULT_HEADER;
 var traincount;
 var datalist;
 var processeddata;
@@ -34,6 +35,7 @@ function setup() {
         //SAMPLE_HEADER = properties["CLASSIFICATION.DECISION_TREE.SAMPLE_HEADER"];
         MODEL_FILE_PATH = properties['CLASSIFICATION.DECISION_TREE.MODEL_PATH'];
         MODEL_UPDATE_FREQUENCY = properties["CLASSIFICATION.DECISION_TREE.TRAIN.MODEL_UPDATE_FREQUENCY"];
+        TRAIN_RESULT_HEADER = properties["CLASSIFICATION.DECISION_TREE.TRAIN.RESULT_ATTRIBUTE"];
         console.log("USE_MSG_FIELD" + USE_MSG_FIELD);
         //console.log("SAMPLE_HEADER" + SAMPLE_HEADER);
         console.log("MODEL_FILE_PATH" + MODEL_FILE_PATH);
@@ -66,14 +68,21 @@ datalist.push(data);
 
 
 if(traincount>= WINDOW_COUNT){
+        var class = '';
 
-		annotationMap.put(Double.valueOf(percentile.evaluate(25)), "BAD");
-		annotationMap.put(Double.valueOf(percentile.evaluate(50)), "GOOD");
-		annotationMap.put(Double.valueOf(percentile.evaluate(75)), "VERYGOOD");
-		annotationMap.put(Double.valueOf(percentile.evaluate(100)), "EXCELLENT");
+
+
+        datalist.forEach(element){
+            data.put(Double.valueOf(percentile.evaluate(25)), "BAD");
+            annotationMap.put(Double.valueOf(percentile.evaluate(50)), "GOOD");
+            annotationMap.put(Double.valueOf(percentile.evaluate(75)), "VERYGOOD");
+            annotationMap.put(Double.valueOf(percentile.evaluate(100)), "EXCELLENT");
+            element[] = class;
+        }
 		
-		fs.writeFileSync(MODEL_FILE_PATH, classification.toJSON());
-		datalist = [];
+        pubsub.publish(publish_topic,datalist);
+        console.log("CLASSIFIED DATA" + datalist);
+        datalist = [];
 	}
 }
 
