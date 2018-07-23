@@ -4,7 +4,7 @@ var C45 = require('c4.5');
 var things = require('../../../lib/things.js');
 
 var pubsub_url = 'mqtt://localhost';
-var pubsub_topic = 'thingsjs/IoTBench/ETL/SenMLParse';
+var pubsub_topic = 'thingsjs/IoTBench/TRAIN/DecisionTreeClassify';
 var publish_topic = 'thingsjs/IoTBench/TRAIN/DecisionTreeTrain';
 
 var pubsub = new things.Pubsub(pubsub_url);
@@ -12,6 +12,8 @@ var USE_MSG_FIELD_LIST;
 var SAMPLE_HEADER;
 var MODEL_FILE_PATH;
 var MODEL_UPDATE_FREQUENCY;
+var TRAIN_RESULT_HEADER;
+var MODEL_TRAIN_INPUT;
 var WINDOW_COUNT = 10;
 var traincount;
 var datalist;
@@ -30,9 +32,13 @@ function setup(){
 
     USE_MSG_FIELD_LIST = properties['TRAIN.DECISION_TREE.USE_MSG_FIELD_LIST'];
     USE_MSG_FIELD = properties['TRAIN.DECISION_TREE.USE_MSG_FIELD']||0;
-    SAMPLE_HEADER = properties["CLASSIFICATION.DECISION_TREE.SAMPLE_HEADER"];
+    MODEL_TRAIN_INPUT = properties["CLASSIFICATION.DECISION_TREE.SAMPLE_HEADER"];
     MODEL_FILE_PATH = properties['TRAIN.DECISION_TREE.MODEL_PATH'];
     MODEL_UPDATE_FREQUENCY = properties["TRAIN.DECISION_TREE.TRAIN.MODEL_UPDATE_FREQUENCY"];
+    TRAIN_RESULT_HEADER = properties['TRAIN.DECISION_TREE.TARGET'];
+    MODEL_TRAIN_INPUT = properties['TRAIN.DECISION_TREE.TRAIN_INPUT'];
+    MODEL_TRAIN_INPUT_TYPE = properties['TRAIN.DECISION_TREE.TRAIN_INPUT_TYPE'];
+
     console.log("USE_MSG_FIELD" + USE_MSG_FIELD);
     //console.log("SAMPLE_HEADER" + SAMPLE_HEADER);
     console.log("MODEL_FILE_PATH" + MODEL_FILE_PATH);
@@ -53,24 +59,52 @@ function setup(){
 }
 
 
-function decisionTreeTrain(data){
+// function decisionTreeTrain(data){
 
-    fs.writeFileSync("./parseddata.json",data);
-    var features = [ "trip_time_in_secs", "trip_distance", "pickup_longitude",
-    "pickup_latitude", "dropoff_longitude", "dropoff_latitude","payment_type"];
-    var target = "fare_amount"
-    var featureTypes = ["number","number","number","number","number","number","category"];
+//     fs.writeFileSync("./parseddata.json",data);
+//     var features = MODEL_TRAIN_INPUT
+//     var target = TRAIN_RESULT_HEADER;
+//     var featureTypes = MODEL_TRAIN_INPUT_TYPE
 
-    datalist.push(data);
-    console.log("length of data" + datalist.length );
-    traincount ++;
-     // console.log("~~~~"+JSON.stringify(data))
-    if(traincount >= WINDOW_COUNT){
-      traincount = 0;
-    console.log("collect 100 data to train by decisionTree");
-    processeddata = processdata(datalist,features,target);
-    var c45 = C45(); 
-    c45.train({
+//     datalist.push(data);
+//     console.log("length of data" + datalist.length );
+//     traincount ++;
+//      // console.log("~~~~"+JSON.stringify(data))
+//     if(traincount >= WINDOW_COUNT){
+//       traincount = 0;
+//     console.log("collect 100 data to train by decisionTree");
+//     processeddata = processdata(datalist,features,target);
+//     var c45 = C45(); 
+//     c45.train({
+//         data: processeddata,
+//         target: target,
+//         features: features,
+//         featureTypes: featureTypes
+//     }, function(error, model) {
+//       if (error) {
+//         console.error(error);
+//         return false;
+//       }  
+//       console.log("tree model"+ model.toJSON());
+//       console.log("TRAIN DECISION TREE MODEL",c45.toJSON());
+//       //pubsub.publish(publish_topic,c45.toJSON()); no pubsub to make it stateless for prediction
+//       fs.writeFileSync(MODEL_FILE_PATH, c45.toJSON());
+
+//     });
+//     datalist = [];
+//   }
+// }
+
+
+function decisionTreeTrain(datalist){
+
+      var features = MODEL_TRAIN_INPUT;
+      var target = TRAIN_RESULT_HEADER;
+      var featureTypes = MODEL_TRAIN_INPUT_TYPE;
+
+      processeddata = processdata(datalist,features,target);
+      var c45 = C45(); 
+      c45.train({
         data: processeddata,
         target: target,
         features: features,
@@ -86,10 +120,8 @@ function decisionTreeTrain(data){
       fs.writeFileSync(MODEL_FILE_PATH, c45.toJSON());
 
     });
-    datalist = [];
-  }
-}
 
+} 
 
 
 function processdata(datalist,features,target){
@@ -109,7 +141,6 @@ resultdata.forEach(function(array){
 });
 return resultdata;
 }
-
 
 
 

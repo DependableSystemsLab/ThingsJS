@@ -11,6 +11,8 @@ var USE_MSG_FIELD_LIST;
 var SAMPLE_HEADER;
 var MODEL_FILE_PATH;
 var MODEL_UPDATE_FREQUENCY;
+var TRAIN_INPUT;
+var TRAIN_OUTPUT;
 var WINDOW_COUNT = 10;
 var traincount;
 var datalist;
@@ -32,6 +34,9 @@ function setup(){
     SAMPLE_HEADER = properties["CLASSIFICATION.DECISION_TREE.SAMPLE_HEADER"];
     MODEL_FILE_PATH = properties["PREDICT.MULTIPLELINEAR_REGRESSION.MODEL_PATH"];
     MODEL_UPDATE_FREQUENCY = properties["PREDICT.MULTIPLELINEAR_REGRESSION.TRAIN.MODEL_UPDATE_FREQUENCY"];
+    TRAIN_INPUT = properties["TRAIN.MULTIPLELINEAR_REGRESSION.TRAIN_INPUT"];
+    TRAIN_OUTPUT = properties["TRAIN.MULTIPLELINEAR_REGRESSION.TRAIN_OUTPUT"];
+    TRAIN_INPUT_TYPE = properties["TRAIN.MULTIPLELINEAR_REGRESSION.TRAIN_INPUT_TYPE"];
     console.log("USE_MSG_FIELD" + USE_MSG_FIELD);
     console.log("SAMPLE_HEADER" + SAMPLE_HEADER);
     console.log("MODEL_FILE_PATH" + MODEL_FILE_PATH);
@@ -55,11 +60,9 @@ function setup(){
 function MultiLinearRegressionTrain(data){
 
     // fs.writeFileSync("./parseddata2.json",data);
-    var features = [ "trip_time_in_secs", "trip_distance", "pickup_longitude",
-    "pickup_latitude", "dropoff_longitude", "dropoff_latitude"];
-    var target = "fare_amount";
-    var featureTypes = ["number","number","number","number","number","number"];
-    var feature_data = [];
+    var features = TRAIN_INPUT;
+    var target = TRAIN_OUTPUT;
+    var featureTypes = TRAIN_INPUT_TYPE;
     var target_data = [];
     datalist.push(data);
     console.log("length of data" + datalist.length );

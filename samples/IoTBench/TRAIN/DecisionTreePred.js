@@ -5,13 +5,16 @@ var things = require('../../../lib/things.js');
 
 var pubsub_url = 'mqtt://localhost';
 var pubsub_topic = 'thingsjs/IoTBench/ETL/SenMLParse';  
-var publish_topic = 'thingsjs/IoTBench/TRAIN/decisionTreePred';
+var publish_topic = 'thingsjs/IoTBench/TRAIN/DecisionTreePred';
 
 var pubsub = new things.Pubsub(pubsub_url);
 var USE_MSG_FIELD_LIST; 
 var SAMPLE_HEADER;
 var MODEL_FILE_PATH;
 var MODEL_UPDATE_FREQUENCY;
+var PRED_RESULT_HEADER;
+var MODEL_PRED_INPUT;
+var MODEL_PRED_INPUT_TYPE;
 
 
 
@@ -31,13 +34,17 @@ function setup(){
     SAMPLE_HEADER = properties["CLASSIFICATION.DECISION_TREE.SAMPLE_HEADER"];
     MODEL_FILE_PATH = properties['CLASSIFICATION.DECISION_TREE.MODEL_PATH'];
     MODEL_UPDATE_FREQUENCY = properties["CLASSIFICATION.DECISION_TREE.TRAIN.MODEL_UPDATE_FREQUENCY"];
+    PRED_RESULT_HEADER = properties['PREDICT.DECISION_TREE.TARGET'];
+    MODEL_PRED_INPUT = properties['PREDICT.DECISION_TREE.TRAIN_INPUT'];
+    MODEL_PRED_INPUT_TYPE = properties['PREDICT.DECISION_TREE.TRAIN_INPUT_TYPE'];
+
     console.log("USE_MSG_FIELD" + USE_MSG_FIELD);
     console.log("SAMPLE_HEADER" + SAMPLE_HEADER);
     console.log("MODEL_FILE_PATH" + MODEL_FILE_PATH);
     console.log("MODEL_UPDATE_FREQUENCY" + MODEL_UPDATE_FREQUENCY);
 
     if(!USE_MSG_FIELD_LIST){
-      console.log('No fields to TRAIN');
+      console.log('No fields to PRED');
       process.exit();
     }
   }
@@ -48,11 +55,10 @@ function setup(){
 }
 
 
-function decisionTreePred(data) {
-    console.log(" " + JSON.stringify(data))
+function DecisionTreePred(data) {
+    console.log(" " + JSON.stringify(data));
     var processeddata =[];
-    var features = ["trip_time_in_secs", "trip_distance", "pickup_longitude",
-        "pickup_latitude", "dropoff_longitude", "dropoff_latitude", "payment_type"];
+    var features = MODEL_PRED_INPUT;
     features.forEach(function(key) {
         processeddata.push(data[key]);
     });
@@ -64,6 +70,7 @@ function decisionTreePred(data) {
     var model = c45.getModel();
     pubsub.publish(publish_topic, model.classify(processeddata));
     console.log("PREDICT RESULT : " + model.classify(processeddata));
+
 }
 
 
@@ -74,5 +81,5 @@ function decisionTreePred(data) {
 pubsub.on('ready', function(){
   setup();
   console.log('Beginning training by decisiontree');
-  pubsub.subscribe(pubsub_topic, decisionTreePred);
+  pubsub.subscribe(pubsub_topic, DecisionTreePred);
 });

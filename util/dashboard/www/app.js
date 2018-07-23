@@ -237,10 +237,7 @@ dashApp.constant("CONFIG", {
                                 dashboard.pubsub.subscribe(APPLICATION_DETAIL, function(topic, appdetail) {
                                     console.log("appdetail" + JSON.stringify(appdetail));
                                     console.log("appData" + JSON.stringify(app_data));
-                                    alert(JSON.stringify(appdetail) + "\n" + "EXPECTED ID" + JSON.parse(app_data)["setup_content"]["id"] + "\n" + "RECEVIED ID" + appdetail["id"]);
-                                    // console.log("EXPECTED ID" + JSON.parse(app_data)["setup_content"]["id"]);
-                                    // console.log("RECEVIED ID" + appdetail["id"]);
-                                    // var responseBody = {
+                                    alert(JSON.stringify(appdetail) + "\n" + "EXPECTED ID" + JSON.parse(app_data)["setup_content"]["id"] + "\n" + "RECEVIED ID" + appdetail["id"]);                                    // var responseBody = {
                                     //     "Factorial.js": ["ABCDEFG", "DKJFSDR"],
                                     //     "Test.js": ["skERRR", "SDFKSADF"]
                                     // }
@@ -344,6 +341,9 @@ dashApp.constant("CONFIG", {
                         //access file system
                         $scope.$repo = CodeRepository.get();
                         $scope.$dash = dashboard;
+                        $scope.Math = window.Math;
+                        $scope.$scheduleArray = [];
+                        var SCHEDULE_UPDATE_TOPIC = 'scheduleUpdate';
                         // $scope.schedule = Schedule.get();
 
                         self.cur_path = "/"; // tentative path
@@ -371,7 +371,6 @@ dashApp.constant("CONFIG", {
                                     $scope.$apply();
 
                                 })
-
                         }
 
 
@@ -407,37 +406,26 @@ dashApp.constant("CONFIG", {
                             });
                         }
 
+                        var schedule1 = {
+                            'pi0-1': ['fractorial.js*0', 'shade-contr.js*1'],
+                            'pi3-3': ['sprinkler.js*1', 'shade-contr.js*2']};
+                        
 
-                        // var schedule1 = {
-                        //     'pi0-1': ['fractorial.js/0', 'shade-contr.js/1'],
-                        //     'pi3-3': ['sprinkler.js/1', 'shade-contr.js/2'],
-                        //     'pi3-1': ['sprinkler.js/2', 'shade-contr.js/3'],
-                        //     'pi3-2': ['sprinkler.js/3', 'temp-reg.js/0'],
-                        //     'i7-1': ['shade-contr.js/0', 'temp-reg.js/1']
-                        // };
+                        var schedule2 = {
+                            'pi3-1': ['sprinkler.js*2', 'shade-contr.js*3'],
+                            'pi3-2': ['sprinkler.js*3', 'temp-reg.js*0'],
+                            'i7-1': ['shade-contr.js*0', 'temp-reg.js*1']};
 
-                        // var schedule2 = {
-                        //     'pi0-1': ['sprinkler.js/2', 'shade-contr.js/1'],
-                        //     'pi3-3': ['sprinkler.js/1', 'shade-contr.js/2'],
-                        //     'pi3-1': ['sprinklertest.js/28', 'shade-contr.js/3'],
-                        //     'pi3-2': ['sprinkler.js/32', 'temp-regettd.js/0'],
-                        //     'i7-1': ['shade-contr.js/09', 'temp-reg.js/12']
-                        // };
-
-                        // var currentschedule = {
-                        //     'pi0-21': ['sprinkler.js/27', 'shade-test.js/12'],
-                        //     'pi3-3': ['sprinkler.js/1', 'shade-contr.js/2'],
-                        //     'pi3-12': ['sprinklertest.js/28', 'shade-contr.js/3'],
-                        //     'pi3-2': ['sprinkler.js/32', 'temp-regettd.js/0'],
-                        //     'i7-1': ['shade-contr.js/89', 'temp-reg.js/12']
-                        // };
+                        var schedule3 = {
+                            'pi3-1': ['sprinkler.js*2', 'shade-contr.js*3'],
+                            'pi3-2': ['sprinkler.js*3', 'temp-reg.js*0'],
+                            'i7-8': ['shade-contr.js*0', 'temp-reg.js*9']};
 
                         function Device(device_id, components_id, components_name) {
                             this.device_id = device_id;
                             this.components_id = components_id;
                             this.components_name = components_name;
                         }
-
 
                         function Schedule(id, data) {
                             this.id = id;
@@ -452,45 +440,185 @@ dashApp.constant("CONFIG", {
                                 var id_array = [];
                                 var name_array = [];
                                 data[element].forEach(function(ele) {
-                                    // console.log(ele.split(".js/")[1]);
                                     id_array.push(ele.split("*")[1]);
                                     name_array.push(ele.split("*")[0]);
                                 })
                                 that.devices[element] = new Device(element, id_array, name_array);
                             });
-
                             console.log("devices" + JSON.stringify(this.devices));
-                            console.log("timestamp"+ this.timestamp);
-                        }
+                            console.log("timestamp" + this.timestamp);
+                            }
 
-                        $scope.$schedules = {};
+                        function OperationSchedule(data) {
+                                  console.log("data to be parsed" + data);
+                                  this.devices = {};
+                                  var that = this;
+                                  Object.keys(data).forEach(function(element) {
+                                      var id_array = [];
+                                      var name_array = [];
+                                      data[element].forEach(function(ele) {
+                                          // console.log(ele.split(".js/")[1]);
+                                          id_array.push(ele.split("*")[1]);
+                                          name_array.push(ele.split("*")[0]);
+                                      })
+                                      that.devices[element] = new Device(element, id_array, name_array);
+                                  });
+                         }
 
-                        self.getSchedule("current", "current").then(function(data) {
-                            $scope.$schedules["current"] = data;
+                            function Operation(data) {
+                                //how to handle empty data;
+                                var run = data["run"];
+                                var stop = data["stop"];
+                                var migrate = data["migrate"];
+                                this.run_schedule = new OperationSchedule(run);
+                                this.stop_schedule = new OperationSchedule(stop);
+                                console.log("components", this.run_schedule.devices);
+                                this.migrate_content = {};
+                                var that = this;
+                                Object.keys(migrate).forEach(function(components_detail) {
+                                    var from_device = migrate[components_detail]["from"];
+                                    var to_device = migrate[components_detail]["to"];
+                                    var instance_id = components_detail.split("*")[1];
+                                    var code_name = components_detail.split("*")[0];
+                                    console.log(code_name + ":" + instance_id + " migrate " + from_device + "--> " +
+                                        to_device);
+                                    that.migrate_content[components_detail]={"from":from_device,"to":to_device} 
+                                });
+                            }
 
-                        });
+                            $scope.$schedules = {};
 
                         self.iterateDir("history").then(function(data) {
                             // console.log("#####*****" + data);
                             data.forEach(function(schedule) {
                                 $scope.$schedules[schedule["id"]] = schedule;
                             });
-
+                              $scope.$scheduleArray = Object.keys($scope.$schedules).map(function(key) { return $scope.$schedules[key]; });
                         });
 
+                        self.getSchedule("current", "current").then(function(data) {
+                                $scope.$schedules["current"] = data;
+                                $scope.$scheduleArray = Object.keys($scope.$schedules).map(function(key) { return $scope.$schedules[key]; });
+                            });
 
-
-
-
-                        $scope.$scheduleArray = Object.keys($scope.$schedules).map(function(key) { return $scope.$schedules[key]; });
+                        // $scope.$scheduleArray = Object.keys($scope.$schedules).map(function(key) { return $scope.$schedules[key]; });
+                        // console.log("$scheduleArray" + $scope.$scheduleArray);
 
                         $scope.sortType = 'id'; // set the default sort type
                         $scope.sortReverse = false; // set the default sort order
                         $scope.search = ''; // set the default search/filter term  
-
-                        //subscribe update channel !
+                        // dynamic view 
+                        $scope.changeVersion = 0;
+                        var sample_change = {
+                            "run": { "node_00": ["factorial.js*2"], "node_02": ["factorial.js*4"] },
+                            "stop": { "node_01": ["test.js*1","factorial.js*888","test.js*1","factorial.js*888"]},
+                            "continueRun": { "node_00": ["test.js*1"]},
+                            "migrate": { "factorial.js*4": { "from": "node_00", "to": "node_01" } }
+                        };
+                        var sample_change2 = {
+                            "run": { "node_00": ["test.js*1"], "node_02": ["factorial.js*4"] },
+                            "stop": { "node_01": ["factorial.js*100"]},
+                            "continueRun": { "node_00": ["test.js*1"]},
+                            "migrate": { "factorial.js*4": { "from": "node_00", "to": "node_01" } }
+                        };
+                        var static_schedule_1 = {"node_01": ["test.js*1","factorial.js*888","test.js*1","factorial.js*888"],"node_02": ["test.js*1"], "timestamp": 1532131837843 };
+                        var static_schedule_2 = {"node_00":["factorial.js*2","fractorial.js*4"], "node_01": ["test.js*1"],"timestamp": 1532131837833 };
+                        var static_schedule_3 = {"node_03":["factorial.js*444"], "node_01": ["test.js*1","fractorial.js*4"],"timestamp": 1532141837833 };
+                        $scope.$operationArray = [];
+                        $scope.scheduleArray = [];
 
                         self.refresh();
+                        $scope.$scheduleArray = Object.keys($scope.$schedules).map(function(key) { return $scope.$schedules[key]; });
+                        console.log("$scheduleArray" + $scope.$scheduleArray);
+
+                        dashboard.pubsub.subscribe(SCHEDULE_UPDATE_TOPIC,function(topic,message){
+                            alert( "update operation" + JSON.stringify(message));
+                            //when detect change(){
+                          
+                            var schedule = message['schedule'];
+                     
+                            $scope.$operationArray.push(new Operation(message['operations']));
+                            //use $scope.$scheduleArray
+                            // $scope.scheduleArray.push(new Schedule($scope.changeVersion,message['schedule']));
+                            $scope.changeVersion++;
+                            $scope.$apply();
+                            });
+
+                        self.startRun = function(index,component_id){
+                            console.log("startRun index:" + index);
+                             var result = false;
+                            if(typeof $scope.$operationArray[index] === 'undefined'||$scope.$operationArray[index] === null){
+                                console.log("")
+                                return result;
+                            }
+                            else if(Object.keys($scope.$operationArray[index]).length === 0){
+                                  return result;
+                            } else if(Object.keys($scope.$operationArray[index].run_schedule).length === 0){
+                                return result;
+                            }
+                            var run_devices =  $scope.$operationArray[index].run_schedule.devices;
+                            console.log("BIUBIUBIUT" + JSON.stringify(run_devices));
+                            Object.keys(run_devices).forEach(function(device_id){
+                                if(run_devices[device_id].components_id.includes(component_id)){
+                                    console.log("components" + component_id + "start running");
+                                    result = true;
+                                }
+                            });
+                            return result;
+                        }
+
+
+                        self.stopRun = function(index,component_id){
+                             console.log("startRun index:" + index);
+                             var result = false;
+                            if(typeof $scope.$operationArray[index] === 'undefined'||$scope.$operationArray[index] === null){
+                                return result;
+                            }
+                            else if(Object.keys($scope.$operationArray[index]).length === 0){
+                                  return result;
+                            } else if(Object.keys($scope.$operationArray[index].stop_schedule).length === 0){
+                                return result;
+                            }
+                            var stop_devices =  $scope.$operationArray[index].stop_schedule.devices;
+                            console.log("BIUBIUBIUT" + JSON.stringify(stop_devices));
+                            Object.keys(stop_devices).forEach(function(device_id){
+                                if(stop_devices[device_id].components_id.includes(component_id)){
+                                    console.log("components" + component_id + "start running");
+                                    result = true;
+                                }
+                            });
+                            return result;
+                        }
+
+                        self.migrate = function(index,component_id){
+                            console.log("startRun index:" + index);
+                             var result = "";
+                            if(typeof $scope.$operationArray[index] === 'undefined'||$scope.$operationArray[index] === null){
+                                return result;
+                            }
+                            else if(Object.keys($scope.$operationArray[index]).length === 0){
+                                  return result;
+                            } else if(Object.keys($scope.$operationArray[index].migrate_content).length === 0){
+                                return result;
+                            }
+                            var migrate_content =  $scope.$operationArray[index].migrate_content;
+                            console.log("BIUBIUBIUT" + JSON.stringify(migrate_content));
+                            Object.keys(migrate_content).forEach(function(code_instance){
+                                if(code_instance.split("*")[1] === component_id){
+                                    console.log("components" + component_id + "migrate");
+                                    result = "migrateTo";
+                                }
+                            });
+                            return result;
+                        }
+                        
+                        // $scope.$operationArray.push({});
+                        // $scope.$operationArray.push(new Operation(sample_change));
+                        // $scope.$operationArray.push(new Operation(sample_change2));
+                        // $scope.scheduleArray.push(new Schedule("test1",static_schedule_1));
+                        // $scope.scheduleArray.push(new Schedule("test2",static_schedule_2));
+                        // $scope.scheduleArray.push(new Schedule("test3",static_schedule_3));
+
                     }],
                     controllerAs: '$view',
                     templateUrl: 'views/schedule.html'

@@ -12,17 +12,17 @@
 				</option>
 			</select>
 		</span>
-			<div class="btn-group" ng-init="viewMode = 'device'">
+			<div class="btn-group" ng-init="viewMode = 'time'">
 			<button ng-click="viewMode = 'device'" class="btn btn-default" ng-class="{ active: viewMode === 'device' }">Device-View Mode</button>
 			<button ng-click="viewMode = 'application'" class="btn btn-default" ng-class="{ active: viewMode === 'application' }">Code-View Mode</button>
-
+			<button ng-click = "viewMode = 'time'" class="btn btn-default" ng-class="{ active: viewMode === 'time' }">Time-based Dynamic View</button>
 		</div>
 			</div>
 			<div class="panel-body">
 				<div class="dashboard-program-list">
 
 <div ng-show="viewMode === 'device'">
-				<form>
+		<form>
     <div class="form-group">
       <div class="input-group">
         <div class="input-group-addon"><i class="fa fa-search"></i></div>
@@ -74,8 +74,56 @@
 		<schedule-app-panel ></schedule-app-panel>
 
 		</div>
+
+
+
+
+<div ng-show="viewMode === 'time'">
+
+<div class="panel panel-default col-md-11">
+	<div class="panel-body" style="min-height:204px;" >
+<!-- 		<h4>{{device.device_id}}</h4> -->
+		<table class="table table-bordered" >
+			<tr>
+				<th>Schedule Name</th>
+				<td ng-repeat = "schedule in $scheduleArray track by $index">
+		<!-- 		<div ng-class="{'red': schedule.id === 'test1', 'green': schedule.id === 'test2'}">  -->
+				{{schedule.id}} 
+				 <!-- </div> -->
+			</td>
+			</tr>					
+			<tr>
+				<th>Date&Time</th>
+				<td ng-repeat = "schedule in $scheduleArray track by $index">					
+				{{schedule.timestamp|date:"medium"}}</td>
+			</tr>
+			<tr >   
+			 <!-- rowspan = 2 * max of schedule.devices.length -->
+				<th >Devices</th>
+				<td ng-repeat = "schedule in $scheduleArray track by $index" >
+			<!-- 	<table> -->
+				<div ng-repeat = "device in schedule.devices track by $index" style="border-style: solid;">	
+					<p style = "font-size: 120%; text-decoration: underline">
+				{{device.device_id}} 
+				</p>
+				<br/>
+				<div ng-repeat ="component_id in device.components_id track by $index">
+				<div ng-class = "{'runComponent':$view.startRun($parent.$parent.$index,component_id) === true,'migrateToComponent':$view.migrate($parent.$parent.$index,component_id) === 'migrateTo'}">
+				{{device.components_name[$index]}}:{{component_id}}
 			</div>
-<!-- 			</div>
-		</div>				
+				</div>
+			</div>
+		</td>
+			</tr>
+			</table>
+		</div>
 	</div>
-</div> -->
+</div>	
+</div>
+</div>
+</div>
+
+
+
+
+
