@@ -81,7 +81,7 @@
 <div ng-show="viewMode === 'time'">
 
 <div class="panel panel-default col-md-11">
-	<div class="panel-body" style="min-height:204px;" >
+<!-- 	<div class="panel-body" style="min-height:204px;" > -->
 <!-- 		<h4>{{device.device_id}}</h4> -->
 		<table class="table table-bordered" >
 			<tr>
@@ -98,17 +98,16 @@
 				{{schedule.timestamp|date:"medium"}}</td>
 			</tr>
 			<tr >   
-			 <!-- rowspan = 2 * max of schedule.devices.length -->
 				<th >Devices</th>
 				<td ng-repeat = "schedule in $scheduleArray track by $index" >
-			<!-- 	<table> -->
+
 				<div ng-repeat = "device in schedule.devices track by $index" style="border-style: solid;">	
 					<p style = "font-size: 120%; text-decoration: underline">
-				{{device.device_id}} 
+				{{device.device_id}}
 				</p>
 				<br/>
 				<div ng-repeat ="component_id in device.components_id track by $index">
-				<div ng-class = "{'runComponent':$view.startRun($parent.$parent.$index,component_id) === true,'migrateToComponent':$view.migrate($parent.$parent.$index,component_id) === 'migrateTo'}">
+				<div ng-class = "{'runComponent':$view.startRun($parent.$parent.$index,component_id,$operation) === true,'migrateToComponent':$view.migrate($parent.$parent.$index,component_id,$operation) === 'migrateTo','stopComponent':$view.migrate($parent.$parent.$index,component_id,$operation) === true}">
 				{{device.components_name[$index]}}:{{component_id}}
 			</div>
 				</div>
@@ -116,7 +115,7 @@
 		</td>
 			</tr>
 			</table>
-		</div>
+<!-- 		</div> -->
 	</div>
 </div>	
 </div>
