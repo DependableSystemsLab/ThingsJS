@@ -27,7 +27,7 @@
 	"PREDICT.DECISION_TREE.TARGET" :["classified_class"],
 	"PREDICT.DECISION_TREE.TRAIN_INPUT_TYPE" :["number","number","number"],
 
-	"AVERAGE.MULTIPLELINEAR_REGRESSION" : ["fare_amount"],
+	"AVERAGE.MULTIPLELINEAR_REGRESSION" : "fare_amount",
 
 
 	"CLASSIFICATION.DECISION_TREE.MODEL_PATH" : "./decisionTreeModel.json",
