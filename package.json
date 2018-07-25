@@ -4,7 +4,7 @@
   "description": "Framework for building distribute IoT applications",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test/*test.js --exit"
   },
   "bin": {
     "things-js": "./bin/things-js"
@@ -40,6 +40,7 @@
     "ws": "^5.1.1"
   },
   "devDependencies": {
+    "chai": "^4.1.2",
     "gulp": "^3.9.1",
     "jsdoc": "^3.5.5",
     "mocha": "^5.1.1"
