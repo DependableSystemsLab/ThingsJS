@@ -112,8 +112,15 @@ dashApp.constant("CONFIG", {
                         self.cur_selection = {};
                         self.code_selection = [];
                         self.app_path = '/application';
+                        self.app_proto_path = '/application/prototype';
+                        self.app_instances_path = '/application/instances';
                         self.app_dir = {};
+                        self.app_proto_dir = {};
+                        self.app_proto_token = [];
+                        self.app_instances_dir = {};
+                        self.app_instances_token = [];
                         self.app_content = {};
+                        self.instances_status = {};
 
                         function randKey(length, charset) {
                             var text = "";
@@ -125,11 +132,16 @@ dashApp.constant("CONFIG", {
                             return text;
                         }
 
-                        function Application(id, name, components) {
-                            this.name = name;
-                            this.id = id;
-                            this.components = components;
+                        function joinPath(p1, p2) {
+                            if (p1[p1.length - 1] === '/') p1 = p1.substring(0, p1.length - 1);
+                            if (p2[0] === '/') p2 = p2.substring(1);
+                            return p1 + '/' + p2;
+                        }
 
+
+                        function ApplicationPrototype( name, components) {
+                            this.name = name;
+                            this.components = components;
                         }
 
                         function remove(array, element) {
@@ -139,19 +151,44 @@ dashApp.constant("CONFIG", {
                         self.refresh = function() {
                             $scope.$repo.get(self.cur_path)
                                 .then(function(fsObject) {
+                                    console.log("currpath");
                                     console.log(fsObject);
                                     self.cur_dir = fsObject;
                                     self.cur_path_tokens = self.cur_path.split('/').slice(1);
                                     $scope.$apply();
-                                })
-                            $scope.$repo.get(self.app_path)
+                                });
+                            // $scope.$repo.get(self.app_path)
+                            //     .then(function(fsObject) {
+                            //         console.log("apppath");
+                            //         console.log(fsObject);
+                            //         self.app_dir = fsObject;
+                            //         self.app_path_tokens = self.app_path.split('/').slice(1);
+                            //         $scope.$apply();
+                            //     });
+                            $scope.$repo.get(self.app_path + "/prototype")
                                 .then(function(fsObject) {
-                                    console.log("apppath");
+                                    console.log("appprotopath");
                                     console.log(fsObject);
-                                    self.app_dir = fsObject;
-                                    self.app_path_tokens = self.app_path.split('/').slice(1);
+                                    self.app_proto_dir = fsObject;
+                                    self.app_proto_token = self.app_proto_path.split('/').slice(1);
                                     $scope.$apply();
-                                })
+                                });
+                            $scope.$repo.get(self.app_path + "/instances")
+                                .then(function(fsObject) {
+                                    console.log("appinstancespath");
+                                    console.log(fsObject);
+                                    self.app_instances_dir = fsObject;
+                                    self.app_instances_token = self.app_instances_path.split('/').slice(1);
+                                    Object.keys(self.app_instances_dir.children).forEach(function(filename){
+                                    self.instances_status[filename] = JSON.parse(self.app_instances_dir.children[filename].content)['status']||'UNKNOWN';
+                                });
+                                 
+                                    $scope.$apply();
+                                });
+
+                            // Object.keys(self.app_instances_dir.children).forEach(function(filename){
+                            //         self.instances_status[filename] = self.app_instances_dir.children[filename].content.status;
+                            //     });
                         }
 
                         self.clearCodeSelection = function() {
@@ -180,28 +217,59 @@ dashApp.constant("CONFIG", {
                             self.app_content[code] = component_detail;
                         }
 
-                        self.generateApp = function(name) {
-                            //generate app id
-                            var id = randKey(10);
-                            //save to file system
-                            //how to avoid duplicate??
-                            var app_content = new Application(id, name, self.app_content);
-                            // var content = {"setup_content":app_content,"detail_content":{}}
+                        self.generateAppPrototype = function(name) {
+
+                            var app_content = new ApplicationPrototype( name, self.app_content);
+
                             var content = {};
-                            content["setup_content"] = app_content;
-                            content["detail_content"] = {};
+
                             console.log("********content" + JSON.stringify(content));
-                            var app = {
+                            var app_proto = {
                                 'name': name,
-                                'content': JSON.stringify(content),
+                                'content': JSON.stringify(app_content),
                                 'type': 'file'
                             };
-                            self.saveFile(app);
+                            self.saveFile("prototype",app_proto);
                             // console.log(json_file);
                             self.code_selection = [];
                             self.app_content = {};
                         }
+              
+                        //TO BE DONE IN THE FUTURE 
+                        // self.appInstanceChange = function(file,num_instances){
 
+                        // }
+
+
+                        self.removeInstance = function(instance,filename){
+                            //check first if instance is stop, otherwise not allowed to remove 
+                            if(JSON.parse(self.app_instances_dir.children[filename].content)['status'] === "STOPPED"){
+                                var id = [];
+                                id.push(self.app_instances_dir.children[filename]._id);
+                                console.log("INSTANCE " + id);
+
+                                $scope.$repo.delete(self.app_instances_path, id)
+                                    .then(function() {
+                                        console.log(filename + id + "deleted")
+                                        self.refresh();
+                                }); 
+                            }
+                             else{
+                                 alert("THE APPLICATION"+filename+":"+instance+ "IS STILL RUNNING!\nSTOP IT BEFORE REMOVE!")
+                            }    
+                        }
+
+                        self.removePrototype = function(prototype,filename){
+                            var id =[];
+                            id.push(self.app_proto_dir.children[filename]._id);
+                            console.log("PROTOTYPE " + id);
+
+                            $scope.$repo.delete(self.app_proto_path, id)
+                                .then(function() {
+                                    console.log(filename + id + "deleted")
+                                    self.refresh();
+                                });                        
+                        }
 
                         $scope.$watch(function() { return self.cur_selection },
                             function(selection) {
@@ -213,12 +281,23 @@ dashApp.constant("CONFIG", {
                         $scope.$repo.makeDir(self.cur_path, "application")
                             .then(function(dir) {
                                 console.log("directory saved", dir);
-                                self.refresh();
+                                 self.refresh();
+                            });
+                        $scope.$repo.makeDir(joinPath(self.cur_path,"application"),"prototype")
+                            .then(function(dir){
+                                console.log("directory saved", dir);
+                                 self.refresh();
+                            });
+                        $scope.$repo.makeDir(joinPath(self.cur_path,"application"),"instances")
+                            .then(function(dir){
+                                console.log("directory saved", dir);
+                                 self.refresh();
                             });
                         self.refresh();
 
-                        self.saveFile = function(app) {
-                            $scope.$repo.writeFile(self.app_path, app)
+
+                        self.saveFile = function(dir,app) {
+                            $scope.$repo.writeFile(self.app_path + "/" + dir, app)
                                 .then(function(file) {
                                     console.log("file saved", file);
                                     self.cur_selection._id = file._id;
@@ -226,63 +305,81 @@ dashApp.constant("CONFIG", {
                                 });
                         }
 
+                        self.saveUpdateInstance = function(app_name,appdata,status){
+                            var application_id = appdata["application_id"];
+                            var appName = app_name + "/" + application_id;
+                            console.log("APPLICATION_ID" + application_id)
+                            appdata['status'] = status;
+
+                            var updated_app = {
+                                'name': appName,
+                                'content': JSON.stringify(appdata),
+                                'type': 'file'
+                            };
+                            if(self.app_instances_dir.files.includes(appName)){
+                                updated_app['_id'] = self.app_instances_dir.children[appName];
+                            }
+                            self.saveFile("instances",updated_app);
+                    };
 
                         //send runapplication detail 
                         self.runApplication = function(app_data, app_name) {
-                            var updateDetail = {};
-                            console.log("pubsub publish runApplication" + JSON.parse(app_data)["setup_content"])
-                            if (Object.keys(JSON.parse(app_data)["detail_content"]).length === 0) {
-                                dashboard.pubsub.publish("runApplication", JSON.parse(app_data)["setup_content"]);
-                                var APPLICATION_DETAIL = "applicationDetails/" + JSON.parse(app_data)["setup_content"]["id"] + "/run";
-                                dashboard.pubsub.subscribe(APPLICATION_DETAIL, function(topic, appdetail) {
-                                    console.log("appdetail" + JSON.stringify(appdetail));
-                                    console.log("appData" + JSON.stringify(app_data));
-                                    alert(JSON.stringify(appdetail) + "\n" + "EXPECTED ID" + JSON.parse(app_data)["setup_content"]["id"] + "\n" + "RECEVIED ID" + appdetail["id"]);                                    // var responseBody = {
-        
-                                    console.log("+++++jump to " + app_name + "subscribe");
-                                    appdetail["instances"]
-                                    var newArray = [];
-                                    Object.keys(appdetail["instances"]).forEach(function(code_name) {
-                                        appdetail["instances"][code_name].forEach(function(instance) {
-                                            var code = { "code_name": code_name, "instance_id": instance };
-                                            newArray.push(code)
-                                        })
-                                    });
-                                    updateDetail = { "instances": newArray };
-                                    alert("UPDATAE DETAIL" + JSON.stringify(updateDetail));
-
-                                    // 	console.log("received all instance id for components" + appdetail);
-                                    var content = {};
-                                    content["setup_content"] = JSON.parse(app_data)["setup_content"];
-                                    content["detail_content"] = updateDetail;
-                                    var updated_app = {
-                                        'name': app_name,
-                                        'content': JSON.stringify(content),
-                                        'type': 'file'
-                                    };
-                                    updated_app["_id"] = self.app_dir.children[app_name]._id;
-                                    self.saveFile(updated_app);
-                                });
-                            } else {
-                                alert("APPLICATION" + JSON.parse(app_data)["setup_content"]["id"] + "ALREADY LAUNCHED");
+                            var runapp_data;
+                            try{
+                                 runapp_data = JSON.parse(app_data);
+                            }catch(e){
+                                runapp_data = app_data;
                             }
+                            console.log("runapp_data" + runapp_data);
+                            var request_token = randKey(16);
+                            runapp_data['request_token'] = request_token;
+                            var updateDetail = {};
+                            console.log("pubsub publish runApplication" + runapp_data);
+                            alert("pubsub publish runApplication" + JSON.stringify(runapp_data));
+                             // if (Object.keys(runapp_data["detail_content"]).length === 0) {
+                            dashboard.pubsub.publish("runApplication", runapp_data);
+                            var APPLICATION_DETAIL = "applicationDetails/" + request_token + "/run";
+                            dashboard.pubsub.subscribe(APPLICATION_DETAIL, function(topic, appdetail) {
+                                console.log("appdetail" + JSON.stringify(appdetail));
+                                console.log( "received application detail" + JSON.stringify(appdetail) + "\n");                                  
+                                console.log("+++++jump to " + app_name + "subscribe");
+
+                                self.saveUpdateInstance(app_name,appdetail,'RUNNING');
+
+                                // var application_id = appdetail["application_id"];
+                                // appdetail['status'] = 'RUNNING';
+                                // console.log("APPLICATION_ID" + application_id);
+                                // var updated_app = {
+                                //     'name': app_name + "/" + application_id,
+                                //     'content': JSON.stringify(appdetail),
+                                //     'type': 'file'
+                                // };
+
+                                // self.saveFile("instances",updated_app);
+                            });
                         };
 
                         self.stopApplication = function(app_detail) {
                             var STOP_APPLICATION = "stopApplication";
-                            var APPLICATION_DETAIL_STOP = "applicationDetails/" + JSON.parse(app_detail)["setup_content"]["id"] + "/stop";
-                            var parsed_data = {};
-                            parsed_data[JSON.parse(app_detail)["setup_content"]["id"]] = JSON.parse(app_detail)["detail_content"]["instances"];
-                            console.log("pubsub publish stopApplication" + parsed_data);
-                            dashboard.pubsub.publish(STOP_APPLICATION, parsed_data);
+                            var request_token = randKey(16);
+                            var application_id = JSON.parse(app_detail)["application_id"];
+                            var APPLICATION_DETAIL_STOP = "applicationDetails/" + request_token + "/stop";
+                            console.log("STOPPED APPLICATION ID" + application_id);
+                            dashboard.pubsub.publish(STOP_APPLICATION, {'application_id':application_id,'request_token':request_token});
                             dashboard.pubsub.subscribe(APPLICATION_DETAIL_STOP, function(topic, data) {
                                 if (data["status"]) {
-                                    alert("stopping application successfully" + data["id"]);
+                                    alert("stopping application successfully" + data["application_id"]);
+                                      // self.instances_status[JSON.parse(app_detail)['name']+"/"+application_id] = 'STOPPED';
+                                    self.saveUpdateInstance(JSON.parse(app_detail)['name'],JSON.parse(app_detail),'STOPPED');
                                 } else {
-                                    alert("stopping application failed" + data["id"]);
+                                    alert("stopping application failed" + data["application_id"]);
+                                    // self.instances_status[JSON.parse(app_detail)['name']+"/"+application_id] = 'STOP FAILED';
+                                    self.saveUpdateInstance(JSON.parse(app_detail)['name'],JSON.parse(app_detail),'STOP FAILED');
                                 }
                             });
                         };
+
+
                     }],
                     controllerAs: '$view',
                     templateUrl: 'views/applications.html'
@@ -371,7 +468,7 @@ dashApp.constant("CONFIG", {
 
                         self.getSchedule = function(dir_name, scheduleName) {
                             // self.navigateTo(dir_name);
-                            var schedule_name = scheduleName + ".json";
+                            var schedule_name = scheduleName ;
                             self.refresh();
                             return $scope.$repo.get(joinPath(self.schedule_path, dir_name))
                                 .then(function(dir) {
@@ -398,7 +495,7 @@ dashApp.constant("CONFIG", {
                                 // var files = dir.children;
                                 Object.keys(dir.children).forEach(function(schedule_name) {
                                     console.log("233ITERATION" + dir.children[schedule_name].content);
-                                    var index = dir.children[schedule_name].name.split('.json')[0];
+                                    var index = dir.children[schedule_name].name;
                                     console.log("IIINNNDDEEXX" + index);
                                     files[index] = new Operation(JSON.parse(dir.children[schedule_name].content));
                                 });
@@ -549,7 +646,7 @@ dashApp.constant("CONFIG", {
                         self.fetchSchedule();
                         setTimeout(function(){
                         self.fetchSchedule();
-                        },10000);
+                        },5000);
                         
 
 
