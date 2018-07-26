@@ -4,7 +4,7 @@
   "description": "Framework for building distribute IoT applications",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test/*test.js --exit"
+    "test": "mocha test/run-all.js --exit"
   },
   "bin": {
     "things-js": "./bin/things-js"

@@ -38,7 +38,7 @@ function runCode(file_path){
 }
 
 /** Testing if raw program's output is equal to the instrumented program's output */
-describe('Code Instrumentation - program output equivalence test', function(){
+describe('Program output equivalence test', function(){
 	var input_dir = path.resolve(__dirname, './inputs/');
 	var inputs = fs.readdirSync(input_dir);
 	inputs.forEach(function(filename){
