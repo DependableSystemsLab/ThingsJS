@@ -98,6 +98,68 @@
 
         
             
+<h4 class="name" id="console"><span class="type-signature"></span>console<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    Attach Proxy objects
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="CodeV3.js.html">CodeV3.js</a>, <a href="CodeV3.js.html#line1589">line 1589</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
 <h4 class="name" id="NATIVE_TRANSFORMERS"><span class="type-signature"></span>NATIVE_TRANSFORMERS<span class="type-signature"></span></h4>
 
 
@@ -142,7 +204,69 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Code.js.html">Code.js</a>, <a href="Code.js.html#line953">line 953</a>
+        <a href="CodeV3.js.html">CodeV3.js</a>, <a href="CodeV3.js.html#line683">line 683</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="NATIVE_TRANSFORMERS"><span class="type-signature"></span>NATIVE_TRANSFORMERS<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    Pre-processor before serializing Scope Tree; this is needed to serialize more complex objects.
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Code.js.html">Code.js</a>, <a href="Code.js.html#line1038">line 1038</a>
     </li></ul></dd>
     
 
@@ -294,7 +418,165 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Code.js.html">Code.js</a>, <a href="Code.js.html#line127">line 127</a>
+        <a href="Code.js.html">Code.js</a>, <a href="Code.js.html#line128">line 128</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="AstHook"><span class="type-signature"></span>AstHook<span class="signature">(scope, node)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Object that wraps a node in the AST produced by esprima used for instrumenting the code
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>scope</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#StaticScope">StaticScope</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The lexical scope that the node belongs to</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>node</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">An AST node</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="CodeV3.js.html">CodeV3.js</a>, <a href="CodeV3.js.html#line125">line 125</a>
     </li></ul></dd>
     
 
@@ -385,7 +667,176 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Pubsub.js.html">Pubsub.js</a>, <a href="Pubsub.js.html#line105">line 105</a>
+        <a href="Pubsub.js.html">Pubsub.js</a>, <a href="Pubsub.js.html#line143">line 143</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="Engine"><span class="type-signature"></span>Engine<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Engine is a client-side abstraction for CodeEngine.
+   Similar object is defined in the client-side library "things.js"
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Dispatcher.js.html">Dispatcher.js</a>, <a href="Dispatcher.js.html#line14">line 14</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="Program"><span class="type-signature"></span>Program<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Dispatcher.js.html">Dispatcher.js</a>, <a href="Dispatcher.js.html#line110">line 110</a>
     </li></ul></dd>
     
 
@@ -472,7 +923,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Code.js.html">Code.js</a>, <a href="Code.js.html#line1378">line 1378</a>
+        <a href="Code.js.html">Code.js</a>, <a href="Code.js.html#line1513">line 1513</a>
     </li></ul></dd>
     
 
@@ -588,6 +1039,93 @@
 
 
         
+            
+
+    
+
+    
+    <h4 class="name" id="StaticScope"><span class="type-signature"></span>StaticScope<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Static Scope object used during instrumentation.
+ It is used to keep track of lexical scope of various AST nodes
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="CodeV3.js.html">CodeV3.js</a>, <a href="CodeV3.js.html#line38">line 38</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
     
 
     
@@ -603,13 +1141,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Code.html">Code</a></li><li><a href="Scope.html">Scope</a></li></ul><h3>Global</h3><ul><li><a href="global.html#AstHook">AstHook</a></li><li><a href="global.html#DummyPubsub">DummyPubsub</a></li><li><a href="global.html#NATIVE_TRANSFORMERS">NATIVE_TRANSFORMERS</a></li><li><a href="global.html#RootScope">RootScope</a></li><li><a href="global.html#StaticScope">StaticScope</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Code.html">Code</a></li><li><a href="CodeEngine.html">CodeEngine</a></li><li><a href="Scope.html">Scope</a></li></ul><h3>Global</h3><ul><li><a href="global.html#AstHook">AstHook</a></li><li><a href="global.html#console">console</a></li><li><a href="global.html#DummyPubsub">DummyPubsub</a></li><li><a href="global.html#Engine">Engine</a></li><li><a href="global.html#NATIVE_TRANSFORMERS">NATIVE_TRANSFORMERS</a></li><li><a href="global.html#Program">Program</a></li><li><a href="global.html#RootScope">RootScope</a></li><li><a href="global.html#StaticScope">StaticScope</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue May 01 2018 23:05:07 GMT-0700 (PDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Jul 26 2018 14:16:41 GMT-0700 (PDT)
 </footer>
 
 <script> prettyPrint(); </script>

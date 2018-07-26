@@ -84,7 +84,7 @@ function StaticScope(func_name, parent){
 
 	this.params = {};
 	this.hoisted = {};
-	this.funcs = {};
+	// this.funcs = {};
 
 	this.refs = {};		// refs maps identifiers to params, vars, or funcs. We do this to emulate the lexical context of JS.
 
@@ -128,14 +128,15 @@ StaticScope.prototype.initRefs = function(node){
 			})
 		}
 		else if (node.type === 'FunctionDeclaration'){
-			self.hoisted[node.id.name] = node;
+			self.hoisted[node.id.name] = node;	// node will be replaced with protected ancestor scope during top-down pass
 			self.refs[node.id.name] = node.id.name;
 		}
 	});
 }
 StaticScope.prototype.findRef = function(raw_name){
 	// if (raw_name in this.refs) return this.identifier()+'.refs.'+raw_name;
-	if (raw_name in this.refs) return { scope: this, identifier: this.identifier()+'.refs.'+raw_name }
+	if (raw_name in this.refs) return { scope: this, identifier: this.identifier()+'.refs.'+raw_name };
+	if (raw_name === this.func_name) return { scope: null, identifier: raw_name+'.'+PROPERTY_PREFIX+'wrapped' };	// If the enclosing function is named, the identifier refers to the function
 	if (this.parent !== null) return this.parent.findRef(raw_name);
 	else {
 		(WARNING &amp;&amp; console.log(chalk.red('[WARNING] Could not find scope for ')+raw_name));
@@ -158,7 +159,7 @@ function AstHook(scope, node){
 
 	(DEBUG &amp;&amp; this.debug(chalk.green('top-down')));
 	if (this.node.type in AstHook.onEnter){
-		AstHook.onEnter[this.node.type](this);	
+		this.result = AstHook.onEnter[this.node.type](this);
 	}
 	else {
 		(DEBUG &amp;&amp; console.log(chalk.yellow('[INFO] '+this.node.type+' remains the same')));
@@ -229,13 +230,15 @@ AstHook.onEnter = {
 		});
 		
 		func_scope.initRefs(self.node);
-		self.scope.funcs[self.node.id.name] = self.node;
+		self.scope.refs[self.node.id.name] = self.node;
+		// self.scope.funcs[self.node.id.name] = self.node;
 
-		self.hooks = [];
+		// self.hooks = [];
 		self.node.body.body.forEach(function(node, index, body){
-			var hook = new AstHook(func_scope, node);
-			body[index] = hook.node;	// hook may have replaced the node
-			self.hooks.push(hook);
+			// var hook = new AstHook(func_scope, node);
+			// body[index] = hook.node;	// hook may have replaced the node
+			// self.hooks.push(hook);
+			body[index] = new AstHook(func_scope, node).node;
 		})
 
 		// After processing the body
@@ -249,7 +252,10 @@ AstHook.onEnter = {
 
 		// func_scope.protects is available now
 		if (!is_expression){
-			self.scope.hoisted[func_scope.func_name] = func_scope.protects.identifier();
+			// If func_scope.func_name is not in self.scope.hoisted, it implies function was declared inside an if block or for block
+			if (func_scope.func_name in self.scope.hoisted){
+				self.scope.hoisted[func_scope.func_name] = func_scope.protects.identifier();	
+			}
 		}
 
 		return { scope_created: func_scope };
@@ -280,7 +286,8 @@ AstHook.onEnter = {
 				&amp;&amp; self.node.callee.property.name === 'log'){
 				self.node.callee.object.name = SCOPE_PREFIX;
 			}
-			else if (self.node.callee.object.name in AstHook.NATIVE_KEYWORDS){
+			else if (self.node.callee.object.name
+				 &amp;&amp; self.node.callee.object.name in AstHook.NATIVE_KEYWORDS){
 				// Do nothing
 			}
 			else {
@@ -289,7 +296,9 @@ AstHook.onEnter = {
 			}
 		}
 		else if (self.node.callee.type === 'Identifier'){
-			if (['setImmediate', 'setTimeout', 'setInterval', 'clearImmediate', 'clearTimeout', 'clearInterval'].indexOf(self.node.callee.name) > -1){
+			if (['setImmediate', 'setTimeout', 'setInterval', 
+				 'clearImmediate', 'clearTimeout', 'clearInterval',
+				 'require'].indexOf(self.node.callee.name) > -1){
 				var replace = esprima.parse(SCOPE_PREFIX+'.'+self.node.callee.name).body[0].expression;
 				self.node.callee = replace;
 			}
@@ -302,7 +311,8 @@ AstHook.onEnter = {
 			}
 		}
 		else if (self.node.callee.type === 'FunctionExpression'){
-			var hook = new AstHook(self.scope, self.node.callee);
+			// var hook = new AstHook(self.scope, self.node.callee);
+			self.node.callee = new AstHook(self.scope, self.node.callee).node;
 		}
 		else if (self.node.callee.type === 'CallExpression'){
 			var hook = new AstHook(self.scope, self.node.callee);
@@ -385,12 +395,19 @@ AstHook.onEnter = {
 		}
 		self.node.test = new AstHook(self.scope, self.node.test).node;
 
-		self.hooks = [];
+		// self.hooks = [];
+		var block_hoisted = [];
 		self.node.body.body.forEach(function(node, index, body){
 			var hook = new AstHook(self.scope, node);
 			body[index] = hook.node;	// hook may have replaced the node
-			self.hooks.push(hook);
-		})
+			// self.hooks.push(hook);
+			if (node.type === 'FunctionDeclaration'){
+				// block_hoisted[node.id.name] = hook.result.protects;
+				var inject = esprima.parse(self.scope.identifier()+'.addFunction('+node.id.name+', '+hook.result.scope_created.protects.identifier()+', "'+node.id.name+'")').body[0];
+				block_hoisted.push(inject);
+			}
+		});
+		self.node.body.body.unshift.apply(self.node.body.body, block_hoisted);
 	},
 	DoWhileStatement: function(self){
 		return AstHook.onEnter['WhileStatement'](self);
@@ -414,12 +431,19 @@ AstHook.onEnter = {
 			block.body.push(self.node.body);
 			self.node.body = block;
 		}
-		self.hooks = [];
+		// self.hooks = [];
+		var block_hoisted = [];
 		self.node.body.body.forEach(function(node, index, body){
 			var hook = new AstHook(self.scope, node);
 			body[index] = hook.node;	// hook may have replaced the node
-			self.hooks.push(hook);
+			// self.hooks.push(hook);
+			if (node.type === 'FunctionDeclaration'){
+				// block_hoisted[node.id.name] = hook.result.protects;
+				var inject = esprima.parse(self.scope.identifier()+'.addFunction('+node.id.name+', '+hook.result.scope_created.protects.identifier()+', "'+node.id.name+'")').body[0];
+				block_hoisted.push(inject);
+			}
 		})
+		self.node.body.body.unshift.apply(self.node.body.body, block_hoisted);
 		// return AstHook.onEnter['WhileStatement'](self);
 	},
 	ForInStatement: function(self){
@@ -440,9 +464,19 @@ AstHook.onEnter = {
 			block.body.push(self.node.body);
 			self.node.body = block;
 		}
+
+		var block_hoisted = [];
 		self.node.body.body.forEach(function(node, index, body){
-			body[index] = new AstHook(self.scope, node).node;	// hook may have replaced the node
-		})
+			var hook = new AstHook(self.scope, node);
+			body[index] = hook.node;	// hook may have replaced the node
+			// body[index] = new AstHook(self.scope, node).node;	// hook may have replaced the node
+			if (node.type === 'FunctionDeclaration'){
+				// block_hoisted[node.id.name] = hook.result.protects;
+				var inject = esprima.parse(self.scope.identifier()+'.addFunction('+node.id.name+', '+hook.result.scope_created.protects.identifier()+', "'+node.id.name+'")').body[0];
+				block_hoisted.push(inject);
+			}
+		});
+		self.node.body.body.unshift.apply(self.node.body.body, block_hoisted);
 	},
 	IfStatement: function(self){
 		
@@ -453,12 +487,20 @@ AstHook.onEnter = {
 		}
 		self.node.test = new AstHook(self.scope, self.node.test).node;
 
-		self.hooks = [];
+		// self.hooks = [];
+		var block_hoisted = [];
 		self.node.consequent.body.forEach(function(node, index, body){
 			var hook = new AstHook(self.scope, node);
 			body[index] = hook.node;	// hook may have replaced the node
-			self.hooks.push(hook);
+			// self.hooks.push(hook);
+
+			if (node.type === 'FunctionDeclaration'){
+				// block_hoisted[node.id.name] = hook.result.protects;
+				var inject = esprima.parse(self.scope.identifier()+'.refs.'+node.id.name+' = '+self.scope.identifier()+'.addFunction('+node.id.name+', '+hook.result.scope_created.protects.identifier()+', "'+node.id.name+'")').body[0];
+				block_hoisted.push(inject);
+			}
 		})
+		self.node.consequent.body.unshift.apply(self.node.consequent.body, block_hoisted);
 
 		if (self.node.alternate){
 			if (self.node.alternate.type === 'IfStatement'){
@@ -471,11 +513,21 @@ AstHook.onEnter = {
 					block.body.push(self.node.alternate);
 					self.node.alternate = block;
 				}
+
+				var block_hoisted = [];
 				self.node.alternate.body.forEach(function(node, index, body){
 					var hook = new AstHook(self.scope, node);
 					body[index] = hook.node;	// hook may have replaced the node
-					self.hooks.push(hook);
-				})
+					// self.hooks.push(hook);
+					// body[index] = new AstHook(self.scope, node).node;
+
+					if (node.type === 'FunctionDeclaration'){
+						// block_hoisted[node.id.name] = hook.result.protects;
+						var inject = esprima.parse(self.scope.identifier()+'.addFunction('+node.id.name+', '+hook.result.scope_created.protects.identifier()+', "'+node.id.name+'")').body[0];
+						block_hoisted.push(inject);
+					}
+				});
+				self.node.alternate.body.unshift.apply(self.node.alternate.body, block_hoisted);
 			}
 		}
 	},
@@ -555,8 +607,14 @@ function Code(pubsub, name, raw_code){
 
 	this.status = Code.Status.READY;
 	// this.process = null;
+
+	// this.pubsub.publish(PROGRAM_MONITOR_NAMESPACE, {
+	// 	code_name: this.name,
+	// 	source: this.source
+	// })
 }
 Code.prototype = new EventEmitter();
+Code.prototype.constructor = Code;
 Code.prototype.save = function(file_path){
 	var self = this;
 	return new Promise(function(resolve, reject){
@@ -592,6 +650,17 @@ Code.prototype.saveSnapshots = function(dir_path){
 	})
 }
 
+Code.prototype.reportStatus = function(){
+	var self = this;
+	Object.values(self.processes).forEach(function(proc){
+		self.pubsub.publish(PROGRAM_MONITOR_NAMESPACE, {
+			code_name: self.name,
+			instance_id: proc.id,
+			status: proc.status
+		})
+	})
+}
+
 Code.prototype.run = function(options){
 	var self = this;
 	return new Promise(function(resolve, reject){
@@ -623,9 +692,9 @@ Code.prototype.run = function(options){
 		});
 		forked.on('message', function(message){
 			
-			if (message.reply in forked._requests){
-				forked._requests[message.reply].resolve(message.payload);
-				delete forked._requests[message.reply];
+			if (message.reply_id in forked._requests){
+				forked._requests[message.reply_id].resolve(message.payload);
+				delete forked._requests[message.reply_id];
 			}
 			else if (message.instance_id){ // should enter here just once when child process bootstraps
 				forked.instance_id = message.instance_id;
@@ -634,6 +703,7 @@ Code.prototype.run = function(options){
 					pid: forked.pid,
 					process: forked,
 					status: Code.Status.RUNNING,
+					logs: []
 					// resourceUsage: []
 				};
 				resolve(self.processes[forked.instance_id]);
@@ -641,11 +711,16 @@ Code.prototype.run = function(options){
 				self.pubsub.publish(PROGRAM_MONITOR_NAMESPACE, {
 					code_name: self.name,
 					instance_id: forked.instance_id,
-					status: Code.Status.RUNNING
+					status: Code.Status.RUNNING,
+					source: self.source
 				})
 			}
 			else if (message.ctrl &amp;&amp; message.ctrl === 'publish'){
 				self.pubsub.publish(message.topic, message.message);
+			}
+			else if (message.ctrl &amp;&amp; message.ctrl === 'log-event'){
+				self.processes[forked.instance_id].logs.push(message.payload);
+				console.log(chalk.yellow('[child:'+forked.pid+'] '+self.name+': ')+message.payload.timestamp+' : '+message.payload.event);
 			}
 			else if (message.timestamp){ // if there's timestamp, it's resource usage
 				// self.processes[forked.instance_id].resourceUsage.push(message);
@@ -665,6 +740,7 @@ Code.prototype.ipcSend = function(instance_id, ctrl, kwargs){
 	var self = this;
 	return new Promise(function(resolve, reject){
 		var instance = self.processes[instance_id];
+		if (!instance) return reject('InstanceNotFound');
 		// if (self.process !== null &amp;&amp; self.process.connected){
 		if (instance &amp;&amp; instance.process.connected){
 			var req_id = helpers.randKey(4);
@@ -677,7 +753,7 @@ Code.prototype.ipcSend = function(instance_id, ctrl, kwargs){
 			// self.process._requests[req_id] = deferred;
 			// self.process.send({ request: req_id, ctrl: ctrl, kwargs: kwargs });
 			instance.process._requests[req_id] = deferred;
-			instance.process.send({ request: req_id, ctrl: ctrl, kwargs: kwargs });
+			instance.process.send({ request_id: req_id, ctrl: ctrl, kwargs: kwargs });
 			setTimeout(function(){
 				if (instance.process &amp;&amp; req_id in instance.process._requests){
 				// if (self.process &amp;&amp; req_id in self.process._requests){
@@ -703,6 +779,7 @@ Code.prototype.ipcSend = function(instance_id, ctrl, kwargs){
 Code.prototype.pause = function(instance_id){
 	var self = this;
 	var instance = self.processes[instance_id];
+	if (!instance) return Promise.reject('InstanceNotFound');
 	if (instance.status === Code.Status.RUNNING){
 		return self.ipcSend(instance_id, 'PAUSE').then(function(reply){
 			instance.status = reply.status;
@@ -721,6 +798,7 @@ Code.prototype.pause = function(instance_id){
 Code.prototype.resume = function(instance_id){
 	var self = this;
 	var instance = self.processes[instance_id];
+	if (!instance) return Promise.reject('InstanceNotFound');
 	if (instance.status === Code.Status.PAUSED){
 		return this.ipcSend(instance_id, 'RESUME').then(function(reply){
 			instance.status = reply.status;
@@ -739,6 +817,7 @@ Code.prototype.resume = function(instance_id){
 Code.prototype.snapshot = function(instance_id, pause_after){
 	var self = this;
 	var instance = self.processes[instance_id];
+	if (!instance) return Promise.reject('InstanceNotFound');
 	return this.ipcSend(instance_id, 'SNAPSHOT', { pause_after: (pause_after || false) })
 		.then(function(reply){
 			self.snapshots.push({
@@ -751,7 +830,8 @@ Code.prototype.snapshot = function(instance_id, pause_after){
 				code_name: self.name,
 				instance_id: instance_id,
 				status: instance.status
-			})
+			});
+			self.pubsub.publish(self.name+'/'+instance_id+'/snapshots', reply.snapshot);
 			return reply.snapshot;
 		});
 }
@@ -826,16 +906,16 @@ Code.fromString = function(pubsub, code_name, raw_code){
 Code.fromFile = function(pubsub, file_path){
 	return new Code(pubsub, path.basename(file_path), fs.readFileSync(file_path).toString());
 }
-Code.fromSnapshot = function(snapshot){
+Code.fromSnapshot = function(snapshot, dummy_pubsub){
 	
 	var code = Code.createEmpty();
-	code.pubsub = new Pubsub(snapshot.meta.pubsub);
+	code.pubsub = dummy_pubsub ? new Pubsub.Dummy(snapshot.meta.pubsub) : new Pubsub(snapshot.meta.pubsub);
 	code.name = snapshot.meta.code_name;
 	// code.uid = snapshot.meta.uid;
 
-	var watch = helpers.StopWatch().start();
+	// var watch = helpers.StopWatch().start();
 	var content = Scope.generateCode(snapshot);
-	watch.stop();
+	// watch.stop();
 	
 	Object.keys(snapshot.timers).forEach(function(id){
 		content += Timer.generateCode(snapshot.timers[id]);
@@ -843,13 +923,18 @@ Code.fromSnapshot = function(snapshot){
 
 	code.source = `(function(${SCOPE_PREFIX}){ ${content} })(require('things-js').bootstrap('${code.pubsub.url}', '${snapshot.meta.code_name}/${snapshot.meta.instance_id}'));`;
 	// console.log(jsBeautify(code.source));
-	code.source = jsBeautify(code.source);
+	// code.source = jsBeautify(code.source);
+
+	// code.pubsub.publish(PROGRAM_MONITOR_NAMESPACE, {
+	// 	code_name: code.name,
+	// 	source: code.source
+	// });
 
 	return code;
 }
-Code.fromSnapshotFile = function(snapshot_path){
+Code.fromSnapshotFile = function(snapshot_path, dummy_pubsub){
 	var snapshot = JSON.parse(fs.readFileSync(snapshot_path).toString());
-	return Code.fromSnapshot(snapshot);
+	return Code.fromSnapshot(snapshot, dummy_pubsub);
 }
 
 
@@ -1003,9 +1088,36 @@ var NATIVE_TRANSFORMERS = {
 			return SCOPE_PREFIX+'.getScope("'+(item.value.split('/').slice(1).join('/'))+'")';
 		}
 	},
+	'Pubsub': {
+		makeSerializable: function(item){
+			var safe = {
+				type: 'Pubsub',
+				value: {
+					id: item.id,
+					url: item.url,
+					handlers: {}
+				}
+			}
+			Object.keys(item.handlers).forEach(function(topic){
+				safe.value.handlers[topic] = makeSerializable(item.handlers[topic]);
+			})
+			return safe;
+		},
+		makeCode: function(item){
+			var handlers = '{'+Object.keys(item.value.handlers).map(function(topic){
+				return '"'+topic+'":'+NATIVE_TRANSFORMERS['Function'].makeCode(item.value.handlers[topic])
+			}).join(',')+'}';
+			return 'new '+SCOPE_PREFIX+'.Pubsub("'+item.value.url+'", { handlers: '+handlers+' })';
+		}
+	},
 	'things-js.reference': {
 		makeCode: function(item){
 			return item.uri;
+		}
+	},
+	'things-js.import': {
+		makeCode: function(item){
+			return SCOPE_PREFIX+'.require("'+item.value+'")';
 		}
 	},
 	'undefined': {
@@ -1030,7 +1142,18 @@ makeSerializable['undefined'] = function(item){
 makeSerializable['object'] = function(item){
 	if (!item) return item;
 	if (item instanceof Array) return item.map(makeSerializable);
-	if (item.constructor.name in NATIVE_TRANSFORMERS) return NATIVE_TRANSFORMERS[item.constructor.name].makeSerializable(item);
+
+	if (item.constructor &amp;&amp; item.constructor.name in NATIVE_TRANSFORMERS) return NATIVE_TRANSFORMERS[item.constructor.name].makeSerializable(item);
+	// If item.constructor is undefined, then object might have been created with Object.create(null). In this case, proceed normally as it's a native JS object.
+
+	// For now, if it's a "require"d object, require it on the target node instead of migrating object.
+	if ((PROPERTY_PREFIX+'import') in item){
+		return {
+			type: 'things-js.import',
+			value: item[PROPERTY_PREFIX+'import']
+		}
+	};
+
 	var safe = {};
 	Object.keys(item).forEach(function(key){
 		// if (key === PROPERTY_PREFIX+'scope'){
@@ -1039,6 +1162,7 @@ makeSerializable['object'] = function(item){
 		// }
 		safe[key] = makeSerializable(item[key]);
 	})
+	
 	return {
 		type: item.constructor.name,
 		proto_uri: item.constructor[PROPERTY_PREFIX+'uri'],
@@ -1046,6 +1170,14 @@ makeSerializable['object'] = function(item){
 	}
 }
 makeSerializable['function'] = function(item){
+	// For now, if it's a "require"d object, require it on the target node instead of migrating object.
+	if ((PROPERTY_PREFIX+'import') in item){
+		return {
+			type: 'things-js.import',
+			value: item[PROPERTY_PREFIX+'import']
+		}
+	};
+
 	return {
 		type: 'Function',
 		value: item[PROPERTY_PREFIX+'uri']
@@ -1177,7 +1309,6 @@ Scope.prototype.hoist = function(funcs){
  */
 Scope.prototype.addFunction = function(func, protects, uid){
 	var self = this;
-
 	// ATTN: Wrapping the function to detect end of a function call.
 	//     we do this to destroy Scopes that are obviously not needed anymore.
 	function wrapped(){
@@ -1210,6 +1341,7 @@ Scope.prototype.addFunction = function(func, protects, uid){
 	wrapped[PROPERTY_PREFIX+'raw'] = func;
 
 	this.funcs[wrapped[PROPERTY_PREFIX+'uid']] = wrapped;
+	func[PROPERTY_PREFIX+'wrapped'] = wrapped;
 	
 	return wrapped;
 }
@@ -1227,12 +1359,14 @@ Scope.prototype.getRawFunction = function(uri){
 	if (scope) return scope.funcs[tokens[tokens.length-1]];
 	else throw "No Scope found for "+uri;
 }
+
 function gcPrescan(obj){
 	if (obj &amp;&amp; (typeof obj === 'object') &amp;&amp; (obj[PROPERTY_PREFIX+'scope'])){
 		obj[PROPERTY_PREFIX+'scope'].protectAncestry();
 		Object.keys(obj).forEach(function(prop){
 			// Commented out for now, to optimize. Cycle detection missing
-			if (prop !== PROPERTY_PREFIX+'scope'){
+			// if (prop !== PROPERTY_PREFIX+'scope'){
+			if (prop[0] !== PROPERTY_PREFIX){
 				gcPrescan(obj[prop]);
 			}
 			// if (typeof obj[prop] === 'function'){
@@ -1240,7 +1374,8 @@ function gcPrescan(obj){
 			// }
 		})
 	}
-	else if (typeof obj === 'function'){
+	else if (typeof obj === 'function'
+		&amp;&amp; obj[PROPERTY_PREFIX+'parent']){	// TODO: need to handle "require"d objects
 		obj[PROPERTY_PREFIX+'parent'].protectAncestry(obj[PROPERTY_PREFIX+'protects']);
 		// obj[PROPERTY_PREFIX+'protects'].in_use = true;
 	}
@@ -1421,7 +1556,11 @@ function RootScope(pubsub_url, code_uri){
 	// this.logging = './logs/'+code_name+'-'+Date.now()+'.log';
 }
 RootScope.prototype = new Scope();
+RootScope.prototype.constructor = RootScope;
+
 RootScope.prototype.Scope = Scope;
+RootScope.prototype.Pubsub = Pubsub;
+
 RootScope.prototype.snapshot = function(){
 	var self = this;
 	self.gc();	// Important - unused scopes should be discarded before snapshotting
@@ -1440,25 +1579,25 @@ RootScope.prototype.snapshot = function(){
 	// serialize_safe.meta.time_taken = (Date.now() - started);
 	return serialize_safe
 }
-RootScope.prototype.createObject = function(){
-	var args = Array.prototype.slice.call(arguments);	// args[0] is a wrapped function.
-	function Constructor(){
-		// return args[0][PROPERTY_PREFIX+'raw'].apply(this, args.slice(1));
-		return args[0].apply(this, args.slice(1));
-	}
-	// if (typeof args[0][PROPERTY_PREFIX+'raw'].prototype === 'object'){
-	if (typeof args[0].prototype === 'object'){
-		// partial.prototype = Object.create(Constructor.prototype);
-		// Constructor.prototype = args[0][PROPERTY_PREFIX+'raw'].prototype;
-		Constructor.prototype = args[0].prototype;
-	}
-	return new Constructor;
+// RootScope.prototype.createObject = function(){
+// 	var args = Array.prototype.slice.call(arguments);	// args[0] is a wrapped function.
+// 	function Constructor(){
+// 		// return args[0][PROPERTY_PREFIX+'raw'].apply(this, args.slice(1));
+// 		return args[0].apply(this, args.slice(1));
+// 	}
+// 	// if (typeof args[0][PROPERTY_PREFIX+'raw'].prototype === 'object'){
+// 	if (typeof args[0].prototype === 'object'){
+// 		// partial.prototype = Object.create(Constructor.prototype);
+// 		// Constructor.prototype = args[0][PROPERTY_PREFIX+'raw'].prototype;
+// 		Constructor.prototype = args[0].prototype;
+// 	}
+// 	return new Constructor;
 
-	// var args = Array.prototype.slice.call(arguments);
-	// var Constructor = this.getRawFunction(args[0]);
-	// var created = new Constructor(args.slice(1));
-	// return created;
-}
+// 	// var args = Array.prototype.slice.call(arguments);
+// 	// var Constructor = this.getRawFunction(args[0]);
+// 	// var created = new Constructor(args.slice(1));
+// 	// return created;
+// }
 RootScope.prototype.restoreObject = function(obj, proto_uri){
 	// var proto = this.getRawFunction(proto_uri).prototype;
 	var proto = this.getFunction(proto_uri).prototype;
@@ -1467,6 +1606,11 @@ RootScope.prototype.restoreObject = function(obj, proto_uri){
 		created[prop] = obj[prop];
 	});
 	return created;
+};
+RootScope.prototype.require = function(module_path){
+	var module = require(module_path);
+	module[PROPERTY_PREFIX+'import'] = module_path;
+	return module;
 };
 RootScope.prototype.log = function(){
 	console.log.apply(null, arguments);
@@ -1532,22 +1676,26 @@ RootScope.prototype.gc = function(){
 	var sum = Scope.prototype.gc.call(this, 0);
 	(DEBUG &amp;&amp; console.log(" --- "+sum+" scopes ---"));
 	// console.log(" --- "+sum+" scopes ---")
+	(global.gc &amp;&amp; global.gc());
 };
 
 var ProcessHandler = {
 	PAUSE: function(root_scope){
 		root_scope.pauseTimers();
+		root_scope._logEvent(logStat('pause'));
 		console.log(chalk.yellow('--- Paused &lt;'+root_scope.meta.code_name+'> ---'));
 		return { status: Code.Status.PAUSED };
 	},
 	RESUME: function(root_scope){
 		console.log(chalk.green('--- Resuming &lt;'+root_scope.meta.code_name+'> ---'));
 		root_scope.resumeTimers();
+		root_scope._logEvent(logStat('resume'));
 		return { status: Code.Status.RUNNING };
 	},
 	SNAPSHOT: function(root_scope, kwargs){
 		root_scope.pauseTimers();
 		var status = Code.Status.PAUSED;
+		root_scope._logEvent(logStat('snapshot'));
 		console.log(chalk.yellow('--- Paused &lt;'+root_scope.meta.code_name+'> ---'));
 		
 		var started = Date.now();
@@ -1569,6 +1717,13 @@ var ProcessHandler = {
 	}
 }
 
+function logStat(event){
+	return {
+		timestamp: Date.now(),
+		event: event
+	}
+}
+
 Code.bootstrap = function(pubsub_url, code_uri){
 	// Initialize Pubsub object, create root scope and return it.
 	var root_scope = new RootScope(pubsub_url, code_uri);
@@ -1580,29 +1735,42 @@ Code.bootstrap = function(pubsub_url, code_uri){
 		process.on('message', function(message){
 			if (message.ctrl in ProcessHandler){
 				var result = ProcessHandler[message.ctrl](root_scope, message.kwargs);
-				process.send({ reply: message.request, payload: result });
+				process.send({ reply_id: message.request_id, payload: result });
 			}
 			else {
 				process.send({ error: 'UnknownCtrl', message: message });
 			}
 		});
 
-		// Report resource usage to master process (TODO: make this optional)
-		setInterval(function(){
-			var self = this;
-			pidusage.stat(process.pid, function(err, stat) {
-				process.send({
-					timestamp: Date.now(),
-					memory: process.memoryUsage(),
-					cpu: stat.cpu
-				})
-				// self.pubsub.publish(self.id+'/resource', {
-				// 	timestamp: Date.now(),
-				// 	memory: process.memoryUsage(),
-				// 	cpu: stat.cpu
-				// })
-			});
-		}, 1000);
+		// user code should not call this function
+		root_scope._logEvent = function(log){
+			process.send({ ctrl: 'log-event', payload: log });
+		}
+
+		// root_scope.reportResource = function(){
+		// 	pidusage.stat(process.pid, function(err, stat) {
+		// 		process.send({
+		// 			timestamp: Date.now(),
+		// 			memory: process.memoryUsage(),
+		// 			cpu: stat.cpu
+		// 		})
+		// 	});
+		// }
+
+		// root_scope._resumeReport = function(){
+		// 	(function next(){
+		// 		root_scope.reportResource();
+		// 		root_scope.report_timer = setTimeout(next, Math.round(1000*Math.random() + 500))
+		// 	})();
+		// }
+		// root_scope._pauseReport = function(){
+		// 	if (root_scope.report_timer) clearTimeout(root_scope.report_timer);
+		// }
+
+		// // Report resource usage to master process (TODO: make this optional)
+		// setInterval(root_scope.reportResource, 1000);
+
+		root_scope._logEvent(logStat('bootstrap'));
 	}
 
 	return root_scope
@@ -1618,13 +1786,13 @@ module.exports = Code;</code></pre>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Code.html">Code</a></li><li><a href="Scope.html">Scope</a></li></ul><h3>Global</h3><ul><li><a href="global.html#AstHook">AstHook</a></li><li><a href="global.html#DummyPubsub">DummyPubsub</a></li><li><a href="global.html#NATIVE_TRANSFORMERS">NATIVE_TRANSFORMERS</a></li><li><a href="global.html#RootScope">RootScope</a></li><li><a href="global.html#StaticScope">StaticScope</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Code.html">Code</a></li><li><a href="CodeEngine.html">CodeEngine</a></li><li><a href="Scope.html">Scope</a></li></ul><h3>Global</h3><ul><li><a href="global.html#AstHook">AstHook</a></li><li><a href="global.html#console">console</a></li><li><a href="global.html#DummyPubsub">DummyPubsub</a></li><li><a href="global.html#Engine">Engine</a></li><li><a href="global.html#NATIVE_TRANSFORMERS">NATIVE_TRANSFORMERS</a></li><li><a href="global.html#Program">Program</a></li><li><a href="global.html#RootScope">RootScope</a></li><li><a href="global.html#StaticScope">StaticScope</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue May 01 2018 23:05:07 GMT-0700 (PDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Jul 26 2018 14:16:41 GMT-0700 (PDT)
 </footer>
 
 <script> prettyPrint(); </script>

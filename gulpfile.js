@@ -2,9 +2,7 @@ var exec = require('child_process').exec;
 var chalk = require('chalk');
 var gulp = require('gulp');
 
-gulp.task('default', function(){
-
-});
+gulp.task('default', [ 'docs' ]);
 
 /** Compile JSDoc html output to /docs/ directory */
 gulp.task('docs', function(){
@@ -13,7 +11,7 @@ gulp.task('docs', function(){
 
 /** Run mocha tests */
 gulp.task('test', function(){
-	
+	// exec('mocha test/run-all.js --exit');
 });
 
 gulp.task('all', ['docs', 'test'], function(){

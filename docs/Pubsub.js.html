@@ -29,9 +29,12 @@
             <pre class="prettyprint source linenums"><code>var EventEmitter = require('events').EventEmitter;
 var mqtt = require('mqtt');
 var mosca = require('mosca');
+var chalk = require('chalk');
 var helpers = require('../helpers.js');
 
 var DEFAULT_PUBSUB_URL = 'mqtt://localhost';
+
+var DEBUG = (process.env.DEBUG === 'true') || false;
 
 function Pubsub(url, options){
 	EventEmitter.call(this);
@@ -45,7 +48,7 @@ function Pubsub(url, options){
 	this.client = mqtt.connect(this.url);
 	
 	this.client.on('connect', function(ack){
-		console.log('[Pubsub:'+self.id+'] connected');
+		(DEBUG &amp;&amp; console.log('[Pubsub:'+self.id+'] connected'));
 		self.emit('ready');
 		self.subscriptions = {};
 		Object.keys(self.handlers).forEach(function(topic){
@@ -54,29 +57,57 @@ function Pubsub(url, options){
 		});
 	});
 	this.client.on('reconnect', function(){
-		console.log('[Pubsub] reconnecting');
+		(DEBUG &amp;&amp; console.log('[Pubsub:'+self.id+'] reconnecting'));
 	});
 	this.client.on('close', function(){
 		// self.status = Pubsub.Status.Closed;
 	});
 	this.client.on('end', function(){
-		console.log('[Pubsub] client ended');
+		(DEBUG &amp;&amp; console.log('[Pubsub:'+self.id+'] client ended'));
 	});
 	this.client.on('message', function(topic, message, packet){
-		message = JSON.parse(message);
-		self.handlers[topic](message, topic);
+		try {
+			message = JSON.parse(message);	
+		}
+		catch (e){
+			(DEBUG &amp;&amp; console.log('[Pubsub:'+self.id+'] Received Raw Buffer ('+message.length+')'));
+		}
+
+		try {
+			self.handlers[topic].forEach(function(handler){
+				handler(message, topic);
+			});
+		}
+		catch (e){
+			console.log(e);
+			console.log(chalk.red('[Pubsub:'+self.id+'] on message &lt;'+topic+'> ERROR: ')+e.message);
+		}
 	});
+
+	if (options &amp;&amp; options.handlers){
+		Object.keys(options.handlers).forEach(function(topic){
+			options.handlers[topic].forEach(function(handler){
+				self.subscribe(topic, handler);
+			})
+			(DEBUG &amp;&amp; console.log('Subscribed to '+topic));
+		})
+	}
 }
 Pubsub.prototype = new EventEmitter();
+Pubsub.prototype.constructor = Pubsub;
 Pubsub.prototype.subscribe = function(topic, handler){
 	var self = this;
 	return new Promise(function(resolve, reject){
-		self.handlers[topic] = handler;
+		if (!self.handlers[topic]) self.handlers[topic] = [];
+		self.handlers[topic].push(handler);
 		if (topic in self.subscriptions) resolve(topic);
-		else self.client.subscribe(topic, function(err, ack){
-			if (err) reject(err);
-			else resolve(topic);
-		})
+		else {
+			self.client.subscribe(topic, function(err, ack){
+				if (err) reject(err);
+				else resolve(topic);
+			});
+			self.subscriptions[topic] = true;
+		};
 
 	})
 }
@@ -86,10 +117,15 @@ Pubsub.prototype.unsubscribe = function(topic){
 		delete self.handlers[topic];
 		if (topic in self.subscriptions){
 			delete self.subscriptions[topic];
-			self.client.unsubscribe(topic, function(err){
-				if (err) reject(err);
-				else resolve(topic);
-			})
+			if (self.client.connected){
+				self.client.unsubscribe(topic, function(err){
+					if (err) reject(err);
+					else resolve(topic);
+				})	
+			}
+			else {
+				resolve(topic);
+			}
 		}
 		else resolve(topic);
 	})
@@ -97,7 +133,9 @@ Pubsub.prototype.unsubscribe = function(topic){
 Pubsub.prototype.publish = function(topic, message){
 	var self = this;
 	return new Promise(function(resolve, reject){
-		self.client.publish(topic, JSON.stringify(message), function(err){
+		if (!(message instanceof Buffer)) message = JSON.stringify(message);
+		self.client.publish(topic, message, function(err){
+		// self.client.publish(topic, JSON.stringify(message), function(err){
 			if (err) reject(err);
 			else resolve(true);
 		})
@@ -108,14 +146,14 @@ Pubsub.prototype.kill = function(){
 	return new Promise(function(resolve, reject){
 		if (self.client.connected){
 			self.client.end(function(){
-				console.log('[Pubsub] gracefully killed');
+				(DEBUG &amp;&amp; console.log('[Pubsub] gracefully killed'));
 				resolve(true);
 			});
 		}
 		else {
 			self.once('ready', function(){
 				self.client.end(function(){
-					console.log('[Pubsub] gracefully killed');
+					(DEBUG &amp;&amp; console.log('[Pubsub] gracefully killed'));
 					resolve(true);
 				});
 			});	
@@ -142,7 +180,46 @@ DummyPubsub.prototype.publish = function(topic, message){
 
 /* Pubsub Server */
 function PubsubServer(){
+	EventEmitter.call(this);
+	var self = this;
+	this.mosca = new mosca.Server({ port: 1883 });
 
+	this.mosca.on('ready', function(){
+		console.log('ThingsJS MOSCA Server Listening at '+self.mosca.opts.host+' on PORT '+self.mosca.opts.port);
+		self.emit('ready');
+	});
+
+	if (DEBUG){
+		this.mosca.on('clientConnected', function(client){
+			console.log(chalk.cyan((new Date()).toLocaleString())+' '+chalk.blue('New client connected: ')+client.id);
+
+		});
+		this.mosca.on('published', function(packet, client){
+			if (client){
+				console.log(chalk.cyan((new Date()).toLocaleString())+' '+chalk.magenta('&lt;'+packet.topic+'> ')+chalk.yellow('['+client.id+']: ') + packet.payload.toString().substr(0,128) );
+			}
+		});
+	}
+}
+PubsubServer.prototype = new EventEmitter();
+PubsubServer.prototype.constructor = PubsubServer;
+
+PubsubServer.prototype.kill = function(){
+	var self = this;
+	return new Promise(function(resolve, reject){
+		self.mosca.close(resolve);
+		self.emit('closed');
+	})
+}
+
+/* Distributed Pubsub Node */
+function PubsubNode(){
+	var self = this;
+	this.mosca = new mosca.Server({ port: 1883 });
+
+	this.mosca.on('ready', function(){
+		console.log('ThingsJS Pubsub Node Listening at '+self.mosca.opts.host+' on PORT '+self.mosca.opts.port);
+	});
 }
 
 /* Attach to Pubsub to export it */
@@ -159,13 +236,13 @@ module.exports = Pubsub;</code></pre>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Code.html">Code</a></li><li><a href="Scope.html">Scope</a></li></ul><h3>Global</h3><ul><li><a href="global.html#AstHook">AstHook</a></li><li><a href="global.html#DummyPubsub">DummyPubsub</a></li><li><a href="global.html#NATIVE_TRANSFORMERS">NATIVE_TRANSFORMERS</a></li><li><a href="global.html#RootScope">RootScope</a></li><li><a href="global.html#StaticScope">StaticScope</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Code.html">Code</a></li><li><a href="CodeEngine.html">CodeEngine</a></li><li><a href="Scope.html">Scope</a></li></ul><h3>Global</h3><ul><li><a href="global.html#AstHook">AstHook</a></li><li><a href="global.html#console">console</a></li><li><a href="global.html#DummyPubsub">DummyPubsub</a></li><li><a href="global.html#Engine">Engine</a></li><li><a href="global.html#NATIVE_TRANSFORMERS">NATIVE_TRANSFORMERS</a></li><li><a href="global.html#Program">Program</a></li><li><a href="global.html#RootScope">RootScope</a></li><li><a href="global.html#StaticScope">StaticScope</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue May 01 2018 23:05:07 GMT-0700 (PDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Jul 26 2018 14:16:41 GMT-0700 (PDT)
 </footer>
 
 <script> prettyPrint(); </script>
