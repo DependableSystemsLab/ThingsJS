@@ -80,16 +80,13 @@
 
 <div ng-show="viewMode === 'time'">
 
-<div class="panel panel-default col-md-11">
-<!-- 	<div class="panel-body" style="min-height:204px;" > -->
-<!-- 		<h4>{{device.device_id}}</h4> -->
+<div class="col-md-11">
+	<div class="panel-body" style="min-height:204px;" > 
 		<table class="table table-bordered" >
 			<tr>
 				<th>Schedule Name</th>
 				<td ng-repeat = "schedule in $scheduleArray track by $index">
-		<!-- 		<div ng-class="{'red': schedule.id === 'test1', 'green': schedule.id === 'test2'}">  -->
 				Schedule {{schedule.id}} 
-				 <!-- </div> -->
 			</td>
 			</tr>					
 			<tr>
@@ -103,21 +100,28 @@
 
 				<div ng-repeat = "device in schedule.devices track by $index" style="border-style: solid;">	
 					<p style = "font-size: 120%; text-decoration: underline">
-				{{device.device_id}}
+				{{device.device_id}} 
 				</p>
 				<br/>
+<!-- 				<p > Available Memory: {{device.available_memory}}</p> -->
+				<br/>
 				<div ng-repeat ="component_id in device.components_id track by $index">
-				<div ng-class = "{'runComponent':$view.startRun($parent.$parent.$index,component_id,$operation) === true,'migrateToComponent':$view.migrate($parent.$parent.$index,component_id,$operation) === 'migrateTo','stopComponent':$view.migrate($parent.$parent.$index,component_id,$operation) === true}">
-				{{device.components_name[$index]}}:{{component_id}}
-			</div>
+			<!-- 	<div ng-class = "{'runComponent':$view.startRun($parent.$parent.$index,component_id,$operation) === true,'migrateToComponent':$view.migrate($parent.$parent.$index,component_id,$operation) === 'migrateTo','stopComponent':$view.migrate($parent.$parent.$index,component_id,$operation) === true}"> -->
+				{{device.components_name[$index]}}:{{component_id}} 
+	<!-- 		</div> -->
 				</div>
 			</div>
 		</td>
 			</tr>
 			</table>
-<!-- 		</div> -->
+		</div>
+	<schedule-device-memory schedule = "$schedules"></schedule-device-memory>
 	</div>
+
+
 </div>	
+
+
 </div>
 </div>
 </div>

@@ -737,7 +737,9 @@ things.factory('CodeRepository', ['$rootScope', function($rootScope){
 							bottom: 30,
 							left: 80
 						},
-						x: function(d){ return d.x },
+						x: function(d){ 
+							console.log("BIBUBIBIBIBI" + JSON.stringify(d))
+							return d.x },
 						y: function(d){ return d.y },
 						useInteractiveGuideline: true,
 						duration: 0,
@@ -819,7 +821,6 @@ things.factory('CodeRepository', ['$rootScope', function($rootScope){
 				console.log("New codes", codes);
 			})
 
-
 			// Watch for node being dynamically resassigned to the directive
 			$scope.$watch(function(){
 				return $scope.node ? $scope.node.id : undefined;
@@ -833,7 +834,6 @@ things.factory('CodeRepository', ['$rootScope', function($rootScope){
 					self.initData();
 				}
 			});
-			
 		}],
 		controllerAs: '$ctrl',
 		templateUrl: 'components/device-graph.html'
@@ -1078,11 +1078,167 @@ things.factory('CodeRepository', ['$rootScope', function($rootScope){
 		templateUrl: 'components/code-panel.html'
 	}
 }])
+.directive('scheduleDeviceMemory',['$filter','Dashboard','CodeRepository',function($filter,Dashboard,CodeRepository)
+{
+
+	function getData(datum){
+			return (Math.round(datum/10000)/100);
+	}
+return {
+		restrict: 'E',
+		scope: {
+			schedule: '=',
+			mode: '=',
+			height: '=?'
+		},
+		controller: ['$scope', function($scope){
+			var self = this;
+			var $dash = Dashboard.get();
+			
+			self.graphOptions = {
+					chart: {
+						type: 'lineChart',
+						height: ($scope.height || 200),
+						margin: {
+							top: 25,
+							right: 30,
+							bottom: 30,
+							left: 80
+						},
+						x: function(d){ 
+							console.log("LALALALALmemory" + JSON.stringify(d));
+							return d.x },
+						y: function(d){ return d.y },
+						useInteractiveGuideline: true,
+						duration: 0,
+						xAxis: {
+							tickFormat: function(d){
+									return $filter('date')(d, 'HH:mm:ss');
+							}
+						},
+						yAxis: {
+							tickFormat: function(d){
+								return d+' '+'MB';
+							}
+						}
+					}
+				};
+
+			self.initData = function(data,name){
+				// if (data){
+				// 	console.log("\n\n\n" + data);
+				// 	console.log("\n\n\n" + name);
+				// 	memData = data.map(function(datum,index){
+				// 		return { x: {"timestamp":datum.timestamp,"name":name[index]}, y:datum.devices[Object.keys(datum.devices)[0]].available_memory} 
+
+				// });
+				// }
+				// self.graphData = [{ values: memData, key: ' Available Memory'}] };
+				self.graphData = [];
+				if ($scope.schedule){
+					console.log("#####graph for schedule"+Object.keys($scope.schedule)[0]);
+					Object.keys($scope.schedule).forEach(function(schedule_name){
+						 Object.keys($scope.schedule[schedule_name].devices).forEach(function(device){
+						 	console.log("inside schedule plot!!!!");
+							var memData = [];
+							var keys = self.graphData.map(function(data){
+								return data.key;
+							});
+							console.log("KEYS" + JSON.stringify(keys));
+							if(keys.includes(device)){
+								var index = keys.indexOf(device);
+								self.graphData[index].values.push({ x:$scope.schedule[schedule_name].timestamp,
+							  	y: getData($scope.schedule[schedule_name].devices[device].available_memory)})
+							}else{
+								console.log("jump here");
+								self.graphData.push({
+									values: [{ x:$scope.schedule[schedule_name].timestamp,
+							  	y: getData($scope.schedule[schedule_name].devices[device].available_memory)}] ,
+									key:device
+								})
+							}
+						});
+					});	
+				}
+					console.log("GRAPH DATA" + JSON.stringify(self.graphData));
+			};
+			
+		 	self.initData();
+		setTimeout(function() {
+		    self.initData();
+		}, 5000);
+
+			// Watch changes in code.stats
+			// $scope.$watch(function(){
+			// 	return $scope.schedule ? Object.keys($scope.schedule).length : undefined;
+			// }, function(length){
+			// 	if (length){
+			// 		console.log("inside look")
+			// 		var schedule_name = Object.keys($scope.schedule)[length-1];
+			// 		var datum = $scope.schedule[schedule_name];
+			// 		// self.graphData['memory'][0].values.push({ x: {"timestamp":datum.timestamp,"name":},
+			// 		//  y: getData(datum) });
+			// 		// if (self.graphData['memory'][0].values.length > 60) self.graphData['memory'][0].values.shift();
+			// 		console.log("SCHEDULE CURRENT DATA" + JSON.stringify($scope.schedule))
+			// 		// self.graphData.map(function(device_mem,index){
+			// 		// 	var key = self.graphData[index].key;
+			// 		// 	device_mem.values.push({ x: datum.timestamp,
+			// 		//   y: getData(datum.devices[key].available_memory) });
+			// 		// 	 if (device_mem.values.length > 6) device_mem.values.shift();
+			// 		// })
+			// 		// self.graphData['memory'][0].values.push({ x: {"timestamp":datum.timestamp,"name":},
+			// 		//  y: getData(datum) });
+			// 		// if (self.graphData['memory'][0].values.length > 60) self.graphData['memory'][0].values.shift();
+			// 		var last_key = Object.keys($scope.schedule)[length-1]
+			// 		var last_item = $scope.schedule[last_key];
+			// 		self.graphData[0].values.push({ x: last_item.timestamp, y: getData(last_item) });
+			// 		if (self.graphData[0].values.length > 60) self.graphData['memory'][0].values.shift();
+			// 		console.log("SCHEDULE DATA AFTER SHIFT" + JSON.stringify($scope.schedule))
+			// 	}
+			// });
+
+			// // Watch changes in code.devices
+			$scope.$watch(function(){
+				return $scope.schedule ? $scope.schedule : undefined;
+			}, function(schedules){
+				console.log("New schedule", schedules);
+			})
+
+			// // Watch for code being dynamically resassigned to the directive
+			$scope.$watch(function(){
+				return $scope.schedule ? $scope.schedule : undefined;
+			}, function(instance_id){
+				if (instance_id){
+					console.log("inside here");
+					var keys = Object.keys($scope.schedule)
+					var slen = Object.keys($scope.schedule).length;
+					console.log("SCHEDULE LENGTH" + slen);
+					if(slen > 10){
+						console.log("START DELETED!!!"+Object.keys($scope.schedule).length);
+						var i = 0;
+						for(i ;i< slen-11; i++){
+							console.log("start delete")
+							delete $scope.schedule[keys[i]];
+						}	
+					}
+					console.log("AFTER DELETED!!!"+ Object.keys($scope.schedule).length);
+					self.initData();
+				}
+				else {
+					self.initData();
+				}
+			});
+ }],
+	controllerAs: '$ctrl',
+	templateUrl: 'components/schedule-device-memory.html'
+}
+}])
 .directive('scheduleDevicePanel', ['Dashboard', 'CodeRepository', function(Dashboard, CodeRepository){
 	return {
 		restrict: 'E',
 		scope: {
-			schedule: '='
+			schedule: '=',
+			height: '='
 		},
 		controller: ['$scope', function($scope){
  

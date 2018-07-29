@@ -1,0 +1,8 @@
+<div style="position: relative;">
+	<div class="btn-group" style="position: absolute; right: 30px; top: -8px;">
+	<!-- 	<button ng-click="$ctrl.setMode('cpu')" class="btn btn-default" ng-class="{ active: mode === 'cpu' }">CPU</button>
+		<button ng-click="$ctrl.setMode('memory')" class="btn btn-default" ng-class="{ active: mode === 'memory' }">Memory</button> -->
+	</div>
+</div>
+<p style = "text-align:center;">Available Memory Graph For schedule</p>
+<nvd3 options="$ctrl.graphOptions" data="$ctrl.graphData"></nvd3>

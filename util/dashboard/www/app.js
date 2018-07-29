@@ -139,7 +139,7 @@ dashApp.constant("CONFIG", {
                         }
 
 
-                        function ApplicationPrototype( name, components) {
+                        function ApplicationPrototype(name, components) {
                             this.name = name;
                             this.components = components;
                         }
@@ -179,21 +179,18 @@ dashApp.constant("CONFIG", {
                                     console.log(fsObject);
                                     self.app_instances_dir = fsObject;
                                     self.app_instances_token = self.app_instances_path.split('/').slice(1);
-                                    Object.keys(self.app_instances_dir.children).forEach(function(filename){
-                                    self.instances_status[filename] = JSON.parse(self.app_instances_dir.children[filename].content)['status']||'UNKNOWN';
-                                });
-                                 
+                                    Object.keys(self.app_instances_dir.children).forEach(function(filename) {
+                                        self.instances_status[filename] = JSON.parse(self.app_instances_dir.children[filename].content)['status'] || 'UNKNOWN';
+                                    });
+
                                     $scope.$apply();
                                 });
-
-                            // Object.keys(self.app_instances_dir.children).forEach(function(filename){
-                            //         self.instances_status[filename] = self.app_instances_dir.children[filename].content.status;
-                            //     });
                         }
 
                         self.clearCodeSelection = function() {
                             self.code_selection = [];
                         }
+
                         self.selectCode = function(code) {
                             if (!(self.code_selection.includes(code))) {
                                 self.code_selection.push(code);
@@ -218,49 +215,54 @@ dashApp.constant("CONFIG", {
                         }
 
                         self.generateAppPrototype = function(name) {
-
-                            var app_content = new ApplicationPrototype( name, self.app_content);
-
+                            var app_content = new ApplicationPrototype(name, self.app_content);
                             var content = {};
-
                             console.log("********content" + JSON.stringify(content));
                             var app_proto = {
                                 'name': name,
                                 'content': JSON.stringify(app_content),
                                 'type': 'file'
                             };
-                            self.saveFile("prototype",app_proto);
-                            // console.log(json_file);
+                            self.saveFile("prototype", app_proto);
                             self.code_selection = [];
                             self.app_content = {};
                         }
-              
+
                         //TO BE DONE IN THE FUTURE 
                         // self.appInstanceChange = function(file,num_instances){
 
                         // }
 
 
-                        self.removeInstance = function(instance,filename){
-                            //check first if instance is stop, otherwise not allowed to remove 
-                            if(JSON.parse(self.app_instances_dir.children[filename].content)['status'] === "STOPPED"){
-                                var id = [];
-                                id.push(self.app_instances_dir.children[filename]._id);
-                                console.log("INSTANCE " + id);
+                        self.removeInstance = function(instance, filename) {
+                              var id = []; 
+                              if (JSON.parse(self.app_instances_dir.children[filename].content)['status'] === "STOPPED") {
+                                  id.push(self.app_instances_dir.children[filename]._id);
+                                  console.log("INSTANCE " + id);
 
-                                $scope.$repo.delete(self.app_instances_path, id)
-                                    .then(function() {
-                                        console.log(filename + id + "deleted")
-                                        self.refresh();
-                                }); 
-                            }
-                             else{
-                                 alert("THE APPLICATION"+filename+":"+instance+ "IS STILL RUNNING!\nSTOP IT BEFORE REMOVE!")
-                            }    
+                                  $scope.$repo.delete(self.app_instances_path, id)
+                                      .then(function() {
+                                          console.log(filename + id + "deleted")
+                                          self.refresh();
+                                      });
+                              } else {
+                                var result = confirm("THE APPLICATION" + filename + " IS STILL RUNNING! \n STILL WANT TO REMOVE?");
+                                if (result){ 
+                                  id.push(self.app_instances_dir.children[filename]._id);
+                                  console.log("INSTANCE " + id);
+
+                                  $scope.$repo.delete(self.app_instances_path, id)
+                                      .then(function() {
+                                          console.log(filename + id + "deleted")
+                                          self.refresh();
+                                      });
+                                }
+
+                              }
                         }
 
-                        self.removePrototype = function(prototype,filename){
-                            var id =[];
+                        self.removePrototype = function(prototype, filename) {
+                            var id = [];
                             id.push(self.app_proto_dir.children[filename]._id);
                             console.log("PROTOTYPE " + id);
 
@@ -268,7 +270,7 @@ dashApp.constant("CONFIG", {
                                 .then(function() {
                                     console.log(filename + id + "deleted")
                                     self.refresh();
-                                });                        
+                                });
                         }
 
                         $scope.$watch(function() { return self.cur_selection },
@@ -281,22 +283,22 @@ dashApp.constant("CONFIG", {
                         $scope.$repo.makeDir(self.cur_path, "application")
                             .then(function(dir) {
                                 console.log("directory saved", dir);
-                                 self.refresh();
+                                self.refresh();
                             });
-                        $scope.$repo.makeDir(joinPath(self.cur_path,"application"),"prototype")
-                            .then(function(dir){
+                        $scope.$repo.makeDir(joinPath(self.cur_path, "application"), "prototype")
+                            .then(function(dir) {
                                 console.log("directory saved", dir);
-                                 self.refresh();
+                                self.refresh();
                             });
-                        $scope.$repo.makeDir(joinPath(self.cur_path,"application"),"instances")
-                            .then(function(dir){
+                        $scope.$repo.makeDir(joinPath(self.cur_path, "application"), "instances")
+                            .then(function(dir) {
                                 console.log("directory saved", dir);
-                                 self.refresh();
+                                self.refresh();
                             });
                         self.refresh();
 
 
-                        self.saveFile = function(dir,app) {
+                        self.saveFile = function(dir, app) {
                             $scope.$repo.writeFile(self.app_path + "/" + dir, app)
                                 .then(function(file) {
                                     console.log("file saved", file);
@@ -305,7 +307,7 @@ dashApp.constant("CONFIG", {
                                 });
                         }
 
-                        self.saveUpdateInstance = function(app_name,appdata,status){
+                        self.saveUpdateInstance = function(app_name, appdata, status) {
                             var application_id = appdata["application_id"];
                             var appName = app_name + "/" + application_id;
                             console.log("APPLICATION_ID" + application_id)
@@ -316,18 +318,18 @@ dashApp.constant("CONFIG", {
                                 'content': JSON.stringify(appdata),
                                 'type': 'file'
                             };
-                            if(self.app_instances_dir.files.includes(appName)){
+                            if (self.app_instances_dir.files.includes(appName)) {
                                 updated_app['_id'] = self.app_instances_dir.children[appName];
                             }
-                            self.saveFile("instances",updated_app);
-                    };
+                            self.saveFile("instances", updated_app);
+                        };
 
                         //send runapplication detail 
                         self.runApplication = function(app_data, app_name) {
                             var runapp_data;
-                            try{
-                                 runapp_data = JSON.parse(app_data);
-                            }catch(e){
+                            try {
+                                runapp_data = JSON.parse(app_data);
+                            } catch (e) {
                                 runapp_data = app_data;
                             }
                             console.log("runapp_data" + runapp_data);
@@ -336,15 +338,15 @@ dashApp.constant("CONFIG", {
                             var updateDetail = {};
                             console.log("pubsub publish runApplication" + runapp_data);
                             alert("pubsub publish runApplication" + JSON.stringify(runapp_data));
-                             // if (Object.keys(runapp_data["detail_content"]).length === 0) {
+                            // if (Object.keys(runapp_data["detail_content"]).length === 0) {
                             dashboard.pubsub.publish("runApplication", runapp_data);
                             var APPLICATION_DETAIL = "applicationDetails/" + request_token + "/run";
                             dashboard.pubsub.subscribe(APPLICATION_DETAIL, function(topic, appdetail) {
                                 console.log("appdetail" + JSON.stringify(appdetail));
-                                console.log( "received application detail" + JSON.stringify(appdetail) + "\n");                                  
+                                console.log("received application detail" + JSON.stringify(appdetail) + "\n");
                                 console.log("+++++jump to " + app_name + "subscribe");
 
-                                self.saveUpdateInstance(app_name,appdetail,'RUNNING');
+                                self.saveUpdateInstance(app_name, appdetail, 'RUNNING');
 
                                 // var application_id = appdetail["application_id"];
                                 // appdetail['status'] = 'RUNNING';
@@ -365,16 +367,16 @@ dashApp.constant("CONFIG", {
                             var application_id = JSON.parse(app_detail)["application_id"];
                             var APPLICATION_DETAIL_STOP = "applicationDetails/" + request_token + "/stop";
                             console.log("STOPPED APPLICATION ID" + application_id);
-                            dashboard.pubsub.publish(STOP_APPLICATION, {'application_id':application_id,'request_token':request_token});
+                            dashboard.pubsub.publish(STOP_APPLICATION, { 'application_id': application_id, 'request_token': request_token });
                             dashboard.pubsub.subscribe(APPLICATION_DETAIL_STOP, function(topic, data) {
                                 if (data["status"]) {
                                     alert("stopping application successfully" + data["application_id"]);
-                                      // self.instances_status[JSON.parse(app_detail)['name']+"/"+application_id] = 'STOPPED';
-                                    self.saveUpdateInstance(JSON.parse(app_detail)['name'],JSON.parse(app_detail),'STOPPED');
+                                    // self.instances_status[JSON.parse(app_detail)['name']+"/"+application_id] = 'STOPPED';
+                                    self.saveUpdateInstance(JSON.parse(app_detail)['name'], JSON.parse(app_detail), 'STOPPED');
                                 } else {
                                     alert("stopping application failed" + data["application_id"]);
                                     // self.instances_status[JSON.parse(app_detail)['name']+"/"+application_id] = 'STOP FAILED';
-                                    self.saveUpdateInstance(JSON.parse(app_detail)['name'],JSON.parse(app_detail),'STOP FAILED');
+                                    self.saveUpdateInstance(JSON.parse(app_detail)['name'], JSON.parse(app_detail), 'STOP FAILED');
                                 }
                             });
                         };
@@ -443,7 +445,7 @@ dashApp.constant("CONFIG", {
                         $scope.$operation = {};
 
                         var SCHEDULE_UPDATE_TOPIC = 'scheduleUpdate';
-           
+
 
                         self.cur_path = "/"; // tentative path
                         self.schedule_path_tokens = [];
@@ -468,22 +470,22 @@ dashApp.constant("CONFIG", {
 
                         self.getSchedule = function(dir_name, scheduleName) {
                             // self.navigateTo(dir_name);
-                            var schedule_name = scheduleName ;
+                            var schedule_name = scheduleName;
                             self.refresh();
                             return $scope.$repo.get(joinPath(self.schedule_path, dir_name))
                                 .then(function(dir) {
                                     console.log("dir get", dir);
-                                    if(typeof dir.children[schedule_name] !== 'undefined' &&  dir.children[schedule_name]!== null ){
-                                    self.cur_schedule_selection._id = dir.children[schedule_name]["_id"];
-                                    self.cur_schedule_selection.name = dir.children[schedule_name].name;
-                                    self.cur_schedule_selection.content = dir.children[schedule_name].content;
-                                    console.log("schedule content" + self.cur_schedule_selection.content);   
-                                    console.log("233" + self.cur_schedule_selection.content);
-                                    return new Schedule(scheduleName, JSON.parse(self.cur_schedule_selection.content));
-                                }else{
-                                    throw error("file not exist");
-                                }
-                            });
+                                    if (typeof dir.children[schedule_name] !== 'undefined' && dir.children[schedule_name] !== null) {
+                                        self.cur_schedule_selection._id = dir.children[schedule_name]["_id"];
+                                        self.cur_schedule_selection.name = dir.children[schedule_name].name;
+                                        self.cur_schedule_selection.content = dir.children[schedule_name].content;
+                                        console.log("schedule content" + self.cur_schedule_selection.content);
+                                        console.log("233" + self.cur_schedule_selection.content);
+                                        return new Schedule(scheduleName, JSON.parse(self.cur_schedule_selection.content));
+                                    } else {
+                                        throw error("file not exist");
+                                    }
+                                });
                         }
 
                         self.iterateOperations = function(dir_name) {
@@ -500,12 +502,12 @@ dashApp.constant("CONFIG", {
                                     files[index] = new Operation(JSON.parse(dir.children[schedule_name].content));
                                 });
                                 return files;
-                            }).catch(function(err){
+                            }).catch(function(err) {
                                 console.log("SCHEDULE NOT EXIST 333");
                             });
                         }
 
-                        self.iterateDir = function(dir_name,type) {
+                        self.iterateDir = function(dir_name, type) {
                             var files = [];
                             self.refresh();
                             return $scope.$repo.get(joinPath(self.schedule_path, dir_name)).
@@ -514,50 +516,130 @@ dashApp.constant("CONFIG", {
                                 // var files = dir.children;
                                 Object.keys(dir.children).forEach(function(schedule_name) {
                                     console.log("233ITERATION" + dir.children[schedule_name].content);
-                                    if(type === "schedule"){
+                                    if (type === "schedule") {
                                         files.push(new Schedule(schedule_name, JSON.parse(dir.children[schedule_name].content)));
-                                    }
-                                    else if(type === "operation"){
+                                    } else if (type === "operation") {
                                         files.push(new Operation(JSON.parse(dir.children[schedule_name].content)));
                                     }
-                                    
+
                                 });
                                 return files;
-                            }).catch(function(err){
+                            }).catch(function(err) {
                                 console.log("SCHEDULE NOT EXIST 333");
                             });
                         }
 
                         var schedule1 = {
                             'pi0-1': ['fractorial.js*0', 'shade-contr.js*1'],
-                            'pi3-3': ['sprinkler.js*1', 'shade-contr.js*2']};
-                        
+                            'pi3-3': ['sprinkler.js*1', 'shade-contr.js*2']
+                        };
+
 
                         var schedule2 = {
                             'pi3-1': ['sprinkler.js*2', 'shade-contr.js*3'],
                             'pi3-2': ['sprinkler.js*3', 'temp-reg.js*0'],
-                            'i7-1': ['shade-contr.js*0', 'temp-reg.js*1']};
+                            'i7-1': ['shade-contr.js*0', 'temp-reg.js*1']
+                        };
 
                         var schedule3 = {
                             'pi3-1': ['sprinkler.js*2', 'shade-contr.js*3'],
                             'pi3-2': ['sprinkler.js*3', 'temp-reg.js*0'],
-                            'i7-8': ['shade-contr.js*0', 'temp-reg.js*9']};
+                            'i7-8': ['shade-contr.js*0', 'temp-reg.js*9']
+                        };
 
-                        function Device(device_id, components_id, components_name) {
+                        // function Device(device_id, components_id, components_name) {
+                        //     this.device_id = device_id;
+                        //     this.components_id = components_id;
+                        //     this.components_name = components_name;
+                        // }
+
+                        // function Schedule(id, data) {
+                        //     this.id = id;
+                        //     console.log("data to be parsed" + data);
+                        //     this.devices = {};
+                        //     var that = this;
+                        //     this.timestamp = new Date(data["timestamp"]);
+                        //     delete data["timestamp"];
+                        //     console.log("~~~");
+                        //     console.log("\n\n" + JSON.stringify(data))
+                        //     Object.keys(data).forEach(function(element) {
+                        //         var id_array = [];
+                        //         var name_array = [];
+                        //         data[element].forEach(function(ele) {
+                        //             id_array.push(ele.split("*")[1]);
+                        //             name_array.push(ele.split("*")[0]);
+                        //         })
+                        //         that.devices[element] = new Device(element, id_array, name_array);
+                        //     });
+                        //     console.log("devices" + JSON.stringify(this.devices));
+                        //     console.log("timestamp" + this.timestamp);
+                        //     }
+
+                        var sample_schedule = {
+                            'timestamp': 2049172904714,
+                            'mapping': {
+                                'pi1': {
+                                    'available_memory': 300,
+                                    'processes': {
+                                        'factorial.js*1': {
+                                            'memory_usage': 30,
+                                            'app_token': 'ABCFKEJSFKEJF'
+                                        },
+                                        'test.js*1': {
+                                            'memory_usage': 30,
+                                            'app_token': 'BDKSJFKLEHF'
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+
+                        // Schedule1
+                        //   this.timestamp
+                        //   this.mapping 
+
+                        function Device(device_id, components_id, components_name, memory, memory_usages, app_tokens) {
                             this.device_id = device_id;
                             this.components_id = components_id;
                             this.components_name = components_name;
+                            this.memory_usages = memory_usages;
+                            this.app_tokens = app_tokens;
+                            this.available_memory = memory;
                         }
+
+
 
                         function Schedule(id, data) {
                             this.id = id;
                             console.log("data to be parsed" + data);
                             this.devices = {};
                             var that = this;
-                            this.timestamp = new Date(data["timestamp"]);
+                            this.timestamp = data["timestamp"];
                             delete data["timestamp"];
-                            console.log("~~~");
+                            var mapping = data['mapping'];
                             console.log("\n\n" + JSON.stringify(data))
+                            Object.keys(mapping).forEach(function(device) {
+                                var id_array = [];
+                                var name_array = [];
+                                var useage_array = [];
+                                var token_array = [];
+                                Object.keys(mapping[device]['processes']).forEach(function(component) {
+                                    id_array.push(component.split("*")[1]);
+                                    name_array.push(component.split("*")[0]);
+                                    useage_array.push(mapping[device]['processes'][component]['memory_usage']);
+                                    token_array.push(mapping[device]['processes'][component]['app_token'])
+                                });
+                                that.devices[device] = new Device(device, id_array, name_array, mapping[device]['available_memory'], useage_array, token_array);
+                            });
+                            // console.log("devices" + JSON.stringify(this.devices));
+                            console.log("timestamp" + this.timestamp);
+                        }
+
+                        function OperationSchedule(data) {
+                            console.log("data to be parsed" + data);
+                            this.devices = {};
+                            var that = this;
                             Object.keys(data).forEach(function(element) {
                                 var id_array = [];
                                 var name_array = [];
@@ -567,28 +649,11 @@ dashApp.constant("CONFIG", {
                                 })
                                 that.devices[element] = new Device(element, id_array, name_array);
                             });
-                            console.log("devices" + JSON.stringify(this.devices));
-                            console.log("timestamp" + this.timestamp);
-                            }
+                        }
 
-                        function OperationSchedule(data) {
-                                  console.log("data to be parsed" + data);
-                                  this.devices = {};
-                                  var that = this;
-                                  Object.keys(data).forEach(function(element) {
-                                      var id_array = [];
-                                      var name_array = [];
-                                      data[element].forEach(function(ele) {
-                                          id_array.push(ele.split("*")[1]);
-                                          name_array.push(ele.split("*")[0]);
-                                      })
-                                      that.devices[element] = new Device(element, id_array, name_array);
-                                  });
-                         }
-
-                            function Operation(data) {
-                                //how to handle empty data;
-                                if(typeof data !== 'undefined' && data !== null){
+                        function Operation(data) {
+                            //how to handle empty data;
+                            if (typeof data !== 'undefined' && data !== null) {
                                 var run = data["run"];
                                 var stop = data["stop"];
                                 var migrate = data["migrate"];
@@ -604,16 +669,15 @@ dashApp.constant("CONFIG", {
                                     var code_name = components_detail.split("*")[0];
                                     console.log(code_name + ":" + instance_id + " migrate " + from_device + "--> " +
                                         to_device);
-                                    that.migrate_content[components_detail]={"from":from_device,"to":to_device} 
+                                    that.migrate_content[components_detail] = { "from": from_device, "to": to_device }
                                 });
-                            }
-                            else{
+                            } else {
                                 console.log("OPEATION DATA IS EMPTY");
                                 return {};
-                                }
                             }
+                        }
 
-                        self.fetchSchedule = function(){
+                        self.fetchSchedule = function() {
                             console.log("starting refresh");
                             self.iterateOperations("operations").then(function(data) {
                                 // data.forEach(function(operation) {
@@ -621,17 +685,17 @@ dashApp.constant("CONFIG", {
                                 $scope.$operation = data;
                                 // });
                                 console.log("$OPERATIONARRAY" + JSON.stringify($scope.$operation));
-                            }).catch(function(err){
+                            }).catch(function(err) {
                                 console.log("fail to fetch operations" + err);
                             });
 
                             self.iterateDir("history", "schedule").then(function(data) {
-                                    data.forEach(function(schedule) {
-                                        $scope.$schedules[schedule["id"]] = schedule;
-                                    });
-                                    $scope.$scheduleArray = Object.keys($scope.$schedules).map(function(key) { return $scope.$schedules[key]; });
-                                    self.refresh();
-                                }).catch(function(err) {
+                                data.forEach(function(schedule) {
+                                    $scope.$schedules[schedule["id"]] = schedule;
+                                });
+                                $scope.$scheduleArray = Object.keys($scope.$schedules).map(function(key) { return $scope.$schedules[key]; });
+                                self.refresh();
+                            }).catch(function(err) {
                                 console.log("biubiubiuSCHEDULE NOT EXIST");
                             });
 
@@ -643,11 +707,12 @@ dashApp.constant("CONFIG", {
                                 console.log("SCHEDULE NOT EXIST")
                             });
                         }
-                        self.fetchSchedule();
-                        setTimeout(function(){
-                        self.fetchSchedule();
-                        },5000);
                         
+                        self.fetchSchedule();
+                        setTimeout(function() {
+                            self.fetchSchedule();
+                        }, 5000);
+
 
 
                         // $scope.$scheduleArray = Object.keys($scope.$schedules).map(function(key) { return $scope.$schedules[key]; });
@@ -677,33 +742,33 @@ dashApp.constant("CONFIG", {
                         $scope.$scheduleArray = Object.keys($scope.$schedules).map(function(key) { return $scope.$schedules[key]; });
                         console.log("$scheduleArray" + $scope.$scheduleArray);
 
-                        console.log("operationarray outside ~~~" + $scope.operationArray+$scope.changeVersion);
+                        console.log("operationarray outside ~~~" + $scope.operationArray + $scope.changeVersion);
 
-                        self.startRun = function(index,component_id,operationArray){
-                            if(index ===0){
-                                console.log("no operation");
+                        self.startRun = function(index, component_id, operationArray) {
+
+                            if (index === 0) {
+                                // console.log("no operation");
                                 return false
                             }
-                            index -=1;
+                            index -= 1;
                             console.log("startRun index:" + index);
 
-                             var result = false;
-                             console.log(index + "array" +  JSON.stringify(operationArray));
-                            if(typeof operationArray[index] === 'undefined'||operationArray[index] === null){
+                            var result = false;
+                            console.log(index + "array" + JSON.stringify(operationArray));
+                            if (typeof operationArray[index] === 'undefined' || operationArray[index] === null) {
                                 console.log("jump to undefined");
                                 return result;
-                            }
-                            else if(Object.keys(operationArray[index]).length === 0){
+                            } else if (Object.keys(operationArray[index]).length === 0) {
                                 console.log("jump to undefined");
-                                  return result;
-                            } else if(Object.keys(operationArray[index].run_schedule).length === 0){
+                                return result;
+                            } else if (Object.keys(operationArray[index].run_schedule).length === 0) {
                                 console.log("run_schedule empty");
                                 return result;
                             }
                             var run_devices = operationArray[index].run_schedule.devices;
                             console.log("BIUBIUBIUT" + JSON.stringify(run_devices));
-                            Object.keys(run_devices).forEach(function(device_id){
-                                if(run_devices[device_id].components_id.includes(component_id)){
+                            Object.keys(run_devices).forEach(function(device_id) {
+                                if (run_devices[device_id].components_id.includes(component_id)) {
                                     console.log("components" + component_id + "start running");
                                     result = true;
                                 }
@@ -712,26 +777,25 @@ dashApp.constant("CONFIG", {
                         }
 
 
-                        self.stopRun = function(index,component_id,operationArray){
-                            if(index ===0){
-                                console.log("no operation");
+                        self.stopRun = function(index, component_id, operationArray) {
+                            if (index === 0) {
+                                // console.log("no operation");
                                 return false
                             }
-                            index -=1;
-                             console.log("STOPRun index:" + index);
-                             var result = false;
-                            if(typeof operationArray[index] === 'undefined'||operationArray[index] === null){
+                            index -= 1;
+                            console.log("STOPRun index:" + index);
+                            var result = false;
+                            if (typeof operationArray[index] === 'undefined' || operationArray[index] === null) {
+                                return result;
+                            } else if (Object.keys(operationArray[index]).length === 0) {
+                                return result;
+                            } else if (Object.keys(operationArray[index].stop_schedule).length === 0) {
                                 return result;
                             }
-                            else if(Object.keys(operationArray[index]).length === 0){
-                                  return result;
-                            } else if(Object.keys(operationArray[index].stop_schedule).length === 0){
-                                return result;
-                            }
-                            var stop_devices =  operationArray[index].stop_schedule.devices;
+                            var stop_devices = operationArray[index].stop_schedule.devices;
                             console.log("BIUBIUBIUT" + JSON.stringify(stop_devices));
-                            Object.keys(stop_devices).forEach(function(device_id){
-                                if(stop_devices[device_id].components_id.includes(component_id)){
+                            Object.keys(stop_devices).forEach(function(device_id) {
+                                if (stop_devices[device_id].components_id.includes(component_id)) {
                                     console.log("components" + component_id + "start running");
                                     result = true;
                                 }
@@ -739,26 +803,25 @@ dashApp.constant("CONFIG", {
                             return result;
                         }
 
-                        self.migrate = function(index,component_id,operationArray){
-                            if(index ===0){
-                                console.log("no operation");
+                        self.migrate = function(index, component_id, operationArray) {
+                            if (index === 0) {
+                                // console.log("no operation");
                                 return ""
                             }
-                            index -=1;
+                            index -= 1;
                             console.log("startRun index:" + index);
-                             var result = "";
-                            if(typeof operationArray[index] === 'undefined'||operationArray[index] === null){
+                            var result = "";
+                            if (typeof operationArray[index] === 'undefined' || operationArray[index] === null) {
                                 return result;
-                            }
-                            else if(Object.keys(operationArray[index]).length === 0){
-                                  return result;
-                            } else if(Object.keys(operationArray[index].migrate_content).length === 0){
+                            } else if (Object.keys(operationArray[index]).length === 0) {
+                                return result;
+                            } else if (Object.keys(operationArray[index].migrate_content).length === 0) {
                                 return result;
                             }
                             var migrate_content = operationArray[index].migrate_content;
                             console.log("BIUBIUBIUT" + JSON.stringify(migrate_content));
-                            Object.keys(migrate_content).forEach(function(code_instance){
-                                if(code_instance.split("*")[1] === component_id){
+                            Object.keys(migrate_content).forEach(function(code_instance) {
+                                if (code_instance.split("*")[1] === component_id) {
                                     console.log("components" + component_id + "migrate");
                                     result = "migrateTo";
                                 }
@@ -771,8 +834,8 @@ dashApp.constant("CONFIG", {
                             function(selection) {
                                 self.hasSelection = Object.values(selection).reduce(function(acc, item) { return acc || !!item }, false);
                                 console.log(selection);
-                        }, true);
-                        
+                            }, true);
+
                         // $scope.$operationArray.push({});
                         // $scope.$operationArray.push(new Operation(sample_change));
                         // $scope.$operationArray.push(new Operation(sample_change2));
@@ -895,7 +958,7 @@ dashApp.constant("CONFIG", {
                         var self = this;
 
                         // self.subscribe = function(topic){
-                        // 	socket.send({ action: "subscribe", topic: topic });
+                  Object.keys($scope.schedule).length      //  socket.send({ action: "subscribe", topic: topic });
                         // }
                     }],
                     controllerAs: '$view',
