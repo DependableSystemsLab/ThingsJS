@@ -444,6 +444,7 @@ dashApp.constant("CONFIG", {
                         $scope.$schedules = {};
                         $scope.$operation = {};
 
+
                         var SCHEDULE_UPDATE_TOPIC = 'scheduleUpdate';
 
 
@@ -455,6 +456,8 @@ dashApp.constant("CONFIG", {
                         self.cur_schedule_selection = {};
                         $scope.operationArray = [];
                         self.scheduleArray = [];
+                        self.operationRecord = [];
+
 
                         self.refresh = function() {
                             $scope.$repo.get(self.schedule_path)
@@ -528,25 +531,6 @@ dashApp.constant("CONFIG", {
                                 console.log("SCHEDULE NOT EXIST 333");
                             });
                         }
-
-                        var schedule1 = {
-                            'pi0-1': ['fractorial.js*0', 'shade-contr.js*1'],
-                            'pi3-3': ['sprinkler.js*1', 'shade-contr.js*2']
-                        };
-
-
-                        var schedule2 = {
-                            'pi3-1': ['sprinkler.js*2', 'shade-contr.js*3'],
-                            'pi3-2': ['sprinkler.js*3', 'temp-reg.js*0'],
-                            'i7-1': ['shade-contr.js*0', 'temp-reg.js*1']
-                        };
-
-                        var schedule3 = {
-                            'pi3-1': ['sprinkler.js*2', 'shade-contr.js*3'],
-                            'pi3-2': ['sprinkler.js*3', 'temp-reg.js*0'],
-                            'i7-8': ['shade-contr.js*0', 'temp-reg.js*9']
-                        };
-
                         // function Device(device_id, components_id, components_name) {
                         //     this.device_id = device_id;
                         //     this.components_id = components_id;
@@ -606,6 +590,7 @@ dashApp.constant("CONFIG", {
                             this.memory_usages = memory_usages;
                             this.app_tokens = app_tokens;
                             this.available_memory = memory;
+                            this.operation_status = [];
                         }
 
 
@@ -679,15 +664,15 @@ dashApp.constant("CONFIG", {
 
                         self.fetchSchedule = function() {
                             console.log("starting refresh");
-                            self.iterateOperations("operations").then(function(data) {
-                                // data.forEach(function(operation) {
-                                console.log("BIBUBIBUBIBUBIBU" + JSON.stringify(data));
-                                $scope.$operation = data;
-                                // });
-                                console.log("$OPERATIONARRAY" + JSON.stringify($scope.$operation));
-                            }).catch(function(err) {
-                                console.log("fail to fetch operations" + err);
-                            });
+                            // self.iterateOperations("operations").then(function(data) {
+                            //     // data.forEach(function(operation) {
+                            //     console.log("BIBUBIBUBIBUBIBU" + JSON.stringify(data));
+                            //     $scope.$operation = data;
+                            //     // });
+                            //     console.log("$OPERATIONARRAY" + JSON.stringify($scope.$operation));
+                            // }).catch(function(err) {
+                            //     console.log("fail to fetch operations" + err);
+                            // });
 
                             self.iterateDir("history", "schedule").then(function(data) {
                                 data.forEach(function(schedule) {
@@ -695,19 +680,79 @@ dashApp.constant("CONFIG", {
                                 });
                                 $scope.$scheduleArray = Object.keys($scope.$schedules).map(function(key) { return $scope.$schedules[key]; });
                                 self.refresh();
+
+                                self.getSchedule("current", "current").then(function(data) {
+                                    $scope.$schedules["current"] = data;
+                                    $scope.$scheduleArray = Object.keys($scope.$schedules).map(function(key) { return $scope.$schedules[key]; });
+                                    self.refresh();
+
+                                }).catch(function(err) {
+                                    console.log("SCHEDULE NOT EXIST")
+                                });
+
+                                self.iterateOperations("operations").then(function(data) {
+                                    // data.forEach(function(operation) {
+                                    console.log("BIBUBIBUBIBUBIBU" + JSON.stringify(data));
+                                    $scope.$operation = data;
+
+                                    // });
+                                    console.log("$OPERATIONARRAY" + JSON.stringify($scope.$operation));
+                                             
+                                             console.log("start to fill operation record");
+                                Object.keys($scope.$schedules).forEach(function(schedule_name,index1){
+                                      console.log("start to loop1;")
+                                    Object.keys($scope.$schedules[schedule_name].devices).forEach(function(device){
+                                          console.log("start to loop2;")
+                                         $scope.$schedules[schedule_name].devices[device].components_id.forEach(function(component_id,index2){
+                                            console.log("start to loop3;")
+                                            if(self.startRun(index1,component_id,$scope.$schedules[schedule_name].devices[device].components_name[index2],$scope.$operation)){
+                                                    $scope.$scheduleArray[index1].devices[device].operation_status[index2] = "run";
+                                            }
+                                            else if(self.stopRun(index1,component_id,$scope.$schedules[schedule_name].devices[device].components_name[index2],$scope.$operation)){
+                                                    $scope.$scheduleArray[index1].devices[device].operation_status[index2] = "stop";
+                                            }
+                                            else if(self.migrate(index1,component_id,$scope.$schedules[schedule_name].devices[device].components_name[index2],$scope.$operation) === "migrateTo"){
+                                                    $scope.$scheduleArray[index1].devices[device].operation_status[index2] = "migrateTo";
+                                            }
+                                        });
+                                    });
+
+                                })
+                                console.log("NEW SCHEDULE" + JSON.stringify($scope.$scheduleArray));
                             }).catch(function(err) {
+                                    console.log("fail to fetch operations" + err);
+                                });
+
+                            })
+                            //     .then(function(){
+                            //     console.log("start to fill operation record");
+                            //     Object.keys($scope.$schedules).forEach(function(schedule_name,index1){
+                            //           console.log("start to loop1;")
+                            //         Object.keys($scope.$schedules[schedule_name].devices).forEach(function(device){
+                            //               console.log("start to loop2;")
+                            //              $scope.$schedules[schedule_name].devices[device].components_id.forEach(function(component_id,index2){
+                            //                 console.log("start to loop3;")
+                            //                 if(self.startRun(index1,component_id,$scope.$schedules[schedule_name].devices[device].components_name[index2],$scope.$operation)){
+                            //                         $scope.$scheduleArray[index1].devices[device].operation_status[index2] = "run";
+                            //                 }
+                            //                 else if(self.stopRun(index1,component_id,$scope.$schedules[schedule_name].devices[device].components_name[index2],$scope.$operation)){
+                            //                         $scope.$scheduleArray[index1].devices[device].operation_status[index2] = "stop";
+                            //                 }
+                            //                 else if(self.migrate(index1,component_id,$scope.$schedules[schedule_name].devices[device].components_name[index2],$scope.$operation) === "migrateTo"){
+                            //                         $scope.$scheduleArray[index1].devices[device].operation_status[index2] = "migrateTo";
+                            //                 }
+                            //             });
+                            //         });
+                            //     });
+                            // console.log("NEW SCHEDULE" + JSON.stringify($scope.$scheduleArray));
+
+                            // })
+                                .catch(function(err) {
                                 console.log("biubiubiuSCHEDULE NOT EXIST");
                             });
 
-                            self.getSchedule("current", "current").then(function(data) {
-                                $scope.$schedules["current"] = data;
-                                $scope.$scheduleArray = Object.keys($scope.$schedules).map(function(key) { return $scope.$schedules[key]; });
-                                self.refresh();
-                            }).catch(function(err) {
-                                console.log("SCHEDULE NOT EXIST")
-                            });
                         }
-                        
+
                         self.fetchSchedule();
                         setTimeout(function() {
                             self.fetchSchedule();
@@ -744,15 +789,15 @@ dashApp.constant("CONFIG", {
 
                         console.log("operationarray outside ~~~" + $scope.operationArray + $scope.changeVersion);
 
-                        self.startRun = function(index, component_id, operationArray) {
+        
 
+                        self.startRun = function(index, component_id, name, operationArray) {
                             if (index === 0) {
                                 // console.log("no operation");
                                 return false
                             }
                             index -= 1;
                             console.log("startRun index:" + index);
-
                             var result = false;
                             console.log(index + "array" + JSON.stringify(operationArray));
                             if (typeof operationArray[index] === 'undefined' || operationArray[index] === null) {
@@ -768,16 +813,20 @@ dashApp.constant("CONFIG", {
                             var run_devices = operationArray[index].run_schedule.devices;
                             console.log("BIUBIUBIUT" + JSON.stringify(run_devices));
                             Object.keys(run_devices).forEach(function(device_id) {
-                                if (run_devices[device_id].components_id.includes(component_id)) {
-                                    console.log("components" + component_id + "start running");
-                                    result = true;
+     
+                                var i = 0;
+                                for(i ; i< run_devices[device_id].components_id.length; i++){
+                                    if(run_devices[device_id].components_id[i] === component_id && 
+                                        run_devices[device_id].components_name[i] === name){
+                                        result = true;
+                                    }
                                 }
                             });
                             return result;
                         }
 
 
-                        self.stopRun = function(index, component_id, operationArray) {
+                        self.stopRun = function(index, component_id, name, operationArray) {
                             if (index === 0) {
                                 // console.log("no operation");
                                 return false
@@ -794,16 +843,27 @@ dashApp.constant("CONFIG", {
                             }
                             var stop_devices = operationArray[index].stop_schedule.devices;
                             console.log("BIUBIUBIUT" + JSON.stringify(stop_devices));
+                            
+                            // Object.keys(stop_devices).forEach(function(device_id) {
+                            //     if (stop_devices[device_id].components_id.includes(component_id)) {
+                            //         console.log("components" + component_id + "start running");
+                            //         result = true;
+                            //     }
+                            // });
+
                             Object.keys(stop_devices).forEach(function(device_id) {
-                                if (stop_devices[device_id].components_id.includes(component_id)) {
-                                    console.log("components" + component_id + "start running");
-                                    result = true;
+                                var i = 0;
+                                for(i ; i< stop_devices[device_id].components_id.length; i++){
+                                    if(stop_devices[device_id].components_id[i] === component_id && 
+                                        stop_devices[device_id].components_name[i] === name){
+                                        result = true;
+                                    }
                                 }
                             });
                             return result;
                         }
 
-                        self.migrate = function(index, component_id, operationArray) {
+                        self.migrate = function(index, component_id, name, operationArray) {
                             if (index === 0) {
                                 // console.log("no operation");
                                 return ""
@@ -820,12 +880,19 @@ dashApp.constant("CONFIG", {
                             }
                             var migrate_content = operationArray[index].migrate_content;
                             console.log("BIUBIUBIUT" + JSON.stringify(migrate_content));
+                            // Object.keys(migrate_content).forEach(function(code_instance) {
+                            //     if (code_instance.split("*")[1] === component_id) {
+                            //         console.log("components" + component_id + "migrate");
+                            //         result = "migrateTo";
+                            //     }
+                            // });
                             Object.keys(migrate_content).forEach(function(code_instance) {
-                                if (code_instance.split("*")[1] === component_id) {
-                                    console.log("components" + component_id + "migrate");
-                                    result = "migrateTo";
+                                if(code_instance.split("*")[1] === component_id && 
+                                    code_instance.split("*")[0] === name){
+                                     result = "migrateTo";
                                 }
                             });
+
                             return result;
                         }
 
@@ -835,13 +902,6 @@ dashApp.constant("CONFIG", {
                                 self.hasSelection = Object.values(selection).reduce(function(acc, item) { return acc || !!item }, false);
                                 console.log(selection);
                             }, true);
-
-                        // $scope.$operationArray.push({});
-                        // $scope.$operationArray.push(new Operation(sample_change));
-                        // $scope.$operationArray.push(new Operation(sample_change2));
-                        // $scope.scheduleArray.push(new Schedule("test1",static_schedule_1));
-                        // $scope.scheduleArray.push(new Schedule("test2",static_schedule_2));
-                        // $scope.scheduleArray.push(new Schedule("test3",static_schedule_3));
 
                     }],
                     controllerAs: '$view',
