@@ -678,12 +678,15 @@ dashApp.constant("CONFIG", {
                                 data.forEach(function(schedule) {
                                     $scope.$schedules[schedule["id"]] = schedule;
                                 });
-                                $scope.$scheduleArray = Object.keys($scope.$schedules).map(function(key) { return $scope.$schedules[key]; });
+                                $scope.$scheduleArray = Object.keys($scope.$schedules).map(function(key) { 
+                                    return $scope.$schedules[key]; });
                                 self.refresh();
 
                                 self.getSchedule("current", "current").then(function(data) {
                                     $scope.$schedules["current"] = data;
-                                    $scope.$scheduleArray = Object.keys($scope.$schedules).map(function(key) { return $scope.$schedules[key]; });
+                                    $scope.$scheduleArray = Object.keys($scope.$schedules).map(function(key) { 
+                                        return $scope.$schedules[key]; 
+                                    });
                                     self.refresh();
 
                                 }).catch(function(err) {
@@ -722,35 +725,9 @@ dashApp.constant("CONFIG", {
                             }).catch(function(err) {
                                     console.log("fail to fetch operations" + err);
                                 });
-
-                            })
-                            //     .then(function(){
-                            //     console.log("start to fill operation record");
-                            //     Object.keys($scope.$schedules).forEach(function(schedule_name,index1){
-                            //           console.log("start to loop1;")
-                            //         Object.keys($scope.$schedules[schedule_name].devices).forEach(function(device){
-                            //               console.log("start to loop2;")
-                            //              $scope.$schedules[schedule_name].devices[device].components_id.forEach(function(component_id,index2){
-                            //                 console.log("start to loop3;")
-                            //                 if(self.startRun(index1,component_id,$scope.$schedules[schedule_name].devices[device].components_name[index2],$scope.$operation)){
-                            //                         $scope.$scheduleArray[index1].devices[device].operation_status[index2] = "run";
-                            //                 }
-                            //                 else if(self.stopRun(index1,component_id,$scope.$schedules[schedule_name].devices[device].components_name[index2],$scope.$operation)){
-                            //                         $scope.$scheduleArray[index1].devices[device].operation_status[index2] = "stop";
-                            //                 }
-                            //                 else if(self.migrate(index1,component_id,$scope.$schedules[schedule_name].devices[device].components_name[index2],$scope.$operation) === "migrateTo"){
-                            //                         $scope.$scheduleArray[index1].devices[device].operation_status[index2] = "migrateTo";
-                            //                 }
-                            //             });
-                            //         });
-                            //     });
-                            // console.log("NEW SCHEDULE" + JSON.stringify($scope.$scheduleArray));
-
-                            // })
-                                .catch(function(err) {
+                            }).catch(function(err) {
                                 console.log("biubiubiuSCHEDULE NOT EXIST");
                             });
-
                         }
 
                         self.fetchSchedule();
@@ -784,7 +761,9 @@ dashApp.constant("CONFIG", {
                         // var static_schedule_2 = {"node_00":["factorial.js*2","fractorial.js*4"], "node_01": ["test.js*1"],"timestamp": 1532131837833 };
                         // var static_schedule_3 = {"node_03":["factorial.js*444"], "node_01": ["test.js*1","fractorial.js*4"],"timestamp": 1532141837833 };
                         self.refresh();
-                        $scope.$scheduleArray = Object.keys($scope.$schedules).map(function(key) { return $scope.$schedules[key]; });
+                        $scope.$scheduleArray = Object.keys($scope.$schedules).map(function(key) { 
+                            return $scope.$schedules[key]; });
+
                         console.log("$scheduleArray" + $scope.$scheduleArray);
 
                         console.log("operationarray outside ~~~" + $scope.operationArray + $scope.changeVersion);

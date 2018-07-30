@@ -1113,7 +1113,8 @@ return {
 						duration: 0,
 						xAxis: {
 							tickFormat: function(d){
-									return $filter('date')(d, 'HH:mm:ss');
+									 return $filter('date')(d, 'HH:mm:ss');
+									// return d;
 							}
 						},
 						yAxis: {
@@ -1124,7 +1125,7 @@ return {
 					}
 				};
 
-			self.initData = function(data,name){
+				self.initData = function(data,name){
 				// if (data){
 				// 	console.log("\n\n\n" + data);
 				// 	console.log("\n\n\n" + name);
@@ -1134,100 +1135,68 @@ return {
 				// });
 				// }
 				// self.graphData = [{ values: memData, key: ' Available Memory'}] };
-				self.graphData = [];
+				// alert("START REFTESH SCHEDULE DATA");
+				self.graphDeviceData = [];
 				if ($scope.schedule){
-					console.log("#####graph for schedule"+Object.keys($scope.schedule)[0]);
-					Object.keys($scope.schedule).forEach(function(schedule_name){
-						 Object.keys($scope.schedule[schedule_name].devices).forEach(function(device){
+					console.log("#####graph for schedule"+ $scope.schedule[0]);
+					$scope.schedule.forEach(function(schedule){
+						 Object.keys(schedule.devices).forEach(function(device){
 						 	console.log("inside schedule plot!!!!");
 							var memData = [];
-							var keys = self.graphData.map(function(data){
+							var keys = self.graphDeviceData.map(function(data){
 								return data.key;
 							});
 							console.log("KEYS" + JSON.stringify(keys));
 							if(keys.includes(device)){
 								var index = keys.indexOf(device);
-								self.graphData[index].values.push({ x:$scope.schedule[schedule_name].timestamp,
-							  	y: getData($scope.schedule[schedule_name].devices[device].available_memory)})
+								self.graphDeviceData[index].values.push({ x:schedule.timestamp,
+							  	y: getData(schedule.devices[device].available_memory)})
 							}else{
 								console.log("jump here");
-								self.graphData.push({
-									values: [{ x:$scope.schedule[schedule_name].timestamp,
-							  	y: getData($scope.schedule[schedule_name].devices[device].available_memory)}] ,
+								self.graphDeviceData.push({
+									values: [{ x:schedule.timestamp,
+							  	y: getData(schedule.devices[device].available_memory)}] ,
 									key:device
 								})
 							}
 						});
 					});	
 				}
-					console.log("GRAPH DATA" + JSON.stringify(self.graphData));
+					console.log("GRAPH DATA" + JSON.stringify(self.graphDeviceData));
 			};
-			
+
+
 		 	self.initData();
 		setTimeout(function() {
 		    self.initData();
 		}, 5000);
 
-			// Watch changes in code.stats
-			// $scope.$watch(function(){
-			// 	return $scope.schedule ? Object.keys($scope.schedule).length : undefined;
-			// }, function(length){
-			// 	if (length){
-			// 		console.log("inside look")
-			// 		var schedule_name = Object.keys($scope.schedule)[length-1];
-			// 		var datum = $scope.schedule[schedule_name];
-			// 		// self.graphData['memory'][0].values.push({ x: {"timestamp":datum.timestamp,"name":},
-			// 		//  y: getData(datum) });
-			// 		// if (self.graphData['memory'][0].values.length > 60) self.graphData['memory'][0].values.shift();
-			// 		console.log("SCHEDULE CURRENT DATA" + JSON.stringify($scope.schedule))
-			// 		// self.graphData.map(function(device_mem,index){
-			// 		// 	var key = self.graphData[index].key;
-			// 		// 	device_mem.values.push({ x: datum.timestamp,
-			// 		//   y: getData(datum.devices[key].available_memory) });
-			// 		// 	 if (device_mem.values.length > 6) device_mem.values.shift();
-			// 		// })
-			// 		// self.graphData['memory'][0].values.push({ x: {"timestamp":datum.timestamp,"name":},
-			// 		//  y: getData(datum) });
-			// 		// if (self.graphData['memory'][0].values.length > 60) self.graphData['memory'][0].values.shift();
-			// 		var last_key = Object.keys($scope.schedule)[length-1]
-			// 		var last_item = $scope.schedule[last_key];
-			// 		self.graphData[0].values.push({ x: last_item.timestamp, y: getData(last_item) });
-			// 		if (self.graphData[0].values.length > 60) self.graphData['memory'][0].values.shift();
-			// 		console.log("SCHEDULE DATA AFTER SHIFT" + JSON.stringify($scope.schedule))
-			// 	}
-			// });
-
-			// // Watch changes in code.devices
 			$scope.$watch(function(){
 				return $scope.schedule ? $scope.schedule : undefined;
-			}, function(schedules){
-				console.log("New schedule", schedules);
-			})
-
-			// // Watch for code being dynamically resassigned to the directive
-			$scope.$watch(function(){
-				return $scope.schedule ? $scope.schedule : undefined;
-			}, function(instance_id){
-				if (instance_id){
+			}, function(schedule){
+				if (schedule){
 					console.log("inside here");
-					var keys = Object.keys($scope.schedule)
-					var slen = Object.keys($scope.schedule).length;
+					// var keys = Object.keys($scope.schedule)
+					var slen = $scope.schedule.length;
 					console.log("SCHEDULE LENGTH" + slen);
+					// keep last 10 records
 					if(slen > 10){
-						console.log("START DELETED!!!"+Object.keys($scope.schedule).length);
+						console.log("START DELETED!!!" + $scope.schedule.length);
 						var i = 0;
 						for(i ;i< slen-11; i++){
 							console.log("start delete")
-							delete $scope.schedule[keys[i]];
+							$scope.schedule = $scope.schedule.slice(1);
 						}	
 					}
-					console.log("AFTER DELETED!!!"+ Object.keys($scope.schedule).length);
+					console.log("AFTER DELETED!!!"+ $scope.schedule.length);
 					self.initData();
 				}
 				else {
 					self.initData();
 				}
 			});
+
+
  }],
 	controllerAs: '$ctrl',
 	templateUrl: 'components/schedule-device-memory.html'
