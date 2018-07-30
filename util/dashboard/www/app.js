@@ -583,7 +583,7 @@ dashApp.constant("CONFIG", {
                         //   this.timestamp
                         //   this.mapping 
 
-                        function Device(device_id, components_id, components_name, memory, memory_usages, app_tokens) {
+                        function Device(device_id, components_id, components_name, memory, memory_usages, app_tokens, instances_id) {
                             this.device_id = device_id;
                             this.components_id = components_id;
                             this.components_name = components_name;
@@ -591,6 +591,7 @@ dashApp.constant("CONFIG", {
                             this.app_tokens = app_tokens;
                             this.available_memory = memory;
                             this.operation_status = [];
+                            this.instances_id = instances_id;
                         }
 
 
@@ -609,13 +610,15 @@ dashApp.constant("CONFIG", {
                                 var name_array = [];
                                 var useage_array = [];
                                 var token_array = [];
+                                var instanceid_array = [];
                                 Object.keys(mapping[device]['processes']).forEach(function(component) {
                                     id_array.push(component.split("*")[1]);
                                     name_array.push(component.split("*")[0]);
                                     useage_array.push(mapping[device]['processes'][component]['memory_usage']);
-                                    token_array.push(mapping[device]['processes'][component]['app_token'])
+                                    token_array.push(mapping[device]['processes'][component]['app_token']);
+                                    instanceid_array.push(mapping[device]['processes'][component]['instance_id'])
                                 });
-                                that.devices[device] = new Device(device, id_array, name_array, mapping[device]['available_memory'], useage_array, token_array);
+                                that.devices[device] = new Device(device, id_array, name_array, mapping[device]['available_memory'], useage_array, token_array, instanceid_array);
                             });
                             // console.log("devices" + JSON.stringify(this.devices));
                             console.log("timestamp" + this.timestamp);

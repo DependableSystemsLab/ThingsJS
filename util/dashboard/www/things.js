@@ -474,8 +474,8 @@
 			self.programArray = Object.keys(self.programs).map(function (key) { return self.programs[key]; });
 			if (message.source) self.programs[message.instance_id].source = message.source;
 		});
-				console.log(self.programs);
-				// console.log("jump in program subscribe function #######");
+
+				 console.log(self.programs);
 
 		pubsub.on('connect', function(){
 			setTimeout(function(){
@@ -738,7 +738,7 @@ things.factory('CodeRepository', ['$rootScope', function($rootScope){
 							left: 80
 						},
 						x: function(d){ 
-							console.log("BIBUBIBIBIBI" + JSON.stringify(d))
+							
 							return d.x },
 						y: function(d){ return d.y },
 						useInteractiveGuideline: true,
@@ -774,7 +774,7 @@ things.factory('CodeRepository', ['$rootScope', function($rootScope){
 						   		   'cpu': [{ values: cpuData, key: modes['cpu'] }] };
 
 				if ($scope.node){
-					console.log("#####graph program"+$scope.node.id);
+					// console.log("#####graph program"+$scope.node.id);
 					Object.keys($scope.node.codes).forEach(function(code_name){
 						Object.keys($scope.node.codes[code_name]).forEach(function(instance_id){
 							var memData = [], cpuData = [];
@@ -903,22 +903,10 @@ things.factory('CodeRepository', ['$rootScope', function($rootScope){
 			};
 			self.initData = function(data){
 				var memData = [], cpuData = [];
-				if (data){
-					memData = data.map(function(datum){
-						return { x: datum.timestamp, y: getData(datum, 'memory') }
-					});
-					cpuData = data.map(function(datum){
-						return { x: datum.timestamp, y: getData(datum, 'cpu') };
-					})
-				}
-				self.graphData = { 'memory': [{ values: memData, key: modes['memory'] }],
-						   		   'cpu': [{ values: cpuData, key: modes['cpu'] }] };
 
-
+				self.graphData = {'memory':[],'cpu':[]}
 				if ($scope.code){
-					console.log("#####graph program"+$scope.code.stats[0].timestamp);
-					Object.keys($scope.code.findHistoryDevices).forEach(function(id){
-						// Object.keys($scope.node.findHistoryDevices[id]).forEach(function(instance_id){
+					console.log("#####graph program"+$scope.code.stats);
 							var memData = [], cpuData = [];
 							memData = $scope.code.stats.map(function(datum){
 								return { x: datum.timestamp, y: getData(datum, 'memory') }
@@ -929,14 +917,12 @@ things.factory('CodeRepository', ['$rootScope', function($rootScope){
 
 							self.graphData['memory'].push({
 								values: memData,
-								key: code_name+'/'+instance_id+' Memory'
+								key: $scope.code.code_name+'/'+$scope.code.id+' Memory'
 							});
 							self.graphData['cpu'].push({
 								values: cpuData,
-								key: code_name+'/'+instance_id+' CPU'
+								key: $scope.code.code_name+'/'+$scope.code.id+' CPU'
 							});
-						})
-					// })
 				}
 			};
 			
@@ -948,11 +934,13 @@ things.factory('CodeRepository', ['$rootScope', function($rootScope){
 				return $scope.code ? $scope.code.stats.length : undefined;
 			}, function(length){
 				if (length){
+					if(self.graphData['memory'][0].values){
 					var datum = $scope.code.stats[length-1];
 					self.graphData['memory'][0].values.push({ x: datum.timestamp, y: getData(datum, 'memory') });
 					if (self.graphData['memory'][0].values.length > 60) self.graphData['memory'][0].values.shift();
 					self.graphData['cpu'][0].values.push({ x: datum.timestamp, y: getData(datum, 'cpu') });
 					if (self.graphData['cpu'][0].values.length > 60) self.graphData['cpu'][0].values.shift();
+					}
 				}
 			});
 
@@ -966,7 +954,7 @@ things.factory('CodeRepository', ['$rootScope', function($rootScope){
 
 			// Watch for code being dynamically resassigned to the directive
 			$scope.$watch(function(){
-				return $scope.code ? $scope.code.instance_id : undefined;
+				return $scope.code ? $scope.code.id : undefined;
 			}, function(instance_id){
 				if (instance_id){
 					var slen = $scope.code.stats.length;
@@ -1106,7 +1094,6 @@ return {
 							left: 80
 						},
 						x: function(d){ 
-							console.log("LALALALALmemory" + JSON.stringify(d));
 							return d.x },
 						y: function(d){ return d.y },
 						useInteractiveGuideline: true,
@@ -1141,12 +1128,12 @@ return {
 					console.log("#####graph for schedule"+ $scope.schedule[0]);
 					$scope.schedule.forEach(function(schedule){
 						 Object.keys(schedule.devices).forEach(function(device){
-						 	console.log("inside schedule plot!!!!");
+						 	// console.log("inside schedule plot!!!!");
 							var memData = [];
 							var keys = self.graphDeviceData.map(function(data){
 								return data.key;
 							});
-							console.log("KEYS" + JSON.stringify(keys));
+							// console.log("KEYS" + JSON.stringify(keys));
 							if(keys.includes(device)){
 								var index = keys.indexOf(device);
 								self.graphDeviceData[index].values.push({ x:schedule.timestamp,
@@ -1174,12 +1161,12 @@ return {
 					console.log("#####graph for schedule"+ $scope.schedule[0]);
 					$scope.schedule.forEach(function(schedule){
 						 Object.keys(schedule.devices).forEach(function(device){
-						 		schedule.devices[device].components_id.forEach(function(comp,index){
-						 			console.log("inside component schedule plot!!!!");
+						 		schedule.devices[device].instances_id.forEach(function(comp,index){
+						 			// console.log("inside component schedule plot!!!!");
 									var keys = self.graphComponentData.map(function(data){
 										return data.key;
 									});
-									console.log("comp KEYS" + JSON.stringify(keys));
+									// console.log("comp KEYS" + JSON.stringify(keys));
 									var comp_key = schedule.devices[device].components_name[index]+":"+comp;
 									console.log("comp_key"+comp_key+index);
 									if(keys.includes(comp_key)){

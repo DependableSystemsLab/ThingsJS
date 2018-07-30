@@ -45,9 +45,9 @@
 			</tr>
 			</thead>
 				<tbody>
-					<tr ng-repeat="component_id in device.components_id">						
+					<tr ng-repeat="instance_id in device.instances_id">						
 						<td>{{device.components_name[$index]}}</td>
-						<td>{{component_id }}</td>
+						<td>{{instance_id }}</td>
 
 					</tr>
 				</tbody>
@@ -105,10 +105,10 @@
 				<br/>
 <!-- 				<p > Available Memory: {{device.available_memory}}</p> -->
 				<br/>
-				<div ng-repeat ="component_id in device.components_id track by $index">
+				<div ng-repeat ="instance_id in device.instances_id track by $index">
 				<div ng-class = "{'runComponent':device.operation_status[$index] === 'run','migrateToComponent':device.operation_status[$index] === 'migrateTo','stopComponent': device.operation_status[$index] === 'stop'}">
 		<!-- 		STATUS:	{{device.operation_status[$index]}} -->
-				{{device.components_name[$index]}}:{{component_id}} 
+				{{device.components_name[$index]}}:{{instance_id}} 
 	<!-- 		</div> -->
 				</div>
 			</div>
