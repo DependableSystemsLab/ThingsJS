@@ -1125,7 +1125,7 @@ return {
 					}
 				};
 
-				self.initData = function(data,name){
+				self.initDeviceData = function(){
 				// if (data){
 				// 	console.log("\n\n\n" + data);
 				// 	console.log("\n\n\n" + name);
@@ -1162,13 +1162,53 @@ return {
 						});
 					});	
 				}
-					console.log("GRAPH DATA" + JSON.stringify(self.graphDeviceData));
+					console.log("DEVICE GRAPH DATA" + JSON.stringify(self.graphDeviceData));
 			};
 
 
-		 	self.initData();
+
+
+			self.initComponentData = function(){
+				self.graphComponentData = [];
+						if ($scope.schedule){
+					console.log("#####graph for schedule"+ $scope.schedule[0]);
+					$scope.schedule.forEach(function(schedule){
+						 Object.keys(schedule.devices).forEach(function(device){
+						 		schedule.devices[device].components_id.forEach(function(comp,index){
+						 			console.log("inside component schedule plot!!!!");
+									var keys = self.graphComponentData.map(function(data){
+										return data.key;
+									});
+									console.log("comp KEYS" + JSON.stringify(keys));
+									var comp_key = schedule.devices[device].components_name[index]+":"+comp;
+									console.log("comp_key"+comp_key+index);
+									if(keys.includes(comp_key)){
+										var index2 = keys.indexOf(comp_key);
+										self.graphComponentData[index2].values.push({ x:schedule.timestamp,
+									  	y: getData(schedule.devices[device].memory_usages[index])})
+									}else{
+										console.log("jump here");
+										self.graphComponentData.push({
+											values: [{ x:schedule.timestamp,
+									  	y: getData(schedule.devices[device].memory_usages[index])}],
+											key:comp_key
+										})
+								}
+						 	});
+						});
+					});	
+				}
+					console.log("COMPONENT GRAPH DATA" + JSON.stringify(self.graphComponentData));
+
+
+
+			}
+
+		 	self.initDeviceData();
+		 	self.initComponentData();
 		setTimeout(function() {
-		    self.initData();
+		    self.initDeviceData();
+		    self.initComponentData();
 		}, 5000);
 
 			$scope.$watch(function(){
@@ -1189,10 +1229,12 @@ return {
 						}	
 					}
 					console.log("AFTER DELETED!!!"+ $scope.schedule.length);
-					self.initData();
+					self.initDeviceData();
+					self.initComponentData();
 				}
 				else {
-					self.initData();
+					self.initDeviceData();
+					self.initComponentData();
 				}
 			});
 
