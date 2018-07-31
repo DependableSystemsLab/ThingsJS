@@ -815,11 +815,6 @@ dashApp.constant("CONFIG", {
                             self.fetchSchedule();   
                         });
 
-
-
-                        // $scope.$scheduleArray = Object.keys($scope.$schedules).map(function(key) { return $scope.$schedules[key]; });
-                        // console.log("$scheduleArray" + $scope.$scheduleArray);
-
                         $scope.sortType = 'id'; // set the default sort type
                         $scope.sortReverse = false; // set the default sort order
                         $scope.search = ''; // set the default search/filter term  
@@ -901,14 +896,7 @@ dashApp.constant("CONFIG", {
                                 return result;
                             }
                             var stop_devices = operationArray[index].stop_schedule.devices;
-                            console.log("BIUBIUBIUT" + JSON.stringify(stop_devices));
-                            
-                            // Object.keys(stop_devices).forEach(function(device_id) {
-                            //     if (stop_devices[device_id].components_id.includes(component_id)) {
-                            //         console.log("components" + component_id + "start running");
-                            //         result = true;
-                            //     }
-                            // });
+                            // console.log("BIUBIUBIUT" + JSON.stringify(stop_devices));
 
                             Object.keys(stop_devices).forEach(function(device_id) {
                                 var i = 0;
@@ -939,12 +927,7 @@ dashApp.constant("CONFIG", {
                             }
                             var migrate_content = operationArray[index].migrate_content;
                             console.log("BIUBIUBIUT" + JSON.stringify(migrate_content));
-                            // Object.keys(migrate_content).forEach(function(code_instance) {
-                            //     if (code_instance.split("*")[1] === component_id) {
-                            //         console.log("components" + component_id + "migrate");
-                            //         result = "migrateTo";
-                            //     }
-                            // });
+
                             Object.keys(migrate_content).forEach(function(code_instance) {
                                 if(code_instance.split("*")[1] === component_id && 
                                     code_instance.split("*")[0] === name){
