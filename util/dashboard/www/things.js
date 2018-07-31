@@ -564,6 +564,8 @@
 	 */
 	CodeRepository.prototype.writeFile = function(abs_path, file_data){
 		var self = this;
+		console.log('CCCCC FILE _ID: ' + file_data._id);
+		console.log('CCCC FILE POST ' + JSON.stringify(file_data));
 		return new Promise(function(resolve, reject){
 			file_data.type = 'file';
 			$.ajax({
@@ -625,35 +627,6 @@
 		})
 	}
 
-// user defined application 
-// function CustomApplication(){
-// 	EventEmitter.call(this);
-// 	this.base_url = base_url;
-// };
-// CustomApplication.prototype = new EventEmitter();
-// /** 
-// 	 * @param {Object} file_data - File data
-// 	 * @param {string} file_data.name - Name of the file
-// 	 * @param {string} file_data.content - File content (utf-8 string)
-// 	 */
-// CustomApplication.prototype.getAll = function(abs_path){};
-// CustomApplication.prototype.saveNewApp = function(abs_path){};
-// CustomApplication.prototype.deleteNewApp = function(abs_path){};
-
-// //schedule grab from filesystem 
-// function Schedule(){
-// 	EventEmitter.call(this);
-// 	this.base_url = base_url;
-// };
-// Schedule.prototype = new EventEmitter();
-// /** 
-// 	 * @param {Object} file_data - File data
-// 	 * @param {string} file_data.name - Name of the file
-// 	 * @param {string} file_data.content - File content (utf-8 string)
-// 	 */
-// Schedule.prototype.getAll = function(abs_path){};
-// Schedule.prototype.saveNewApp = function(abs_path){};
-// Schedule.prototype.deleteNewApp = function(abs_path){};
 
 
 var things = angular.module('things.js', []);
@@ -906,7 +879,7 @@ things.factory('CodeRepository', ['$rootScope', function($rootScope){
 
 				self.graphData = {'memory':[],'cpu':[]}
 				if ($scope.code){
-					console.log("#####graph program"+$scope.code.stats);
+					// console.log("#####graph program"+$scope.code.stats);
 							var memData = [], cpuData = [];
 							memData = $scope.code.stats.map(function(datum){
 								return { x: datum.timestamp, y: getData(datum, 'memory') }
@@ -1125,21 +1098,20 @@ return {
 				// alert("START REFTESH SCHEDULE DATA");
 				self.graphDeviceData = [];
 				if ($scope.schedule){
-					console.log("#####graph for schedule"+ $scope.schedule[0]);
+					// console.log("#####graph for schedule"+ $scope.schedule[0]);
 					$scope.schedule.forEach(function(schedule){
 						 Object.keys(schedule.devices).forEach(function(device){
-						 	// console.log("inside schedule plot!!!!");
+
 							var memData = [];
 							var keys = self.graphDeviceData.map(function(data){
 								return data.key;
 							});
-							// console.log("KEYS" + JSON.stringify(keys));
 							if(keys.includes(device)){
 								var index = keys.indexOf(device);
 								self.graphDeviceData[index].values.push({ x:schedule.timestamp,
 							  	y: getData(schedule.devices[device].available_memory)})
 							}else{
-								console.log("jump here");
+
 								self.graphDeviceData.push({
 									values: [{ x:schedule.timestamp,
 							  	y: getData(schedule.devices[device].available_memory)}] ,
@@ -1162,19 +1134,16 @@ return {
 					$scope.schedule.forEach(function(schedule){
 						 Object.keys(schedule.devices).forEach(function(device){
 						 		schedule.devices[device].instances_id.forEach(function(comp,index){
-						 			// console.log("inside component schedule plot!!!!");
 									var keys = self.graphComponentData.map(function(data){
 										return data.key;
 									});
-									// console.log("comp KEYS" + JSON.stringify(keys));
 									var comp_key = schedule.devices[device].components_name[index]+":"+comp;
-									console.log("comp_key"+comp_key+index);
 									if(keys.includes(comp_key)){
 										var index2 = keys.indexOf(comp_key);
 										self.graphComponentData[index2].values.push({ x:schedule.timestamp,
 									  	y: getData(schedule.devices[device].memory_usages[index])})
 									}else{
-										console.log("jump here");
+
 										self.graphComponentData.push({
 											values: [{ x:schedule.timestamp,
 									  	y: getData(schedule.devices[device].memory_usages[index])}],
@@ -1185,24 +1154,21 @@ return {
 						});
 					});	
 				}
-					console.log("COMPONENT GRAPH DATA" + JSON.stringify(self.graphComponentData));
-
-
-
+					// console.log("COMPONENT GRAPH DATA" + JSON.stringify(self.graphComponentData));
 			}
 
 		 	self.initDeviceData();
 		 	self.initComponentData();
-		setTimeout(function() {
-		    self.initDeviceData();
-		    self.initComponentData();
-		}, 5000);
+		// setTimeout(function() {
+		//     self.initDeviceData();
+		//     self.initComponentData();
+		// }, 5000);
 
 			$scope.$watch(function(){
 				return $scope.schedule ? $scope.schedule : undefined;
 			}, function(schedule){
 				if (schedule){
-					console.log("inside here");
+					// console.log("inside here");
 					// var keys = Object.keys($scope.schedule)
 					var slen = $scope.schedule.length;
 					console.log("SCHEDULE LENGTH" + slen);
@@ -1218,6 +1184,7 @@ return {
 					console.log("AFTER DELETED!!!"+ $scope.schedule.length);
 					self.initDeviceData();
 					self.initComponentData();
+
 				}
 				else {
 					self.initDeviceData();

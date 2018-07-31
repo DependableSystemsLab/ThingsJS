@@ -149,7 +149,7 @@ dashApp.constant("CONFIG", {
                         }
 
                         self.refresh = function() {
-                            $scope.$repo.get(self.cur_path)
+                             $scope.$repo.get(self.cur_path)
                                 .then(function(fsObject) {
                                     console.log("currpath");
                                     console.log(fsObject);
@@ -157,15 +157,7 @@ dashApp.constant("CONFIG", {
                                     self.cur_path_tokens = self.cur_path.split('/').slice(1);
                                     $scope.$apply();
                                 });
-                            // $scope.$repo.get(self.app_path)
-                            //     .then(function(fsObject) {
-                            //         console.log("apppath");
-                            //         console.log(fsObject);
-                            //         self.app_dir = fsObject;
-                            //         self.app_path_tokens = self.app_path.split('/').slice(1);
-                            //         $scope.$apply();
-                            //     });
-                            $scope.$repo.get(self.app_path + "/prototype")
+                             $scope.$repo.get(self.app_path + "/prototype")
                                 .then(function(fsObject) {
                                     console.log("appprotopath");
                                     console.log(fsObject);
@@ -173,7 +165,7 @@ dashApp.constant("CONFIG", {
                                     self.app_proto_token = self.app_proto_path.split('/').slice(1);
                                     $scope.$apply();
                                 });
-                            $scope.$repo.get(self.app_path + "/instances")
+                             $scope.$repo.get(self.app_path + "/instances")
                                 .then(function(fsObject) {
                                     console.log("appinstancespath");
                                     console.log(fsObject);
@@ -185,7 +177,27 @@ dashApp.constant("CONFIG", {
 
                                     $scope.$apply();
                                 });
+
+                                // return Promise.all([p0, p1, p2]);
                         }
+                        self.refreshInstance = function(name){
+                            return new Promise(function(resolve,reject){
+                                 $scope.$repo.get(self.app_path + "/instances")
+                                .then(function(fsObject) {
+                                    console.log("appinstancespath");
+                                    console.log(fsObject);
+                                    self.app_instances_dir = fsObject;
+                                    self.app_instances_token = self.app_instances_path.split('/').slice(1);
+                                    Object.keys(self.app_instances_dir.children).forEach(function(filename) {
+                                        self.instances_status[filename] = JSON.parse(self.app_instances_dir.children[filename].content)['status'] || 'UNKNOWN';
+                                    });
+
+                                    resolve(self.app_instances_dir.children[name]._id);
+                                });
+                            })
+                        }
+
+
 
                         self.clearCodeSelection = function() {
                             self.code_selection = [];
@@ -261,6 +273,24 @@ dashApp.constant("CONFIG", {
                               }
                         }
 
+                        self.removeInstances = function(dir){
+                            var ids = []
+                            var result = confirm("DO YOU WANT TO REMOVE ALL INSTANCES RECORDS?");
+                             if(result){
+                                Object.keys(self.app_instances_dir.children).forEach(function(key){
+                                    console.log("delete keys" + key);
+                                    ids.push(self.app_instances_dir.children[key]._id);
+                                });
+                                $scope.$repo.delete(self.app_instances_path, ids)
+                                      .then(function(data) {
+                                          console.log( JSON.stringify(data) + "deleted");
+                                          self.refresh();
+                                      });
+                                    }
+                                }
+
+
+
                         self.removePrototype = function(prototype, filename) {
                             var id = [];
                             id.push(self.app_proto_dir.children[filename]._id);
@@ -304,26 +334,58 @@ dashApp.constant("CONFIG", {
                                     console.log("file saved", file);
                                     self.cur_selection._id = file._id;
                                     self.refresh();
+                                    $scope.$apply();
                                 });
+
                         }
 
-                        self.saveUpdateInstance = function(app_name, appdata, status) {
+                        self.saveNewInstance = function(app_name, appdata) {
                             var application_id = appdata["application_id"];
                             var appName = app_name + "/" + application_id;
                             console.log("APPLICATION_ID" + application_id)
-                            appdata['status'] = status;
+                            console.log("APP DATA" + JSON.stringify(appdata));
+
 
                             var updated_app = {
                                 'name': appName,
                                 'content': JSON.stringify(appdata),
                                 'type': 'file'
                             };
-                            if (self.app_instances_dir.files.includes(appName)) {
-                                updated_app['_id'] = self.app_instances_dir.children[appName];
-                            }
+
                             self.saveFile("instances", updated_app);
+
+                    
                         };
 
+                        self.UpdateExistInstance = function(app_name,appdata){
+                            var application_id = appdata["application_id"];
+                            var appName = app_name + "/" + application_id;
+                            console.log("APPLICATION_ID" + application_id)
+                            console.log("APP DATA" + JSON.stringify(appdata));
+
+
+                            var updated_app = {
+                                'name': appName,
+                                'content': JSON.stringify(appdata),
+                                'type': 'file'
+                            };
+                            
+                             if (self.app_instances_dir.files.includes(appName)) {
+                                updated_app['_id'] = self.app_instances_dir.children[appName]._id;
+                                console.log("FETCHED ID" + updated_app['_id']);
+                                 self.saveFile("instances", updated_app);
+                            }
+                            else{
+                                self.refreshInstance(appName).then(function(id){
+                                    updated_app['_id'] = id;
+                                    console.log("IDDDD" +   updated_app['_id'])
+                                    self.saveFile("instances", updated_app);
+                                }).catch(function(err){
+                                    console.log("UPDATE FILE FAIL" + err);
+                                    // self.saveFile("instances", updated_app);
+                                });
+                            }
+                        }
                         //send runapplication detail 
                         self.runApplication = function(app_data, app_name) {
                             var runapp_data;
@@ -346,7 +408,8 @@ dashApp.constant("CONFIG", {
                                 console.log("received application detail" + JSON.stringify(appdetail) + "\n");
                                 console.log("+++++jump to " + app_name + "subscribe");
 
-                                self.saveUpdateInstance(app_name, appdetail, 'RUNNING');
+                                // self.saveUpdateInstance(app_name, appdetail, 'RUNNING');
+                                self.saveNewInstance(app_name,appdetail);                          
 
                                 // var application_id = appdetail["application_id"];
                                 // appdetail['status'] = 'RUNNING';
@@ -361,24 +424,29 @@ dashApp.constant("CONFIG", {
                             });
                         };
 
+                        //update pending app's status 
+                        dashboard.pubsub.subscribe("applicationDetails",function(topic,appdetail){
+                            console.log("inside subscribing!!! update status"+appdetail['application_id']+appdetail['status']);
+                            var app_name = appdetail['name'];
+                            self.UpdateExistInstance(app_name,appdetail);
+                        });
+
                         self.stopApplication = function(app_detail) {
                             var STOP_APPLICATION = "stopApplication";
                             var request_token = randKey(16);
                             var application_id = JSON.parse(app_detail)["application_id"];
                             var APPLICATION_DETAIL_STOP = "applicationDetails/" + request_token + "/stop";
                             console.log("STOPPED APPLICATION ID" + application_id);
+                            if(JSON.parse(app_detail)['status'] === "RUNNING"){
                             dashboard.pubsub.publish(STOP_APPLICATION, { 'application_id': application_id, 'request_token': request_token });
                             dashboard.pubsub.subscribe(APPLICATION_DETAIL_STOP, function(topic, data) {
-                                if (data["status"]) {
-                                    alert("stopping application successfully" + data["application_id"]);
-                                    // self.instances_status[JSON.parse(app_detail)['name']+"/"+application_id] = 'STOPPED';
-                                    self.saveUpdateInstance(JSON.parse(app_detail)['name'], JSON.parse(app_detail), 'STOPPED');
-                                } else {
-                                    alert("stopping application failed" + data["application_id"]);
-                                    // self.instances_status[JSON.parse(app_detail)['name']+"/"+application_id] = 'STOP FAILED';
-                                    self.saveUpdateInstance(JSON.parse(app_detail)['name'], JSON.parse(app_detail), 'STOP FAILED');
-                                }
+                                alert("stopping application" + data['status']);
+                                self.UpdateExistInstance(JSON.parse(app_detail)['name'],data);
                             });
+                            } else{
+                                alert("THE APPLICATION CAN'T BE STOPPED!");
+                            }
+
                         };
 
 
@@ -724,19 +792,28 @@ dashApp.constant("CONFIG", {
                                     });
 
                                 })
+
+
                                 console.log("NEW SCHEDULE" + JSON.stringify($scope.$scheduleArray));
+                                $scope.$apply();
                             }).catch(function(err) {
                                     console.log("fail to fetch operations" + err);
                                 });
                             }).catch(function(err) {
                                 console.log("biubiubiuSCHEDULE NOT EXIST");
                             });
+
                         }
 
                         self.fetchSchedule();
-                        setTimeout(function() {
-                            self.fetchSchedule();
-                        }, 5000);
+                        // setTimeout(function() {
+                        //     self.fetchSchedule();
+                        // }, 5000);
+                        var SCHEDULE_UPDATE_TOPIC = 'scheduleUpdate';
+                        dashboard.pubsub.subscribe(SCHEDULE_UPDATE_TOPIC,function(topic,message){
+                            console.log("subscribe from schedule update");
+                            self.fetchSchedule();   
+                        });
 
 
 
@@ -889,9 +966,9 @@ dashApp.constant("CONFIG", {
                     controllerAs: '$view',
                     templateUrl: 'views/schedule.html'
                 })
-                .state('codes', {
+                .state('files', {
                     parent: 'init',
-                    url: '/codes',
+                    url: '/files',
                     controller: ['$scope', 'CodeRepository', function($scope, CodeRepository) {
                         var self = this;
                         $scope.$repo = CodeRepository.get();
@@ -991,7 +1068,7 @@ dashApp.constant("CONFIG", {
                         self.refresh();
                     }],
                     controllerAs: '$view',
-                    templateUrl: 'views/codes.html'
+                    templateUrl: 'views/files.html'
                 })
                 .state('debug', {
                     parent: 'init',

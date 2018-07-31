@@ -34,12 +34,13 @@
 
 <div ng-repeat = "device in $schedules[selectedSchedule].devices track by $index" class="panel panel-default col-md-11">
 	<div class="panel-body" style="min-height:204px;" >
-		<h4>{{device.device_id}}</h4>
+		<h4>{{device.device_id}} &emsp; &emsp;Available Memory: {{device.available_memory}} MB</h4>
 		<table class="table table-bordered">
 			<thead>
 			<tr>
 				<th>CodeName</th>
 				<th>Instance ID</th>
+				<th> Memory Usage</th>
 
 
 			</tr>
@@ -48,6 +49,7 @@
 					<tr ng-repeat="instance_id in device.instances_id">						
 						<td>{{device.components_name[$index]}}</td>
 						<td>{{instance_id }}</td>
+						<td> {{device.memory_usages[$index]}}</td>
 
 					</tr>
 				</tbody>

@@ -57,9 +57,9 @@
 				 <button class="btn btn-danger btn-xs pull-right" style="margin-right: 50px;"  ng-click = "$view.removePrototype($view.app_proto_dir.children[appName],appName)"> remove </button>
 				 <button class="btn btn-success btn-xs pull-right" style="margin-right: 50px;" ng-click = "$view.runApplication($view.app_proto_dir.children[appName].content,appName)" > Generate&Start </button>
 
-				<input class = "pull-right" id="app_num_instance" type="text" maxlength="10" size="4" ng-model="app_num_instance" style="margin-right: 50px;" ng-change="$view.appInstanceChange($view.app_dir.children[appName],app_num_instance)"/>
+				<!-- <input class = "pull-right" id="app_num_instance" type="text" maxlength="10" size="4" ng-model="app_num_instance" style="margin-right: 50px;" ng-change="$view.appInstanceChange($view.app_dir.children[appName],app_num_instance)"/>
 
-				<div class = "pull-right" style="margin-right: 50px;">num_instances</div>
+				<div class = "pull-right" style="margin-right: 50px;">num_instances</div> -->
 
 				
 				 
@@ -71,7 +71,8 @@
 	<div class="row-md-5">
 		<div class="panel panel-default">
 			<div class="panel-heading" style="text-align:center">
-         <p pos="center">  Application Instance</p>
+         <p pos="center">  Application Instance  
+				 <button class=" btn btn-danger btn-sm pull-right" style="margin-right: 50px;" ng-click="$view.removeInstances($view.app_instances_dir)">Remove All</button></p>
 			</div>
 			<div class="panel-body">
 			<div class="dashboard-device-list">
