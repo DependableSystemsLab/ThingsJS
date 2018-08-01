@@ -1,0 +1,135 @@
+<div class="row">
+<div class="col-md-11">
+		<div class="panel panel-default">		
+			<div class="panel-heading">
+			<span class="form-inline">
+			<select ng-model="selectedSchedule" class="form-control">
+				<option value="">--- Select Schedule ---</option>
+		<!-- 		<option ng-value = "currentschedule"> Current Schedlue </option>
+				<option ng-value = "schedule1"> Schedule 1 </option>
+				<option ng-value = "schedule2"> Schedule 2 </option> -->
+				<option ng-repeat = "schedule in $schedules" ng-value = "schedule.id"> {{schedule.id}}
+				</option>
+			</select>
+		</span>
+			<div class="btn-group" ng-init="viewMode = 'time'">
+			<button ng-click="viewMode = 'device'" class="btn btn-default" ng-class="{ active: viewMode === 'device' }">Device-View Mode</button>
+			<button ng-click="viewMode = 'application'" class="btn btn-default" ng-class="{ active: viewMode === 'application' }">Code-View Mode</button>
+			<button ng-click = "viewMode = 'time'" class="btn btn-default" ng-class="{ active: viewMode === 'time' }">Time-based Dynamic View</button>
+		</div>
+			</div>
+			<div class="panel-body">
+				<div class="dashboard-program-list">
+
+<div ng-show="viewMode === 'device'">
+		<form>
+    <div class="form-group">
+      <div class="input-group">
+        <div class="input-group-addon"><i class="fa fa-search"></i></div>
+        <input type="text" class="form-control" placeholder="Search Device" ng-model="searchDevice">
+      </div>      
+    </div>
+</form>
+<div class="form-group"> TIMESTAMP {{$schedules[selectedSchedule].timestamp|date:"medium"}} </div>
+
+<div ng-repeat = "device in $schedules[selectedSchedule].devices track by $index" class="panel panel-default col-md-11">
+	<div class="panel-body" style="min-height:204px;" >
+		<h4>{{device.device_id}} &emsp; &emsp;Available Memory: {{device.available_memory}} MB</h4>
+		<table class="table table-bordered">
+			<thead>
+			<tr>
+				<th>CodeName</th>
+				<th>Instance ID</th>
+				<th> Memory Usage</th>
+
+
+			</tr>
+			</thead>
+				<tbody>
+					<tr ng-repeat="instance_id in device.instances_id">						
+						<td>{{device.components_name[$index]}}</td>
+						<td>{{instance_id }}</td>
+						<td> {{device.memory_usages[$index]}}</td>
+
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+		
+
+<div ng-show="viewMode === 'application'">
+				<form>
+    <div class="form-group">
+      <div class="input-group">
+        <div class="input-group-addon"><i class="fa fa-search"></i></div>
+        <input type="text" class="form-control" placeholder="Search Component" ng-model="searchApplication">
+      </div>      
+    </div>
+</form>
+    
+		<schedule-app-panel ></schedule-app-panel>
+
+		<schedule-app-panel ></schedule-app-panel>
+
+		<schedule-app-panel ></schedule-app-panel>
+
+		</div>
+
+
+
+
+<div ng-show="viewMode === 'time'">
+
+<div class="col-md-11">
+	<div class="panel-body" style="min-height:204px;" > 
+		<table class="table table-bordered" >
+			<tr>
+				<th>Schedule Name</th>
+				<td ng-repeat = "schedule in $scheduleArray track by $index">
+				Schedule {{schedule.id}} 
+			</td>
+			</tr>					
+			<tr>
+				<th>Date&Time</th>
+				<td ng-repeat = "schedule in $scheduleArray track by $index">					
+				{{schedule.timestamp|date:"medium"}}</td>
+			</tr>
+			<tr >   
+				<th >Devices</th>
+				<td ng-repeat = "schedule in $scheduleArray track by $index" >
+
+				<div ng-repeat = "device in schedule.devices track by $index" style="border-style: solid;">	
+					<p style = "font-size: 120%; text-decoration: underline">
+				{{device.device_id}} 
+				</p>
+				<br/>
+<!-- 				<p > Available Memory: {{device.available_memory}}</p> -->
+				<br/>
+				<div ng-repeat ="instance_id in device.instances_id track by $index">
+				<div ng-class = "{'runComponent':device.operation_status[$index] === 'run','migrateToComponent':device.operation_status[$index] === 'migrateTo','stopComponent': device.operation_status[$index] === 'stop'}">
+		<!-- 		STATUS:	{{device.operation_status[$index]}} -->
+				{{device.components_name[$index]}}:{{instance_id}} 
+	<!-- 		</div> -->
+				</div>
+			</div>
+		</td>
+			</tr>
+			</table>
+		</div>
+	<schedule-device-memory schedule = "$scheduleArray"></schedule-device-memory>
+	</div>
+
+
+</div>	
+
+
+</div>
+</div>
+</div>
+
+
+
+
+

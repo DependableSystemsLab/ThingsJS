@@ -42,6 +42,12 @@
 	overflow: auto;
 }
 
+.dashboard-program-list {
+	height: 750px;
+	overflow: auto;
+}
+
+
 .dashboard-device-list>.dashboard-device {
 	border-radius: 5px;
 	border: 1px solid rgba(0,0,0,0.3);
@@ -152,3 +158,36 @@
 	margin-right: 0.6em;
 	border: 4px solid #dbe2e6;
 }
+.red{
+	color: red;
+}
+.green{
+	color:green;
+}
+.runComponent{
+	color:blue;
+}
+.runComponent::before{
+	content:"+";
+	color:blue;
+}
+.migrateToComponent,.migrateFromComponent{
+	color:green;
+}
+.migrateToComponent::before{
+	content:">>";
+	color:green;
+}
+.migrateFromComponent::before{
+	content:"<<";
+	color:green;
+}
+.stopComponent{
+	color:red;
+}
+.stopComponent::before{
+	content: "-";
+	color: red;
+}
+
+
