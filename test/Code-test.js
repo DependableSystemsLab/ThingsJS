@@ -52,7 +52,7 @@ describe('API methods', function(){
 	});
 
 	// Tests
-	it('Initialize Code object', function(done){
+	it('Initialize Code instance', function(done){
 		code = things.Code.fromString(pubsub, 'count.js', 'var c=0;setInterval(function(){ console.log(c++); }, 100)');
 		expect(code.name).to.equal('count.js');
 		done();

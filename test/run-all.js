@@ -13,10 +13,11 @@ before(function(done){
 	server.on('ready', done);
 });
 
-// runTest('Pubsub', './Pubsub-test.js');
+runTest('Pubsub', './Pubsub-test.js');
 runTest('Code', './Code-test.js');
-// runTest('Code Instrumentation', './instrumentation-test.js');
-// runTest('CodeEngine', './CodeEngine-test.js');
+runTest('CodeEngine', './CodeEngine-test.js');
+runTest('Dispatcher', './Dispatcher-test.js');
+// runTest('Scheduler', './Scheduler-test.js');
 
 after(function(done){
  	server.kill().then(function(){

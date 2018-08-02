@@ -7,14 +7,13 @@ gulp.task('default', [ 'docs', 'test' ]);
 
 /** Compile JSDoc html output to /docs/ directory */
 gulp.task('docs', function(){
-	exec('./node_modules/.bin/jsdoc -d ./docs/ -r ./lib/core');
+	return exec('./node_modules/.bin/jsdoc -d ./docs/ -r ./lib/core');
 });
 
 /** Run mocha tests */
 gulp.task('test', function(){
 	return gulp.src('test/run-all.js', { read: false })
 		.pipe(mocha());
-	// exec('mocha test/run-all.js --exit');
 });
 
 gulp.task('all', ['docs', 'test'], function(){

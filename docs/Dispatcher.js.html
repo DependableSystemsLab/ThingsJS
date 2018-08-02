@@ -150,6 +150,7 @@ function Program(dispatcher, code_name, instance_id, source){
 
 	this._requests = {};
 	this.pubsub.subscribe(this.dispatcher.id+'/'+this.id, function(message, topic){
+		// console.log(message);
 		if (message.reply_id in self._requests){
 			self._requests[message.reply_id].resolve(message.payload);
 			clearTimeout(self._requests[message.reply_id].timer);
@@ -191,20 +192,26 @@ Program.prototype.sendCommand = function(ctrl, kwargs){
 			delete self._requests[request_id];
 		}
 	}, 10000); // assume failure if reply not received
-	console.log(self._requests);
+	
+	// console.log(self._requests);
 	return deferred.promise
 }
-Program.prototype.pause = function(code_name, instance_id){
+Program.prototype.pause = function(){
 	return this.sendCommand('pause')
 }
-Program.prototype.resume = function(code_name, instance_id){
+Program.prototype.resume = function(){
 	return this.sendCommand('resume')
 }
-Program.prototype.kill = function(code_name, instance_id){
+Program.prototype.kill = function(){
 	return this.sendCommand('kill')
 }
 
-
+/**
+ * This object is used to control the CodeEngine instances in the network (i.e. connected to the same Pub/Sub service)
+ * @param {object} config - Configuration for the Dispatcher
+ * @param {string} config.pubsub_url - URL of the Pub/Sub server. Defaults to mqtt://localhost
+ * @param {object} options - options object for customizing Dispatcher behaviour
+ */
 function Dispatcher(config, options){
 	EventEmitter.call(this);
 	var self = this;
@@ -237,7 +244,7 @@ function Dispatcher(config, options){
 	});
 
 	this.pubsub.subscribe(PROGRAM_MONITOR_NAMESPACE, function(message, topic){
-		self.engines[message.id] = message;
+		// self.engines[message.id] = message;
 		// console.log(chalk.green('[Dispatcher:'+self.id+'] engine status update ')+message.id+' - '+message.status);
 		// self.printEngines();
 
@@ -255,20 +262,21 @@ function Dispatcher(config, options){
 	this.pubsub.on('ready', function(){
 		self.emit('ready');
 		console.log(chalk.green('[Dispatcher:'+self.id+'] connected to Pub/Sub at '+self.pubsub.url));
-		self.pubsub.publish(ENGINE_REGISTRY_NAMESPACE+'/bcast', { ctrl: 'report' });
+		self.requestStatusReports();
 	});
 };
 Dispatcher.prototype = new EventEmitter();
 Dispatcher.prototype.constructor = Dispatcher;
 
+/**
+ * Send command to a CodeEngine to run a program.
+ * @param  {string} engine_id - The ID of the CodeEngine instance
+ * @param  {string} code_name - Human readable code name (e.g. example.js)
+ * @param  {string} source - Source code in UTF-8 string
+ * @return {Promise} - The Promise object returned is resolved when Dispatcher receives acknowledgment from the CodeEngine.
+ */
 Dispatcher.prototype.runCode = function(engine_id, code_name, source){
 	return this.engines[engine_id].runCode(code_name, source);
-};
-Dispatcher.prototype.pauseCode = function(engine_id, code_name, instance_id){
-	return this.engines[engine_id].pauseCode(code_name, instance_id);
-};
-Dispatcher.prototype.killCode = function(engine_id, code_name, instance_id){
-	return this.engines[engine_id].killCode(code_name, instance_id);
 };
 Dispatcher.prototype.moveCode = function(from_id, to_id, code_name, instance_id){
 	return this.engines[from_id].migrateCode(code_name, instance_id, to_id);
@@ -277,9 +285,30 @@ Dispatcher.prototype.spawnCode = function(from_id, to_ids, code_name, instance_i
 	return this.engines[from_id].spawnCode(code_name, instance_id, to_ids);
 };
 
+Dispatcher.prototype.pauseCode = function(instance_id){
+	// return this.engines[engine_id].pauseCode(code_name, instance_id);
+	return this.programs[instance_id].pause();
+};
+Dispatcher.prototype.resumeCode = function(instance_id){
+	// return this.engines[engine_id].pauseCode(code_name, instance_id);
+	return this.programs[instance_id].resume();
+};
+Dispatcher.prototype.killCode = function(instance_id){
+	// return this.engines[engine_id].killCode(code_name, instance_id);
+	return this.programs[instance_id].kill();
+};
+
 Dispatcher.prototype.kill = function(){
 	console.log(chalk.green('[Dispatcher:'+this.id+'] Killed gracefully'));
 	return this.pubsub.kill()
+};
+
+/**
+ * Send a Pub/Sub broadcast message to request status reports from all the CodeEngine instances
+ * @return {undefined} - Does not return anything, as we cannot know for sure if all CodeEngines have reported.
+ */
+Dispatcher.prototype.requestStatusReports = function(){
+	this.pubsub.publish(ENGINE_REGISTRY_NAMESPACE+'/bcast', { ctrl: 'report' });
 };
 
 Dispatcher.prototype.printEngines = function(){
@@ -303,13 +332,13 @@ module.exports = Dispatcher;</code></pre>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Code.html">Code</a></li><li><a href="CodeEngine.html">CodeEngine</a></li><li><a href="Scope.html">Scope</a></li></ul><h3>Global</h3><ul><li><a href="global.html#AstHook">AstHook</a></li><li><a href="global.html#console">console</a></li><li><a href="global.html#DummyPubsub">DummyPubsub</a></li><li><a href="global.html#Engine">Engine</a></li><li><a href="global.html#NATIVE_TRANSFORMERS">NATIVE_TRANSFORMERS</a></li><li><a href="global.html#Program">Program</a></li><li><a href="global.html#RootScope">RootScope</a></li><li><a href="global.html#StaticScope">StaticScope</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Code.html">Code</a></li><li><a href="CodeEngine.html">CodeEngine</a></li><li><a href="Scope.html">Scope</a></li></ul><h3>Global</h3><ul><li><a href="global.html#AstHook">AstHook</a></li><li><a href="global.html#console">console</a></li><li><a href="global.html#Dispatcher">Dispatcher</a></li><li><a href="global.html#DummyPubsub">DummyPubsub</a></li><li><a href="global.html#Engine">Engine</a></li><li><a href="global.html#NATIVE_TRANSFORMERS">NATIVE_TRANSFORMERS</a></li><li><a href="global.html#Program">Program</a></li><li><a href="global.html#RootScope">RootScope</a></li><li><a href="global.html#StaticScope">StaticScope</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Jul 26 2018 14:16:41 GMT-0700 (PDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Aug 02 2018 13:18:42 GMT-0700 (PDT)
 </footer>
 
 <script> prettyPrint(); </script>
