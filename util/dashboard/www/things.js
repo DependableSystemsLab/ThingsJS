@@ -1122,7 +1122,7 @@ return {
 						});
 					});	
 				}
-					console.log("DEVICE GRAPH DATA" + JSON.stringify(self.graphDeviceData));
+					// console.log("DEVICE GRAPH DATA" + JSON.stringify(self.graphDeviceData));
 			};
 
 
@@ -1131,7 +1131,7 @@ return {
 			self.initComponentData = function(){
 				self.graphComponentData = [];
 						if ($scope.schedule){
-					console.log("#####graph for schedule"+ $scope.schedule[0]);
+					// console.log("#####graph for schedule"+ $scope.schedule[0]);
 					$scope.schedule.forEach(function(schedule){
 						 Object.keys(schedule.devices).forEach(function(device){
 						 		schedule.devices[device].instances_id.forEach(function(comp,index){

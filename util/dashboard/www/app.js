@@ -288,8 +288,6 @@ dashApp.constant("CONFIG", {
                                     }
                                 }
 
-
-
                         self.removePrototype = function(prototype, filename) {
                             var id = [];
                             id.push(self.app_proto_dir.children[filename]._id);
@@ -300,7 +298,8 @@ dashApp.constant("CONFIG", {
                                     console.log(filename + id + "deleted")
                                     self.refresh();
                                 });
-                        }
+                            }
+
 
                         $scope.$watch(function() { return self.cur_selection },
                             function(selection) {
@@ -335,7 +334,6 @@ dashApp.constant("CONFIG", {
                                     self.refresh();
                                     $scope.$apply();
                                 });
-
                         }
 
                         self.saveNewInstance = function(app_name, appdata) {
@@ -352,14 +350,13 @@ dashApp.constant("CONFIG", {
                             };
 
                             self.saveFile("instances", updated_app);                    
-                        };
+                        }
 
                         self.UpdateExistInstance = function(app_name,appdata){
                             var application_id = appdata["application_id"];
                             var appName = app_name + "/" + application_id;
                             console.log("APPLICATION_ID" + application_id)
                             console.log("APP DATA" + JSON.stringify(appdata));
-
 
                             var updated_app = {
                                 'name': appName,
@@ -383,6 +380,7 @@ dashApp.constant("CONFIG", {
                                 });
                             }
                         }
+
                         //send runapplication detail 
                         self.runApplication = function(app_data, app_name) {
                             var runapp_data;
@@ -404,10 +402,8 @@ dashApp.constant("CONFIG", {
                                 console.log("appdetail" + JSON.stringify(appdetail));
                                 console.log("received application detail" + JSON.stringify(appdetail) + "\n");
                                 console.log("+++++jump to " + app_name + "subscribe");
-
                                 // self.saveUpdateInstance(app_name, appdetail, 'RUNNING');
                                 self.saveNewInstance(app_name,appdetail);                          
-
                                 // var application_id = appdetail["application_id"];
                                 // appdetail['status'] = 'RUNNING';
                                 // console.log("APPLICATION_ID" + application_id);
@@ -416,7 +412,6 @@ dashApp.constant("CONFIG", {
                                 //     'content': JSON.stringify(appdetail),
                                 //     'type': 'file'
                                 // };
-
                                 // self.saveFile("instances",updated_app);
                             });
                         };
@@ -426,6 +421,8 @@ dashApp.constant("CONFIG", {
                             console.log("inside subscribing!!! update status"+appdetail['application_id']+appdetail['status']);
                             var app_name = appdetail['name'];
                             self.UpdateExistInstance(app_name,appdetail);
+                            self.refresh();
+                            $scope.$apply();
                         });
 
                         self.stopApplication = function(app_detail) {
@@ -443,9 +440,7 @@ dashApp.constant("CONFIG", {
                             } else{
                                 alert("THE APPLICATION CAN'T BE STOPPED!");
                             }
-
                         };
-
 
                     }],
                     controllerAs: '$view',
@@ -519,7 +514,7 @@ dashApp.constant("CONFIG", {
                         //access file system
                         $scope.$repo = CodeRepository.get();
                         $scope.$dash = dashboard;
-                        $scope.Math = window.Math;
+
                         $scope.$scheduleArray = [];
                         $scope.$scheduleArray2 = [];
                         $scope.$operationArray = [];
@@ -582,9 +577,9 @@ dashApp.constant("CONFIG", {
                                 console.log("dir get", dir);
                                 // var files = dir.children;
                                 Object.keys(dir.children).forEach(function(schedule_name) {
-                                    console.log("233ITERATION" + dir.children[schedule_name].content);
+                                    // console.log("233ITERATION" + dir.children[schedule_name].content);
                                     var index = dir.children[schedule_name].name;
-                                    console.log("IIINNNDDEEXX" + index);
+                                    // console.log("IIINNNDDEEXX" + index);
                                     files[index] = new Operation(JSON.parse(dir.children[schedule_name].content));
                                 });
                                 return files;
@@ -601,7 +596,7 @@ dashApp.constant("CONFIG", {
                                 console.log("dir get", dir);
                                 // var files = dir.children;
                                 Object.keys(dir.children).forEach(function(schedule_name) {
-                                    console.log("233ITERATION" + dir.children[schedule_name].content);
+                                    // console.log("233ITERATION" + dir.children[schedule_name].content);
                                     if (type === "schedule") {
                                         files.push(new Schedule(schedule_name, JSON.parse(dir.children[schedule_name].content)));
                                     } else if (type === "operation") {
@@ -613,8 +608,7 @@ dashApp.constant("CONFIG", {
                             }).catch(function(err) {
                                 console.log("SCHEDULE NOT EXIST 333");
                             });
-                        }
-                    
+                        }                   
 
                         // var sample_schedule = {
                         //     'timestamp': 2049172904714,
@@ -647,13 +641,13 @@ dashApp.constant("CONFIG", {
 
                         function Schedule(id, data) {
                             this.id = id;
-                            console.log("data to be parsed" + data);
+                            // console.log("data to be parsed" + data);
                             this.devices = {};
                             var that = this;
                             this.timestamp = data["timestamp"];
                             delete data["timestamp"];
                             var mapping = data['mapping'];
-                            console.log("\n\n" + JSON.stringify(data))
+                            // console.log("\n\n" + JSON.stringify(data))
                             Object.keys(mapping).forEach(function(device) {
                                 var id_array = [];
                                 var name_array = [];
@@ -670,11 +664,11 @@ dashApp.constant("CONFIG", {
                                 that.devices[device] = new Device(device, id_array, name_array, mapping[device]['available_memory'], useage_array, token_array, instanceid_array);
                             });
                             // console.log("devices" + JSON.stringify(this.devices));
-                            console.log("timestamp" + this.timestamp);
+                            // console.log("timestamp" + this.timestamp);
                         }
 
                         function OperationSchedule(data) {
-                            console.log("data to be parsed" + data);
+                            // console.log("data to be parsed" + data);
                             this.devices = {};
                             var that = this;
                             Object.keys(data).forEach(function(element) {
@@ -704,8 +698,8 @@ dashApp.constant("CONFIG", {
                                     var to_device = migrate[components_detail]["to"];
                                     var instance_id = components_detail.split("*")[1];
                                     var code_name = components_detail.split("*")[0];
-                                    console.log(code_name + ":" + instance_id + " migrate " + from_device + "--> " +
-                                        to_device);
+                                    // console.log(code_name + ":" + instance_id + " migrate " + from_device + "--> " +
+                                    //     to_device);
                                     that.migrate_content[components_detail] = { "from": from_device, "to": to_device }
                                 });
                             } else {
@@ -773,9 +767,9 @@ dashApp.constant("CONFIG", {
                                     $scope.$operation = data;
 
                                     // });
-                                    console.log("$OPERATIONARRAY" + JSON.stringify($scope.$operation));
+                                    // console.log("$OPERATIONARRAY" + JSON.stringify($scope.$operation));
                                              
-                                             console.log("start to fill operation record");
+                                console.log("start to fill operation record");
                                 Object.keys($scope.$schedules).forEach(function(schedule_name,index1){
     
                                     Object.keys($scope.$schedules[schedule_name].devices).forEach(function(device){
@@ -795,7 +789,7 @@ dashApp.constant("CONFIG", {
                                         });
                                     });
                                 });
-                                console.log("NEW SCHEDULE" + JSON.stringify($scope.$scheduleArray2));
+                                // console.log("NEW SCHEDULE" + JSON.stringify($scope.$scheduleArray2));
                                 self.cutSchedule();
                                 $scope.$apply();
                             }).catch(function(err) {
@@ -833,9 +827,6 @@ dashApp.constant("CONFIG", {
                         }, function(limit) {
                             self.cutSchedule();
                         });
-
-
-
                         
                         // var sample_change = {
                         //     "run": { "node_00": ["factorial.js*2"], "node_01": ["test.js*4"] },
@@ -860,23 +851,19 @@ dashApp.constant("CONFIG", {
                                 return false
                             }
                             index -= 1;
-                            console.log("startRun index:" + index);
+                            // console.log("startRun index:" + index);
                             var result = false;
-                            console.log(index + "array" + JSON.stringify(operationArray));
-                            if (typeof operationArray[index] === 'undefined' || operationArray[index] === null) {
-                                console.log("jump to undefined");
+                            // console.log(index + "array" + JSON.stringify(operationArray));
+                            if (typeof operationArray[index] === 'undefined' || operationArray[index] === null) {          
                                 return result;
                             } else if (Object.keys(operationArray[index]).length === 0) {
-                                console.log("jump to undefined");
                                 return result;
                             } else if (Object.keys(operationArray[index].run_schedule).length === 0) {
-                                console.log("run_schedule empty");
                                 return result;
                             }
                             var run_devices = operationArray[index].run_schedule.devices;
-                            console.log("BIUBIUBIUT" + JSON.stringify(run_devices));
+                            // console.log("BIUBIUBIUT" + JSON.stringify(run_devices));
                             Object.keys(run_devices).forEach(function(device_id) {
-     
                                 var i = 0;
                                 for(i ; i< run_devices[device_id].components_id.length; i++){
                                     if(run_devices[device_id].components_id[i] === component_id && 
@@ -895,7 +882,7 @@ dashApp.constant("CONFIG", {
                                 return false
                             }
                             index -= 1;
-                            console.log("STOPRun index:" + index);
+                            // console.log("STOPRun index:" + index);
                             var result = false;
                             if (typeof operationArray[index] === 'undefined' || operationArray[index] === null) {
                                 return result;
@@ -925,7 +912,7 @@ dashApp.constant("CONFIG", {
                                 return ""
                             }
                             index -= 1;
-                            console.log("startRun index:" + index);
+                            // console.log("startRun index:" + index);
                             var result = "";
                             if (typeof operationArray[index] === 'undefined' || operationArray[index] === null) {
                                 return result;
@@ -935,7 +922,7 @@ dashApp.constant("CONFIG", {
                                 return result;
                             }
                             var migrate_content = operationArray[index].migrate_content;
-                            console.log("BIUBIUBIUT" + JSON.stringify(migrate_content));
+                            // console.log("BIUBIUBIUT" + JSON.stringify(migrate_content));
 
                             Object.keys(migrate_content).forEach(function(code_instance) {
                                 if(code_instance.split("*")[1] === component_id && 
