@@ -375,39 +375,39 @@
 	// };
 
   /** Schedule*/
- function Schedule(id,data){
-    EventEmitter.call(this);
-    var self = this;
-    this.id = id;
-    this.name = undefined; 
-    this.devices = Object.keys(data);
-    this.pubsub = pubsub;
-    this.components_id ={};
-    Object.keys(data).forEach(function(element){
-    var array=[]; 
-       data[element].forEach(function(ele){
-       // console.log(ele.split(".js/")[1]);
-        array.push(ele.split("/")[1]);
-      })
-      this.components_id[element]=array;
-    });
-    this.components_name ={};
-    Object.keys(data).forEach(function(element2){
-    var array2=[]; 
-       data[element2].forEach(function(ele2){
-       // console.log(ele.split(".js/")[1]);
-        array2.push(ele2.split("/")[0]);
-      })
-     this.components_name[element2]=array2;
-    });
+//  function Schedule(id,data){
+//     EventEmitter.call(this);
+//     var self = this;
+//     this.id = id;
+//     this.name = undefined; 
+//     this.devices = Object.keys(data);
+//     this.pubsub = pubsub;
+//     this.components_id ={};
+//     Object.keys(data).forEach(function(element){
+//     var array=[]; 
+//        data[element].forEach(function(ele){
+//        // console.log(ele.split(".js/")[1]);
+//         array.push(ele.split("/")[1]);
+//       })
+//       this.components_id[element]=array;
+//     });
+//     this.components_name ={};
+//     Object.keys(data).forEach(function(element2){
+//     var array2=[]; 
+//        data[element2].forEach(function(ele2){
+//        // console.log(ele.split(".js/")[1]);
+//         array2.push(ele2.split("/")[0]);
+//       })
+//      this.components_name[element2]=array2;
+//     });
 
-    console.log("components id: \n");
-    console.log(this.components_id);
-    console.log("components name: \n");
-    console.log(this.components_name);
-}
+//     console.log("components id: \n");
+//     console.log(this.components_id);
+//     console.log("components name: \n");
+//     console.log(this.components_name);
+// }
 
-	Schedule.prototype = new EventEmitter();
+// 	Schedule.prototype = new EventEmitter();
 
 
 
@@ -1050,7 +1050,8 @@ return {
 		scope: {
 			schedule: '=',
 			mode: '=',
-			height: '=?'
+			height: '=?',
+			limit: '='
 		},
 		controller: ['$scope', function($scope){
 			var self = this;
@@ -1167,31 +1168,38 @@ return {
 			$scope.$watch(function(){
 				return $scope.schedule ? $scope.schedule : undefined;
 			}, function(schedule){
-				if (schedule){
-					// console.log("inside here");
-					// var keys = Object.keys($scope.schedule)
-					var slen = $scope.schedule.length;
-					console.log("SCHEDULE LENGTH" + slen);
-					// keep last 10 records
-					if(slen > 10){
-						console.log("START DELETED!!!" + $scope.schedule.length);
-						var i = 0;
-						for(i ;i< slen-11; i++){
-							console.log("start delete")
-							$scope.schedule = $scope.schedule.slice(1);
-						}	
-					}
-					console.log("AFTER DELETED!!!"+ $scope.schedule.length);
-					self.initDeviceData();
-					self.initComponentData();
+						self.initDeviceData();
+		 				self.initComponentData();
+			 });
 
-				}
-				else {
-					self.initDeviceData();
-					self.initComponentData();
-				}
-			});
+			// 		// console.log("inside here");
+			// 		// var keys = Object.keys($scope.schedule)
+			// 		var limit = $scope.limit;
+			// 		var slen = $scope.schedule.length;
+			// 		console.log("SCHEDULE limit111 " + limit);
+			// 		var ids = $scope.schedule.map(function(ele){
+			// 			return ele.id;
+			// 		})
+			// 		alert("SCHEDULE LIMIT1:" + JSON.stringify(ids)+ "LIMIT" + limit);
+			// 		// keep last 10 records
+			// 		if(slen > limit){
+			// 			console.log("START DELETED!!!" + $scope.schedule.length);
+			// 			var i = 0;
+			// 			for(i ;i< slen-(limit+1); i++){
+			// 				console.log("start delete")
+			// 				$scope.schedule = $scope.schedule.slice(1);
+			// 			}	
+			// 		}
+			// 		console.log("AFTER DELETED!!!"+ $scope.schedule.length);
+			// 		self.initDeviceData();
+			// 		self.initComponentData();
 
+			// 	}
+			// 	else {
+			// 		self.initDeviceData();
+			// 		self.initComponentData();
+			// 	}
+			// });
 
  }],
 	controllerAs: '$ctrl',

@@ -103,6 +103,7 @@ dashApp.constant("CONFIG", {
                         var self = this;
                         $scope.$dash = dashboard;
                         $scope.$repo = CodeRepository.get();
+                        $scope.instances_status = {};
 
 
                         self.cur_path = '/';
@@ -120,7 +121,7 @@ dashApp.constant("CONFIG", {
                         self.app_instances_dir = {};
                         self.app_instances_token = [];
                         self.app_content = {};
-                        self.instances_status = {};
+                        // self.instances_status = {};
 
                         function randKey(length, charset) {
                             var text = "";
@@ -172,12 +173,10 @@ dashApp.constant("CONFIG", {
                                     self.app_instances_dir = fsObject;
                                     self.app_instances_token = self.app_instances_path.split('/').slice(1);
                                     Object.keys(self.app_instances_dir.children).forEach(function(filename) {
-                                        self.instances_status[filename] = JSON.parse(self.app_instances_dir.children[filename].content)['status'] || 'UNKNOWN';
-                                    });
-
-                                    $scope.$apply();
+                                        $scope.instances_status[filename] = JSON.parse(self.app_instances_dir.children[filename].content)['status'] || 'UNKNOWN';
+                                         $scope.$apply();
+                                    });       
                                 });
-
                                 // return Promise.all([p0, p1, p2]);
                         }
                         self.refreshInstance = function(name){
@@ -189,7 +188,7 @@ dashApp.constant("CONFIG", {
                                     self.app_instances_dir = fsObject;
                                     self.app_instances_token = self.app_instances_path.split('/').slice(1);
                                     Object.keys(self.app_instances_dir.children).forEach(function(filename) {
-                                        self.instances_status[filename] = JSON.parse(self.app_instances_dir.children[filename].content)['status'] || 'UNKNOWN';
+                                        $scope.instances_status[filename] = JSON.parse(self.app_instances_dir.children[filename].content)['status'] || 'UNKNOWN';
                                     });
 
                                     resolve(self.app_instances_dir.children[name]._id);
@@ -352,9 +351,7 @@ dashApp.constant("CONFIG", {
                                 'type': 'file'
                             };
 
-                            self.saveFile("instances", updated_app);
-
-                    
+                            self.saveFile("instances", updated_app);                    
                         };
 
                         self.UpdateExistInstance = function(app_name,appdata){
@@ -466,7 +463,23 @@ dashApp.constant("CONFIG", {
                         $scope.$repo = CodeRepository.get();
                         $scope.$app_name = $stateParams.app_name;
                         $scope.$app_content = $stateParams.app_content;
+
                         console.log($scope.$app_content);
+
+                        self.parseFsData = function(data){
+                            var app_content = JSON.parse(data)["components"];
+                            console.log("APPCONTENT" + JSON.stringify(app_content))
+                            var app_array = [];
+                            Object.keys(app_content).forEach(function(code_name){
+                                app_array.push(
+                                {"code_name":code_name,"num_instance":app_content[code_name]["num_instances"],
+                                "required_memory":app_content[code_name]["required_memory"]
+                                })
+                            });
+                            console.log("APPARRAY" + JSON.stringify(app_array))
+                            return app_array;
+                        };
+                        $scope.$app_array = self.parseFsData($scope.$app_content)
 
                     }],
                     controllerAs: '$view',
@@ -508,9 +521,11 @@ dashApp.constant("CONFIG", {
                         $scope.$dash = dashboard;
                         $scope.Math = window.Math;
                         $scope.$scheduleArray = [];
+                        $scope.$scheduleArray2 = [];
                         $scope.$operationArray = [];
                         $scope.$schedules = {};
                         $scope.$operation = {};
+                        $scope.limit = 10;
 
 
                         var SCHEDULE_UPDATE_TOPIC = 'scheduleUpdate';
@@ -599,58 +614,26 @@ dashApp.constant("CONFIG", {
                                 console.log("SCHEDULE NOT EXIST 333");
                             });
                         }
-                        // function Device(device_id, components_id, components_name) {
-                        //     this.device_id = device_id;
-                        //     this.components_id = components_id;
-                        //     this.components_name = components_name;
-                        // }
+                    
 
-                        // function Schedule(id, data) {
-                        //     this.id = id;
-                        //     console.log("data to be parsed" + data);
-                        //     this.devices = {};
-                        //     var that = this;
-                        //     this.timestamp = new Date(data["timestamp"]);
-                        //     delete data["timestamp"];
-                        //     console.log("~~~");
-                        //     console.log("\n\n" + JSON.stringify(data))
-                        //     Object.keys(data).forEach(function(element) {
-                        //         var id_array = [];
-                        //         var name_array = [];
-                        //         data[element].forEach(function(ele) {
-                        //             id_array.push(ele.split("*")[1]);
-                        //             name_array.push(ele.split("*")[0]);
-                        //         })
-                        //         that.devices[element] = new Device(element, id_array, name_array);
-                        //     });
-                        //     console.log("devices" + JSON.stringify(this.devices));
-                        //     console.log("timestamp" + this.timestamp);
+                        // var sample_schedule = {
+                        //     'timestamp': 2049172904714,
+                        //     'mapping': {
+                        //         'pi1': {
+                        //             'available_memory': 300,
+                        //             'processes': {
+                        //                 'factorial.js*1': {
+                        //                     'memory_usage': 30,
+                        //                     'app_token': 'ABCFKEJSFKEJF'
+                        //                 },
+                        //                 'test.js*1': {
+                        //                     'memory_usage': 30,
+                        //                     'app_token': 'BDKSJFKLEHF'
+                        //                 }
+                        //             }
+                        //         }
                         //     }
-
-                        var sample_schedule = {
-                            'timestamp': 2049172904714,
-                            'mapping': {
-                                'pi1': {
-                                    'available_memory': 300,
-                                    'processes': {
-                                        'factorial.js*1': {
-                                            'memory_usage': 30,
-                                            'app_token': 'ABCFKEJSFKEJF'
-                                        },
-                                        'test.js*1': {
-                                            'memory_usage': 30,
-                                            'app_token': 'BDKSJFKLEHF'
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-
-                        // Schedule1
-                        //   this.timestamp
-                        //   this.mapping 
-
+                        // }
                         function Device(device_id, components_id, components_name, memory, memory_usages, app_tokens, instances_id) {
                             this.device_id = device_id;
                             this.components_id = components_id;
@@ -661,8 +644,6 @@ dashApp.constant("CONFIG", {
                             this.operation_status = [];
                             this.instances_id = instances_id;
                         }
-
-
 
                         function Schedule(id, data) {
                             this.id = id;
@@ -733,17 +714,37 @@ dashApp.constant("CONFIG", {
                             }
                         }
 
+                          self.cutSchedule = function(){
+                            var limit = $scope.limit;
+                            console.log("LIMITVALUE" + limit);
+                            $scope.$scheduleArray2 = $scope.$scheduleArray;
+                            // var limit = $scope.limit;
+                            var slen = $scope.$scheduleArray2.length;
+                            console.log("SCHEDULE limit111 " + limit);
+                            var ids = $scope.$scheduleArray2.map(function(ele) {
+                                return ele.id;
+                            })
+                            console.log("SCHEDULE LIMIT1:" + JSON.stringify(ids) + "LIMIT" + limit + "LENGTH" + slen);
+                            // keep last 10 records
+                            if (slen > limit) {
+                                console.log("START DELETED!!!" + $scope.$scheduleArray2.length);
+                                var i = 0;
+                                for (i; i < slen - limit -1; i++) {
+                                    console.log("start delete")
+                                    $scope.$scheduleArray2 = $scope.$scheduleArray2.slice(1);
+                                }
+                            }
+                             var ids = $scope.$scheduleArray2.map(function(ele) {
+                                return ele.id;
+                            })
+                            console.log("SCHEDULE LIMIT2:" + JSON.stringify(ids) + "LIMIT" + limit);
+                            // keep last 10 records
+                            console.log("AFTER DELETED!!!" + $scope.$scheduleArray2.length);
+                            // $scope.$apply();
+                        }
+
                         self.fetchSchedule = function() {
                             console.log("starting refresh");
-                            // self.iterateOperations("operations").then(function(data) {
-                            //     // data.forEach(function(operation) {
-                            //     console.log("BIBUBIBUBIBUBIBU" + JSON.stringify(data));
-                            //     $scope.$operation = data;
-                            //     // });
-                            //     console.log("$OPERATIONARRAY" + JSON.stringify($scope.$operation));
-                            // }).catch(function(err) {
-                            //     console.log("fail to fetch operations" + err);
-                            // });
 
                             self.iterateDir("history", "schedule").then(function(data) {
                                 data.forEach(function(schedule) {
@@ -751,6 +752,7 @@ dashApp.constant("CONFIG", {
                                 });
                                 $scope.$scheduleArray = Object.keys($scope.$schedules).map(function(key) { 
                                     return $scope.$schedules[key]; });
+                                // $scope.$scheduleArray2 =  $scope.$scheduleArray ;
                                 self.refresh();
 
                                 self.getSchedule("current", "current").then(function(data) {
@@ -758,6 +760,7 @@ dashApp.constant("CONFIG", {
                                     $scope.$scheduleArray = Object.keys($scope.$schedules).map(function(key) { 
                                         return $scope.$schedules[key]; 
                                     });
+                                     // $scope.$scheduleArray2 =  $scope.$scheduleArray ;
                                     self.refresh();
 
                                 }).catch(function(err) {
@@ -766,7 +769,7 @@ dashApp.constant("CONFIG", {
 
                                 self.iterateOperations("operations").then(function(data) {
                                     // data.forEach(function(operation) {
-                                    console.log("BIBUBIBUBIBUBIBU" + JSON.stringify(data));
+                                    // console.log("BIBUBIBUBIBUBIBU" + JSON.stringify(data));
                                     $scope.$operation = data;
 
                                     // });
@@ -774,11 +777,11 @@ dashApp.constant("CONFIG", {
                                              
                                              console.log("start to fill operation record");
                                 Object.keys($scope.$schedules).forEach(function(schedule_name,index1){
-                                      console.log("start to loop1;")
+    
                                     Object.keys($scope.$schedules[schedule_name].devices).forEach(function(device){
-                                          console.log("start to loop2;")
+             
                                          $scope.$schedules[schedule_name].devices[device].components_id.forEach(function(component_id,index2){
-                                            console.log("start to loop3;")
+    
                                             if(self.startRun(index1,component_id,$scope.$schedules[schedule_name].devices[device].components_name[index2],$scope.$operation)){
                                                     $scope.$scheduleArray[index1].devices[device].operation_status[index2] = "run";
                                             }
@@ -788,13 +791,12 @@ dashApp.constant("CONFIG", {
                                             else if(self.migrate(index1,component_id,$scope.$schedules[schedule_name].devices[device].components_name[index2],$scope.$operation) === "migrateTo"){
                                                     $scope.$scheduleArray[index1].devices[device].operation_status[index2] = "migrateTo";
                                             }
+                                             // $scope.$scheduleArray2 =  $scope.$scheduleArray ;
                                         });
                                     });
-
-                                })
-
-
-                                console.log("NEW SCHEDULE" + JSON.stringify($scope.$scheduleArray));
+                                });
+                                console.log("NEW SCHEDULE" + JSON.stringify($scope.$scheduleArray2));
+                                self.cutSchedule();
                                 $scope.$apply();
                             }).catch(function(err) {
                                     console.log("fail to fetch operations" + err);
@@ -805,21 +807,36 @@ dashApp.constant("CONFIG", {
 
                         }
 
+
+                      
+
                         self.fetchSchedule();
+                        // self.cutSchedule();
                         // setTimeout(function() {
                         //     self.fetchSchedule();
                         // }, 5000);
                         var SCHEDULE_UPDATE_TOPIC = 'scheduleUpdate';
-                        dashboard.pubsub.subscribe(SCHEDULE_UPDATE_TOPIC,function(topic,message){
+                        dashboard.pubsub.subscribe(SCHEDULE_UPDATE_TOPIC, function(topic, message) {
                             console.log("subscribe from schedule update");
-                            self.fetchSchedule();   
+                            self.fetchSchedule();
+                            // self.cutSchedule();
+                            // $scope.$apply();
                         });
 
                         $scope.sortType = 'id'; // set the default sort type
                         $scope.sortReverse = false; // set the default sort order
                         $scope.search = ''; // set the default search/filter term  
-                        // dynamic view 
+            
 
+                        $scope.$watch(function() {
+                            return $scope.limit
+                        }, function(limit) {
+                            self.cutSchedule();
+                        });
+
+
+
+                        
                         // var sample_change = {
                         //     "run": { "node_00": ["factorial.js*2"], "node_01": ["test.js*4"] },
                         //     "stop": { "node_01": ["test.js*1","factorial.js*888","test.js*1","factorial.js*888"]},
@@ -835,15 +852,7 @@ dashApp.constant("CONFIG", {
                         // var static_schedule_1 = {"node_01": ["test.js*1","factorial.js*888","test.js*1","factorial.js*888"],"node_02": ["test.js*1"], "timestamp": 1532131837843 };
                         // var static_schedule_2 = {"node_00":["factorial.js*2","fractorial.js*4"], "node_01": ["test.js*1"],"timestamp": 1532131837833 };
                         // var static_schedule_3 = {"node_03":["factorial.js*444"], "node_01": ["test.js*1","fractorial.js*4"],"timestamp": 1532141837833 };
-                        self.refresh();
-                        $scope.$scheduleArray = Object.keys($scope.$schedules).map(function(key) { 
-                            return $scope.$schedules[key]; });
-
-                        console.log("$scheduleArray" + $scope.$scheduleArray);
-
-                        console.log("operationarray outside ~~~" + $scope.operationArray + $scope.changeVersion);
-
-        
+                        self.refresh();        
 
                         self.startRun = function(index, component_id, name, operationArray) {
                             if (index === 0) {
