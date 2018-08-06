@@ -1,10 +1,25 @@
-<style>
+<!-- <style>
 	.ace_editor { height: 400px;};
-</style>
+</style> -->
 
 <div class="col-md-8">
 <div class="form-group">
 			<label>{{$app_name}}</label>
-			<div ui-ace="{ mode: 'javascript' }" ng-model = "$app_content" ></div>
+			<table class="table table-bordered">
+				<thead>
+					<tr>
+				<th> CodeName</th>
+				<th> InstanceNumber </th>
+				<th> RequiredMemory</th>
+			</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="app in $app_array">						
+						<td>{{app["code_name"]}}</td>
+						<td>{{app["num_instance"] }}</td>
+						<td> {{app["required_memory"]}}</td>
+					</tr>
+				</tbody>
+			</table>
 </div>
 </div>

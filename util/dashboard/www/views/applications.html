@@ -79,10 +79,10 @@
 			<li ng-repeat="appName in $view.app_instances_dir.files" class="list-group-item">	
 				{{ appName }}
 				 &emsp;
-				 <a ui-sref="app_component({app_name:appName,app_content:$view.app_instances_dir.children[appName].content})" > Detailed Components </a> 
+				 <!-- <a ui-sref="app_component({app_name:appName,app_content:$view.app_instances_dir.children[appName].content})" > Detailed Components </a>  -->
 				 <button class="btn btn-danger btn-xs pull-right" style="margin-right: 50px;"  ng-click = "$view.removeInstance($view.app_instances_dir.children[appName],appName)"> remove </button>
 				<button class="btn btn-danger btn-xs pull-right" style="margin-right: 50px;"  ng-click = "$view.stopApplication($view.app_instances_dir.children[appName].content)"> stop </button> 
-				 <button class="btn btn-success btn-xs pull-right" style="margin-right: 50px;"> STATUS:{{$view.instances_status[appName]}} </button>
+				 <button class="btn btn-success btn-xs pull-right" style="margin-right: 50px;"> STATUS:{{instances_status[appName]}} </button>
 				 
 			</li>
 			</div>
@@ -90,5 +90,4 @@
 	</div>
 </div>
 <!-- </div> -->
-
 

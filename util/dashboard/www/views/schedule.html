@@ -78,27 +78,31 @@
 		</div>
 
 
-
-
 <div ng-show="viewMode === 'time'">
 
 <div class="col-md-11">
 	<div class="panel-body" style="min-height:204px;" > 
+		Show Last
+<!-- 		 <select ng-model="limit" style="width: 40px;">
+					<option ng-value = "10">10</option>
+					<option ng-value = "15">15</option>
+					<option ng-value = "20">20</option></select> -->
+ <input id="instance" type="text" value="10" maxlength="10" size="4" ng-model="limit" >Records 
 		<table class="table table-bordered" >
 			<tr>
 				<th>Schedule Name</th>
-				<td ng-repeat = "schedule in $scheduleArray track by $index">
+				<td ng-repeat = "schedule in $scheduleArray2 track by $index">
 				Schedule {{schedule.id}} 
 			</td>
 			</tr>					
 			<tr>
 				<th>Date&Time</th>
-				<td ng-repeat = "schedule in $scheduleArray track by $index">					
+				<td ng-repeat = "schedule in $scheduleArray2 track by $index">					
 				{{schedule.timestamp|date:"medium"}}</td>
 			</tr>
 			<tr >   
 				<th >Devices</th>
-				<td ng-repeat = "schedule in $scheduleArray track by $index" >
+				<td ng-repeat = "schedule in $scheduleArray2 track by $index" >
 
 				<div ng-repeat = "device in schedule.devices track by $index" style="border-style: solid;">	
 					<p style = "font-size: 120%; text-decoration: underline">
@@ -118,7 +122,7 @@
 			</tr>
 			</table>
 		</div>
-	<schedule-device-memory schedule = "$scheduleArray"></schedule-device-memory>
+	<schedule-device-memory schedule = "$scheduleArray2"></schedule-device-memory>
 	</div>
 
 
@@ -128,7 +132,6 @@
 </div>
 </div>
 </div>
-
 
 
 
