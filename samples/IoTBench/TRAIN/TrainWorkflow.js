@@ -7,7 +7,7 @@ const COMPONENTS = [
 './MultiLinearRegressionTrain.js',
 './DecisionTreeTrain.js', 
 './DecisionTreeClassify.js',
-'../ETL/SenMLParse.js', '../ETL/ETLSenMLSpout.js'];
+'../SenMLParse.js', '../SenMLSpout.js'];
 
 var instances = {};
 var noHeader = true;

@@ -5,7 +5,7 @@ var things = require('../../../lib/things.js');
 var math = require('mathjs');
 
 var pubsub_url = 'mqtt://localhost';
-var pubsub_topic = 'thingsjs/IoTBench/ETL/SenMLParse';
+var pubsub_topic = 'thingsjs/IoTBench/SenMLParse';
 var publish_topic = 'thingsjs/IoTBench/TRAIN/DecisionTreeClassify';
 
 var pubsub = new things.Pubsub(pubsub_url);
@@ -13,7 +13,7 @@ var USE_MSG_FIELD_LIST;
 var SAMPLE_HEADER;
 var MODEL_FILE_PATH;
 var MODEL_UPDATE_FREQUENCY;
-var WINDOW_COUNT = 10;
+var WINDOW_COUNT = 30;
 var TRAIN_RESULT_HEADER;
 var CLASS_HEADER;
 var traincount;
@@ -27,7 +27,7 @@ function setup() {
 
     // default to TAXI property set if no specific property file is given
     if (!args.length) {
-        args = ['../ETL/TAXI_properties.json'];
+        args = ['../TAXI_properties.json'];
     }
     try {
         properties = JSON.parse(fs.readFileSync(args[0], 'utf-8'));

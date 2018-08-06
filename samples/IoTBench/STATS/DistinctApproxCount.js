@@ -3,7 +3,7 @@ var fs = require('fs');
 var crypto = require('crypto');
 
 var pubsub_url = 'mqtt://localhost';
-var pubsub_topic = 'thingsjs/IoTBench/ETL/SenMLParse';
+var pubsub_topic = 'thingsjs/IoTBench/SenMLParse';
 var publish_topic = 'thingsjs/IoTBench/STATS/DistinctApproxCount';
 
 var pubsub = new things.Pubsub(pubsub_url);
@@ -19,7 +19,7 @@ function setup(){
 
 	// default to TAXI property set if no specific property file is given
 	if(!args.length){
-		args = ['../ETL/TAXI_properties.json'];
+		args = ['../TAXI_properties.json'];
 	}
 	try{
 		properties = JSON.parse(fs.readFileSync(args[0], 'utf-8'));
@@ -108,4 +108,3 @@ pubsub.on('ready', function(){
 	console.log('Beginning Distinct Approx. Count');
 	pubsub.subscribe(pubsub_topic, doUniqueCount);
 });
-

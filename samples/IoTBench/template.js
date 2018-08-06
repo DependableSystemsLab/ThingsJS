@@ -1,4 +1,4 @@
-var things = require('../../../lib/things.js');
+var things = require('../../lib/things.js');
 var fs = require('fs');
 
 var pubsub_url = 'mqtt://localhost';
@@ -32,4 +32,3 @@ pubsub.on('ready', function(){
 	console.log('Beginning <>');
 	pubsub.subscribe(pubsub_topic, task);
 });
-

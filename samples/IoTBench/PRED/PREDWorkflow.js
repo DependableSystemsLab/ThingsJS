@@ -5,7 +5,7 @@ var fs = require('fs');
 // TODO: generalize this later on for other benchmarks ... we can pass in the components as an arg
 const COMPONENTS = 
 ['./ResidualError.js','./Average.js','./MultiLinearRegressionPred.js', './DecisionTreePRED.js',
- '../SenMLParse.js', '../ETLSenMLSpout.js'];
+ '../SenMLParse.js', '../SenMLSpout.js'];
 
 var instances = {};
 var noHeader = true;

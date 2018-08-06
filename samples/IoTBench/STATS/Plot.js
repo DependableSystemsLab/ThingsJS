@@ -20,7 +20,7 @@ function setup(){
 	var properties;
 
 	if(!args.length){
-		args = ['../ETL/TAXI_properties.json'];
+		args = ['../TAXI_properties.json'];
 	}
 	try{
 		properties = JSON.parse(fs.readFileSync(args[0], 'utf-8'));
@@ -43,7 +43,7 @@ function initServer(){
 	  next();
 	});
 
-	app.set('port', (process.env.PORT || 3000));
+	app.set('port', (process.env.PORT || 5000));
 	app.listen(app.get('port'), function(){
 		console.log('Server started');
 		app.get('/points', function(req, res){
@@ -75,4 +75,3 @@ pubsub.on('ready', function(){
 	console.log('Beginning plot');
 	pubsub.subscribe(pubsub_topic, task);
 });
-

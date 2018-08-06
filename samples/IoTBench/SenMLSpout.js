@@ -21,7 +21,7 @@ function startSpout() {
 	// process.chdir("../ETL");
 	 console.log("#########currentdirectory"+ process.cwd());
 	var lineReader = readline.createInterface({
-		input: require('fs').createReadStream('TAXI_sample_data_senml.csv')
+		input: require('fs').createReadStream('../TAXI_sample_data_senml.csv')
 	});
 
 	lineReader.on('line', function (line) {

@@ -19,7 +19,7 @@ function setup(){
 
 	// default to TAXI property set if no specific property file is given
 	if(!args.length){
-		args = ['../ETL/TAXI_properties.json'];
+		args = ['../TAXI_properties.json'];
 	}
 	try{
 		properties = JSON.parse(fs.readFileSync(args[0], 'utf-8'));
@@ -59,4 +59,3 @@ pubsub.on('ready', function(){
 		pubsub.subscribe(pubsub_heading + topic, accumulate);
 	});
 });
-
