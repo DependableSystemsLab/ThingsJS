@@ -5,7 +5,7 @@ var things = require('../../../lib/things.js');
 var fs = require('fs');
 
 var pubsub_url = 'mqtt://localhost';
-var pubsub_topic = 'thingsjs/IoTBench/ETL/SenMLParse';
+var pubsub_topic = 'thingsjs/IoTBench/SenMLParse';
 var publish_topic = 'thingsjs/IoTBench/ETL/RangeFilterCheck';
 
 var pubsub = new things.Pubsub(pubsub_url);
@@ -23,7 +23,7 @@ function getRange(){
 
 	// default to TAXI property set if no specific property file is given
 	if(!args.length){
-		args = ['./TAXI_properties.json'];
+		args = ['../TAXI_properties.json'];
 	}
 	try{
 		var properties = JSON.parse(fs.readFileSync(args[0], 'utf-8'));

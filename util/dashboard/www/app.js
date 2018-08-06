@@ -732,9 +732,8 @@ dashApp.constant("CONFIG", {
                                 return ele.id;
                             })
                             console.log("SCHEDULE LIMIT2:" + JSON.stringify(ids) + "LIMIT" + limit);
-                            // keep last 10 records
                             console.log("AFTER DELETED!!!" + $scope.$scheduleArray2.length);
-                            // $scope.$apply();
+                       
                         }
 
                         self.fetchSchedule = function() {
@@ -790,6 +789,9 @@ dashApp.constant("CONFIG", {
                                     });
                                 });
                                 // console.log("NEW SCHEDULE" + JSON.stringify($scope.$scheduleArray2));
+                                // self.cutSchedule();
+                                // $scope.$apply();
+                            }).then(function(data){
                                 self.cutSchedule();
                                 $scope.$apply();
                             }).catch(function(err) {
@@ -798,7 +800,6 @@ dashApp.constant("CONFIG", {
                             }).catch(function(err) {
                                 console.log("biubiubiuSCHEDULE NOT EXIST");
                             });
-
                         }
 
 
@@ -806,12 +807,12 @@ dashApp.constant("CONFIG", {
 
                         self.fetchSchedule();
                         // self.cutSchedule();
-                        // setTimeout(function() {
-                        //     self.fetchSchedule();
-                        // }, 5000);
+                        setTimeout(function() {
+                            self.fetchSchedule();
+                        }, 5000);
                         var SCHEDULE_UPDATE_TOPIC = 'scheduleUpdate';
                         dashboard.pubsub.subscribe(SCHEDULE_UPDATE_TOPIC, function(topic, message) {
-                            console.log("subscribe from schedule update");
+                            console.log("subscribe from schedule update" + message);
                             self.fetchSchedule();
                             // self.cutSchedule();
                             // $scope.$apply();
