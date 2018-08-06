@@ -24,6 +24,7 @@ function serializeBloom(){
 		else{
 			console.log('Serialized bloom filter to ' + modelPath);
 		}
+		process.exit();
 	});
 }
 
