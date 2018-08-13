@@ -5,6 +5,7 @@ var fork = require('child_process').fork;
 var fs = require('fs');
 var Dispatcher = require('../lib/core/Dispatcher.js');
 var Pubsub = require('../lib/core/Pubsub.js');
+var randKey = require('../lib/helpers.js').randKey;
 
 /*****************************************************************************
                             QUEUE OBJECT
@@ -67,7 +68,7 @@ function DispatcherShell(){
 	
 	Promise.all([ready(self.pubsub), ready(self.dispatcher)]).then(function(){
 		var shell = repl.start({
-			prompt: '~ ',
+			prompt: '~> ',
 			eval: self.eval,
 			writer: self.writer
 		});
@@ -112,11 +113,17 @@ DispatcherShell.prototype.eval = function(input, context, filename, callback){
 }
 
 DispatcherShell.prototype.writer = function(output){
-	if(typeof output === 'string'){
-		return '\x1b[36m' + output + '\x1b[0m';
+	try{
+		var pretty = JSON.stringify(JSON.parse(output), null, 2);
+		return '\x1b[36m' + pretty + '\x1b[0m';
 	}
-	else{
-		return '';
+	catch(e){
+		if(typeof output === 'string'){
+			return '\x1b[36m' + output + '\x1b[0m';
+		}
+		else{
+			return '';
+		}
 	}
 }
 
@@ -141,9 +148,19 @@ DispatcherShell.ERRORS = {
 
 	EDNE: 'Error: It looks like this code engine does not exist',
 
+	IDNE: 'Error: IT looks like this code instance does not exist',
+
+	EXISTS: function(path){
+		return 'Error: ' + path + ' already exists';
+	},
+
 	PDNE: function(dir){
 		return 'ERROR: The path ' + dir + ' does not exist';
 	},
+
+	CONFIG: 'Error: Problem processing config',
+
+	FILE: 'Error: Problem reading file',
 
 	NAF: 'Error: Not a file',
 
@@ -159,6 +176,15 @@ DispatcherShell.ERRORS = {
 /*****************************************************************************
                 FUNCTIONS RELATED TO CODE INSTANCES
 ******************************************************************************/
+
+DispatcherShell.prototype.programMeta = function(instanceId){
+	var self = this;
+
+	if(!self.dispatcher.programs[instanceId]){
+		return DispatcherShell.ERRORS['IDNE'];
+	}
+	return 'UNDER CONSTRUCTION';
+}
 
 /**
  * Run code on an engine
@@ -226,11 +252,11 @@ DispatcherShell.prototype.migrateCode = function(from, to, codeName, instanceId)
 /**
  * Kill an instance of code
  */
- DispatcherShell.prototype.kill = function(engineId, codeName, instanceId){
+ DispatcherShell.prototype.kill = function(codeName, instanceId){
  	var self = this;
 
  	return new Promise(function(resolve){
- 		self.dispatcher.killCode(engineId, codeName, instanceId).then(function(data){
+ 		self.dispatcher.killCode(codeName, instanceId).then(function(data){
  			resolve(JSON.stringify(data));
  		})
  		.catch(function(err){
@@ -285,6 +311,9 @@ DispatcherShell.prototype.getPrograms = function(){
 			self.pubsub.unsubscribe('program-monitor');
 			var instanceResources = {};
 
+			if(instances.length === 0){
+				resolve(JSON.stringify(instanceResources));
+			}
 			instances.forEach(function(instance){
 				var name = instance.code_name;
 				var id = instance.instance_id;
@@ -352,6 +381,9 @@ DispatcherShell.prototype.getProgramResourceUsage = function(codeName, instanceI
 	});
 }
 
+DispatcherShell.prototype.killEngine = function(engineId){
+}
+
 DispatcherShell.prototype.pauseCode = function(codeName, instanceId){
 	return this.sendCodeCommand(codeName, instanceId, 'pause');
 }
@@ -379,24 +411,86 @@ DispatcherShell.prototype.listEngines = function(){
 /*****************************************************************************
 						FILESYSTEM FUNCTIONS
 *****************************************************************************/
-DispatcherShell.prototype.cwd = function(){
+DispatcherShell.prototype.pwd = function(){
 	return this.dir;
 }
 
-DispatcherShell.prototype.mkdir = function(path){
+DispatcherShell.prototype.make = function(path, content){
 	var self = this;
+	var type = (content) ? 'file' : 'directory';
 	var parent = path.split('/');
-	var dirname = parent.pop();
-	if(dirname === ''){
-		return 'No directory name provided';
-	}
+	var name = parent.pop();
+
+	return new Promise(function(resolve, reject){
+		if(name === ''){
+			reject('No ' + type + ' name provided');
+			return;
+		}
+		self._exists(path).then(function(_id){
+			if(_id && (type === 'directory')){
+				reject(DispatcherShell.ERRORS['EXISTS'](path));
+				return;
+			}
+			self._goto(parent.join('/')).then(function(res){
+				var path = res.path;
+
+				self._post(path, type, name, content, _id).then(function(){
+					resolve(type + ' successfully created');
+				})
+				.catch(function(err){
+					reject(err);
+				});
+			})
+			.catch(function(err){
+				reject(err);
+			});
+		});
+	});
+}
+
+DispatcherShell.prototype.makeDirectory = function(path){
+	var self = this;
 
 	return new Promise(function(resolve){
-		self._goto(parent.join('/')).then(function(res){
-			var path = res.path;
+		self.make(path).then(function(res){
+			resolve(res);
+		})
+		.catch(function(err){
+			resolve(err);
+		});
+	});
+}
 
-			self._post(path, 'directory', dirname).then(function(){
-				resolve('Directory successfully created');
+DispatcherShell.prototype.makeFile = function(path, contentPath){
+	var self = this;
+
+	return new Promise(function(resolve){
+		try{
+			var file = fs.readFileSync(contentPath, 'utf-8');
+		}
+		catch(e){
+			resolve(DispatcherShell.ERRORS['FILE']);
+			return;
+		}
+		self.make(path, file).then(function(res){
+			resolve(res);
+		})
+		.catch(function(err){
+			resolve(err);
+		});
+	});
+}
+
+DispatcherShell.prototype.delete = function(path){
+	var self = this;
+
+	return new Promise(function(resolve){
+		self._goto(path).then(function(newPath){
+			var _id = newPath.data._id;
+			var absPath = newPath.path + '?ids=' + _id;
+
+			self.http(absPath, 'DELETE').then(function(){
+				resolve(newPath.data.type + ' succesfully deleted');
 			})
 			.catch(function(err){
 				resolve(err);
@@ -428,7 +522,7 @@ DispatcherShell.prototype.cat = function(path){
 	})
 }
 
-DispatcherShell.prototype.ls = function(){
+DispatcherShell.prototype.listFiles = function(){
 	var self = this;
 
 	return new Promise(function(resolve){
@@ -442,12 +536,12 @@ DispatcherShell.prototype.ls = function(){
 	});
 }
 
-DispatcherShell.prototype.cd = function(path){
+DispatcherShell.prototype.changeDirectory = function(path){
 	var self = this;
 
 	return new Promise(function(resolve){
 		self._goto(path).then(function(newPath){
-			if(newPath.data.type !== 'directory'){
+			if(newPath.data.type && newPath.data.type !== 'directory'){
 				resolve(DispatcherShell.ERRORS['NAD']);
 				return;
 			}
@@ -460,6 +554,19 @@ DispatcherShell.prototype.cd = function(path){
 	});
 }
 
+DispatcherShell.prototype._exists = function(path){
+	var self = this;
+
+	return new Promise(function(resolve){
+		self._goto(path).then(function(res){
+			resolve(res.data._id);
+		})
+		.catch(function(err){
+			resolve(undefined);
+		});
+	});
+}
+
 DispatcherShell.prototype._goto = function(path){
 	var self = this;
 	var currTokens = self.dir.split('/');
@@ -467,10 +574,12 @@ DispatcherShell.prototype._goto = function(path){
 	currTokens.shift();
 
 	return new Promise(function(resolve, reject){
-		cdTokens.forEach(function(token){
+		cdTokens.forEach(function(token, index){
 			switch(token){
 				case '':
-					currTokens = [];
+					if(index === 0){
+						currTokens = [];
+					}
 					break;
 				case '..':
 					currTokens.pop();
@@ -498,10 +607,10 @@ DispatcherShell.prototype._goto = function(path){
 	});
 }
 
-DispatcherShell.prototype._post = function(absPath, type, name, content, _id){
+DispatcherShell.prototype.http = function(absPath, method, requestBody){
 	var self = this;
 	var options = {
-		method: 'POST',
+		method: method,
 		host: self.FSURL,
 		port: self.FSPort,
 		path: self.FSPath + absPath,
@@ -509,42 +618,9 @@ DispatcherShell.prototype._post = function(absPath, type, name, content, _id){
 			'Content-Type': 'application/json'
 		}
 	}
-	var requestBody = {
-		type: type,
-		name: name,
-		content: content,
-		_id: _id 
-	}
 
 	return new Promise(function(resolve, reject){
 		var req = http.request(options, function(res){
-			res.on('data', function(){
-			});
-			res.on('end', function(){
-				resolve();
-			});
-			res.on('error', function(err){
-				reject(err);
-			});
-
-		}).on('error', function(){
-			reject(DispatcherShell.ERRORS['FS']);
-		});
-		req.write(JSON.stringify(requestBody));
-		req.end();
-	});
-}
-
-DispatcherShell.prototype._get = function(absPath){
-	var self = this;
-
-	var options = {
-		host: self.FSURL,
-		port: self.FSPort,
-		path: self.FSPath + absPath
-	}
-	return new Promise(function(resolve, reject){
-		http.get(options, function(res){
 			var body = '';
 			res.on('data', function(c){
 				body += c;
@@ -552,36 +628,161 @@ DispatcherShell.prototype._get = function(absPath){
 			res.on('end', function(){
 				resolve(body);
 			});
-			res.on('error', function(err){
+			res.on('error', function(){
 				reject(err);
 			});
-		}).on('error', function(err){
+
+		}).on('error', function(){
 			reject(DispatcherShell.ERRORS['FS']);
 		});
 
+		if(requestBody){
+			req.write(JSON.stringify(requestBody));
+		}
+		req.end();
 	});
 }
 
+DispatcherShell.prototype._post = function(absPath, type, name, content, _id){
+	var self = this;
+	var requestBody = {
+		type: type,
+		name: name
+	}
+	if(content){
+		requestBody.content = content;
+	}
+	if(_id){
+		requestBody._id = _id;
+	}
+	return self.http(absPath, 'POST', requestBody);
+}
+
+DispatcherShell.prototype._get = function(absPath){
+	var self = this;
+	return self.http(absPath, 'GET');
+}
+
 /*****************************************************************************
-						FILESYSTEM FUNCTIONS
+					  SCHEDULING FUNCTIONS
 *****************************************************************************/
 
-DispatcherShell.prototype.runApplication = function(components){
+DispatcherShell.prototype.runApplication = function(appConfig){
 	var self = this;
+	var config;
+	var sendChannel = 'runApplication';
+	var listenChannel = 'applicationDetails';
+	var requestToken = randKey();
 
 	return new Promise(function(resolve){
+		try{
+			config = JSON.parse(fs.readFileSync(appConfig, 'utf-8'));
+			config.request_token = requestToken;
+		}
+		catch(e){
+			resolve(DispatcherShell.ERRORS['CONFIG']);
+		}
+		self._listenTimeout(5000, listenChannel + '/' +  requestToken + '/run')
+			.then(function(res){
+				self._isPending(res).then(function(data){
+					resolve(JSON.stringify(data));
+				})
+				.catch(function(err){
+					resolve(err);
+				});
+			})
+			.catch(function(err){
+				resolve(err);
+			});
 
+		self.pubsub.publish(sendChannel, config);
 	});
 }
 
 DispatcherShell.prototype.stopApplication = function(id){
 	var self = this;
+	var sendChannel = 'stopApplication';
+	var listenChannel = 'applicationDetails';
+	var requestToken = randKey();
+	var appId = id.trim();
 
 	return new Promise(function(resolve){
+		self._listenTimeout(5000, listenChannel + '/' + requestToken + '/stop')
+			.then(function(res){
+				self._isPending(res).then(function(data){
+					resolve(JSON.stringify(data));
+				})
+				.catch(function(err){
+					resolve(err);
+				});
+			})
+			.catch(function(err){
+				resolve(err);
+			});
 
+		var request = {
+			application_id: appId,
+			request_token: requestToken
+		}
+
+		self.pubsub.publish(sendChannel, request);
 	});
 }
 
+DispatcherShell.prototype._isPending = function(json){
+	var self = this;
+	var listenChannel = 'applicationDetails';
+
+	return new Promise(function(resolve, reject){
+		if(json.status === 'PENDING'){
+			console.log(JSON.stringify(json));
+			console.log('\nWaiting for a status update...\n');
+
+			self._listenAccumulate(5000, listenChannel).then(function(msgs){
+				msgs.forEach(function(update){
+					if(update.application_id === json.application_id){
+						resolve(update);
+						return;
+					}
+				});
+				reject(DispatcherShell.ERRORS['TIMEOUT']);
+			});
+		}
+		else{
+			resolve(json);
+		}
+	});
+}
+
+DispatcherShell.prototype._listenAccumulate = function(ms, channel){
+	var self = this;
+	var messages = [];
+
+	return new Promise(function(resolve){
+		self.pubsub.subscribe(channel, function(msg){
+			messages.push(msg);
+		});
+
+		setTimeout(function(){
+			resolve(messages);
+		}, ms);
+	});
+}
+
+DispatcherShell.prototype._listenTimeout = function(ms, channel){
+	var self = this;
+
+	return new Promise(function(resolve, reject){
+		var timer = setTimeout(function(){
+			reject(DispatcherShell.ERRORS['TIMEOUT']);
+		}, ms);
+
+		self.pubsub.subscribe(channel, function(msg){
+			clearTimeout(timer);
+			resolve(msg);
+		});
+	});
+}
 
 
 /*****************************************************************************
@@ -636,11 +837,35 @@ DispatcherShell.prototype.executeScript = function(scriptFile){
  * All available commands on the shell
  */
 DispatcherShell.COMMANDS = {
+	stop_app: function(arg1){
+		if(arguments.length < 1){
+			return DispatcherShell.ERRORS['ARGS'](['application id']);
+		}
+		return this.stopApplication(arg1);
+	},
+	run_app: function(arg1){
+		if(arguments.length < 1){
+			return DispatcherShell.ERRORS['ARGS'](['application JSON']);
+		}
+		return this.runApplication(arg1);
+	},
+	rm: function(arg1){
+		if(arguments.length < 1){
+			return DispatcherShell.ERRORS['ARGS'](['path']);
+		}
+		return this.delete(arg1);
+	},
 	mkdir: function(arg1){
 		if(arguments.length < 1){
 			return DispatcherShell.ERRORS['ARGS'](['directory']);
 		}
-		return this.mkdir(arg1);
+		return this.makeDirectory(arg1);
+	},
+	touch: function(arg1, arg2){
+		if(arguments.length < 1){
+			return DispatcherShell.ERRORS['ARGS'](['file path', 'content path']);
+		}
+		return this.makeFile(arg1, arg2);
 	},
 	cat: function(arg1){
 		if(arguments.length < 1){
@@ -648,17 +873,17 @@ DispatcherShell.COMMANDS = {
 		}
 		return this.cat(arg1);
 	},
-	cwd: function(){
-		return this.cwd();
+	pwd: function(){
+		return this.pwd();
 	},
 	ls: function(){
-		return this.ls();
+		return this.listFiles();
 	},
 	cd: function(arg1){
 		if(arguments.length < 1){
 			return DispatcherShell.ERRORS['ARGS'](['path']);
 		}
-		return this.cd(arg1);
+		return this.changeDirectory(arg1);
 	},
 	migrate: function(arg1, arg2, arg3, arg4){
 		if(arguments.length < 4){
@@ -671,6 +896,12 @@ DispatcherShell.COMMANDS = {
 	},
 	programs: function(){
 		return this.getPrograms();
+	},
+	user_meta: function(arg1){
+		if(arguments.length < 1){
+			return DispatcherShell.ERRORS['ARGS'](['instance id']);
+		}
+		return this.programMeta(arg1);
 	},
 	presource: function(arg1, arg2){
 		if(arguments.length < 2){
@@ -702,11 +933,11 @@ DispatcherShell.COMMANDS = {
 		}
 		return this.pause(arg1, arg2, arg3);
 	},
-	kill: function(arg1, arg2, arg3){
+	kill: function(arg1, arg2){
 		if(arguments.length < 3){
-			return DispatcherShell.ERRORS['ARGS'](['engine id', 'code name', 'instance id']);
+			return DispatcherShell.ERRORS['ARGS'](['code name', 'instance id']);
 		}
-		return this.kill(arg1, arg2, arg3);
+		return this.kill(arg1, arg2);
 	},
 	snapshot: function(arg1, arg2){
 		if(arguments.length < 2){
