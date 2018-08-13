@@ -36,6 +36,23 @@ program
   });
 
 program
+  .command('scheduler <conf>')
+  .alias('sched')
+  .description('Start a ThingsJS Scheduler')
+  .action(function(conf){
+    var things = require('../lib/things.js');
+    var config = things.CodeEngine.validateConfig(conf);
+    // var engine = new things.CodeEngine(config);
+    var scheduler = new things.Scheduler(config);
+    process.on('SIGINT', function(){
+      scheduler.kill().then(function(){
+          process.exit();
+        })
+    });
+
+  });
+
+program
   .command('instrument <file_path>')
   .option('-p, --pubsub <pubsub_url>', 'Pubsub URL')
   .option('-s, --save <save_path>', 'File path to optionally save instrumented code')
@@ -168,5 +185,5 @@ program
 program.parse(process.argv);
 if (process.argv.length === 2){
   var things = require('../lib/things.js');
-  var shell = new things.Shell;
+  var shell = new things.util.Shell;
 }
