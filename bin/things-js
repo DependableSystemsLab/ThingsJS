@@ -21,9 +21,11 @@ program
 
 program
   .command('worker <conf>')
+  .option('-d, --debug', 'Set environment variable DEBUG to "true" and see debug output')
   .alias('engine')
   .description('Start a ThingsJS Worker')
-  .action(function(conf){
+  .action(function(conf, options){
+    process.env['DEBUG'] = options.debug ? "true": "false";
     var things = require('../lib/things.js');
     var config = things.CodeEngine.validateConfig(conf);
     var engine = new things.CodeEngine(config);
