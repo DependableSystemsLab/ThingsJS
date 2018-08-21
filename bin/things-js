@@ -15,8 +15,9 @@ program
   .alias('dash')
   .description('Start a Dashboard application')
   .action(function(options){
-    var app = require('../util/dashboard/application.js');
-    app(options.config);
+    var config = options.config ? require(options.config) : {};
+    var startApp = require('../util/dashboard-v2/startApp.js');
+    startApp();
   });
 
 program

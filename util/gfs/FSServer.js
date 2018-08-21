@@ -5,10 +5,6 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var FSObject = require('./FSObject.js');
 
-// var db;
-// var app = express();
-// 
-
 var DEFAULT_DIRS = {
 	'dev': {},
 	'proc': {},
