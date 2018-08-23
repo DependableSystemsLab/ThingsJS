@@ -5,6 +5,7 @@
 **/data/**
 **/tests/**
 **/temp/**
+**/_book/**
 .vimrc
 .project
 

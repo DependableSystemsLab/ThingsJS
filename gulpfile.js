@@ -7,7 +7,7 @@ gulp.task('default', [ 'docs', 'test' ]);
 
 /** Compile JSDoc html output to /docs/ directory */
 gulp.task('docs', function(){
-	return exec('./node_modules/.bin/jsdoc -d ./docs/ -r ./lib/core');
+	return exec('./node_modules/.bin/jsdoc -c ./jsdoc.json');
 });
 
 /** Run mocha tests */

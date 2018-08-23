@@ -4,7 +4,8 @@
   "description": "Framework for building distribute IoT applications",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test/run-all.js --exit"
+    "test": "mocha test/run-all.js --exit",
+    "docs": "gitbook build && cp -TR _book/ docs/"
   },
   "bin": {
     "things-js": "./bin/things-js"
@@ -47,6 +48,7 @@
     "gulp": "^3.9.1",
     "gulp-mocha": "^6.0.0",
     "jsdoc": "^3.5.5",
-    "mocha": "^5.1.1"
+    "mocha": "^5.1.1",
+    "gitbook-plugin-jsdoc": "0.0.6"
   }
 }

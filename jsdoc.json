@@ -1,0 +1,30 @@
+{
+	"tags": {
+		"allowUnknownTags": false
+	},
+	"plugins": [
+		"plugins/markdown"
+	],
+	"templates": {
+		"default": {
+			"staticFiles": {
+				"include": [
+					"./www/static"
+				]
+			}
+		}
+	},
+	"source": {
+		"include": [
+			"lib/core"
+		]
+	},
+	"opts": {
+		"destination": "docs/api/",
+		"encoding": "utf8",
+		"recurse": true,
+		"verbose": true,
+		"readme": "guide/README.md",
+		"tutorials": "guide/tutorials"
+	}
+}

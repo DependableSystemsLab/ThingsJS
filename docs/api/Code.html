@@ -1,0 +1,615 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>Code · GitBook</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="CodeEngine.html" />
+    
+    
+    <link rel="prev" href="./" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="../GettingStarted.html">
+            
+                <a href="../GettingStarted.html">
+            
+                    
+                    Getting Started
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="../FirstApplication.html">
+            
+                <a href="../FirstApplication.html">
+            
+                    
+                    Your First Application
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    API
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter active" data-level="1.4.1" data-path="Code.html">
+            
+                <a href="Code.html">
+            
+                    
+                    Code
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.2" data-path="CodeEngine.html">
+            
+                <a href="CodeEngine.html">
+            
+                    
+                    CodeEngine
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.3" data-path="Dispatcher.html">
+            
+                <a href="Dispatcher.html">
+            
+                    
+                    Dispatcher
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.4" data-path="Scheduler.html">
+            
+                <a href="Scheduler.html">
+            
+                    
+                    Scheduler
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >Code</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h2 id="classes">Classes</h2>
+<dl>
+<dt><a href="#Code">Code</a></dt>
+<dd></dd>
+<dt><a href="#Scope">Scope</a></dt>
+<dd></dd>
+</dl>
+
+<h2 id="members">Members</h2>
+<dl>
+<dt><a href="#NATIVE_TRANSFORMERS">NATIVE_TRANSFORMERS</a></dt>
+<dd><p>Pre-processor before serializing Scope Tree; this is needed to serialize more complex objects.</p>
+</dd>
+<dt><a href="#console">console</a></dt>
+<dd><p>Attach Proxy objects</p>
+</dd>
+</dl>
+
+<h2 id="functions">Functions</h2>
+<dl>
+<dt><a href="#StaticScope">StaticScope()</a></dt>
+<dd><p>Static Scope object used during instrumentation.
+ It is used to keep track of lexical scope of various AST nodes</p>
+</dd>
+<dt><a href="#AstHook">AstHook(scope, node)</a></dt>
+<dd><p>Object that wraps a node in the AST produced by esprima used for instrumenting the code</p>
+</dd>
+</dl>
+
+<p><a name="Code"></a></p>
+<h2 id="code">Code</h2>
+<p><strong>Kind</strong>: global class  </p>
+<ul>
+<li><a href="#Code">Code</a><ul>
+<li><a href="#new_Code_new">new Code(pubsub, name, raw_code)</a></li>
+<li><em>instance</em><ul>
+<li><a href="#Code+run">.run(options)</a> &#x21D2; <code>Promise</code></li>
+<li><a href="#Code+kill">.kill()</a></li>
+</ul>
+</li>
+<li><em>static</em><ul>
+<li><a href="#Code.readMetadata">.readMetadata(raw_code)</a> &#x21D2; <code>object</code></li>
+<li><a href="#Code.instrument">.instrument(raw_code)</a></li>
+<li><a href="#Code.createEmpty">.createEmpty()</a></li>
+<li><a href="#Code.fromString">.fromString(pubsub, code_name, raw_code)</a> &#x21D2; <a href="#Code"><code>Code</code></a></li>
+<li><a href="#Code.fromFile">.fromFile(file_path)</a></li>
+<li><a href="#Code.fromSnapshot">.fromSnapshot(snapshot)</a> &#x21D2; <a href="#Code"><code>Code</code></a></li>
+<li><a href="#Code.fromSnapshotFile">.fromSnapshotFile(snapshot_path)</a> &#x21D2; <a href="#Code"><code>Code</code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><a name="new_Code_new"></a></p>
+<h3 id="new-codepubsub-name-rawcode">new Code(pubsub, name, raw_code)</h3>
+<p>Code object used for instrumented user code</p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>pubsub</td>
+<td><code>Pubsub</code></td>
+<td>Pubsub interface the code should use</td>
+</tr>
+<tr>
+<td>name</td>
+<td><code>string</code></td>
+<td>Name of the code (e.g. file name)</td>
+</tr>
+<tr>
+<td>raw_code</td>
+<td><code>string</code></td>
+<td>String content of the code</td>
+</tr>
+</tbody>
+</table>
+<p><a name="Code+run"></a></p>
+<h3 id="coderunoptions-&#x21D2;-promise">code.run(options) &#x21D2; <code>Promise</code></h3>
+<p>Execute a new process.</p>
+<p><strong>Kind</strong>: instance method of <a href="#Code"><code>Code</code></a><br><strong>Returns</strong>: <code>Promise</code> - - On successful execution, the Promise is resolved with a Process object.  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>options</td>
+<td><code>object</code></td>
+<td>Options object used for initializing the Process object.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="Code+kill"></a></p>
+<h3 id="codekill">code.kill()</h3>
+<p>Pause the user code through IPC. This will work only if the user code was executed through Code.run.
+   If the user code was executed as a standalone Node process (e.g. node user_code.js),
+   it can only be paused through Pubsub.</p>
+<p><strong>Kind</strong>: instance method of <a href="#Code"><code>Code</code></a><br><a name="Code.readMetadata"></a></p>
+<h3 id="codereadmetadatarawcode-&#x21D2;-object">Code.readMetadata(raw_code) &#x21D2; <code>object</code></h3>
+<p>Standalone static function for reading ThingsJS metadata from raw code</p>
+<p><strong>Kind</strong>: static method of <a href="#Code"><code>Code</code></a><br><strong>Returns</strong>: <code>object</code> - - Object representing the YAML metadata from the code  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>raw_code</td>
+<td><code>string</code></td>
+<td>Raw user code in UTF-8 string</td>
+</tr>
+</tbody>
+</table>
+<p><a name="Code.instrument"></a></p>
+<h3 id="codeinstrumentrawcode">Code.instrument(raw_code)</h3>
+<p>Return instrumented code string</p>
+<p><strong>Kind</strong>: static method of <a href="#Code"><code>Code</code></a>  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>raw_code</td>
+<td><code>string</code></td>
+</tr>
+</tbody>
+</table>
+<p><a name="Code.createEmpty"></a></p>
+<h3 id="codecreateempty">Code.createEmpty()</h3>
+<p>Create a dummy Code object without initializing the properties. This method is used when restoring code from a snapshot.</p>
+<p><strong>Kind</strong>: static method of <a href="#Code"><code>Code</code></a><br><a name="Code.fromString"></a></p>
+<h3 id="codefromstringpubsub-codename-rawcode-&#x21D2;-code">Code.fromString(pubsub, code_name, raw_code) &#x21D2; <a href="#Code"><code>Code</code></a></h3>
+<p>Create a new Code object from utf-8 string</p>
+<p><strong>Kind</strong>: static method of <a href="#Code"><code>Code</code></a><br><strong>Returns</strong>: <a href="#Code"><code>Code</code></a> - Returns a new Code instance  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>pubsub</td>
+<td><code>Pubsub</code></td>
+<td>Pubsub object to use for instrumentation - this determines which Pubsub service a Process connects to</td>
+</tr>
+<tr>
+<td>code_name</td>
+<td><code>string</code></td>
+<td>Name to assign the code (e.g. factorial.js)</td>
+</tr>
+<tr>
+<td>raw_code</td>
+<td><code>string</code></td>
+<td>JavaScript code string</td>
+</tr>
+</tbody>
+</table>
+<p><a name="Code.fromFile"></a></p>
+<h3 id="codefromfilefilepath">Code.fromFile(file_path)</h3>
+<p>Create a new Code object from file path</p>
+<p><strong>Kind</strong>: static method of <a href="#Code"><code>Code</code></a>  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>file_path</td>
+<td><code>string</code></td>
+<td>the path to the raw JS file</td>
+</tr>
+</tbody>
+</table>
+<p><a name="Code.fromSnapshot"></a></p>
+<h3 id="codefromsnapshotsnapshot-&#x21D2;-code">Code.fromSnapshot(snapshot) &#x21D2; <a href="#Code"><code>Code</code></a></h3>
+<p>Create a new Code object from given Snapshot object</p>
+<p><strong>Kind</strong>: static method of <a href="#Code"><code>Code</code></a><br><strong>Returns</strong>: <a href="#Code"><code>Code</code></a> - Returns a new Code instance  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>snapshot</td>
+<td><code>object</code></td>
+<td>The Snapshot object produced when Process.snapshot() is called</td>
+</tr>
+</tbody>
+</table>
+<p><a name="Code.fromSnapshotFile"></a></p>
+<h3 id="codefromsnapshotfilesnapshotpath-&#x21D2;-code">Code.fromSnapshotFile(snapshot_path) &#x21D2; <a href="#Code"><code>Code</code></a></h3>
+<p>Create a new Code object from given Snapshot file. This static method calls Code.fromSnapshot after reading from file.</p>
+<p><strong>Kind</strong>: static method of <a href="#Code"><code>Code</code></a><br><strong>Returns</strong>: <a href="#Code"><code>Code</code></a> - Returns a new Code instance  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>snapshot_path</td>
+<td><code>string</code></td>
+<td>The path to the snapshot file</td>
+</tr>
+</tbody>
+</table>
+<p><a name="Scope"></a></p>
+<h2 id="scope">Scope</h2>
+<p><strong>Kind</strong>: global class  </p>
+<ul>
+<li><a href="#Scope">Scope</a><ul>
+<li><a href="#new_Scope_new">new Scope()</a></li>
+<li><a href="#Scope+hoist">.hoist()</a></li>
+</ul>
+</li>
+</ul>
+<p><a name="new_Scope_new"></a></p>
+<h3 id="new-scope">new Scope()</h3>
+<p>Scope object injected into the user code; it&apos;s used in the same execution context.</p>
+<p><a name="Scope+hoist"></a></p>
+<h3 id="scopehoist">scope.hoist()</h3>
+<p>chainable function</p>
+<p><strong>Kind</strong>: instance method of <a href="#Scope"><code>Scope</code></a><br><a name="NATIVE_TRANSFORMERS"></a></p>
+<h2 id="nativetransformers">NATIVE_TRANSFORMERS</h2>
+<p>Pre-processor before serializing Scope Tree; this is needed to serialize more complex objects.</p>
+<p><strong>Kind</strong>: global variable<br><a name="console"></a></p>
+<h2 id="console">console</h2>
+<p>Attach Proxy objects</p>
+<p><strong>Kind</strong>: global variable<br><a name="StaticScope"></a></p>
+<h2 id="staticscope">StaticScope()</h2>
+<p>Static Scope object used during instrumentation.
+ It is used to keep track of lexical scope of various AST nodes</p>
+<p><strong>Kind</strong>: global function<br><a name="AstHook"></a></p>
+<h2 id="asthookscope-node">AstHook(scope, node)</h2>
+<p>Object that wraps a node in the AST produced by esprima used for instrumenting the code</p>
+<p><strong>Kind</strong>: global function  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>scope</td>
+<td><a href="#StaticScope"><code>StaticScope</code></a></td>
+<td>The lexical scope that the node belongs to</td>
+</tr>
+<tr>
+<td>node</td>
+<td><code>object</code></td>
+<td>An AST node</td>
+</tr>
+</tbody>
+</table>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="./" class="navigation navigation-prev " aria-label="Previous page: API">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="CodeEngine.html" class="navigation navigation-next " aria-label="Next page: CodeEngine">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"Code","level":"1.4.1","depth":2,"next":{"title":"CodeEngine","level":"1.4.2","depth":2,"path":"api/CodeEngine.md","ref":"api/CodeEngine.md","articles":[]},"previous":{"title":"API","level":"1.4","depth":1,"path":"api/README.md","ref":"api/README.md","articles":[{"title":"Code","level":"1.4.1","depth":2,"path":"api/Code.md","ref":"api/Code.md","articles":[]},{"title":"CodeEngine","level":"1.4.2","depth":2,"path":"api/CodeEngine.md","ref":"api/CodeEngine.md","articles":[]},{"title":"Dispatcher","level":"1.4.3","depth":2,"path":"api/Dispatcher.md","ref":"api/Dispatcher.md","articles":[]},{"title":"Scheduler","level":"1.4.4","depth":2,"path":"api/Scheduler.md","ref":"api/Scheduler.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"api/Code.md","mtime":"2018-08-23T00:12:17.461Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-08-23T00:34:25.068Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+
