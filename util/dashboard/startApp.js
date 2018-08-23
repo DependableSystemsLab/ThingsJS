@@ -4,8 +4,8 @@ var express = require('express');
 var helmet = require('helmet');
 var chalk = require('chalk');
 
-var MqttWsBridge = require('things-js').util.MqttWsBridge;
-var FSServer = require('things-js').addons.FSServer;
+var MqttWsBridge = require('../../lib/things.js').util.MqttWsBridge;
+var FSServer = require('../../lib/things.js').addons.FSServer;
 
 /* helpers */
 function httpDebugger(req, res, next){

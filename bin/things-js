@@ -16,7 +16,7 @@ program
   .description('Start a Dashboard application')
   .action(function(options){
     var config = options.config ? require(options.config) : {};
-    var startApp = require('../util/dashboard-v2/startApp.js');
+    var startApp = require('../util/dashboard/startApp.js');
     startApp();
   });
 
