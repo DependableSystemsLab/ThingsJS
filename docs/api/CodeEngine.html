@@ -1,0 +1,497 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>CodeEngine · GitBook</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="Dispatcher.html" />
+    
+    
+    <link rel="prev" href="Code.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.1.1" data-path="../Architecture.html">
+            
+                <a href="../Architecture.html">
+            
+                    
+                    System Architecture
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="../GettingStarted.html">
+            
+                <a href="../GettingStarted.html">
+            
+                    
+                    Getting Started
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="../tutorials/">
+            
+                <a href="../tutorials/">
+            
+                    
+                    Tutorials
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.1" data-path="../tutorials/FirstApplication.html">
+            
+                <a href="../tutorials/FirstApplication.html">
+            
+                    
+                    Your First Application
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2" data-path="../tutorials/Migration.html">
+            
+                <a href="../tutorials/Migration.html">
+            
+                    
+                    Live-Migration
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    API
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.4.1" data-path="Pubsub.html">
+            
+                <a href="Pubsub.html">
+            
+                    
+                    Pubsub
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.2" data-path="Code.html">
+            
+                <a href="Code.html">
+            
+                    
+                    Code
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.4.3" data-path="CodeEngine.html">
+            
+                <a href="CodeEngine.html">
+            
+                    
+                    CodeEngine
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.4" data-path="Dispatcher.html">
+            
+                <a href="Dispatcher.html">
+            
+                    
+                    Dispatcher
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.5" data-path="Scheduler.html">
+            
+                <a href="Scheduler.html">
+            
+                    
+                    Scheduler
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >CodeEngine</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <p><a name="CodeEngine"></a></p>
+<h2 id="codeengine">CodeEngine</h2>
+<p><strong>Kind</strong>: global class  </p>
+<ul>
+<li><a href="#CodeEngine">CodeEngine</a><ul>
+<li><a href="#new_CodeEngine_new">new CodeEngine(config, [options])</a></li>
+<li><em>instance</em><ul>
+<li><a href="#CodeEngine+reportStatus">.reportStatus(eventName)</a> &#x21D2; <code>Promise</code></li>
+<li><a href="#CodeEngine+reportResource">.reportResource()</a> &#x21D2; <code>undefined</code></li>
+<li><a href="#CodeEngine+log">.log()</a></li>
+<li><a href="#CodeEngine+run_code">.run_code()</a></li>
+<li><a href="#CodeEngine+restore_code">.restore_code()</a></li>
+<li><a href="#CodeEngine+migrate_code">.migrate_code()</a></li>
+<li><a href="#CodeEngine+kill">.kill()</a></li>
+</ul>
+</li>
+<li><em>static</em><ul>
+<li><a href="#CodeEngine.initCode">.initCode</a> : <code>Object</code></li>
+<li><a href="#CodeEngine.Behaviours">.Behaviours</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><a name="new_CodeEngine_new"></a></p>
+<h3 id="new-codeengineconfig-options">new CodeEngine(config, [options])</h3>
+<p>CodeEngine is an abstraction for a &quot;worker&quot; in a ThingsJS network.
+A CodeEngine instance connects to the Publish/Subscribe service at the provided URL.
+Once connected, CodeEngine listens for incoming commands by subscribing to a unique topic. (e.g. &quot;${engine.id}/cmd&quot;)</p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>config</td>
+<td><code>Object</code></td>
+<td>The configuration object used to initialize the CodeEngine instance</td>
+</tr>
+<tr>
+<td>config.pubsub_url</td>
+<td><code>string</code></td>
+<td>URL of the Publish/Subscribe service</td>
+</tr>
+<tr>
+<td>[options]</td>
+<td><code>Object</code></td>
+<td>Additional options object for customizing the CodeEngine behaviour</td>
+</tr>
+</tbody>
+</table>
+<p><a name="CodeEngine+reportStatus"></a></p>
+<h3 id="codeenginereportstatuseventname-&#x21D2;-promise">codeEngine.reportStatus(eventName) &#x21D2; <code>Promise</code></h3>
+<p>[reportStatus description]</p>
+<p><strong>Kind</strong>: instance method of <a href="#CodeEngine"><code>CodeEngine</code></a><br><strong>Returns</strong>: <code>Promise</code> - [description]  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>eventName</td>
+<td><code>String</code></td>
+<td>[description]</td>
+</tr>
+</tbody>
+</table>
+<p><a name="CodeEngine+reportResource"></a></p>
+<h3 id="codeenginereportresource-&#x21D2;-undefined">codeEngine.reportResource() &#x21D2; <code>undefined</code></h3>
+<p>[reportResource description]</p>
+<p><strong>Kind</strong>: instance method of <a href="#CodeEngine"><code>CodeEngine</code></a><br><strong>Returns</strong>: <code>undefined</code> - [description]<br><a name="CodeEngine+log"></a></p>
+<h3 id="codeenginelog">codeEngine.log()</h3>
+<p>Augmented console.log function for debugging purposes, the log is published to pubsub</p>
+<p><strong>Kind</strong>: instance method of <a href="#CodeEngine"><code>CodeEngine</code></a><br><a name="CodeEngine+run_code"></a></p>
+<h3 id="codeengineruncode">codeEngine.run_code()</h3>
+<p>&quot;Behaviour&quot; functions
+   the reason the following functions are defined in this particular style
+   is because we consider these operations to be &quot;behaviour&quot;s in the actor model,
+   which can be triggered by external signals. For example in our case the external signal comes from Pubsub.
+   Of course, the functions can be called directly as well.</p>
+<p><strong>Kind</strong>: instance method of <a href="#CodeEngine"><code>CodeEngine</code></a><br><a name="CodeEngine+restore_code"></a></p>
+<h3 id="codeenginerestorecode">codeEngine.restore_code()</h3>
+<p>[restore_code description]</p>
+<p><strong>Kind</strong>: instance method of <a href="#CodeEngine"><code>CodeEngine</code></a><br><a name="CodeEngine+migrate_code"></a></p>
+<h3 id="codeenginemigratecode">codeEngine.migrate_code()</h3>
+<p>[migrate_code description]</p>
+<p><strong>Kind</strong>: instance method of <a href="#CodeEngine"><code>CodeEngine</code></a><br><a name="CodeEngine+kill"></a></p>
+<h3 id="codeenginekill">codeEngine.kill()</h3>
+<p>[kill description]</p>
+<p><strong>Kind</strong>: instance method of <a href="#CodeEngine"><code>CodeEngine</code></a><br><a name="CodeEngine.initCode"></a></p>
+<h3 id="codeengineinitcode--object">CodeEngine.initCode : <code>Object</code></h3>
+<p>[description]</p>
+<p><strong>Kind</strong>: static property of <a href="#CodeEngine"><code>CodeEngine</code></a><br><a name="CodeEngine.Behaviours"></a></p>
+<h3 id="codeenginebehaviours">CodeEngine.Behaviours</h3>
+<p>Defines a set of &quot;behaviours&quot; for the CodeEngine. (Actor pattern)
+  these behaviours are either triggered via Pubsub or directly called by the instance.
+  All of these should return a Promise object that resolves to a JSON-serializable object
+  as the result will be transmitted over HTTP/MQTT.</p>
+<p><strong>Kind</strong>: static property of <a href="#CodeEngine"><code>CodeEngine</code></a>  </p>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="Code.html" class="navigation navigation-prev " aria-label="Previous page: Code">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="Dispatcher.html" class="navigation navigation-next " aria-label="Next page: Dispatcher">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"CodeEngine","level":"1.4.3","depth":2,"next":{"title":"Dispatcher","level":"1.4.4","depth":2,"path":"api/Dispatcher.md","ref":"api/Dispatcher.md","articles":[]},"previous":{"title":"Code","level":"1.4.2","depth":2,"path":"api/Code.md","ref":"api/Code.md","articles":[]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"api/CodeEngine.md","mtime":"2018-08-23T00:55:01.351Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-08-23T01:48:20.095Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+
