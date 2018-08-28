@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>Scheduler · GitBook</title>
+        <title>System Architecture · GitBook</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -57,8 +57,10 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
+    <link rel="next" href="Terminology.html" />
     
-    <link rel="prev" href="Dispatcher.html" />
+    
+    <link rel="prev" href="../" />
     
 
     </head>
@@ -101,9 +103,9 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.1.1" data-path="../about/Architecture.html">
+        <li class="chapter active" data-level="1.1.1" data-path="Architecture.html">
             
-                <a href="../about/Architecture.html">
+                <a href="Architecture.html">
             
                     
                     System Architecture
@@ -114,9 +116,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.1.2" data-path="../about/Terminology.html">
+        <li class="chapter " data-level="1.1.2" data-path="Terminology.html">
             
-                <a href="../about/Terminology.html">
+                <a href="Terminology.html">
             
                     
                     Terminology
@@ -203,9 +205,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.5" data-path="./">
+        <li class="chapter " data-level="1.5" data-path="../api/">
             
-                <a href="./">
+                <a href="../api/">
             
                     
                     Developer API
@@ -217,9 +219,9 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.5.1" data-path="Pubsub.html">
+        <li class="chapter " data-level="1.5.1" data-path="../api/Pubsub.html">
             
-                <a href="Pubsub.html">
+                <a href="../api/Pubsub.html">
             
                     
                     Pubsub
@@ -230,9 +232,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.5.2" data-path="Code.html">
+        <li class="chapter " data-level="1.5.2" data-path="../api/Code.html">
             
-                <a href="Code.html">
+                <a href="../api/Code.html">
             
                     
                     Code
@@ -243,9 +245,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.5.3" data-path="CodeEngine.html">
+        <li class="chapter " data-level="1.5.3" data-path="../api/CodeEngine.html">
             
-                <a href="CodeEngine.html">
+                <a href="../api/CodeEngine.html">
             
                     
                     CodeEngine
@@ -256,9 +258,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.5.4" data-path="Dispatcher.html">
+        <li class="chapter " data-level="1.5.4" data-path="../api/Dispatcher.html">
             
-                <a href="Dispatcher.html">
+                <a href="../api/Dispatcher.html">
             
                     
                     Dispatcher
@@ -269,9 +271,9 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.5.5" data-path="Scheduler.html">
+        <li class="chapter " data-level="1.5.5" data-path="../api/Scheduler.html">
             
-                <a href="Scheduler.html">
+                <a href="../api/Scheduler.html">
             
                     
                     Scheduler
@@ -317,7 +319,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".." >Scheduler</a>
+        <a href=".." >System Architecture</a>
     </h1>
 </div>
 
@@ -332,65 +334,23 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <p><a name="Scheduler"></a></p>
-<h2 id="scheduler">Scheduler</h2>
-<p><strong>Kind</strong>: global class  </p>
+                                <h1 id="system-architecture">System Architecture</h1>
+<p>A ThingsJS system consists of the following:</p>
+<ol>
+<li>A set of <strong>Workers</strong> capable of running JavaScript <em>Programs</em>.</li>
+<li>Capability to perform <strong>platform-independent live-migration of a Process</strong> from one Worker to another</li>
+<li>A <strong>Publish/Subscribe interface</strong> accessible by all <em>Workers</em> in the system. At the higher-level, <em>ThingsJS does not assume a specific implementation of the interface</em>, but assumes per-topic FIFO message ordering guarantee. In the current version of ThingsJS, the Publish/Subscribe interface is centralized and uses the MQTT protocol.</li>
+<li>A <strong>Global File System accessible</strong> by all <em>Workers</em>. At the higher-level, <em>ThingsJS does not assume a specific implementation of the file system</em>. In the current version, the file system is implemented through a central MongoDB service.</li>
+<li>A <strong>Scheduler service</strong> that monitors the network of <em>Workers</em> and coordinates the allocation and migration of <em>Programs</em> between the <em>Workers</em>.</li>
+</ol>
+<h1 id="example-setup">Example Setup</h1>
+<p>A small ThingsJS system consisting of 3 different devices might look like this:</p>
 <ul>
-<li><a href="#Scheduler">Scheduler</a><ul>
-<li><a href="#new_Scheduler_new">new Scheduler(config)</a></li>
-<li><a href="#Scheduler.Algorithms">.Algorithms</a></li>
+<li>1 Raspberry Pi 3 running a ThingsJS Worker runtime.</li>
+<li>1 Raspberry Pi Zero running a ThingsJS Worker runtime.</li>
+<li>1 Desktop PC, running a ThingsJS Scheduler service, a Pub/Sub server, and the File Server.</li>
 </ul>
-</li>
-</ul>
-<p><a name="new_Scheduler_new"></a></p>
-<h3 id="new-schedulerconfig">new Scheduler(config)</h3>
-<p>[Scheduler description]</p>
-<table>
-<thead>
-<tr>
-<th>Param</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>config</td>
-<td><code>Object</code></td>
-<td>[description]</td>
-</tr>
-</tbody>
-</table>
-<p><a name="Scheduler.Algorithms"></a></p>
-<h3 id="scheduleralgorithms">Scheduler.Algorithms</h3>
-<p>Scheduler Algorithms - all functions should accept devices, tasks, mapping as arguments</p>
-<p><strong>Kind</strong>: static property of <a href="#Scheduler"><code>Scheduler</code></a>  </p>
-<table>
-<thead>
-<tr>
-<th>Param</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>devices</td>
-<td><code>Array</code></td>
-<td>[{ id, available_memory }]</td>
-</tr>
-<tr>
-<td>tasks</td>
-<td><code>Array</code></td>
-<td>[{ id, required_memory }]</td>
-</tr>
-<tr>
-<td>[cur_mapping]</td>
-<td><code>Object</code></td>
-<td>Current mapping</td>
-</tr>
-</tbody>
-</table>
+<p>A user of this system would make a request to the Scheduler service to run a Program, after which the Scheduler would decide which Raspberry Pi should run it. The Scheduler will send the Code to the target Worker via the Pub/Sub interface, and the selected Worker will execute the Program.</p>
 
                                 
                                 </section>
@@ -418,10 +378,14 @@
 
             
                 
-                <a href="Dispatcher.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: Dispatcher">
+                <a href="../" class="navigation navigation-prev " aria-label="Previous page: What is ThingsJS?">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
+                
+                <a href="Terminology.html" class="navigation navigation-next " aria-label="Next page: Terminology">
+                    <i class="fa fa-angle-right"></i>
+                </a>
                 
             
         
@@ -430,7 +394,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Scheduler","level":"1.5.5","depth":2,"previous":{"title":"Dispatcher","level":"1.5.4","depth":2,"path":"api/Dispatcher.md","ref":"api/Dispatcher.md","articles":[]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"api/Scheduler.md","mtime":"2018-08-23T00:55:01.351Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-08-28T21:05:41.380Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"System Architecture","level":"1.1.1","depth":2,"next":{"title":"Terminology","level":"1.1.2","depth":2,"path":"about/Terminology.md","ref":"about/Terminology.md","articles":[]},"previous":{"title":"What is ThingsJS?","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[{"title":"System Architecture","level":"1.1.1","depth":2,"path":"about/Architecture.md","ref":"about/Architecture.md","articles":[]},{"title":"Terminology","level":"1.1.2","depth":2,"path":"about/Terminology.md","ref":"about/Terminology.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"about/Architecture.md","mtime":"2018-08-28T20:42:41.604Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-08-28T21:05:41.380Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
