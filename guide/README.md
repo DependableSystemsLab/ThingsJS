@@ -1,2 +1,4 @@
-# Introduction
+# What is ThingsJS?
+
+
 
