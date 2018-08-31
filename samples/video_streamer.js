@@ -12,6 +12,10 @@
  *   To use another file, replace the variable "source"
  * 
  */
+/*things.meta
+outputs:
+  things-videostream/raw: image/png
+*/
 var fs = require('fs');
 var sb = require('stream-buffers');
 var ffmpeg = require('fluent-ffmpeg');
@@ -24,7 +28,7 @@ var channel = 'things-videostream/raw';	//Change this topic to publish to anothe
 var fps = 5;
 /* end of configurable variables */
 
-var pubsub = new things.Pubsub('stream-worker-1', pubsub_url);
+var pubsub = new things.Pubsub(pubsub_url);
 //ffmpeg.setFfmpegPath('/usr/bin/avconv');		//Uncomment this line to run on raspberry pi
 //ffmpeg.setFfprobePath('/usr/bin/avprobe');	//Uncomment this line to run on raspberry pi
 

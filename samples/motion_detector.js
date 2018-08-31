@@ -8,6 +8,13 @@
  *     - jimp
  * 
  */
+/*things.meta
+inputs:
+  things-videostream/raw: image/png
+outputs:
+  things-videostream/motion: image/png
+  things-videostream/alarm: application/json
+*/
 var fs = require('fs');
 var jimp = require('jimp');
 var things = require('things-js');
