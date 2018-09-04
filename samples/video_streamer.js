@@ -83,7 +83,7 @@ function streamVideo(duration, start, fps, callback){
 	capture();
 }
 
-pubsub.connect(function(){
+pubsub.on('ready', function(){
     console.log("Pubsub connected");
     streamVideo(300, 0, fps);
 });
