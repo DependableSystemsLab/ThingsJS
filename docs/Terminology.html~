@@ -320,12 +320,8 @@
     <div class="search-noresults">
     
                                 <section class="normal markdown-section">
-                                <img src="thingsjs.jpg" alt="Things-js">
                                 
                                 <h1 id="thingsjs-terminology">ThingsJS Terminology</h1>
-                                
-                                
-
 <ul>
 <li><p><strong>Program</strong>: A Program is a general term used to refer to the abstract idea embedded in a <em>single</em> Code.</p>
 </li>
@@ -343,6 +339,7 @@
 </li>
 </ul>
 
+<img src="thingsjs.jpg" alt="Things-js">
 
                                 
                                 </section>
