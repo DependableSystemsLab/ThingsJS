@@ -71,7 +71,7 @@ function getFrame(data){
 	frames.push(data.toString('base64'));
 }
 
-pubsub.connect(function(){
+pubsub.on('ready', function(){
     console.log("Pubsub connected");
     pubsub.subscribe(source_channel, getFrame);
 });
