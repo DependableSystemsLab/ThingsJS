@@ -1,0 +1,482 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>Getting Started · GitBook</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="Bluefish 2.2.10" >
+        
+        
+        
+    
+    <link rel="stylesheet" href="gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="tutorials/" />
+    
+    
+    <link rel="prev" href="about/Terminology.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    What is ThingsJS?
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.1.1" data-path="about/Architecture.html">
+            
+                <a href="about/Architecture.html">
+            
+                    
+                    System Architecture
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.2" data-path="about/Terminology.html">
+            
+                <a href="about/Terminology.html">
+            
+                    
+                    Terminology
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.2" data-path="GettingStarted.html">
+            
+                <a href="GettingStarted.html">
+            
+                    
+                    Getting Started
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="tutorials/">
+            
+                <a href="tutorials/">
+            
+                    
+                    Tutorials
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.1" data-path="tutorials/FirstApplication.html">
+            
+                <a href="tutorials/FirstApplication.html">
+            
+                    
+                    Your First Application
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2" data-path="tutorials/Migration.html">
+            
+                <a href="tutorials/Migration.html">
+            
+                    
+                    Live-Migration
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" data-path="Publications.html">
+            
+                <a href="Publications.html">
+            
+                    
+                    Publications
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5" data-path="api/">
+            
+                <a href="api/">
+            
+                    
+                    Developer API
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.5.1" data-path="api/Pubsub.html">
+            
+                <a href="api/Pubsub.html">
+            
+                    
+                    Pubsub
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.2" data-path="api/Code.html">
+            
+                <a href="api/Code.html">
+            
+                    
+                    Code
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.3" data-path="api/CodeEngine.html">
+            
+                <a href="api/CodeEngine.html">
+            
+                    
+                    CodeEngine
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.4" data-path="api/Dispatcher.html">
+            
+                <a href="api/Dispatcher.html">
+            
+                    
+                    Dispatcher
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.5" data-path="api/Scheduler.html">
+            
+                <a href="api/Scheduler.html">
+            
+                    
+                    Scheduler
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="." >Getting Started</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="getting-started">Getting Started</h1>
+<p>ThingsJS is packaged as an NPM module; you will need to have Node.js installed on the machines you would like to use ThingsJS on.</p>
+<h2 id="prerequisite">Prerequisites</h2>
+<p>Check the node and the npm versions:</p>
+<pre><code>~$ node -v
+</code></pre>
+<pre><code>~$ npm -v
+</code></pre>
+<p>The node version should be greater than 8 and the npm version should be greater than 5.
+<h2 id="installation">Installation</h2>
+<p>You can install via the following NPM command:</p>
+<pre><code>~$ sudo npm install -g things-js
+</code></pre><ul>
+<li>You may omit the <code>sudo</code> depending on your NodeJS install settings.</li>
+<li><strong>You need the <code>-g</code> (global installation) option for using the CLI</strong>. If you don&apos;t plan on using the CLI, you can omit the <code>-g</code> option.</li>
+</ul>
+<h2 id="using-the-cli">Using the CLI</h2>
+<p>Commands available currently:</p>
+<ul>
+<li><code>things-js pubsub</code> - Start a MQTT Publish/Subscribe Server</li>
+<li><code>things-js dashboard</code> - Start the Web Dashboard</li>
+<li><code>things-js worker {config}</code> - Start a ThingsJS worker</li>
+<li><code>things-js instrument {code}</code> - Instrument the given user code into a live-migratable version.</li>
+</ul>
+<h3 id="starting-a-pubsub-server">Starting a Pubsub Server</h3>
+<pre><code>~$ things-js pubsub
+</code></pre><h3 id="starting-the-web-dashboard">Starting the Web Dashboard</h3>
+<pre><code>~$ things-js dash
+
+#OR
+
+~$ things-js dashboard
+</code></pre><p>By default it connects to MQTT at <code>localhost:1883</code>, MongoDB at <code>localhost:27017/things_dashboard</code>, and listens on <code>localhost:3000</code>.
+To start the dashboard with a different configuration, you can use the <code>-c</code> or <code>--config</code> options with the config file path provided as an argument.
+e.g.</p>
+<pre><code>~$ things-js dash -c my_config.conf
+</code></pre><p>This will start a web-application served at the specified port.
+You can watch the demo of the Dashboard here:</p>
+<p><a href="http://ece.ubc.ca/~kumseok/assets/ThingsJS_Migration.mp4" target="_blank"><img src="http://ece.ubc.ca/~kumseok/assets/ThingsJS_Migration.png" alt="Demo Screenshot" width="427" height="240" border="10"><p>Click Image to see Demo Video</p></a></p>
+<h3 id="starting-a-thingsjs-worker">Starting a ThingsJS worker:</h3>
+<p>To start a ThingsJS worker, first you need to create a directory that will provide the NodeJS environment. This is because the worker needs to have a reference to the <code>things-js</code> module and any other npm modules that a ThingsJS user (developer) may require. If the worker cannot find a link to a <code>node_modules</code> directory, it will throw an error.</p>
+<pre><code>~$ mkdir hello_things
+~$ cd hello_things
+~$ npm link things-js
+
+#create a config file for the worker first (e.g. node_00.conf) 
+
+~/hello_things$ things-js worker node_00.conf
+</code></pre><p>The configuration file is a required argument for starting the worker. It should contain the following information:</p>
+<pre><code>{
+    &quot;pubsub_url&quot;: &quot;mqtt://localhost&quot;,
+    &quot;id&quot;: &quot;node_00&quot;,
+    &quot;device&quot;: &quot;raspberry-pi3&quot;
+}
+</code></pre><ol>
+<li>To instrument raw JavaScript code into a &quot;ThingJS-compatible&quot; code:
+```
+~$ things-js inst my_code.js</li>
+</ol>
+<h1 id="or">OR</h1>
+<code>~$ things-js instrument my_code.js</code>
+<p>By default the output file will have the same file name, with the extension `.things.js`.
+To specify the output file name, provide the optional argument with `-o` or `--output`.
+e.g.</p>
+<code>~$ things-js inst my_code.js -o my_code.instrumented.js
+```</code>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="about/Terminology.html" class="navigation navigation-prev " aria-label="Previous page: Terminology">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="tutorials/" class="navigation navigation-next " aria-label="Next page: Tutorials">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"Getting Started","level":"1.2","depth":1,"next":{"title":"Tutorials","level":"1.3","depth":1,"path":"tutorials/README.md","ref":"tutorials/README.md","articles":[{"title":"Your First Application","level":"1.3.1","depth":2,"path":"tutorials/FirstApplication.md","ref":"tutorials/FirstApplication.md","articles":[]},{"title":"Live-Migration","level":"1.3.2","depth":2,"path":"tutorials/Migration.md","ref":"tutorials/Migration.md","articles":[]}]},"previous":{"title":"Terminology","level":"1.1.2","depth":2,"path":"about/Terminology.md","ref":"about/Terminology.md","articles":[]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"GettingStarted.md","mtime":"2018-08-28T21:07:53.195Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-08-30T21:07:07.955Z"},"basePath":".","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="gitbook/gitbook.js"></script>
+    <script src="gitbook/theme.js"></script>
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+

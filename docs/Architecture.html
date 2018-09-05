@@ -57,7 +57,7 @@
     <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="GettingStarted.html" />
+    <link rel="next" href="Terminology.html" />
     
     
     <link rel="prev" href="./" />
@@ -94,7 +94,7 @@
                 <a href="./">
             
                     
-                    Introduction
+                    What is ThingsJS?
             
                 </a>
             
@@ -109,6 +109,19 @@
             
                     
                     System Architecture
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.2" data-path="Terminology.html">
+            
+                <a href="Terminology.html">
+            
+                    
+                    Terminology
             
                 </a>
             
@@ -184,7 +197,7 @@
                 <a href="api/">
             
                     
-                    API
+                    Developer API
             
                 </a>
             
@@ -308,7 +321,23 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h2 id="thingsjs-system">ThingsJS System</h2>
+                                <h1 id="system-architecture">System Architecture</h1>
+<p>A ThingsJS system consists of the following:</p>
+<ol>
+<li>A set of <strong>Workers</strong> capable of running JavaScript <em>Programs</em>.</li>
+<li>Capability to perform <strong>platform-independent live-migration of a Process</strong> from one Worker to another</li>
+<li>A <strong>Publish/Subscribe interface</strong> accessible by all <em>Workers</em> in the system. At the higher-level, <em>ThingsJS does not assume a specific implementation of the interface</em>, but assumes per-topic FIFO message ordering guarantee. In the current version of ThingsJS, the Publish/Subscribe interface is centralized and uses the MQTT protocol.</li>
+<li>A <strong>Global File System accessible</strong> by all <em>Workers</em>. At the higher-level, <em>ThingsJS does not assume a specific implementation of the file system</em>. In the current version, the file system is implemented through a central MongoDB service.</li>
+<li>A <strong>Scheduler service</strong> that monitors the network of <em>Workers</em> and coordinates the allocation and migration of <em>Programs</em> between the <em>Workers</em>.</li>
+</ol>
+<h1 id="example-setup">Example Setup</h1>
+<p>A small ThingsJS system consisting of 3 different devices might look like this:</p>
+<ul>
+<li>1 Raspberry Pi 3 running a ThingsJS Worker runtime.</li>
+<li>1 Raspberry Pi Zero running a ThingsJS Worker runtime.</li>
+<li>1 Desktop PC, running a ThingsJS Scheduler service, a Pub/Sub server, and the File Server.</li>
+</ul>
+<p>A user of this system would make a request to the Scheduler service to run a Program, after which the Scheduler would decide which Raspberry Pi should run it. The Scheduler will send the Code to the target Worker via the Pub/Sub interface, and the selected Worker will execute the Program.</p>
 
                                 
                                 </section>
@@ -336,12 +365,12 @@
 
             
                 
-                <a href="./" class="navigation navigation-prev " aria-label="Previous page: Introduction">
+                <a href="./" class="navigation navigation-prev " aria-label="Previous page: What is ThingsJS?">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
                 
-                <a href="GettingStarted.html" class="navigation navigation-next " aria-label="Next page: Getting Started">
+                <a href="Terminology.html" class="navigation navigation-next " aria-label="Next page: Terminology">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -352,7 +381,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"System Architecture","level":"1.1.1","depth":2,"next":{"title":"Getting Started","level":"1.2","depth":1,"path":"GettingStarted.md","ref":"GettingStarted.md","articles":[]},"previous":{"title":"Introduction","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[{"title":"System Architecture","level":"1.1.1","depth":2,"path":"Architecture.md","ref":"Architecture.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"Architecture.md","mtime":"2018-08-23T01:46:06.769Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-08-23T01:48:20.095Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"System Architecture","level":"1.1.1","depth":2,"next":{"title":"Terminology","level":"1.1.2","depth":2,"path":"Terminology.md","ref":"Terminology.md","articles":[]},"previous":{"title":"What is ThingsJS?","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[{"title":"System Architecture","level":"1.1.1","depth":2,"path":"Architecture.md","ref":"Architecture.md","articles":[]},{"title":"Terminology","level":"1.1.2","depth":2,"path":"Terminology.md","ref":"Terminology.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"Architecture.md","mtime":"2018-08-28T20:38:40.213Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-08-28T20:41:21.021Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>

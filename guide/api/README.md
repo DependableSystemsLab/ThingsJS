@@ -1,11 +1,11 @@
-## API Documentation for Developers
+# API Documentation for Developers
 
 ThingsJS is a framework for running JavaScript applications on IoT devices such as Raspberry PIs
 
 * NOTE: This repository is currently under active development and its contents are subject to breaking changes. 
 
 
-## Directory Structure
+# Directory Structure
 
 ```
 /bin
@@ -32,7 +32,7 @@ This repository is organized thus:
 5. [`samples`](samples/) contains raw JavaScript sample code (non-instrumented) that can be dispatched to ThingsJS workers.
 
 
-## Dependencies
+# Dependencies
 
 * The ThingsJS framework uses MQTT Pub/Sub as its main communication mechanism and assumes the existence of an active MQTT service. Either **Mosquitto**, or **Mosca** will do. ThingsJS provides a basic Mosca server that can be started with `things-js pubsub` command. The Pub/Sub service is referenced only by the URL (e.g. `mqtt://localhost`) within the ThingsJS framework and does not assume any specific implementation of the service.
 ```
@@ -44,13 +44,13 @@ This repository is organized thus:
 ~$ service mongod start
 ```
 
-## Getting Started
+# Getting Started
 
 For trying out the framework, you can follow the steps below:
 
-### Installation
+## Installation
 
-#### Option 1
+### Option 1
 
 1. `git clone` this repository
 ```
@@ -65,7 +65,7 @@ You need the `-g` (global installation) option for using the CLI. If you don't p
 ~/ThingsJS$ npm install -g
 ```
 
-#### Option 2
+### Option 2
 
 1. Install via npm
 ```
@@ -74,7 +74,7 @@ You need the `-g` (global installation) option for using the CLI. If you don't p
 You may omit the `sudo` depending on your NodeJS install settings.
 
 
-#### Using the CLI
+### Using the CLI
 
 Along with the API provided, CLI is included for easy use.
 Commands available currently:

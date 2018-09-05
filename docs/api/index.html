@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>API · GitBook</title>
+        <title>Developer API · GitBook</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -60,7 +60,7 @@
     <link rel="next" href="Pubsub.html" />
     
     
-    <link rel="prev" href="../tutorials/Migration.html" />
+    <link rel="prev" href="../Publications.html" />
     
 
     </head>
@@ -94,7 +94,7 @@
                 <a href="../">
             
                     
-                    Introduction
+                    What is ThingsJS?
             
                 </a>
             
@@ -103,12 +103,25 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.1.1" data-path="../Architecture.html">
+        <li class="chapter " data-level="1.1.1" data-path="../about/Architecture.html">
             
-                <a href="../Architecture.html">
+                <a href="../about/Architecture.html">
             
                     
                     System Architecture
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.2" data-path="../about/Terminology.html">
+            
+                <a href="../about/Terminology.html">
+            
+                    
+                    Terminology
             
                 </a>
             
@@ -179,12 +192,25 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.4" data-path="./">
+        <li class="chapter " data-level="1.4" data-path="../Publications.html">
+            
+                <a href="../Publications.html">
+            
+                    
+                    Publications
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.5" data-path="./">
             
                 <a href="./">
             
                     
-                    API
+                    Developer API
             
                 </a>
             
@@ -193,7 +219,7 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.4.1" data-path="Pubsub.html">
+        <li class="chapter " data-level="1.5.1" data-path="Pubsub.html">
             
                 <a href="Pubsub.html">
             
@@ -206,7 +232,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.2" data-path="Code.html">
+        <li class="chapter " data-level="1.5.2" data-path="Code.html">
             
                 <a href="Code.html">
             
@@ -219,7 +245,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.3" data-path="CodeEngine.html">
+        <li class="chapter " data-level="1.5.3" data-path="CodeEngine.html">
             
                 <a href="CodeEngine.html">
             
@@ -232,7 +258,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.4" data-path="Dispatcher.html">
+        <li class="chapter " data-level="1.5.4" data-path="Dispatcher.html">
             
                 <a href="Dispatcher.html">
             
@@ -245,7 +271,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.5" data-path="Scheduler.html">
+        <li class="chapter " data-level="1.5.5" data-path="Scheduler.html">
             
                 <a href="Scheduler.html">
             
@@ -293,7 +319,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".." >API</a>
+        <a href=".." >Developer API</a>
     </h1>
 </div>
 
@@ -308,12 +334,12 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h2 id="api-documentation-for-developers">API Documentation for Developers</h2>
+                                <h1 id="api-documentation-for-developers">API Documentation for Developers</h1>
 <p>ThingsJS is a framework for running JavaScript applications on IoT devices such as Raspberry PIs</p>
 <ul>
 <li>NOTE: This repository is currently under active development and its contents are subject to breaking changes. </li>
 </ul>
-<h2 id="directory-structure">Directory Structure</h2>
+<h1 id="directory-structure">Directory Structure</h1>
 <pre><code>/bin
 /docs
 /lib
@@ -339,7 +365,7 @@
 </li>
 <li><a href="samples"><code>samples</code></a> contains raw JavaScript sample code (non-instrumented) that can be dispatched to ThingsJS workers.</li>
 </ol>
-<h2 id="dependencies">Dependencies</h2>
+<h1 id="dependencies">Dependencies</h1>
 <ul>
 <li><p>The ThingsJS framework uses MQTT Pub/Sub as its main communication mechanism and assumes the existence of an active MQTT service. Either <strong>Mosquitto</strong>, or <strong>Mosca</strong> will do. ThingsJS provides a basic Mosca server that can be started with <code>things-js pubsub</code> command. The Pub/Sub service is referenced only by the URL (e.g. <code>mqtt://localhost</code>) within the ThingsJS framework and does not assume any specific implementation of the service.</p>
 <pre><code>~$ things-js pubsub
@@ -348,10 +374,10 @@
 <pre><code>~$ service mongod start
 </code></pre></li>
 </ul>
-<h2 id="getting-started">Getting Started</h2>
+<h1 id="getting-started">Getting Started</h1>
 <p>For trying out the framework, you can follow the steps below:</p>
-<h3 id="installation">Installation</h3>
-<h4 id="option-1">Option 1</h4>
+<h2 id="installation">Installation</h2>
+<h3 id="option-1">Option 1</h3>
 <ol>
 <li><p><code>git clone</code> this repository</p>
 <pre><code>~$ git clone https://github.com/karthikp-ubc/ThingsJS.git
@@ -363,12 +389,12 @@ You need the <code>-g</code> (global installation) option for using the CLI. If 
 ~/ThingsJS$ npm install -g
 </code></pre></li>
 </ol>
-<h4 id="option-2">Option 2</h4>
+<h3 id="option-2">Option 2</h3>
 <ol>
 <li>Install via npm<pre><code>~$ sudo npm install -g things-js
 </code></pre>You may omit the <code>sudo</code> depending on your NodeJS install settings.</li>
 </ol>
-<h4 id="using-the-cli">Using the CLI</h4>
+<h3 id="using-the-cli">Using the CLI</h3>
 <p>Along with the API provided, CLI is included for easy use.
 Commands available currently:</p>
 <ul>
@@ -449,7 +475,7 @@ e.g.</p>
 
             
                 
-                <a href="../tutorials/Migration.html" class="navigation navigation-prev " aria-label="Previous page: Live-Migration">
+                <a href="../Publications.html" class="navigation navigation-prev " aria-label="Previous page: Publications">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
@@ -465,7 +491,7 @@ e.g.</p>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"API","level":"1.4","depth":1,"next":{"title":"Pubsub","level":"1.4.1","depth":2,"path":"api/Pubsub.md","ref":"api/Pubsub.md","articles":[]},"previous":{"title":"Live-Migration","level":"1.3.2","depth":2,"path":"tutorials/Migration.md","ref":"tutorials/Migration.md","articles":[]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"api/README.md","mtime":"2018-08-23T01:45:02.749Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-08-23T01:48:20.095Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Developer API","level":"1.5","depth":1,"next":{"title":"Pubsub","level":"1.5.1","depth":2,"path":"api/Pubsub.md","ref":"api/Pubsub.md","articles":[]},"previous":{"title":"Publications","level":"1.4","depth":1,"path":"Publications.md","ref":"Publications.md","articles":[]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"api/README.md","mtime":"2018-08-28T21:07:53.195Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-08-30T21:07:07.955Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
