@@ -5,8 +5,11 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var FSObject = require('./FSObject.js');
 
-// var db;
-// var app = express();
+var DEFAULT_DIRS = {
+	'dev': {},
+	'proc': {},
+	'apps': {}
+}
 
 function getNode(abs_path){
 	var tokens = abs_path.split('/');
@@ -104,21 +107,14 @@ FSServer.prototype._init = function(){
 				// console.log(node);
 				if (req.body.type === 'file'){
 					if (req.body._id){
-						console.log("jump to here~~~"+req.body._id);
 						FSObject.findByIdAndUpdate(req.body._id, {
 							name: req.body.name,
 							content: req.body.content
 						}, {
 							new: true
 						}).exec(function(err, file){
-								if (err) {
-									console.log("write file error" + err);
-									res.json({ result: 'error', error: err });
-								}
-								else{
-									console.log("write file succeed" + file);
-									res.json({ result: 'success', data: file });
-								} 
+								if (err) res.status(500).json({ result: 'error', error: err });
+								else res.json({ result: 'success', data: file });
 							})
 					}
 					else {
@@ -129,15 +125,8 @@ FSServer.prototype._init = function(){
 							content: req.body.content
 						});
 						file.save(function(err){
-							if (err){
-								console.log("write file error" + err);
-								 res.json({ result: 'error', error: err });
-
-							} 
-							else{
-								console.log("write file succeed" + file);
-								res.json({ result: 'success', data: file });
-							} 
+							if (err) res.status(500).json({ result: 'error', error: err });
+							else res.json({ result: 'success', data: file });
 						})
 					}
 				}
@@ -148,11 +137,13 @@ FSServer.prototype._init = function(){
 						name: req.body.name
 					});
 					directory.save(function(err){
-						if (err) res.json({ result: 'error', error: err });
+						if (err) res.status(500).json({ result: 'error', error: err });
 						else res.json({ result: 'success', data: directory });
 					})
 
 				}
+			}, function(err){
+				res.status(500).json({ error: err });
 			})		
 	})
 	this.app.delete(':abs_path(*)', function(req, res, next){
@@ -169,7 +160,7 @@ FSServer.prototype._init = function(){
 						res.json(data);
 					})
 			}, function(err){
-				res.json({ error: err });
+				res.status(500).json({ error: err });
 			})
 	});
 }

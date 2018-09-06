@@ -1,0 +1,469 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>System Architecture · GitBook</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="Terminology.html" />
+    
+    
+    <link rel="prev" href="../" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    What is ThingsJS?
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter active" data-level="1.1.1" data-path="Architecture.html">
+            
+                <a href="Architecture.html">
+            
+                    
+                    System Architecture
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.2" data-path="Terminology.html">
+            
+                <a href="Terminology.html">
+            
+                    
+                    Terminology
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="../GettingStarted.html">
+            
+                <a href="../GettingStarted.html">
+            
+                    
+                    Getting Started
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="../tutorials/">
+            
+                <a href="../tutorials/">
+            
+                    
+                    Tutorials
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.1" data-path="../tutorials/FirstApplication.html">
+            
+                <a href="../tutorials/FirstApplication.html">
+            
+                    
+                    Your First Application
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2" data-path="../tutorials/Migration.html">
+            
+                <a href="../tutorials/Migration.html">
+            
+                    
+                    Live-Migration
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" data-path="../Publications.html">
+            
+                <a href="../Publications.html">
+            
+                    
+                    Publications
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5" data-path="../api/">
+            
+                <a href="../api/">
+            
+                    
+                    Developer API
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.5.1" data-path="../api/Pubsub.html">
+            
+                <a href="../api/Pubsub.html">
+            
+                    
+                    Pubsub
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.2" data-path="../api/Code.html">
+            
+                <a href="../api/Code.html">
+            
+                    
+                    Code
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.3" data-path="../api/CodeEngine.html">
+            
+                <a href="../api/CodeEngine.html">
+            
+                    
+                    CodeEngine
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.4" data-path="../api/Dispatcher.html">
+            
+                <a href="../api/Dispatcher.html">
+            
+                    
+                    Dispatcher
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.5" data-path="../api/Scheduler.html">
+            
+                <a href="../api/Scheduler.html">
+            
+                    
+                    Scheduler
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >System Architecture</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="system-architecture">System Architecture</h1>
+<p>A ThingsJS system consists of the following:</p>
+<ol>
+<li>A set of <a href="#workers"><strong>Workers</strong></a> capable of running JavaScript <em>Programs</em>.</li>
+<li>Capability to perform <strong><a href="#platform-independent-live-migration-support">platform-independent live-migration</a> of a JavaScript Process</strong> from one <em>Worker</em> to another</li>
+<li>A <a href="#publishsubscribe-interface"><strong>Publish/Subscribe interface</strong></a> through which all <em>Workers</em> in the system communicate.</li>
+<li>A <a href="#scheduler-service"><strong>Scheduler service</strong></a> that monitors the system and coordinates the allocation and migration of <em>Processes</em> between the <em>Workers</em>.</li>
+<li>A <a href="#global-file-system"><strong>Global File System</strong></a> accessible by all <em>Workers</em>.</li>
+</ol>
+<h2 id="workers">Workers</h2>
+<p>A ThingsJS <em>Worker</em> is a high-level term used to refer to an instance of <code>CodeEngine</code>, which implements the ThingsJS runtime system. A <em>Worker</em> receives control messages via the Pub/Sub interface and carries out tasks such as running or migrating a Program. Technically, it is a JavaScript daemon process running on a single machine.</p>
+<p>Each <em>Worker</em> is capable of:</p>
+<ul>
+<li>instrumenting raw input code into a live-migratable version,</li>
+<li>running a <em>Program</em> as a child <em>Process</em>,</li>
+<li>producing a snapshot of a running <em>Process</em>, and</li>
+<li>restoring a <em>Process</em> from an input snapshot.</li>
+</ul>
+<h2 id="platform-independent-live-migration-support">Platform-independent Live-migration Support</h2>
+<p>In order to address reliability concerns, the ThingsJS <em>Scheduler</em> monitors all the <em>Devices</em> and <em>Processes</em> in the network and adjusts the <em>Schedule</em> - i.e. assignment of <em>Processes</em> to <em>Devices</em>. In certain cases, a <em>Process</em> might have to be killed because of low resource or reboot after update, but an <em>Application</em> may require that that <em>Process</em> never terminate. Therefore, stateful live-migration support is critical in ThingsJS for flexible scheduling.</p>
+<p>IoT systems are heterogeneous and will remain thus in the future; we do not make any assumptions about the underlying hardwares in the system. However, ThingsJS does assume that each <em>Device</em> in the network is equipped with a JavaScript engine that implements ECMAScript 5 Standard. ThingsJS live-migration mechanism is implemented purely at the JavaScript layer through code instrumentation, and involves no modifcation to the underlying VM (i.e. JS engine).</p>
+<h2 id="publishsubscribe-interface">Publish/Subscribe Interface</h2>
+<p>While the physical links between the machines will constitute some kind of a tree-like network, ThingsJS does not make any assumptions about the network layer. ThingsJS assumes that there is a Publish/Subscribe service reachable by every Worker, and all communication happens through this software-defined interface. Furthermore, ThingsJS does not assume a specific implementation of the interface, but only assumes per-topic FIFO message ordering guarantee. In the current version of ThingsJS, the Publish/Subscribe interface is centralized and uses the MQTT protocol.</p>
+<p>An example of how ThingsJS uses the Pub/Sub interface:</p>
+<ol>
+<li>A Worker named <code>camera-1</code> boots up.</li>
+<li><code>camera-1</code> subscribes to topic <code>camera-1/cmd</code> to receive control messages.</li>
+<li><code>camera-1</code> publishes its status to topic <code>engine-registry</code> to notify other Workers that it is online.</li>
+<li>The <em>Scheduler</em> decides to run <code>video-streamer.js</code> on <code>camera-1</code>.</li>
+<li>The <em>Scheduler</em> publishes a message to topic <code>camera-1/cmd</code> to request <code>camera-1</code> to run <code>video-streamer.js</code>. The message contains the control keyword <code>run</code> along with the code of <code>video-streamer.js</code>.</li>
+<li>Upon receiving the message, <code>camera-1</code> instruments the code and then executes the instrumented code as a child process.</li>
+</ol>
+<h2 id="scheduler-service">Scheduler Service</h2>
+<p>At the bare minimum, a network of ThingsJS <em>Workers</em> and a Publish/Subscribe server is enough to build a working IoT system. However, with this minimal setup, coordinating the execution and migration of different <em>Programs</em> across the <em>Devices</em> is a manual effort. When there is a large number of <em>Devices</em> and <em>Programs</em>, which is a more realistic IoT setup, manual coordination becomes impractical. In its simplest form, the problem of assigning <em>Programs</em> to <em>Devices</em> boils down to the <a href="https://en.wikipedia.org/wiki/Bin_packing_problem" target="_blank">bin-packing problem</a>. Therefore we need an automated way to manage the system.</p>
+<p>ThingsJS assumes that there is a <em>Scheduler</em> Service that:</p>
+<ul>
+<li>has a global view of the network,</li>
+<li>can send commands to any <em>Worker</em>,</li>
+<li>makes scheduling decisions according to some user-defined policy, and</li>
+<li>can accept requests from an end-user of the system to make changes to the current <em>Schedule</em></li>
+</ul>
+<p>While ThingsJS expects there to be a <em>Scheduler</em>, it does not assume how it is implemented. The default scheduling algorithm included in the framework is a greedy first-fit algorithm, but the user can (and should be able to) specify what algorithm the <em>Scheduler</em> should use. In addition, the <em>Scheduler</em> could be centralized or decentralized, but ThingsJS does not assume either and only expects an interface to use the service.</p>
+<h2 id="global-file-system">Global File System</h2>
+<p>Although it is not critical for an IoT system to have a shared file system, a lot of things become easy when it does have one. For example, creating a log for recording events across the network becomes much easier when all the <em>Workers</em> are writing to the same log file (or at least, the same file as far as the programmer is concerned). In addition, a <em>Global File System</em> is a good place to store the <em>Application</em> code shared by all the <em>Workers</em>.</p>
+<p>Similar to many other concepts in ThingsJS, we do not assume a specific implementation of the file system; it could be centralized or distributed. In the current version, the file system is implemented through a central MongoDB service with a RESTful API.</p>
+<h1 id="example-setup">Example Setup</h1>
+<p>A small ThingsJS system consisting of 3 different devices might look like this:</p>
+<ul>
+<li>1 Raspberry Pi 3 running a ThingsJS Worker runtime.</li>
+<li>1 Raspberry Pi Zero running a ThingsJS Worker runtime.</li>
+<li>1 Desktop PC, running a ThingsJS Scheduler service, a Pub/Sub server, and the File Server.</li>
+</ul>
+<p>A user of this system would make a request to the Scheduler service to run a Program, after which the Scheduler would decide which Raspberry Pi should run it. The Scheduler will send the Code to the target Worker via the Pub/Sub interface, and the selected Worker will execute the Program.</p>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="../" class="navigation navigation-prev " aria-label="Previous page: What is ThingsJS?">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="Terminology.html" class="navigation navigation-next " aria-label="Next page: Terminology">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"System Architecture","level":"1.1.1","depth":2,"next":{"title":"Terminology","level":"1.1.2","depth":2,"path":"about/Terminology.md","ref":"about/Terminology.md","articles":[]},"previous":{"title":"What is ThingsJS?","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[{"title":"System Architecture","level":"1.1.1","depth":2,"path":"about/Architecture.md","ref":"about/Architecture.md","articles":[]},{"title":"Terminology","level":"1.1.2","depth":2,"path":"about/Terminology.md","ref":"about/Terminology.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"about/Architecture.md","mtime":"2018-08-30T21:04:06.981Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-08-30T21:07:07.955Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+

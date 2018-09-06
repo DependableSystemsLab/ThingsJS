@@ -4,7 +4,8 @@
   "description": "Framework for building distribute IoT applications",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test/run-all.js --exit",
+    "docs": "gitbook build && cp -TR _book/ docs/"
   },
   "bin": {
     "things-js": "./bin/things-js"
@@ -26,29 +27,28 @@
   },
   "homepage": "https://github.com/karthikp-ubc/ThingsJS#readme",
   "dependencies": {
-    "bloomfilter": "0.0.18",
-    "c4.5": "0.0.3",
-    "csv": "^3.1.0",
     "escodegen": "^1.9.0",
     "esprima": "^4.0.0",
     "express": "^4.16.2",
+    "helmet": "^3.13.0",
     "js-beautify": "^1.7.4",
     "js-yaml": "^3.12.0",
     "jsonschema": "^1.2.0",
-    "mathjs": "^5.0.3",
-    "ml-regression-multivariate-linear": "^1.2.0",
     "mongodb": "^2.2.33",
     "mongoose": "^5.0.17",
     "mosca": "^2.8.1",
     "mqtt": "^2.14.0",
     "pidusage": "^1.2.0",
+    "request": "^2.87.0",
     "request-promise": "^4.2.2",
-    "ws": "^5.1.1",
-    "xtend": "^4.0.1"
+    "ws": "^5.1.1"
   },
   "devDependencies": {
+    "chai": "^4.1.2",
     "gulp": "^3.9.1",
+    "gulp-mocha": "^6.0.0",
     "jsdoc": "^3.5.5",
-    "mocha": "^5.1.1"
+    "mocha": "^5.1.1",
+    "gitbook-plugin-jsdoc": "0.0.6"
   }
 }

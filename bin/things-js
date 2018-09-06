@@ -15,20 +15,40 @@ program
   .alias('dash')
   .description('Start a Dashboard application')
   .action(function(options){
-    var app = require('../util/dashboard/application.js');
-    app(options.config);
+    var config = options.config ? require(options.config) : {};
+    var startApp = require('../util/dashboard/startApp.js');
+    startApp();
   });
 
 program
   .command('worker <conf>')
+  .option('-d, --debug', 'Set environment variable DEBUG to "true" and see debug output')
   .alias('engine')
   .description('Start a ThingsJS Worker')
-  .action(function(conf){
+  .action(function(conf, options){
+    process.env['DEBUG'] = options.debug ? "true": "false";
     var things = require('../lib/things.js');
     var config = things.CodeEngine.validateConfig(conf);
     var engine = new things.CodeEngine(config);
     process.on('SIGINT', function(){
       engine.kill().then(function(){
+          process.exit();
+        })
+    });
+
+  });
+
+program
+  .command('scheduler <conf>')
+  .alias('sched')
+  .description('Start a ThingsJS Scheduler')
+  .action(function(conf){
+    var things = require('../lib/things.js');
+    var config = things.CodeEngine.validateConfig(conf);
+    // var engine = new things.CodeEngine(config);
+    var scheduler = new things.Scheduler(config);
+    process.on('SIGINT', function(){
+      scheduler.kill().then(function(){
           process.exit();
         })
     });
@@ -70,6 +90,7 @@ program
   .option('-p, --pubsub <pubsub_url>', 'Pubsub URL')
   .option('-s, --save <save_path>', 'File path to optionally save instrumented code')
   .option('-d, --debug', 'Set environment variable DEBUG to "true" and see debug output')
+  .option('-nr, --noReport', 'Turn off resource reporting')
   .description('Instrument and run raw JavaScript code.')
   .action(function(file_path, options){
     process.env['DEBUG'] = options.debug ? "true": "false";
@@ -83,7 +104,9 @@ program
     }
 
     if (options.save) code.save(options.save);
-    code.run()
+    code.run({
+      enableStats: !(options.noReport)
+    })
     .then(function(instance){
       instance.on('finished', function(){
         code.kill();
@@ -165,8 +188,26 @@ program
 
   });
 
+program
+  .command('debug <action> [args...]')
+  .description('Use Debug Commands')
+  .action(function(action, args){
+    var things = require('../lib/things.js');
+    var pubsub = new things.Pubsub('mqtt://localhost');
+    pubsub.on('ready', function(){
+      console.log(args);
+      pubsub.publish(args[0], JSON.parse(args[1]))
+        .then(function(){
+          pubsub.kill()
+            .then(function(){
+              process.exit();
+            })
+        })
+    })
+  });
+
 program.parse(process.argv);
 if (process.argv.length === 2){
   var things = require('../lib/things.js');
-  var shell = new things.Shell;
+  var shell = new things.util.Shell;
 }

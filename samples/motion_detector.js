@@ -8,6 +8,13 @@
  *     - jimp
  * 
  */
+/*things.meta
+inputs:
+  things-videostream/raw: image/png
+outputs:
+  things-videostream/motion: image/png
+  things-videostream/alarm: application/json
+*/
 var fs = require('fs');
 var jimp = require('jimp');
 var things = require('things-js');
@@ -64,7 +71,7 @@ function getFrame(data){
 	frames.push(data.toString('base64'));
 }
 
-pubsub.connect(function(){
+pubsub.on('ready', function(){
     console.log("Pubsub connected");
     pubsub.subscribe(source_channel, getFrame);
 });
