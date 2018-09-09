@@ -3,7 +3,7 @@ var fs = require('fs');
 
 const COMPONENTS = 
 ['./Plot.js', './Accumulator.js', './SimpleLinearRegression.js', './KalmanFilter.js',
-'./BlockWindowAverage.js', './DistinctApproxCount.js', '../ETL/SenMLParse.js', '../ETL/ETLSenMLSpout.js'];
+'./BlockWindowAverage.js', './DistinctApproxCount.js', '../SenMLParse.js', '../SenMLSpout.js'];
 
 var instances = {};
 var noHeader = true;

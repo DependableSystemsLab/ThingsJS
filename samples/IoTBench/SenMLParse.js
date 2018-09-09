@@ -7,8 +7,8 @@ var things = require('../../../lib/things.js')
 
 /* configurable variables */
 var pubsub_url = 'mqtt://localhost';
-var pubsub_topic = 'thingsjs/IoTBench/ETL/SenMLSpout';
-var publish_topic = 'thingsjs/IoTBench/ETL/SenMLParse';
+var pubsub_topic = 'thingsjs/IoTBench/SenMLSpout';
+var publish_topic = 'thingsjs/IoTBench/SenMLParse';
 
 var pubsub = new things.Pubsub(pubsub_url);
 

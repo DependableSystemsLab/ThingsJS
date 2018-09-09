@@ -3,7 +3,7 @@ var slr = require('ml-regression').SLR;
 var fs = require('fs');
 
 var pubsub_url = 'mqtt://localhost';
-var pubsub_topic = 'thingsjs/IoTBench/ETL/SenMLParse';
+var pubsub_topic = 'thingsjs/IoTBench/SenMLParse';
 
 /* training variables */
 var TRAINING_SIZE, USE_MSG_FIELDLIST, MODEL_PATH;
@@ -20,7 +20,7 @@ function setup(){
 
 	// default to TAXI property set if no specific property file is given
 	if(!args.length){
-		args = ['../ETL/TAXI_properties.json'];
+		args = ['../TAXI_properties.json'];
 	}
 	try{
 		properties = JSON.parse(fs.readFileSync(args[0], 'utf-8'));

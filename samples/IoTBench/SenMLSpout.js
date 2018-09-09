@@ -8,7 +8,7 @@ var readline = require('readline');
 
 /* configurable variables */
 var pubsub_url = 'mqtt://localhost';
-var pubsub_topic = 'thingsjs/IoTBench/ETL/SenMLSpout';
+var pubsub_topic = 'thingsjs/IoTBench/SenMLSpout';
 var publish_interval = 1000;
 
 var pubsub = new things.Pubsub(pubsub_url);
@@ -18,8 +18,6 @@ var lines = [];
 var currentLine = 0;
 
 function startSpout() {
-	process.chdir("../ETL");
-	console.log("#########currentdirectory"+ process.cwd());
 	var lineReader = readline.createInterface({
 		input: require('fs').createReadStream('TAXI_sample_data_senml.csv')
 	});
