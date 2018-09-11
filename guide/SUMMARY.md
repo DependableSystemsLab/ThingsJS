@@ -7,6 +7,7 @@
 * [Tutorials](tutorials/README.md)
     * [Your First Application](tutorials/FirstApplication.md)
     * [Live-Migration](tutorials/Migration.md)
+    * [Using the Dashboard](tutorials/dashboard/Dashboard.md)
 * [Publications](Publications.md)
 * [Developer API](api/README.md)
     * [Pubsub](api/Pubsub.md)
