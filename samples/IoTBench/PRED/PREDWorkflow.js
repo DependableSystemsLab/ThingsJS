@@ -1,5 +1,6 @@
-var things = require('../../../lib/things.js');
+var things = require('things-js');
 var fs = require('fs');
+var gfs = require('FSServer');
 
 /* components need to be loaded in OPPOSITE ORDER */
 // TODO: generalize this later on for other benchmarks ... we can pass in the components as an arg

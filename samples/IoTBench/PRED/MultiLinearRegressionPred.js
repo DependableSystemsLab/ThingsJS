@@ -1,7 +1,8 @@
 var fs = require('fs');
 var csv = require('csv');
 var MLR  = require('ml-regression-multivariate-linear');
-var things = require('../../../lib/things.js');
+var things = require('things-js');
+var gfs = require('FSServer');
 
 var pubsub_url = 'mqtt://localhost';
 var pubsub_topic = 'thingsjs/IoTBench/SenMLParse';  
@@ -29,7 +30,9 @@ function setup(){
     USE_MSG_FIELD_LIST = properties['PREDICT.MULTIPLELINEAR_REGRESSION.USE_MSG_FIELD_LIST'];
     USE_MSG_FIELD = properties["PREDICT.MULTIPLELINEAR_REGRESSION.USE_MSG_FIELD"]||0;
     SAMPLE_HEADER = properties["CLASSIFICATION.DECISION_TREE.SAMPLE_HEADER"];
+    // CHANGE THIS TO FS PATH 
     MODEL_FILE_PATH = '../TRAIN/' + properties["PREDICT.MULTIPLELINEAR_REGRESSION.MODEL_PATH"];
+    
     MODEL_UPDATE_FREQUENCY = properties["PREDICT.MULTIPLELINEAR_REGRESSION.TRAIN.MODEL_UPDATE_FREQUENCY"];
     PRED_INPUT = properties["PREDICT.MULTIPLELINEAR_REGRESSION.TRAIN_INPUT"];
     PRED_OUTPUT = properties["PREDICT.MULTIPLELINEAR_REGRESSION.TRAIN_OUTPUT"];
@@ -56,6 +59,7 @@ function MultiLinearRegressionPred(data) {
     var processeddata =[];
     var features = PRED_INPUT;
     var target = PRED_OUTPUT;
+    // USE GFS API TO READ THE MODEL OUT 
     fs.readFile(MODEL_FILE_PATH,function(err,weights){
     if (err) {
         console.error(err);

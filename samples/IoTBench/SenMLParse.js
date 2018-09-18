@@ -3,7 +3,8 @@
  */
 
 //var things = require('things-js');
-var things = require('../../../lib/things.js')
+var things = require('things-js')
+
 
 /* configurable variables */
 var pubsub_url = 'mqtt://localhost';
@@ -11,7 +12,8 @@ var pubsub_topic = 'thingsjs/IoTBench/SenMLSpout';
 var publish_topic = 'thingsjs/IoTBench/SenMLParse';
 
 var pubsub = new things.Pubsub(pubsub_url);
-
+// mkdir RIOT/ETL folder if not exist 
+// save file inside 
 function processMessage(data) {
 	var line = data.toString();
 	

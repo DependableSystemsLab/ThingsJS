@@ -1,4 +1,4 @@
-var things = require('../../../lib/things.js');
+var things = require('things-js');
 var bloom = require('bloomfilter').BloomFilter;
 var fs = require('fs');
 var EventEmitter = require('events').EventEmitter;

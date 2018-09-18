@@ -1,4 +1,4 @@
-var things = require('../../../lib/things.js');
+var things = require('things-js');
 var fs = require('fs');
 
 var pubsub_url = 'mqtt://localhost';
@@ -12,7 +12,8 @@ var ID = 'ID';
 var USE_MSG_FIELD_LIST, WINDOW_SIZE;
 var valuesMap = {};
 
-
+// mkdir RIOT/ETL folder if not exist 
+// save file inside 
 function setup(){
 	var args = process.argv.slice(2);
 	var properties;

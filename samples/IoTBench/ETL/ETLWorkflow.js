@@ -1,11 +1,15 @@
-var things = require('../../../lib/things.js');
+var things = require('things-js');
 var fs = require('fs');
+var gfs = require('FSServer');
 
 /* components need to be loaded in OPPOSITE ORDER */
 // TODO: generalize this later on for other benchmarks ... we can pass in the components as an arg
 const COMPONENTS = 
-['CsvToSenML.js', 'Annotate.js', 'Interpolation.js',
-'BloomFilterCheck.js', 'RangeFilterCheck.js', '../SenMLParse.js', '../SenMLSpout.js'];
+[
+// 'CsvToSenML.js', 'Annotate.js', 'Interpolation.js',
+// 'BloomFilterCheck.js', 'RangeFilterCheck.js', 
+
+'../SenMLParse.js', '../SenMLSpout.js'];
 
 var instances = {};
 var noHeader = true;
@@ -23,7 +27,8 @@ var dispatcher, pubsub, logger;
 	});
 
 })();
-
+// mkdir RIOT/ETL folder if not exist 
+// save file inside 
 function memToCSV(data){
 	if(noHeader){
 		logger.write('Component, Timestamp, rss, Heap total, Heap used, External\n');

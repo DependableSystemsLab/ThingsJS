@@ -1,4 +1,4 @@
-var things = require('../../../lib/things.js');
+var things = require('things-js');
 var fs = require('fs');
 var crypto = require('crypto');
 

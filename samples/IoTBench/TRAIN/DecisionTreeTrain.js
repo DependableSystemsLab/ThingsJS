@@ -1,7 +1,8 @@
 var fs = require('fs');
 var csv = require('csv');
 var C45 = require('c4.5');
-var things = require('../../../lib/things.js');
+var things = require('things-js'); 
+var gfs = require('FSServer');
 
 var pubsub_url = 'mqtt://localhost';
 var pubsub_topic = 'thingsjs/IoTBench/TRAIN/DecisionTreeClassify';
@@ -40,7 +41,6 @@ function setup(){
     MODEL_TRAIN_INPUT_TYPE = properties['TRAIN.DECISION_TREE.TRAIN_INPUT_TYPE'];
 
     console.log("USE_MSG_FIELD" + USE_MSG_FIELD);
-    //console.log("SAMPLE_HEADER" + SAMPLE_HEADER);
     console.log("MODEL_FILE_PATH" + MODEL_FILE_PATH);
     console.log("MODEL_UPDATE_FREQUENCY" + MODEL_UPDATE_FREQUENCY);
 
@@ -57,43 +57,6 @@ function setup(){
   datalist = [];
 
 }
-
-
-// function decisionTreeTrain(data){
-
-//     fs.writeFileSync("./parseddata.json",data);
-//     var features = MODEL_TRAIN_INPUT
-//     var target = TRAIN_RESULT_HEADER;
-//     var featureTypes = MODEL_TRAIN_INPUT_TYPE
-
-//     datalist.push(data);
-//     console.log("length of data" + datalist.length );
-//     traincount ++;
-//      // console.log("~~~~"+JSON.stringify(data))
-//     if(traincount >= WINDOW_COUNT){
-//       traincount = 0;
-//     console.log("collect 100 data to train by decisionTree");
-//     processeddata = processdata(datalist,features,target);
-//     var c45 = C45(); 
-//     c45.train({
-//         data: processeddata,
-//         target: target,
-//         features: features,
-//         featureTypes: featureTypes
-//     }, function(error, model) {
-//       if (error) {
-//         console.error(error);
-//         return false;
-//       }  
-//       console.log("tree model"+ model.toJSON());
-//       console.log("TRAIN DECISION TREE MODEL",c45.toJSON());
-//       //pubsub.publish(publish_topic,c45.toJSON()); no pubsub to make it stateless for prediction
-//       fs.writeFileSync(MODEL_FILE_PATH, c45.toJSON());
-
-//     });
-//     datalist = [];
-//   }
-// }
 
 
 function decisionTreeTrain(datalist){
@@ -117,6 +80,7 @@ function decisionTreeTrain(datalist){
       console.log("tree model"+ model.toJSON());
       console.log("TRAIN DECISION TREE MODEL",c45.toJSON());
       //pubsub.publish(publish_topic,c45.toJSON()); no pubsub to make it stateless for prediction
+      // USE GFS API SAVE TO RIOT/TRAIN
       fs.writeFileSync(MODEL_FILE_PATH, c45.toJSON());
 
     });

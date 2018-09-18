@@ -1,6 +1,9 @@
-var things = require('../../../lib/things.js');
+
+// USE ABSOLUTE PATH 
+var things = require('things-js');  
 var slr = require('ml-regression').SLR;
 var fs = require('fs');
+var gfs = require('FSServer');
 
 var pubsub_url = 'mqtt://localhost';
 var pubsub_topic = 'thingsjs/IoTBench/SenMLParse';
@@ -43,6 +46,7 @@ function train(data){
 		console.log('Finished training with '+ TRAINING_SIZE + ' points');
 		regressionModel = new slr(X, Y);
 		// save b_0 and b_1 coefficients into the model file
+		//use gfs api to save model 
 		fs.writeFile(MODEL_PATH, JSON.stringify(regressionModel.coefficients), function(err){
 			if(err){
 				console.log('Error with writing regression to path: ' + err);

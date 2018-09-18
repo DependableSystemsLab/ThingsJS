@@ -1,4 +1,4 @@
-var things = require('../../../lib/things.js');
+var things = require('things-js');
 
 var pubsub_url = 'mqtt://localhost';
 var pubsub_topic = 'thingsjs/IoTBench/ETL/Interpolation';

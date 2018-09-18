@@ -1,6 +1,6 @@
-var things = require('../../../lib/things.js');
+var things = require('things-js');
 var fs = require('fs');
-
+var gfs = require('FSServer');
 const COMPONENTS = 
 ['./Plot.js', './Accumulator.js', './SimpleLinearRegression.js', './KalmanFilter.js',
 './BlockWindowAverage.js', './DistinctApproxCount.js', '../SenMLParse.js', '../SenMLSpout.js'];

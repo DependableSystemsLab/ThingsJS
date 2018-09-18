@@ -3,7 +3,7 @@
  */
 
 //var things = require('things-js');
-var things = require('../../../lib/things.js');
+var things = require('things-js');
 var readline = require('readline');
 
 /* configurable variables */

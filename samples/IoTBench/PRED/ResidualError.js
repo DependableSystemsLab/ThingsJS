@@ -1,7 +1,7 @@
 var fs = require('fs');
 var csv = require('csv');
 var MLR  = require('ml-regression-multivariate-linear');
-var things = require('../../../lib/things.js');
+var things = require('things-js');
 
 var pubsub_url = 'mqtt://localhost';
 var pubsub_topic = 'thingsjs/IoTBench/PRED/MultiLinearRegressionPred';  

@@ -1,7 +1,7 @@
 /*
  * Publishes filtered SenML data (already parsed) over pub sub
  */
-var things = require('../../../lib/things.js');
+var things = require('things-js');
 var fs = require('fs');
 
 var pubsub_url = 'mqtt://localhost';
@@ -17,7 +17,8 @@ function MinMax(min, max){
 	this.min = min;
 	this.max = max;
 }
-
+// mkdir RIOT/ETL folder if not exist 
+// save file inside 
 function getRange(){
 	var args = process.argv.slice(2);
 

@@ -1,7 +1,8 @@
 var fs = require('fs');
 var csv = require('csv');
 var C45 = require('c4.5');
-var things = require('../../../lib/things.js');
+var things = require('things-js');
+var gfs = require('FSServer')
 
 var pubsub_url = 'mqtt://localhost';
 var pubsub_topic = 'thingsjs/IoTBench/SenMLParse';  
@@ -32,7 +33,9 @@ function setup(){
     USE_MSG_FIELD_LIST = properties['CLASSIFICATION.DECISION_TREE.USE_MSG_FIELD_LIST'];
     USE_MSG_FIELD = properties['CLASSIFICATION.DECISION_TREE.USE_MSG_FIELD']||0;
     SAMPLE_HEADER = properties["CLASSIFICATION.DECISION_TREE.SAMPLE_HEADER"];
+// change this to fs path 
     MODEL_FILE_PATH = '../TRAIN/'+ properties['CLASSIFICATION.DECISION_TREE.MODEL_PATH'];
+
     MODEL_UPDATE_FREQUENCY = properties["CLASSIFICATION.DECISION_TREE.TRAIN.MODEL_UPDATE_FREQUENCY"];
     PRED_RESULT_HEADER = properties['PREDICT.DECISION_TREE.TARGET'];
     MODEL_PRED_INPUT = properties['PREDICT.DECISION_TREE.TRAIN_INPUT'];
@@ -65,6 +68,7 @@ function DecisionTreePred(data) {
     console.log("parsed data" + processeddata);
     
     var c45 = C45();
+    // use api to read file 
     var state = require(MODEL_FILE_PATH);
     c45.restore(state)
     var model = c45.getModel();
