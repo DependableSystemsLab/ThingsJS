@@ -1,0 +1,94 @@
+
+<div class="row">
+	<div class=" col-md-5"> 
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				Available Code
+			</div>
+			<div class="panel-body">
+			<div class="dashboard-device-list">
+			<li ng-repeat="fileName in $view.cur_dir.files"
+				class="list-group-item">
+				{{ fileName }}
+				<button class="btn btn-success btn-xs pull-right" ng-click=$view.selectCode(fileName)> select </button> 	
+			</li>
+
+				</div>
+			</div>
+		</div>
+	 </div> 
+
+			<div class=" col-md-7"> 
+		<div class="panel panel-default">
+			<div class="panel-heading" >
+		Selected Components 
+		<button  class="btn btn-default btn-sm pull-right" ng-click="$view.clearCodeSelection()">Clear All</button>
+			</div>
+			<div class="panel-body">
+			<div class="dashboard-device-list">
+			<li ng-repeat="code in $view.code_selection track by $index"
+				class="list-group-item">
+				{{ code }} &emsp; num_instances: <input id="instance" type="text" maxlength="10" size="4" ng-model="instanceNumber[$index]" >
+				&emsp; required_memory: <input id="instance_memory" type="text" maxlength="10" size="4" ng-model="requiredMemory[$index]" ng-change="$view.instanceChange(code,instanceNumber[$index],requiredMemory[$index])"/>
+				<button class="btn btn-danger btn-xs pull-right" ng-click=$view.removeCode(code)> remove </button> 	
+
+			</li>
+			{{instanceNumber1}}
+				Name:<input id="appname" type="text" maxlength="60" size="10" ng-model="appName"/>
+				<button style="text-align:center" class="btn btn-primary pull-right" ng-click="$view.generateAppPrototype(appName)" onclick="document.getElementById('appname').value = ''" >Confirm</button>  
+			</div>
+			</div>
+		</div>			
+	</div>
+</div>
+<!-- <div class="row"> -->
+
+		<div class="row-md-5">
+		<div class="panel panel-default">
+			<div class="panel-heading" style="text-align:center">
+         <p pos="center"> Application Prototype</p>
+			</div>
+			<div class="panel-body">
+			<div class="dashboard-device-list">
+			<li ng-repeat="appName in $view.app_proto_dir.files" class="list-group-item">	
+				{{ appName }}
+				 &emsp;
+				 <a ui-sref="app_component({app_name:appName,app_content:$view.app_proto_dir.children[appName].content})" > Detailed Components </a> 
+				 <button class="btn btn-danger btn-xs pull-right" style="margin-right: 50px;"  ng-click = "$view.removePrototype($view.app_proto_dir.children[appName],appName)"> remove </button>
+				 <button class="btn btn-success btn-xs pull-right" style="margin-right: 50px;" ng-click = "$view.runApplication($view.app_proto_dir.children[appName].content,appName)" > Generate&Start </button>
+
+				<!-- <input class = "pull-right" id="app_num_instance" type="text" maxlength="10" size="4" ng-model="app_num_instance" style="margin-right: 50px;" ng-change="$view.appInstanceChange($view.app_dir.children[appName],app_num_instance)"/>
+
+				<div class = "pull-right" style="margin-right: 50px;">num_instances</div> -->
+
+				
+				 
+			</li>
+			</div>
+			</div>
+	</div>
+</div>
+	<div class="row-md-5">
+		<div class="panel panel-default">
+			<div class="panel-heading" style="text-align:center">
+         <p pos="center">  Application Instance  
+				 <button class=" btn btn-danger btn-sm pull-right" style="margin-right: 50px;" ng-click="$view.removeInstances($view.app_instances_dir)">Remove All</button></p>
+			</div>
+			<div class="panel-body">
+			<div class="dashboard-device-list">
+			<li ng-repeat="appName in $view.app_instances_dir.files" class="list-group-item">	
+				{{ appName }}
+				 &emsp;
+				 <!-- <a ui-sref="app_component({app_name:appName,app_content:$view.app_instances_dir.children[appName].content})" > Detailed Components </a>  -->
+				 <button class="btn btn-danger btn-xs pull-right" style="margin-right: 50px;"  ng-click = "$view.removeInstance($view.app_instances_dir.children[appName],appName)"> remove </button>
+				<button class="btn btn-danger btn-xs pull-right" style="margin-right: 50px;"  ng-click = "$view.stopApplication($view.app_instances_dir.children[appName].content)"> stop </button> 
+				 <button class="btn btn-success btn-xs pull-right" style="margin-right: 50px;"> STATUS:{{instances_status[appName]}} </button>
+				 
+			</li>
+			</div>
+			</div>
+	</div>
+</div>
+<!-- </div> -->
+
+
