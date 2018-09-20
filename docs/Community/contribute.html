@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>Developer API · GitBook</title>
+        <title>Contribute · GitBook</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -57,10 +57,10 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="Pubsub.html" />
+    <link rel="next" href="feedback.html" />
     
     
-    <link rel="prev" href="../Publications.html" />
+    <link rel="prev" href="involve.html" />
     
 
     </head>
@@ -218,9 +218,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4" data-path="../Community/">
+        <li class="chapter " data-level="1.4" data-path="./">
             
-                <a href="../Community/">
+                <a href="./">
             
                     
                     Community
@@ -232,9 +232,9 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.4.1" data-path="../Community/involve.html">
+        <li class="chapter " data-level="1.4.1" data-path="involve.html">
             
-                <a href="../Community/involve.html">
+                <a href="involve.html">
             
                     
                     Get involved
@@ -245,9 +245,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.2" data-path="../Community/contribute.html">
+        <li class="chapter active" data-level="1.4.2" data-path="contribute.html">
             
-                <a href="../Community/contribute.html">
+                <a href="contribute.html">
             
                     
                     Contribute
@@ -258,9 +258,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.3" data-path="../Community/feedback.html">
+        <li class="chapter " data-level="1.4.3" data-path="feedback.html">
             
-                <a href="../Community/feedback.html">
+                <a href="feedback.html">
             
                     
                     Feedback
@@ -271,9 +271,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.4" data-path="../Community/comittee.html">
+        <li class="chapter " data-level="1.4.4" data-path="comittee.html">
             
-                <a href="../Community/comittee.html">
+                <a href="comittee.html">
             
                     
                     Committee
@@ -302,9 +302,9 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.6" data-path="./">
+        <li class="chapter " data-level="1.6" data-path="../api/">
             
-                <a href="./">
+                <a href="../api/">
             
                     
                     Developer API
@@ -316,9 +316,9 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.6.1" data-path="Pubsub.html">
+        <li class="chapter " data-level="1.6.1" data-path="../api/Pubsub.html">
             
-                <a href="Pubsub.html">
+                <a href="../api/Pubsub.html">
             
                     
                     Pubsub
@@ -329,9 +329,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.6.2" data-path="Code.html">
+        <li class="chapter " data-level="1.6.2" data-path="../api/Code.html">
             
-                <a href="Code.html">
+                <a href="../api/Code.html">
             
                     
                     Code
@@ -342,9 +342,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.6.3" data-path="CodeEngine.html">
+        <li class="chapter " data-level="1.6.3" data-path="../api/CodeEngine.html">
             
-                <a href="CodeEngine.html">
+                <a href="../api/CodeEngine.html">
             
                     
                     CodeEngine
@@ -355,9 +355,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.6.4" data-path="Dispatcher.html">
+        <li class="chapter " data-level="1.6.4" data-path="../api/Dispatcher.html">
             
-                <a href="Dispatcher.html">
+                <a href="../api/Dispatcher.html">
             
                     
                     Dispatcher
@@ -368,9 +368,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.6.5" data-path="Scheduler.html">
+        <li class="chapter " data-level="1.6.5" data-path="../api/Scheduler.html">
             
-                <a href="Scheduler.html">
+                <a href="../api/Scheduler.html">
             
                     
                     Scheduler
@@ -416,7 +416,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".." >Developer API</a>
+        <a href=".." >Contribute</a>
     </h1>
 </div>
 
@@ -431,120 +431,26 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="api-documentation-for-developers">API Documentation for Developers</h1>
-<p>ThingsJS is a framework for running JavaScript applications on IoT devices such as Raspberry PIs</p>
+                                <h1 id="contributing-to-thingsjs">Contributing to ThingsJS</h1>
 <ul>
-<li>NOTE: This repository is currently under active development and its contents are subject to breaking changes. </li>
+<li>There are many different ways to contribute to the ThingsJS open source community. These types of contributions include submitting code changes, interacting with users and questions from the community, verifying releases and submitting bug reports.</li>
 </ul>
-<h1 id="directory-structure">Directory Structure</h1>
-<pre><code>/bin
-/docs
-/lib
-    /core
-    /util
-/util
-    /dashboard
-    /gfs
-/samples
-</code></pre><p>This repository is organized thus:</p>
-<ol>
-<li><a href="bin"><code>bin</code></a> contains the <code>things-js</code> CLI (shell script) that is installed with the package. Also contains default config files.</li>
-<li><a href="docs"><code>docs</code></a> contains the API documentations generated by JSDoc.</li>
-<li><a href="lib"><code>lib</code></a> contains the core ThingsJS code<ol>
-<li><a href="lib/core"><code>core</code></a> contains the main ThingsJS objects such as <code>Code</code>, <code>CodeEngine</code>, <code>Pubsub</code>, <code>Dispatcher</code>.</li>
-<li><a href="lib/util"><code>util</code></a> contains general-purpose utility modules used in the system.</li>
-</ol>
-</li>
-<li><a href="util"><code>util</code></a> contains supplementary apps and debug tools<ol>
-<li><a href="lib/dashboard"><code>dashboard</code></a> contains the ThingsJS Dashboard application; it is an <code>express</code> web-application</li>
-<li><a href="lib/gfs"><code>gfs</code></a> contains the ThingsJS distributed filesystem. The file server can be run as a standalone <code>express</code> web-application or as a <code>express.Router</code> object to be plugged into an existing application.</li>
-</ol>
-</li>
-<li><a href="samples"><code>samples</code></a> contains raw JavaScript sample code (non-instrumented) that can be dispatched to ThingsJS workers.</li>
-</ol>
-<h1 id="dependencies">Dependencies</h1>
+<h2 id="helping-other-users">Helping Other Users</h2>
 <ul>
-<li><p>The ThingsJS framework uses MQTT Pub/Sub as its main communication mechanism and assumes the existence of an active MQTT service. Either <strong>Mosquitto</strong>, or <strong>Mosca</strong> will do. ThingsJS provides a basic Mosca server that can be started with <code>things-js pubsub</code> command. The Pub/Sub service is referenced only by the URL (e.g. <code>mqtt://localhost</code>) within the ThingsJS framework and does not assume any specific implementation of the service.</p>
-<pre><code>~$ things-js pubsub
-</code></pre></li>
-<li><p>For running the Dashboard web-application, <strong>MongoDB</strong> is required as the Dashboard uses it to store the end-user code.</p>
-<pre><code>~$ service mongod start
-</code></pre></li>
+<li>Helping other ThingsJS users on the <a href="https://groups.google.com/forum/#!forum/thingsjs" target="_blank">mailing list</a>. Helping new users with your expertise is a very helpful way of contributing to the community.</li>
 </ul>
-<h1 id="getting-started">Getting Started</h1>
-<p>For trying out the framework, you can follow the steps below:</p>
-<h2 id="installation">Installation</h2>
-<h3 id="option-1">Option 1</h3>
-<ol>
-<li><p><code>git clone</code> this repository</p>
-<pre><code>~$ git clone https://github.com/karthikp-ubc/ThingsJS.git
-</code></pre></li>
-<li><p><code>npm install -g</code> to install the package. (download all the npm dependencies and link the CLI tool)
-You may need to put <code>sudo</code> depending on your installation of NodeJS.
-You need the <code>-g</code> (global installation) option for using the CLI. If you don&apos;t plan on using the CLI, you can omit the <code>-g</code> option. </p>
-<pre><code>~$ cd ThingsJS
-~/ThingsJS$ npm install -g
-</code></pre></li>
-</ol>
-<h3 id="option-2">Option 2</h3>
-<ol>
-<li>Install via npm<pre><code>~$ sudo npm install -g things-js
-</code></pre>You may omit the <code>sudo</code> depending on your NodeJS install settings.</li>
-</ol>
-<h3 id="using-the-cli">Using the CLI</h3>
-<p>Along with the API provided, CLI is included for easy use.
-Commands available currently:</p>
+<h2 id="testing-and-verifying-releases-and-release-candidates">Testing and Verifying Releases and Release Candidates</h2>
 <ul>
-<li>things-js dashboard</li>
-<li>things-js worker {config}</li>
-<li>things-js instrument {code}</li>
+<li>For the different components of ThingsJS we need to perform tests to measure the performace and stability of the system. Those interested can get in touch by dropping a mail on the <a href="https://groups.google.com/forum/#!forum/thingsjs" target="_blank">mailing list</a>.</li>
 </ul>
-<ol>
-<li>To start the Dashboard Application:</li>
-</ol>
-<pre><code>~$ things-js dash
-
-#OR
-
-~$ things-js dashboard
-</code></pre><p>By default it connects to MQTT at <code>localhost:1883</code>, MongoDB at <code>localhost:27017/things_dashboard</code>, and listens on <code>localhost:3000</code>.
-To start the dashboard with a different configuration, you can use the <code>-c</code> or <code>--config</code> options with the config file path provided as an argument.
-e.g.</p>
-<pre><code>~$ things-js dash -c my_config.conf
-</code></pre><p>This will start a web-application served at the specified port.
-You can watch the demo of the Dashboard here:</p>
-<p><a href="http://ece.ubc.ca/~kumseok/assets/ThingsJS_Migration.mp4" target="_blank"><img src="http://ece.ubc.ca/~kumseok/assets/ThingsJS_Migration.png" alt="Demo Screenshot" width="427" height="240" border="10"><p>Click Image to see Demo Video</p></a></p>
-<ol>
-<li>Running a ThingsJS worker:</li>
-</ol>
-<p>To start a ThingsJS worker, first you need to create a directory that will provide the NodeJS environment. This is because the worker needs to have a reference to the <code>things-js</code> module and any other npm modules that a ThingsJS user (developer) may require. If the worker cannot find a link to a <code>node_modules</code> directory, it will throw an error.</p>
-<pre><code>~$ mkdir hello_things
-~$ cd hello_things
-~$ npm link things-js
-
-#create a config file for the worker first (e.g. node_00.conf) 
-
-~/hello_things$ things-js worker node_00.conf
-</code></pre><p>The configuration file is a required argument for starting the worker. It should contain the following information:</p>
-<pre><code>{
-    &quot;pubsub_url&quot;: &quot;mqtt://localhost&quot;,
-    &quot;id&quot;: &quot;node_00&quot;,
-    &quot;device&quot;: &quot;raspberry-pi3&quot;
-}
-</code></pre><ol>
-<li>To instrument raw JavaScript code into a &quot;ThingJS-compatible&quot; code:</li>
-</ol>
-<pre><code>~$ things-js inst my_code.js
-
-#OR
-
-~$ things-js instrument my_code.js
-</code></pre><p>By default the output file will have the same file name, with the extension <code>.things.js</code>.
-To specify the output file name, provide the optional argument with <code>-o</code> or <code>--output</code>.
-e.g.</p>
-<pre><code>~$ things-js inst my_code.js -o my_code.instrumented.js
-</code></pre><h2 id="license">License</h2>
-<p>MIT</p>
+<h2 id="improving-documentation">Improving Documentation</h2>
+<ul>
+<li>ThingsJS Documentation is the first thing which new users read when getting started with ThingsJS. To propose changes to the Documentation make changes in the guide folder and submit a pull request directly on github.</li>
+</ul>
+<h2 id="contributing-source-code-changes">Contributing source code changes</h2>
+<ul>
+<li>The ThingsJS community is always encouraged and welcome to submit ThingsJS source code changes. Improving documentation, adding new features, and fixing bugs are important in making ThingsJS better. Other ThingsJS community maintainers will guide you through the process of successfully making changes to the ThingsJS source code.</li>
+</ul>
 
                                 
                                 </section>
@@ -572,12 +478,12 @@ e.g.</p>
 
             
                 
-                <a href="../Publications.html" class="navigation navigation-prev " aria-label="Previous page: Publications">
+                <a href="involve.html" class="navigation navigation-prev " aria-label="Previous page: Get involved">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
                 
-                <a href="Pubsub.html" class="navigation navigation-next " aria-label="Next page: Pubsub">
+                <a href="feedback.html" class="navigation navigation-next " aria-label="Next page: Feedback">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -588,7 +494,7 @@ e.g.</p>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Developer API","level":"1.6","depth":1,"next":{"title":"Pubsub","level":"1.6.1","depth":2,"path":"api/Pubsub.md","ref":"api/Pubsub.md","articles":[]},"previous":{"title":"Publications","level":"1.5","depth":1,"path":"Publications.md","ref":"Publications.md","articles":[]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"api/README.md","mtime":"2018-09-17T18:23:44.659Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-09-20T22:09:30.358Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Contribute","level":"1.4.2","depth":2,"next":{"title":"Feedback","level":"1.4.3","depth":2,"path":"Community/feedback.md","ref":"Community/feedback.md","articles":[]},"previous":{"title":"Get involved","level":"1.4.1","depth":2,"path":"Community/involve.md","ref":"Community/involve.md","articles":[]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"Community/contribute.md","mtime":"2018-09-20T22:09:07.646Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-09-20T22:09:30.358Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
