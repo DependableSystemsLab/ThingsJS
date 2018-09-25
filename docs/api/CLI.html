@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>Pocket Beagle · GitBook</title>
+        <title>CLI Commands · GitBook</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -57,10 +57,10 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="SecondApplication.html" />
+    <link rel="next" href="../samples/" />
     
     
-    <link rel="prev" href="../GettingStarted.html" />
+    <link rel="prev" href="../about/Terminology.html" />
     
 
     </head>
@@ -129,9 +129,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.1.3" data-path="../api/CLI.html">
+        <li class="chapter active" data-level="1.1.3" data-path="CLI.html">
             
-                <a href="../api/CLI.html">
+                <a href="CLI.html">
             
                     
                     CLI Commands
@@ -174,9 +174,9 @@
             <ul class="articles">
                 
     
-        <li class="chapter active" data-level="1.2.1" data-path="FirstApplication.html">
+        <li class="chapter " data-level="1.2.1" data-path="../tutorials/FirstApplication.html">
             
-                <a href="FirstApplication.html">
+                <a href="../tutorials/FirstApplication.html">
             
                     
                     Pocket Beagle
@@ -187,9 +187,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2.2" data-path="SecondApplication.html">
+        <li class="chapter " data-level="1.2.2" data-path="../tutorials/SecondApplication.html">
             
-                <a href="SecondApplication.html">
+                <a href="../tutorials/SecondApplication.html">
             
                     
                     Beaglebone Black
@@ -205,9 +205,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3" data-path="./">
+        <li class="chapter " data-level="1.3" data-path="../tutorials/">
             
-                <a href="./">
+                <a href="../tutorials/">
             
                     
                     Tutorials
@@ -219,9 +219,9 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.3.1" data-path="Migration.html">
+        <li class="chapter " data-level="1.3.1" data-path="../tutorials/Migration.html">
             
-                <a href="Migration.html">
+                <a href="../tutorials/Migration.html">
             
                     
                     Live-Migration
@@ -232,9 +232,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.2" data-path="dashboard/Dashboard.html">
+        <li class="chapter " data-level="1.3.2" data-path="../tutorials/dashboard/Dashboard.html">
             
-                <a href="dashboard/Dashboard.html">
+                <a href="../tutorials/dashboard/Dashboard.html">
             
                     
                     Using the Dashboard
@@ -334,9 +334,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.6" data-path="../api/">
+        <li class="chapter " data-level="1.6" data-path="./">
             
-                <a href="../api/">
+                <a href="./">
             
                     
                     Developer API
@@ -348,9 +348,9 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.6.1" data-path="../api/Pubsub.html">
+        <li class="chapter " data-level="1.6.1" data-path="Pubsub.html">
             
-                <a href="../api/Pubsub.html">
+                <a href="Pubsub.html">
             
                     
                     Pubsub
@@ -361,9 +361,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.6.2" data-path="../api/Code.html">
+        <li class="chapter " data-level="1.6.2" data-path="Code.html">
             
-                <a href="../api/Code.html">
+                <a href="Code.html">
             
                     
                     Code
@@ -374,9 +374,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.6.3" data-path="../api/CodeEngine.html">
+        <li class="chapter " data-level="1.6.3" data-path="CodeEngine.html">
             
-                <a href="../api/CodeEngine.html">
+                <a href="CodeEngine.html">
             
                     
                     CodeEngine
@@ -387,9 +387,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.6.4" data-path="../api/Dispatcher.html">
+        <li class="chapter " data-level="1.6.4" data-path="Dispatcher.html">
             
-                <a href="../api/Dispatcher.html">
+                <a href="Dispatcher.html">
             
                     
                     Dispatcher
@@ -400,9 +400,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.6.5" data-path="../api/Scheduler.html">
+        <li class="chapter " data-level="1.6.5" data-path="Scheduler.html">
             
-                <a href="../api/Scheduler.html">
+                <a href="Scheduler.html">
             
                     
                     Scheduler
@@ -448,7 +448,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".." >Pocket Beagle</a>
+        <a href=".." >CLI Commands</a>
     </h1>
 </div>
 
@@ -463,39 +463,83 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="using-a-pocket-beagle">Using a Pocket Beagle</h1>
-<p>PocketBeagle is an ultra-tiny-yet-complete open-source USB-key-For computer. For more information on <a href="https://beagleboard.org/pocket" target="_blank">Pocket Beagle</a></p>
-<h2 id="setting-up-the-pocket-beagle">Setting up the Pocket beagle</h2>
+                                <h1 id="cli-commands">CLI commands</h1>
+<h2 id="things-js-pubsub"><code>things-js pubsub</code></h2>
+<p><strong>Options:</strong></p>
 <ul>
-<li><p>Install the debian image in 4GB or greater memory card from <a href="https://beagleboard.org/latest-images" target="_blank">here</a>.</p>
-</li>
-<li><p>Plug in the PocketBeagle to the PC using the USB cable.</p>
-</li>
-<li><p>You have two ways to use the PocketBeagle terminal</p>
+<li>[<code>-d</code> | <code>--debug</code>] - set debug flag to true</li>
+</ul>
+<p><strong>Description:</strong></p>
+<p>Start a MOSCA Publish/Subscribe Server</p>
+<p><strong>Example:</strong></p>
+<pre><code>~$ things-js pubsub
+</code></pre><h2 id="things-js-dashboard"><code>things-js dashboard</code></h2>
+<p><strong>Alias:</strong> <code>things-js dash</code></p>
+<p><strong>Options:</strong></p>
 <ul>
-<li><p>When the PocketBeagle is connected it automatically acquires the local IP of 192.168.7.1 or 192.168.6.1 depending on the Operating system. 192.168.7.1 is for Linux based distros. Going on the local IP we get access to Cloud9 IDE and Bonescript which comes preinstalled. You can directly run commands from the terminal provided in CLoud 9 IDE.</p>
-</li>
-<li><p>The second way to proceed is to ssh into the machine like any other embedded device.</p>
-</li>
+<li>[<code>-c &lt;conf_path&gt;</code> | <code>--config &lt;conf_path&gt;</code>] - specify a configuration file to use</li>
 </ul>
-<pre><code>~$ ssh debian@192.168.7.2
-</code></pre><p>The default password is temppwd</p>
-</li>
-<li><p>For Ubuntu share internet from the host PC through USB, however, the internet connection is quite slow when we use internet over the USB. Hence, you can consider the option of cross-compiling it on the host PC and them using it on the PocketBeagle.</p>
-</li>
-<li><p>Check your internet connection.</p>
-</li>
-</ul>
-<pre><code>~$ ping 8.8.8.8
-</code></pre><p>Follow the Getting started steps to install ThingsJS running</p>
-<p>The configuration file is a required argument for starting the worker. It should contain the following information:</p>
+<p>The content of the file located at <code>&lt;conf_path&gt;</code> must be a json string. Default shown below:</p>
+<pre><code>{
+    port: 3000,
+    pubsub_url: &apos;mqtt://localhost&apos;,
+    fs_db_url: &apos;mongodb://localhost:27017/things-js-fs&apos;
+}
+</code></pre><p><strong>Description:</strong></p>
+<p>This command starts the web dashboard application, binding to port specified by <code>port</code>. It will use the Publish/Subscribe service located at <code>pubsub_url</code> and use Global File Storage service located at <code>fs_db_url</code>.</p>
+<p><strong>Example:</strong></p>
+<pre><code>~$ things-js dash -c ./dashboard.conf
+</code></pre><h2 id="things-js-worker-confpath"><code>things-js worker &lt;conf_path&gt;</code></h2>
+<p><strong>Alias:</strong> <code>things-js engine &lt;conf_path&gt;</code></p>
+<p>The content of the file located at <code>&lt;conf_path&gt;</code> must be a json string. Default shown below :</p>
 <pre><code>{
     &quot;pubsub_url&quot;: &quot;mqtt://localhost&quot;,
-    &quot;id&quot;: &quot;node_00&quot;,
-    &quot;device&quot;: &quot;PocketBeagle&quot;
+    &quot;id&quot;: &quot;engine-&quot; + {randomly generated at runtime},
+    &quot;device&quot;: &quot;raspberry-pi3&quot;
 }
-</code></pre><p>Make the required changes to the PocketBeagle file.</p>
-
+</code></pre><p><strong>Options:</strong></p>
+<ul>
+<li>[<code>-d</code> | <code>--debug</code>] - set debug flag to true</li>
+</ul>
+<p><strong>Description:</strong></p>
+<p>It starts a ThingsJS worker, connecting to Publish/Subscribe service at <code>pubsub_url</code>. If <code>id</code> is given in the configuration file, it will use that value. If not given, it will be generated randomly upon start.</p>
+<p><strong>Example:</strong></p>
+<pre><code>~$ things-js worker ./pi-01.conf
+</code></pre><h2 id="things-js-instrument-filepath"><code>things-js instrument &lt;file_path&gt;</code></h2>
+<p><strong>Alias:</strong> <code>things-js inst &lt;file_path&gt;</code></p>
+<p><strong>Options:</strong></p>
+<ul>
+<li>[<code>-s &lt;save_path&gt;</code> | <code>--save &lt;save_path&gt;</code>] - File path to optionally save instrumented code</li>
+<li>[<code>-p &lt;pubsub_url&gt;</code> | <code>--pubsub &lt;pubsub_url&gt;</code>] - Pubsub URL to use for the output program. Defaults to <code>mqtt://localhost</code></li>
+<li>[<code>-d</code> | <code>--debug</code>] - set debug flag to true</li>
+</ul>
+<p><strong>Description:</strong></p>
+<p>Instrument the JavaScript file located at <code>&lt;file_path&gt;</code> and write the instrumented source code to stdout.</p>
+<p><strong>Example:</strong></p>
+<pre><code>~$ things-js inst ./myComponent.js &gt; ./myComponent.things.js
+</code></pre><h2 id="things-js-restore-filepath"><code>things-js restore &lt;file_path&gt;</code></h2>
+<p><strong>Options:</strong></p>
+<ul>
+<li>[<code>-s &lt;save_path&gt;</code> | <code>--save &lt;save_path&gt;</code>] - File path to optionally save instrumented code</li>
+<li>[<code>-d</code> | <code>--debug</code>] - set debug flag to true</li>
+</ul>
+<p><strong>Description:</strong></p>
+<p>Restore the ThingsJS JSON snapshot file located at <code>&lt;file_path&gt;</code> and write the restored source code to stdout.</p>
+<p><strong>Example:</strong></p>
+<pre><code>~$ things-js restore ./myComponent.json &gt; ./myComponent.restored.js
+</code></pre><h2 id="things-js-run-filepath"><code>things-js run &lt;file_path&gt;</code></h2>
+<p><strong>Options:</strong></p>
+<ul>
+<li>[<code>-r</code> | <code>--restore</code>] - indicate that input <code>&lt;file_path&gt;</code> is a JSON snapshot</li>
+<li>[<code>-s &lt;save_path&gt;</code> | <code>--save &lt;save_path&gt;</code>] - File path to optionally save processed (instrumented/restored) code</li>
+<li>[<code>-p &lt;pubsub_url&gt;</code> | <code>--pubsub &lt;pubsub_url&gt;</code>] - Pubsub URL to use for the output program. Defaults to <code>mqtt://localhost</code></li>
+<li>[<code>-d</code> | <code>--debug</code>] - set debug flag to true</li>
+</ul>
+<p><strong>Description:</strong></p>
+<p>Instrument or Restore the input file located at <code>&lt;file_path&gt;</code> and then run the program. It should be noted that <strong>this command will run the process without a CodeEngine instance</strong>, so it will not be included during scheduling.</p>
+<p><strong>Example:</strong></p>
+<pre><code>~$ things-js run ./myComponent.js
+</code></pre>
                                 
                                 </section>
                             
@@ -522,12 +566,12 @@
 
             
                 
-                <a href="../GettingStarted.html" class="navigation navigation-prev " aria-label="Previous page: Getting Started">
+                <a href="../about/Terminology.html" class="navigation navigation-prev " aria-label="Previous page: Terminology">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
                 
-                <a href="SecondApplication.html" class="navigation navigation-next " aria-label="Next page: Beaglebone Black">
+                <a href="../samples/" class="navigation navigation-next " aria-label="Next page: Sample Components">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -538,7 +582,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Pocket Beagle","level":"1.2.1","depth":2,"next":{"title":"Beaglebone Black","level":"1.2.2","depth":2,"path":"tutorials/SecondApplication.md","ref":"tutorials/SecondApplication.md","articles":[]},"previous":{"title":"Getting Started","level":"1.2","depth":1,"path":"GettingStarted.md","ref":"GettingStarted.md","articles":[{"title":"Pocket Beagle","level":"1.2.1","depth":2,"path":"tutorials/FirstApplication.md","ref":"tutorials/FirstApplication.md","articles":[]},{"title":"Beaglebone Black","level":"1.2.2","depth":2,"path":"tutorials/SecondApplication.md","ref":"tutorials/SecondApplication.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"tutorials/FirstApplication.md","mtime":"2018-09-25T07:29:06.127Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-09-25T07:53:43.555Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"CLI Commands","level":"1.1.3","depth":2,"next":{"title":"Sample Components","level":"1.1.4","depth":2,"path":"samples/README.md","ref":"samples/README.md","articles":[]},"previous":{"title":"Terminology","level":"1.1.2","depth":2,"path":"about/Terminology.md","ref":"about/Terminology.md","articles":[]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"api/CLI.md","mtime":"2018-09-25T07:36:55.175Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-09-25T07:53:43.555Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

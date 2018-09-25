@@ -3,6 +3,8 @@
 * [What is ThingsJS?](README.md)
     * [System Architecture](about/Architecture.md)
     * [Terminology](about/Terminology.md)
+    * [CLI Commands](api/CLI.md)
+    * [Sample Components](samples/README.md)
 * [Getting Started](GettingStarted.md)
     * [Pocket Beagle](tutorials/FirstApplication.md)
     * [Beaglebone Black](tutorials/SecondApplication.md)
