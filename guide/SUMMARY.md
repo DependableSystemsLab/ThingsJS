@@ -9,6 +9,7 @@
     * [Pocket Beagle](tutorials/FirstApplication.md)
     * [Beaglebone Black](tutorials/SecondApplication.md)
 * [Tutorials](tutorials/README.md)
+    * [Writing your First App](tutorials/Videostreamer.md)
     * [Live-Migration](tutorials/Migration.md)
     * [Using the Dashboard](tutorials/dashboard/Dashboard.md)
 * [Community](Community/README.md)  
