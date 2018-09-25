@@ -30,70 +30,11 @@ A beaglebone black is one of the powerful devices in the world of embedded syste
 
 ```
 
-## Installing ThingsJS
 
-* Clone the repository from github
 
-```
-~$ git clone https://github.com/DependableSystemsLab/ThingsJS.git
-
+* Install ThingsJS using the Getting started steps.
 ```
 
-* Enter the cloned directory
-
-```
-~$ cd ThingJS
-
-```
-
-* Install ThingsJS
-
-```
-~$ sudo npm install -g
-
-```
-
-## Using ThingsJS
-
-Now that ThingsJS is set up on the Beaglebone Black, we can start using it.
-
-* Starting a Pubsub Server
-
-```
-~$ things-js pubsub
-
-```
-
-* Starting MongoDB
-
-```
-~$ sudo service mongod start
-
-```
-
-Note: Since here we are not making use of the GUI, we have to manually start these two services in the terminal.
-
-* Start ThingsJS
-
-```
-~$ thingsjs
-
-```
-
-This enters the ThingsJS console.
-
-* To use the Beaglebone Black as a worker follow the following steps
-
-To start a ThingsJS worker, first you need to create a directory that will provide the NodeJS environment. This is because the worker needs to have a reference to the `things-js` module and any other npm modules that a ThingsJS user (developer) may require. If the worker cannot find a link to a `node_modules` directory, it will throw an error.
-
-```
-~$ mkdir hello_things
-~$ cd hello_things
-~$ npm link things-js
-
-#create a config file for the worker first (e.g. node_00.conf)
-
-~/hello_things$ things-js worker node_00.conf
 ```
 
 The configuration file is a required argument for starting the worker. It should contain the following information:
@@ -102,7 +43,7 @@ The configuration file is a required argument for starting the worker. It should
 {
     "pubsub_url": "mqtt://localhost",
     "id": "node_00",
-    "device": "raspberry-pi3"
+    "device": "BBB"
 }
 ```
 
