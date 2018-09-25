@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>Pocket Beagle · GitBook</title>
+        <title>Sample Components · GitBook</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -57,10 +57,10 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="SecondApplication.html" />
+    <link rel="next" href="../GettingStarted.html" />
     
     
-    <link rel="prev" href="../GettingStarted.html" />
+    <link rel="prev" href="../api/CLI.html" />
     
 
     </head>
@@ -142,9 +142,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.1.4" data-path="../samples/">
+        <li class="chapter active" data-level="1.1.4" data-path="./">
             
-                <a href="../samples/">
+                <a href="./">
             
                     
                     Sample Components
@@ -174,9 +174,9 @@
             <ul class="articles">
                 
     
-        <li class="chapter active" data-level="1.2.1" data-path="FirstApplication.html">
+        <li class="chapter " data-level="1.2.1" data-path="../tutorials/FirstApplication.html">
             
-                <a href="FirstApplication.html">
+                <a href="../tutorials/FirstApplication.html">
             
                     
                     Pocket Beagle
@@ -187,9 +187,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2.2" data-path="SecondApplication.html">
+        <li class="chapter " data-level="1.2.2" data-path="../tutorials/SecondApplication.html">
             
-                <a href="SecondApplication.html">
+                <a href="../tutorials/SecondApplication.html">
             
                     
                     Beaglebone Black
@@ -205,9 +205,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3" data-path="./">
+        <li class="chapter " data-level="1.3" data-path="../tutorials/">
             
-                <a href="./">
+                <a href="../tutorials/">
             
                     
                     Tutorials
@@ -219,9 +219,9 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.3.1" data-path="Migration.html">
+        <li class="chapter " data-level="1.3.1" data-path="../tutorials/Migration.html">
             
-                <a href="Migration.html">
+                <a href="../tutorials/Migration.html">
             
                     
                     Live-Migration
@@ -232,9 +232,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.2" data-path="dashboard/Dashboard.html">
+        <li class="chapter " data-level="1.3.2" data-path="../tutorials/dashboard/Dashboard.html">
             
-                <a href="dashboard/Dashboard.html">
+                <a href="../tutorials/dashboard/Dashboard.html">
             
                     
                     Using the Dashboard
@@ -448,7 +448,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".." >Pocket Beagle</a>
+        <a href=".." >Sample Components</a>
     </h1>
 </div>
 
@@ -463,38 +463,15 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="using-a-pocket-beagle">Using a Pocket Beagle</h1>
-<p>PocketBeagle is an ultra-tiny-yet-complete open-source USB-key-For computer. For more information on <a href="https://beagleboard.org/pocket" target="_blank">Pocket Beagle</a></p>
-<h2 id="setting-up-the-pocket-beagle">Setting up the Pocket beagle</h2>
-<ul>
-<li><p>Install the debian image in 4GB or greater memory card from <a href="https://beagleboard.org/latest-images" target="_blank">here</a>.</p>
-</li>
-<li><p>Plug in the PocketBeagle to the PC using the USB cable.</p>
-</li>
-<li><p>You have two ways to use the PocketBeagle terminal</p>
-<ul>
-<li><p>When the PocketBeagle is connected it automatically acquires the local IP of 192.168.7.1 or 192.168.6.1 depending on the Operating system. 192.168.7.1 is for Linux based distros. Going on the local IP we get access to Cloud9 IDE and Bonescript which comes preinstalled. You can directly run commands from the terminal provided in CLoud 9 IDE.</p>
-</li>
-<li><p>The second way to proceed is to ssh into the machine like any other embedded device.</p>
-</li>
-</ul>
-<pre><code>~$ ssh debian@192.168.7.2
-</code></pre><p>The default password is temppwd</p>
-</li>
-<li><p>For Ubuntu share internet from the host PC through USB, however, the internet connection is quite slow when we use internet over the USB. Hence, you can consider the option of cross-compiling it on the host PC and them using it on the PocketBeagle.</p>
-</li>
-<li><p>Check your internet connection.</p>
-</li>
-</ul>
-<pre><code>~$ ping 8.8.8.8
-</code></pre><p>Follow the Getting started steps to install ThingsJS running</p>
-<p>The configuration file is a required argument for starting the worker. It should contain the following information:</p>
-<pre><code>{
-    &quot;pubsub_url&quot;: &quot;mqtt://localhost&quot;,
-    &quot;id&quot;: &quot;node_00&quot;,
-    &quot;device&quot;: &quot;PocketBeagle&quot;
-}
-</code></pre><p>Make the required changes to the PocketBeagle file.</p>
+                                <h1 id="samples">Samples</h1>
+<h4 id="factorial">Factorial</h4>
+<p>A basic factorial program written using an asynchronous loop to yield control to Pub/Sub listeners. This component is mainly used for doing health checks on the system.</p>
+<h4 id="video-streamer">Video Streamer</h4>
+<p><strong>Depends on:</strong> <code>stream-buffers</code>, <code>fluent-ffmpeg</code></p>
+<p>This Component reads from a video source at <code>/data/sample.mp4</code> and then publishes the video stream to <code>things-videostream/raw</code>.</p>
+<h4 id="motion-detector">Motion Detector</h4>
+<p><strong>Depends on:</strong> <code>jimp</code></p>
+<p>This Component subscribes to the video stream at <code>things-videostream/raw</code> and performs image differencing on subsequent frames. It publishes the diff-images as a stream to <code>things-videostream/motion</code>. If the image difference is larger than a specified threshold, it will publish a message to <code>things-videostream/alarm</code>.</p>
 
                                 
                                 </section>
@@ -522,12 +499,12 @@
 
             
                 
-                <a href="../GettingStarted.html" class="navigation navigation-prev " aria-label="Previous page: Getting Started">
+                <a href="../api/CLI.html" class="navigation navigation-prev " aria-label="Previous page: CLI Commands">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
                 
-                <a href="SecondApplication.html" class="navigation navigation-next " aria-label="Next page: Beaglebone Black">
+                <a href="../GettingStarted.html" class="navigation navigation-next " aria-label="Next page: Getting Started">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -538,7 +515,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Pocket Beagle","level":"1.2.1","depth":2,"next":{"title":"Beaglebone Black","level":"1.2.2","depth":2,"path":"tutorials/SecondApplication.md","ref":"tutorials/SecondApplication.md","articles":[]},"previous":{"title":"Getting Started","level":"1.2","depth":1,"path":"GettingStarted.md","ref":"GettingStarted.md","articles":[{"title":"Pocket Beagle","level":"1.2.1","depth":2,"path":"tutorials/FirstApplication.md","ref":"tutorials/FirstApplication.md","articles":[]},{"title":"Beaglebone Black","level":"1.2.2","depth":2,"path":"tutorials/SecondApplication.md","ref":"tutorials/SecondApplication.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"tutorials/FirstApplication.md","mtime":"2018-09-25T07:29:06.127Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-09-25T07:53:43.555Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Sample Components","level":"1.1.4","depth":2,"next":{"title":"Getting Started","level":"1.2","depth":1,"path":"GettingStarted.md","ref":"GettingStarted.md","articles":[{"title":"Pocket Beagle","level":"1.2.1","depth":2,"path":"tutorials/FirstApplication.md","ref":"tutorials/FirstApplication.md","articles":[]},{"title":"Beaglebone Black","level":"1.2.2","depth":2,"path":"tutorials/SecondApplication.md","ref":"tutorials/SecondApplication.md","articles":[]}]},"previous":{"title":"CLI Commands","level":"1.1.3","depth":2,"path":"api/CLI.md","ref":"api/CLI.md","articles":[]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"samples/README.md","mtime":"2018-09-25T07:53:37.550Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-09-25T07:53:43.555Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
