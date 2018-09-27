@@ -26,18 +26,18 @@ program
   .action(function(options){
     var config = options.config ? require(options.config) : {};
     var startApp = require('../util/dashboard/startApp.js');
-    startApp();
+    startApp(config);
   });
 
 program
-  .command('worker <conf>')
+  .command('worker <conf_path>')
   .option('-d, --debug', 'Set environment variable DEBUG to "true" and see debug output')
   .alias('engine')
   .description('Start a ThingsJS Worker')
-  .action(function(conf, options){
+  .action(function(conf_path, options){
     process.env['DEBUG'] = options.debug ? "true": "false";
     var things = require('../lib/things.js');
-    var config = things.CodeEngine.validateConfig(conf);
+    var config = things.CodeEngine.validateConfig(conf_path);
     var engine = new things.CodeEngine(config);
     process.on('SIGINT', function(){
       engine.kill().then(function(){
@@ -48,12 +48,12 @@ program
   });
 
 program
-  .command('scheduler <conf>')
+  .command('scheduler <conf_path>')
   .alias('sched')
   .description('Start a ThingsJS Scheduler')
-  .action(function(conf){
+  .action(function(conf_path){
     var things = require('../lib/things.js');
-    var config = things.CodeEngine.validateConfig(conf);
+    var config = things.CodeEngine.validateConfig(conf_path);
     // var engine = new things.CodeEngine(config);
     var scheduler = new things.Scheduler(config);
     process.on('SIGINT', function(){

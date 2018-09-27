@@ -1,0 +1,621 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>CLI Commands · GitBook</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="../samples/" />
+    
+    
+    <link rel="prev" href="../about/Terminology.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    What is ThingsJS?
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.1.1" data-path="../about/Architecture.html">
+            
+                <a href="../about/Architecture.html">
+            
+                    
+                    System Architecture
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.2" data-path="../about/Terminology.html">
+            
+                <a href="../about/Terminology.html">
+            
+                    
+                    Terminology
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.1.3" data-path="CLI.html">
+            
+                <a href="CLI.html">
+            
+                    
+                    CLI Commands
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.4" data-path="../samples/">
+            
+                <a href="../samples/">
+            
+                    
+                    Sample Components
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="../GettingStarted.html">
+            
+                <a href="../GettingStarted.html">
+            
+                    
+                    Getting Started
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.2.1" data-path="../tutorials/FirstApplication.html">
+            
+                <a href="../tutorials/FirstApplication.html">
+            
+                    
+                    Pocket Beagle
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.2" data-path="../tutorials/SecondApplication.html">
+            
+                <a href="../tutorials/SecondApplication.html">
+            
+                    
+                    Beaglebone Black
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="../tutorials/">
+            
+                <a href="../tutorials/">
+            
+                    
+                    Tutorials
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.1" data-path="../tutorials/Migration.html">
+            
+                <a href="../tutorials/Migration.html">
+            
+                    
+                    Live-Migration
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2" data-path="../tutorials/dashboard/Dashboard.html">
+            
+                <a href="../tutorials/dashboard/Dashboard.html">
+            
+                    
+                    Using the Dashboard
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" data-path="../Community/">
+            
+                <a href="../Community/">
+            
+                    
+                    Community
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.4.1" data-path="../Community/involve.html">
+            
+                <a href="../Community/involve.html">
+            
+                    
+                    Get involved
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.2" data-path="../Community/contribute.html">
+            
+                <a href="../Community/contribute.html">
+            
+                    
+                    Contribute
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.3" data-path="../Community/feedback.html">
+            
+                <a href="../Community/feedback.html">
+            
+                    
+                    Feedback
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.4" data-path="../Community/comittee.html">
+            
+                <a href="../Community/comittee.html">
+            
+                    
+                    Committee
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5" data-path="../Publications.html">
+            
+                <a href="../Publications.html">
+            
+                    
+                    Publications
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.6" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    Developer API
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.6.1" data-path="Pubsub.html">
+            
+                <a href="Pubsub.html">
+            
+                    
+                    Pubsub
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.6.2" data-path="Code.html">
+            
+                <a href="Code.html">
+            
+                    
+                    Code
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.6.3" data-path="CodeEngine.html">
+            
+                <a href="CodeEngine.html">
+            
+                    
+                    CodeEngine
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.6.4" data-path="Dispatcher.html">
+            
+                <a href="Dispatcher.html">
+            
+                    
+                    Dispatcher
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.6.5" data-path="Scheduler.html">
+            
+                <a href="Scheduler.html">
+            
+                    
+                    Scheduler
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >CLI Commands</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="cli-commands">CLI commands</h1>
+<h2 id="things-js-pubsub"><code>things-js pubsub</code></h2>
+<p><strong>Options:</strong></p>
+<ul>
+<li>[<code>-d</code> | <code>--debug</code>] - set debug flag to true</li>
+</ul>
+<p><strong>Description:</strong></p>
+<p>Start a MOSCA Publish/Subscribe Server</p>
+<p><strong>Example:</strong></p>
+<pre><code>~$ things-js pubsub
+</code></pre><h2 id="things-js-dashboard"><code>things-js dashboard</code></h2>
+<p><strong>Alias:</strong> <code>things-js dash</code></p>
+<p><strong>Options:</strong></p>
+<ul>
+<li>[<code>-c &lt;conf_path&gt;</code> | <code>--config &lt;conf_path&gt;</code>] - specify a configuration file to use</li>
+</ul>
+<p>The content of the file located at <code>&lt;conf_path&gt;</code> must be a json string. Default shown below:</p>
+<pre><code>{
+    port: 3000,
+    pubsub_url: &apos;mqtt://localhost&apos;,
+    fs_db_url: &apos;mongodb://localhost:27017/things-js-fs&apos;
+}
+</code></pre><p><strong>Description:</strong></p>
+<p>This command starts the web dashboard application, binding to port specified by <code>port</code>. It will use the Publish/Subscribe service located at <code>pubsub_url</code> and use Global File Storage service located at <code>fs_db_url</code>.</p>
+<p><strong>Example:</strong></p>
+<pre><code>~$ things-js dash -c ./dashboard.conf
+</code></pre><h2 id="things-js-worker-confpath"><code>things-js worker &lt;conf_path&gt;</code></h2>
+<p><strong>Alias:</strong> <code>things-js engine &lt;conf_path&gt;</code></p>
+<p>The content of the file located at <code>&lt;conf_path&gt;</code> must be a json string. Default shown below :</p>
+<pre><code>{
+    &quot;pubsub_url&quot;: &quot;mqtt://localhost&quot;,
+    &quot;id&quot;: &quot;engine-&quot; + {randomly generated at runtime},
+    &quot;device&quot;: &quot;raspberry-pi3&quot;
+}
+</code></pre><p><strong>Options:</strong></p>
+<ul>
+<li>[<code>-d</code> | <code>--debug</code>] - set debug flag to true</li>
+</ul>
+<p><strong>Description:</strong></p>
+<p>It starts a ThingsJS worker, connecting to Publish/Subscribe service at <code>pubsub_url</code>. If <code>id</code> is given in the configuration file, it will use that value. If not given, it will be generated randomly upon start.</p>
+<p><strong>Example:</strong></p>
+<pre><code>~$ things-js worker ./pi-01.conf
+</code></pre><h2 id="things-js-instrument-filepath"><code>things-js instrument &lt;file_path&gt;</code></h2>
+<p><strong>Alias:</strong> <code>things-js inst &lt;file_path&gt;</code></p>
+<p><strong>Options:</strong></p>
+<ul>
+<li>[<code>-s &lt;save_path&gt;</code> | <code>--save &lt;save_path&gt;</code>] - File path to optionally save instrumented code</li>
+<li>[<code>-p &lt;pubsub_url&gt;</code> | <code>--pubsub &lt;pubsub_url&gt;</code>] - Pubsub URL to use for the output program. Defaults to <code>mqtt://localhost</code></li>
+<li>[<code>-d</code> | <code>--debug</code>] - set debug flag to true</li>
+</ul>
+<p><strong>Description:</strong></p>
+<p>Instrument the JavaScript file located at <code>&lt;file_path&gt;</code> and write the instrumented source code to stdout.</p>
+<p><strong>Example:</strong></p>
+<pre><code>~$ things-js inst ./myComponent.js &gt; ./myComponent.things.js
+</code></pre><h2 id="things-js-restore-filepath"><code>things-js restore &lt;file_path&gt;</code></h2>
+<p><strong>Options:</strong></p>
+<ul>
+<li>[<code>-s &lt;save_path&gt;</code> | <code>--save &lt;save_path&gt;</code>] - File path to optionally save instrumented code</li>
+<li>[<code>-d</code> | <code>--debug</code>] - set debug flag to true</li>
+</ul>
+<p><strong>Description:</strong></p>
+<p>Restore the ThingsJS JSON snapshot file located at <code>&lt;file_path&gt;</code> and write the restored source code to stdout.</p>
+<p><strong>Example:</strong></p>
+<pre><code>~$ things-js restore ./myComponent.json &gt; ./myComponent.restored.js
+</code></pre><h2 id="things-js-run-filepath"><code>things-js run &lt;file_path&gt;</code></h2>
+<p><strong>Options:</strong></p>
+<ul>
+<li>[<code>-r</code> | <code>--restore</code>] - indicate that input <code>&lt;file_path&gt;</code> is a JSON snapshot</li>
+<li>[<code>-s &lt;save_path&gt;</code> | <code>--save &lt;save_path&gt;</code>] - File path to optionally save processed (instrumented/restored) code</li>
+<li>[<code>-p &lt;pubsub_url&gt;</code> | <code>--pubsub &lt;pubsub_url&gt;</code>] - Pubsub URL to use for the output program. Defaults to <code>mqtt://localhost</code></li>
+<li>[<code>-d</code> | <code>--debug</code>] - set debug flag to true</li>
+</ul>
+<p><strong>Description:</strong></p>
+<p>Instrument or Restore the input file located at <code>&lt;file_path&gt;</code> and then run the program. It should be noted that <strong>this command will run the process without a CodeEngine instance</strong>, so it will not be included during scheduling.</p>
+<p><strong>Example:</strong></p>
+<pre><code>~$ things-js run ./myComponent.js
+</code></pre>
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="../about/Terminology.html" class="navigation navigation-prev " aria-label="Previous page: Terminology">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="../samples/" class="navigation navigation-next " aria-label="Next page: Sample Components">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"CLI Commands","level":"1.1.3","depth":2,"next":{"title":"Sample Components","level":"1.1.4","depth":2,"path":"samples/README.md","ref":"samples/README.md","articles":[]},"previous":{"title":"Terminology","level":"1.1.2","depth":2,"path":"about/Terminology.md","ref":"about/Terminology.md","articles":[]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"api/CLI.md","mtime":"2018-09-25T07:36:55.175Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-09-25T07:53:43.555Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+
