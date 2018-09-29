@@ -35,5 +35,3 @@ For the data and model generated during running process, we will save it to glob
 
 
 All figures referenced from [dreamlab RIOT benchmark]( https://github.com/dream-lab/riot-bench)
-
-

@@ -13,6 +13,7 @@ before(function(done){
 	server.on('ready', done);
 });
 
+runTest('things-js library', './require-test.js');
 runTest('Pubsub', './Pubsub-test.js');
 runTest('Code', './Code-test.js');
 runTest('CodeEngine', './CodeEngine-test.js');
