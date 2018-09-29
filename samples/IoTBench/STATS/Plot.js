@@ -20,7 +20,7 @@ function setup(){
 	var properties;
 
 	if(!args.length){
-		args = ['../TAXI_properties.json'];
+		args = ['./TAXI_properties.json'];
 	}
 	try{
 		properties = JSON.parse(fs.readFileSync(args[0], 'utf-8'));

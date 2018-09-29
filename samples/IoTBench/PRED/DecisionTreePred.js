@@ -2,7 +2,7 @@ var fs = require('fs');
 var csv = require('csv');
 var C45 = require('c4.5');
 var things = require('things-js');
-var gfs = require('FSServer')
+// var gfs = require('FSServer')
 
 var pubsub_url = 'mqtt://localhost';
 var pubsub_topic = 'thingsjs/IoTBench/SenMLParse';  
@@ -25,7 +25,7 @@ function setup(){
 
   // default to TAXI property set if no specific property file is given
   if(!args.length){
-    args = ['../TAXI_properties.json'];
+    args = ['./TAXI_properties.json'];
   }
   try{
     properties = JSON.parse(fs.readFileSync(args[0], 'utf-8'));

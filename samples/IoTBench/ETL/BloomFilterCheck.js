@@ -6,6 +6,7 @@ var pubsub_url = 'mqtt://localhost';
 var pubsub_topic = 'thingsjs/IoTBench/ETL/RangeFilterCheck';
 var publish_topic = 'thingsjs/IoTBench/ETL/BloomFilterCheck';
 
+
 /* bloom filter properties */
 var DEFAULT_FALSEPOSITIVE = 0.1;
 var DEFAULT_INSERTIONS = 20000000
@@ -27,7 +28,7 @@ function createBloomFilter(){
 
 	// default to TAXI property set if no specific property file is given
 	if(!args.length){
-		args = ['../TAXI_properties.json'];
+		args = ['./TAXI_properties.json'];
 	}
 	try{
 		properties = JSON.parse(fs.readFileSync(args[0], 'utf-8'));

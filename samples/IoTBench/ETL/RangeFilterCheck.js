@@ -24,7 +24,7 @@ function getRange(){
 
 	// default to TAXI property set if no specific property file is given
 	if(!args.length){
-		args = ['../TAXI_properties.json'];
+		args = ['./TAXI_properties.json'];
 	}
 	try{
 		var properties = JSON.parse(fs.readFileSync(args[0], 'utf-8'));
