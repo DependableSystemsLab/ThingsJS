@@ -52,6 +52,18 @@ describe('API tests', function(){
 			});
 		});
 
+		it('Read a nonexistent file', function(){
+
+			return new Promise(function(resolve){
+				self.gfs.readFile('NONEXISTENTPATH', function(err, data){
+					resolve(err);
+				});
+			}).then(function(res){
+				expect(res).to.be.instanceOf(Error);
+			})
+
+		});
+
 		it('Write to an existing file', function(){
 			var fpath = self.fpaths[0];
 

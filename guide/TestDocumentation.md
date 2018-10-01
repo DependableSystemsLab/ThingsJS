@@ -113,6 +113,7 @@ Test file: ```test/Filesystem-REST-test.js```
 	* An error is thrown
 * Delete an existing file: ```gfs.deleteFile```
 	* The file no longer exists and cannot be read
+	
 #### Filesystem REST API
 Test file: ```test/Filesystem-test.js```
 * ```GET requests```:
