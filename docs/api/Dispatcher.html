@@ -219,7 +219,20 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.3.1" data-path="../tutorials/Migration.html">
+        <li class="chapter " data-level="1.3.1" data-path="../tutorials/Videostreamer.html">
+            
+                <a href="../tutorials/Videostreamer.html">
+            
+                    
+                    Writing your First App
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2" data-path="../tutorials/Migration.html">
             
                 <a href="../tutorials/Migration.html">
             
@@ -232,7 +245,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.2" data-path="../tutorials/dashboard/Dashboard.html">
+        <li class="chapter " data-level="1.3.3" data-path="../tutorials/dashboard/Dashboard.html">
             
                 <a href="../tutorials/dashboard/Dashboard.html">
             
@@ -469,13 +482,6 @@
 <dd></dd>
 </dl>
 
-<h2 id="members">Members</h2>
-<dl>
-<dt><a href="#ACTION_MAP">ACTION_MAP</a> &#x21D2; <code>Promise</code></dt>
-<dd><p>Apply the given list of actions</p>
-</dd>
-</dl>
-
 <h2 id="functions">Functions</h2>
 <dl>
 <dt><a href="#Engine">Engine()</a></dt>
@@ -499,6 +505,7 @@
 <li><a href="#Dispatcher+resumeCode">.resumeCode(instance_id)</a> &#x21D2; <code>Promise</code></li>
 <li><a href="#Dispatcher+killCode">.killCode(instance_id)</a> &#x21D2; <code>Promise</code></li>
 <li><a href="#Dispatcher+kill">.kill()</a> &#x21D2; <code>Promise</code></li>
+<li><a href="#Dispatcher+applyActions">.applyActions(actions)</a> &#x21D2; <code>Promise</code></li>
 <li><a href="#Dispatcher+requestStatusReports">.requestStatusReports()</a> &#x21D2; <code>undefined</code></li>
 </ul>
 </li>
@@ -695,13 +702,10 @@
 <p><a name="Dispatcher+kill"></a></p>
 <h3 id="dispatcherkill-&#x21D2;-promise">dispatcher.kill() &#x21D2; <code>Promise</code></h3>
 <p>[kill description]</p>
-<p><strong>Kind</strong>: instance method of <a href="#Dispatcher"><code>Dispatcher</code></a><br><strong>Returns</strong>: <code>Promise</code> - [description]<br><a name="Dispatcher+requestStatusReports"></a></p>
-<h3 id="dispatcherrequeststatusreports-&#x21D2;-undefined">dispatcher.requestStatusReports() &#x21D2; <code>undefined</code></h3>
-<p>Send a Pub/Sub broadcast message to request status reports from all the CodeEngine instances</p>
-<p><strong>Kind</strong>: instance method of <a href="#Dispatcher"><code>Dispatcher</code></a><br><strong>Returns</strong>: <code>undefined</code> - - Does not return anything, as we cannot know for sure if all CodeEngines have reported.<br><a name="ACTION_MAP"></a></p>
-<h2 id="actionmap-&#x21D2;-promise">ACTION_MAP &#x21D2; <code>Promise</code></h2>
-<p>Apply the given list of actions</p>
-<p><strong>Kind</strong>: global variable<br><strong>Returns</strong>: <code>Promise</code> - - Promise that resolves when all actions are successful  </p>
+<p><strong>Kind</strong>: instance method of <a href="#Dispatcher"><code>Dispatcher</code></a><br><strong>Returns</strong>: <code>Promise</code> - [description]<br><a name="Dispatcher+applyActions"></a></p>
+<h3 id="dispatcherapplyactionsactions-&#x21D2;-promise">dispatcher.applyActions(actions) &#x21D2; <code>Promise</code></h3>
+<p>Apply the given list of actions concurrently</p>
+<p><strong>Kind</strong>: instance method of <a href="#Dispatcher"><code>Dispatcher</code></a><br><strong>Returns</strong>: <code>Promise</code> - - Promise that resolves when all actions are successful  </p>
 <table>
 <thead>
 <tr>
@@ -718,7 +722,10 @@
 </tr>
 </tbody>
 </table>
-<p><a name="Engine"></a></p>
+<p><a name="Dispatcher+requestStatusReports"></a></p>
+<h3 id="dispatcherrequeststatusreports-&#x21D2;-undefined">dispatcher.requestStatusReports() &#x21D2; <code>undefined</code></h3>
+<p>Send a Pub/Sub broadcast message to request status reports from all the CodeEngine instances</p>
+<p><strong>Kind</strong>: instance method of <a href="#Dispatcher"><code>Dispatcher</code></a><br><strong>Returns</strong>: <code>undefined</code> - - Does not return anything, as we cannot know for sure if all CodeEngines have reported.<br><a name="Engine"></a></p>
 <h2 id="engine">Engine()</h2>
 <p>Engine is a client-side abstraction for CodeEngine.
    Similar object is defined in the client-side library &quot;things.js&quot;</p>
@@ -768,7 +775,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Dispatcher","level":"1.6.4","depth":2,"next":{"title":"Scheduler","level":"1.6.5","depth":2,"path":"api/Scheduler.md","ref":"api/Scheduler.md","articles":[]},"previous":{"title":"CodeEngine","level":"1.6.3","depth":2,"path":"api/CodeEngine.md","ref":"api/CodeEngine.md","articles":[]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"api/Dispatcher.md","mtime":"2018-09-17T18:23:44.659Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-09-25T07:53:43.555Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Dispatcher","level":"1.6.4","depth":2,"next":{"title":"Scheduler","level":"1.6.5","depth":2,"path":"api/Scheduler.md","ref":"api/Scheduler.md","articles":[]},"previous":{"title":"CodeEngine","level":"1.6.3","depth":2,"path":"api/CodeEngine.md","ref":"api/CodeEngine.md","articles":[]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"api/Dispatcher.md","mtime":"2018-09-17T18:23:44.659Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-10-01T03:16:37.996Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
