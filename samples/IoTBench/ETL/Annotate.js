@@ -1,6 +1,8 @@
 var things = require('things-js');
 var fs = require('fs');
 var readline = require('readline');
+var mongoUrl = 'mongodb://localhost:27017/things-js-fs';
+var GFS = require('things-js').addons.gfs(mongoUrl);
 
 var pubsub_url = 'mqtt://localhost';
 var pubsub_topic = 'thingsjs/IoTBench/ETL/Interpolation';
@@ -15,22 +17,30 @@ var annotationMap = {};
 function setup(){
 	var args = process.argv.slice(2);
 	var properties;
+	var schemaPath;
 
 	// default to TAXI property set if no specific property file is given
-	if(!args.length){
-		args = ['TAXI_properties.json'];
-	}
 
-	try{
-		properties = JSON.parse(fs.readFileSync(args[0], 'utf-8'));
+	if(!args.length){
+		args = ['./TAXI_properties.json'];
 	}
-	catch(e){
-		console.log('Couldn\'t fetch properties: ' + e);
-		process.exit();
-	}
-	useMsgField = properties['ANNOTATE.ANNOTATE_MSG_USE_FIELD'] || 0;
-	filePath = properties['ANNOTATE.ANNOTATE_FILE_PATH'];
-	var schemaPath = properties['ANNOTATE.ANNOTATE_SCHEMA'];
+	// try{
+		  GFS.readFile(args[0], function(err2, data){
+	   		if (err2) {
+          console.log('\x1b[44m%s\x1b[0m', 'Couldn\'t fetch properties: ' + err2);
+          process.exit();
+        }
+	 		properties = JSON.parse(data);
+	 		useMsgField = properties['ANNOTATE.ANNOTATE_MSG_USE_FIELD'] || 0;
+			filePath = properties['ANNOTATE.ANNOTATE_FILE_PATH'];
+			schemaPath = properties['ANNOTATE.ANNOTATE_SCHEMA'];
+			
+
+
+			console.log('Beginning annotation');
+			pubsub.subscribe(pubsub_topic, annotate);
+
+		});		
 
 	var x = new Promise(function(resolve){
 		readSchemaTypes(schemaPath).then(function(data){
@@ -113,9 +123,7 @@ function annotate(data){
 }
 
 pubsub.on('ready', function(){
-	setup().then(function(){
-		console.log('Beginning annotation');
-		pubsub.subscribe(pubsub_topic, annotate);
+	setup()；
 	});
-});
+
 

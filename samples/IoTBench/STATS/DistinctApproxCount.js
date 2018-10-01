@@ -1,6 +1,8 @@
 var things = require('things-js');
 var fs = require('fs');
 var crypto = require('crypto');
+var mongoUrl = 'mongodb://localhost:27017/things-js-fs';
+var GFS = require('things-js').addons.gfs(mongoUrl);
 
 var pubsub_url = 'mqtt://localhost';
 var pubsub_topic = 'thingsjs/IoTBench/SenMLParse';
@@ -21,14 +23,13 @@ function setup(){
 	if(!args.length){
 		args = ['./TAXI_properties.json'];
 	}
-	try{
-		properties = JSON.parse(fs.readFileSync(args[0], 'utf-8'));
-	}
-	catch(e){
-		console.log('Error reading properties file: ' + e);
-		process.exit();
-	}
 
+	GFS.readFile(args[0], function(err2, data) {
+        if (err2) {
+            console.log('\x1b[44m%s\x1b[0m', 'Couldn\'t fetch properties: ' + err2);
+            process.exit();
+        }
+    properties = JSON.parse(data);		
 	BUCKET_SIZE = properties['AGGREGATE.DISTINCT_APPROX_COUNT.BUCKETS'] || 10;
 	if(BUCKET_SIZE > 31){
 		console.log('Bucket size is too large. Must be less than or equal to 31');
@@ -42,6 +43,9 @@ function setup(){
 	for(var i = 0; i < numBuckets; i++){
 		maxZeroes[i] = 0;
 	}
+
+	console.log('Beginning Distinct Approx. Count');
+	pubsub.subscribe(pubsub_topic, doUniqueCount);
 }
 
 function doUniqueCount(data){
@@ -65,6 +69,8 @@ function doUniqueCount(data){
 
 	console.log('Approx ' + count + ' unique items in ' + field);
 	pubsub.publish(publish_topic, uniqueCountJSON);
+
+
 }
 
 function countUniqueItems(item){
@@ -105,6 +111,4 @@ function countTrailZeroes(val){
 
 pubsub.on('ready', function(){
 	setup();
-	console.log('Beginning Distinct Approx. Count');
-	pubsub.subscribe(pubsub_topic, doUniqueCount);
 });

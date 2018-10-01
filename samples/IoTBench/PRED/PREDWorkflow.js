@@ -6,7 +6,7 @@ var fs = require('fs');
 // TODO: generalize this later on for other benchmarks ... we can pass in the components as an arg
 const COMPONENTS = 
 ['./ResidualError.js','./Average.js','./MultiLinearRegressionPred.js', './DecisionTreePRED.js',
- './SenMLParse.js', './SenMLSpout.js'];
+ '../SenMLParse.js', '../SenMLSpout.js'];
 
 var instances = {};
 var noHeader = true;
@@ -15,7 +15,7 @@ var dispatcher, pubsub, logger;
 (function begin(){
 	dispatcher = new things.Dispatcher();
 	pubsub = new things.Pubsub();
-	logger = fs.createWriteStream('PREDStats_' + Date.now() + '.csv');
+	// logger = fs.createWriteStream('PREDStats_' + Date.now() + '.csv');
 
 	dispatcher.on('ready', function(){
 		pubsub.on('ready', function(){
@@ -33,7 +33,7 @@ function memToCSV(data){
 	var values = [data.component, data.timestamp, data.memory.rss,
 		data.memory.heapTotal, data.memory.heapUsed, data.memory.external];
 
-	logger.write(values.join(',') + '\n');
+	// logger.write(values.join(',') + '\n');
 }
 
 function runPRED(){

@@ -1,5 +1,7 @@
 var things = require('things-js');
 var fs = require('fs');
+var mongoUrl = 'mongodb://localhost:27017/things-js-fs';
+var GFS = require('things-js').addons.gfs(mongoUrl);
 
 var pubsub_url = 'mqtt://localhost';
 var pubsub_topics = ['SLR', 'DistinctApproxCount', 'BlockWindowAverage']
@@ -21,14 +23,19 @@ function setup(){
 	if(!args.length){
 		args = ['./TAXI_properties.json'];
 	}
-	try{
-		properties = JSON.parse(fs.readFileSync(args[0], 'utf-8'));
-	}
-	catch(e){
-		console.log('Problem reading properties file: ' + e);
-		process.exit();
-	}
-	WINDOW_SIZE = properties['AGGREGATE.ACCUMULATOR.TUPLE_WINDOW_SIZE'];
+
+	GFS.readFile(args[0], function(err2, data) {
+        if (err2) {
+            console.log('\x1b[44m%s\x1b[0m', 'Couldn\'t fetch properties: ' + err2);
+            process.exit();
+        }
+        properties = JSON.parse(data);	
+		WINDOW_SIZE = properties['AGGREGATE.ACCUMULATOR.TUPLE_WINDOW_SIZE'];
+		console.log('Beginning accumulation');
+		pubsub_topics.forEach(function(topic){
+			pubsub.subscribe(pubsub_heading + topic, accumulate);
+		});
+	});
 }
 
 function accumulate(data){
@@ -54,8 +61,4 @@ function accumulate(data){
 
 pubsub.on('ready', function(){
 	setup();
-	console.log('Beginning accumulation');
-	pubsub_topics.forEach(function(topic){
-		pubsub.subscribe(pubsub_heading + topic, accumulate);
-	});
 });

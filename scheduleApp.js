@@ -4,10 +4,10 @@ var fs = require('fs');
 
 // var args = process.argv.slice(2);
 pubsub.on('ready',function(){
-	pubsub.subscribe('STAT',function(data){
+	pubsub.subscribe('TRAINGFS',function(data){
 	console.log(data);
 });
-	var testconf = JSON.parse(fs.readFileSync('./testSTAT.conf','utf-8')) ;
+	var testconf = JSON.parse(fs.readFileSync('./testTRAINGFS.conf','utf-8')) ;
 
 	pubsub.publish('test1/cmd',testconf);
 });

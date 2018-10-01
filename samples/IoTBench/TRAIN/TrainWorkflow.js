@@ -16,7 +16,7 @@ var dispatcher, pubsub, logger;
 (function begin(){
 	dispatcher = new things.Dispatcher();
 	pubsub = new things.Pubsub();
-	logger = fs.createWriteStream('TRAINStats_' + Date.now() + '.csv');
+	// logger = fs.createWriteStream('TRAINStats_' + Date.now() + '.csv');
 
 	dispatcher.on('ready', function(){
 		pubsub.on('ready', function(){
@@ -34,7 +34,7 @@ function memToCSV(data){
 	var values = [data.component, data.timestamp, data.memory.rss,
 		data.memory.heapTotal, data.memory.heapUsed, data.memory.external];
 
-	logger.write(values.join(',') + '\n');
+	// logger.write(values.join(',') + '\n');
 }
 
 function runTRAIN(){

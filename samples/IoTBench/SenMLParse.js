@@ -1,4 +1,4 @@
-/* 
+ /* 
  * SenMLParse file adapted from RIoTBench (SenMLParse.java)
  */
 

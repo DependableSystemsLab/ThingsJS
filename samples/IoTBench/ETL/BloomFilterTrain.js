@@ -2,7 +2,8 @@ var things = require('things-js');
 var bloom = require('bloomfilter').BloomFilter;
 var fs = require('fs');
 var EventEmitter = require('events').EventEmitter;
-
+var mongoUrl = 'mongodb://localhost:27017/things-js-fs';
+var GFS = require('things-js').addons.gfs(mongoUrl);
 /* bloom filter properties */
 var DEFAULT_FALSEPOSITIVE = 0.1;
 var DEFAULT_INSERTIONS = 20000000

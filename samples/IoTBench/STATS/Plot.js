@@ -1,5 +1,7 @@
 var things = require('things-js');
 var fs = require('fs');
+var mongoUrl = 'mongodb://localhost:27017/things-js-fs';
+var GFS = require('things-js').addons.gfs(mongoUrl);
 var express = require('express');
 var bodyParser = require('body-parser');
 
@@ -22,15 +24,18 @@ function setup(){
 	if(!args.length){
 		args = ['./TAXI_properties.json'];
 	}
-	try{
-		properties = JSON.parse(fs.readFileSync(args[0], 'utf-8'));
-	}
-	catch(e){
-		console.log('Problem reading properties file: '+e);
-		process.exit();
-	}
-	PLOT_WINDOW = properties['VISUALZE.PLOT.WINDOW_SIZE'] || 10;
-	initServer();
+	
+	GFS.readFile(args[0], function(err2, data) {
+        if (err2) {
+            console.log('\x1b[44m%s\x1b[0m', 'Couldn\'t fetch properties: ' + err2);
+            process.exit();
+        }
+        properties = JSON.parse(data);
+        PLOT_WINDOW = properties['VISUALZE.PLOT.WINDOW_SIZE'] || 10;
+        initServer();
+        console.log('Beginning plot');
+		pubsub.subscribe(pubsub_topic, task);
+	});
 }
 
 function initServer(){
@@ -72,6 +77,4 @@ function task(data){
 
 pubsub.on('ready', function(){
 	setup();
-	console.log('Beginning plot');
-	pubsub.subscribe(pubsub_topic, task);
 });

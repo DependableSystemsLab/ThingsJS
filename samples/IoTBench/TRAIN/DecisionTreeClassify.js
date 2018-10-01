@@ -4,6 +4,8 @@ var C45 = require('c4.5');
 var things = require('things-js');
 var math = require('mathjs');
 var fs = require('fs');
+var mongoUrl = 'mongodb://localhost:27017/things-js-fs';
+var GFS = require('things-js').addons.gfs(mongoUrl);
 
 var pubsub_url = 'mqtt://localhost';
 var pubsub_topic = 'thingsjs/IoTBench/SenMLParse';
@@ -14,7 +16,7 @@ var USE_MSG_FIELD_LIST;
 var SAMPLE_HEADER;
 var MODEL_FILE_PATH;
 var MODEL_UPDATE_FREQUENCY;
-var WINDOW_COUNT = 30;
+var WINDOW_COUNT = 10;
 var TRAIN_RESULT_HEADER;
 var CLASS_HEADER;
 var traincount;
@@ -30,31 +32,39 @@ function setup() {
     if (!args.length) {
         args = ['./TAXI_properties.json'];
     }
-    try {
-        properties = JSON.parse(fs.readFileSync(args[0], 'utf-8'));
 
-        USE_MSG_FIELD_LIST = properties['CLASSIFICATION.DECISION_TREE.USE_MSG_FIELD_LIST'];
-        USE_MSG_FIELD = properties['CLASSIFICATION.DECISION_TREE.USE_MSG_FIELD'] || 0;
-        //SAMPLE_HEADER = properties["CLASSIFICATION.DECISION_TREE.SAMPLE_HEADER"];
-        MODEL_FILE_PATH = properties['CLASSIFICATION.DECISION_TREE.MODEL_PATH'];
-        MODEL_UPDATE_FREQUENCY = properties["CLASSIFICATION.DECISION_TREE.TRAIN.MODEL_UPDATE_FREQUENCY"];
-        TRAIN_RESULT_HEADER = properties["CLASSIFICATION.DECISION_TREE.TRAIN.RESULT_ATTRIBUTE"];
-        CLASS_HEADER = properties["CLASSIFICATION.DECISION_TREE.TRAIN.CLASS_HEADER"];
-        console.log("USE_MSG_FIELD" + USE_MSG_FIELD);
-        //console.log("SAMPLE_HEADER" + SAMPLE_HEADER);
-        console.log("MODEL_FILE_PATH" + MODEL_FILE_PATH);
-        console.log("MODEL_UPDATE_FREQUENCY" + MODEL_UPDATE_FREQUENCY);
-
-        if (!USE_MSG_FIELD_LIST) {
-            console.log('No fields to TRAIN');
-            process.exit();
+    GFS.readFile(args[0], function(err2, data){
+        if (err2) {
+          console.log('\x1b[44m%s\x1b[0m', 'Couldn\'t fetch properties: ' + err2);
+          process.exit();
         }
-    } catch (e) {
-        console.log('Couldn\'t fetch properties: ' + e);
-        process.exit();
-    }
-    traincount = 0;
-    datalist = [];
+            properties = JSON.parse(data);
+            USE_MSG_FIELD_LIST = properties['CLASSIFICATION.DECISION_TREE.USE_MSG_FIELD_LIST'];
+            USE_MSG_FIELD = properties['CLASSIFICATION.DECISION_TREE.USE_MSG_FIELD'] || 0;
+            //SAMPLE_HEADER = properties["CLASSIFICATION.DECISION_TREE.SAMPLE_HEADER"];
+            MODEL_FILE_PATH = properties['CLASSIFICATION.DECISION_TREE.MODEL_PATH'];
+            MODEL_UPDATE_FREQUENCY = properties["CLASSIFICATION.DECISION_TREE.TRAIN.MODEL_UPDATE_FREQUENCY"];
+            TRAIN_RESULT_HEADER = properties["CLASSIFICATION.DECISION_TREE.TRAIN.RESULT_ATTRIBUTE"];
+            CLASS_HEADER = properties["CLASSIFICATION.DECISION_TREE.TRAIN.CLASS_HEADER"];
+            console.log("USE_MSG_FIELD" + USE_MSG_FIELD);
+            console.log("MODEL_FILE_PATH" + MODEL_FILE_PATH);
+            console.log("MODEL_UPDATE_FREQUENCY" + MODEL_UPDATE_FREQUENCY);
+
+            if (!USE_MSG_FIELD_LIST) {
+                console.log('No fields to TRAIN');
+                process.exit();
+            }
+
+          traincount = 0;
+          datalist = [];
+          console.log('Beginning classify the decisiontree');
+          pubsub.subscribe(pubsub_topic, DecisionTreeClassify);
+        });     
+    // } catch (e) {
+    //     console.log('Couldn\'t fetch properties: ' + e);
+    //     process.exit();
+    // }
+
 
 }
 
@@ -106,6 +116,4 @@ function getQuantile(data, bar1, bar2, bar3, bar4){
 
 pubsub.on('ready', function(){
   setup();
-  console.log('Beginning classify the decisiontree');
-  pubsub.subscribe(pubsub_topic, DecisionTreeClassify);
 });

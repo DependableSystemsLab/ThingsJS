@@ -1,5 +1,7 @@
 var things = require('things-js');
 var fs = require('fs');
+var mongoUrl = 'mongodb://localhost:27017/things-js-fs';
+var GFS = require('things-js').addons.gfs(mongoUrl);
 
 var pubsub_url = 'mqtt://localhost';
 var pubsub_topic = 'thingsjs/IoTBench/SenMLParse';
@@ -20,19 +22,20 @@ function setup(){
 	if(!args.length){
 		args = ['./TAXI_properties.json'];
 	}
-	try{
-		properties = JSON.parse(fs.readFileSync(args[0], 'utf-8'));
-	}
-	catch(e){
-		console.log('Problem reading properties file: ' + e);
-		process.exit();
-	}
-	USE_MSG_FIELD = properties['STATISTICS.KALMAN_FILTER.USE_MSG_FIELD'] || 0;
-	USE_MSG_FIELDLIST = properties['STATISTICS.KALMAN_FILTER.USE_MSG_FIELD_LIST'];
-	SENSOR_NOISE = properties['STATISTICS.KALMAN_FILTER.SENSOR_NOISE'] || 0.1;
-	PROCESS_NOISE = properties['STATISTICS.KALMAN_FILTER.PROCESS_NOISE'] || 0.1;
-	prevErrorCovariance = properties['STATISTICS.KALMAN_FILTER.ESTIMATED_ERROR'] || 1;
-	previousEstimation = 0;
+	GFS.readFile(args[0], function(err2, data) {
+        if (err2) {
+            console.log('\x1b[44m%s\x1b[0m', 'Couldn\'t fetch properties: ' + err2);
+            process.exit();
+        }
+        properties = JSON.parse(data);
+		USE_MSG_FIELD = properties['STATISTICS.KALMAN_FILTER.USE_MSG_FIELD'] || 0;
+		USE_MSG_FIELDLIST = properties['STATISTICS.KALMAN_FILTER.USE_MSG_FIELD_LIST'];
+		SENSOR_NOISE = properties['STATISTICS.KALMAN_FILTER.SENSOR_NOISE'] || 0.1;
+		PROCESS_NOISE = properties['STATISTICS.KALMAN_FILTER.PROCESS_NOISE'] || 0.1;
+		prevErrorCovariance = properties['STATISTICS.KALMAN_FILTER.ESTIMATED_ERROR'] || 1;
+		previousEstimation = 0;
+		console.log('Beginning Kalman Filter');
+		pubsub.subscribe(pubsub_topic, kalmanfilter);
 }
 
 function kalmanfilter(data){
@@ -68,6 +71,4 @@ function kalmanfilter(data){
 
 pubsub.on('ready', function(){
 	setup();
-	console.log('Beginning Kalman Filter');
-	pubsub.subscribe(pubsub_topic, kalmanfilter);
 });

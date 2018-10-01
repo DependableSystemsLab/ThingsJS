@@ -3,6 +3,8 @@
 var things = require('things-js');  
 var slr = require('ml-regression').SLR;
 var fs = require('fs');
+var mongoUrl = 'mongodb://localhost:27017/things-js-fs';
+var GFS = require('things-js').addons.gfs(mongoUrl);
 
 
 var pubsub_url = 'mqtt://localhost';
@@ -26,7 +28,10 @@ function setup(){
 		args = ['./TAXI_properties.json'];
 	}
 	try{
-		properties = JSON.parse(fs.readFileSync(args[0], 'utf-8'));
+		GFS.readFile(args[0], function(err2, data){
+	   		if (err2) throw err2;
+	 		properties = data;
+		});		
 	}
 	catch(e){
 		console.log('Problem reading properties file: ' + e);
@@ -47,7 +52,7 @@ function train(data){
 		regressionModel = new slr(X, Y);
 		// save b_0 and b_1 coefficients into the model file
 		//use gfs api to save model 
-		fs.writeFile(MODEL_PATH, JSON.stringify(regressionModel.coefficients), function(err){
+		GFS.writeFile(MODEL_PATH, JSON.stringify(regressionModel.coefficients), function(err){
 			if(err){
 				console.log('Error with writing regression to path: ' + err);
 			}

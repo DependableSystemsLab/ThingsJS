@@ -3,6 +3,8 @@
  */
 var things = require('things-js');
 var fs = require('fs');
+var mongoUrl = 'mongodb://localhost:27017/things-js-fs';
+var GFS = require('things-js').addons.gfs(mongoUrl);
 
 var pubsub_url = 'mqtt://localhost';
 var pubsub_topic = 'thingsjs/IoTBench/SenMLParse';
@@ -26,10 +28,15 @@ function getRange(){
 	if(!args.length){
 		args = ['./TAXI_properties.json'];
 	}
-	try{
-		var properties = JSON.parse(fs.readFileSync(args[0], 'utf-8'));
-		var validRanges = properties['FILTER.RANGE_FILTER.VALID_RANGE'];
-		for(field in validRanges){
+
+		  GFS.readFile(args[0], function(err2, data){
+	   		if (err2) {
+            console.log('\x1b[44m%s\x1b[0m', 'Couldn\'t fetch properties: ' + err2);
+            process.exit();
+        }
+	 		properties = JSON.parse(data);
+	 		var validRanges = properties['FILTER.RANGE_FILTER.VALID_RANGE'];
+			for(field in validRanges){
 			var tokens = validRanges[field].split(':');
 			try{
 				var rng = new MinMax(parseFloat(tokens[0]), parseFloat(tokens[1]));
@@ -38,13 +45,12 @@ function getRange(){
 			catch(c){
 				console.log('Error parsing value: ' + c);
 				process.exit();
+				}
 			}
-		}
-	}
-	catch(e){
-		console.log('A problem occured: ' + e);
-		process.exit();
-	}
+			console.log('Beginning range filter');
+    		pubsub.subscribe(pubsub_topic, checkRange);
+		});		
+	
 }
 
 function checkRange(data){
@@ -65,7 +71,4 @@ function checkRange(data){
 
 pubsub.on('ready', function(){
 	getRange();
-	console.log('Beginning range filter');
-    // subscribe to parsed senml data
-    pubsub.subscribe(pubsub_topic, checkRange);
 });

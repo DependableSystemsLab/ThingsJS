@@ -1,5 +1,7 @@
 var things = require('things-js');
 var fs = require('fs');
+var mongoUrl = 'mongodb://localhost:27017/things-js-fs';
+var GFS = require('things-js').addons.gfs(mongoUrl);
 
 var pubsub_url = 'mqtt://localhost';
 var pubsub_topic = 'thingsjS/IoTBench/ETL/BloomFilterCheck';
@@ -23,7 +25,10 @@ function setup(){
 		args = ['./TAXI_properties.json'];
 	}
 	try{
-		properties = JSON.parse(fs.readFileSync(args[0], 'utf-8'));
+		  GFS.readFile(args[0], function(err2, data){
+	   		if (err2) throw err2;
+	 		properties = data;
+		});		
 		USE_MSG_FIELD_LIST = properties['INTERPOLATION.USE_MSG_FIELD_LIST'];
 		WINDOW_SIZE = properties['INTERPOLATION.WINDOW_SIZE'] || 0;
 

@@ -1,7 +1,8 @@
 var things = require('things-js');
 var bloom = require('bloomfilter').BloomFilter;
 var fs = require('fs');
-
+var mongoUrl = 'mongodb://localhost:27017/things-js-fs';
+var GFS = require('things-js').addons.gfs(mongoUrl);
 var pubsub_url = 'mqtt://localhost';
 var pubsub_topic = 'thingsjs/IoTBench/ETL/RangeFilterCheck';
 var publish_topic = 'thingsjs/IoTBench/ETL/BloomFilterCheck';
@@ -14,70 +15,72 @@ var bloomFilter, testingRange, useMsgField;
 
 var pubsub = new things.Pubsub(pubsub_url);
 
-function getFilterSize(n, fpp){
-	return (-1) * Math.ceil( ( n * Math.log(fpp) ) / Math.pow(Math.log(2), 2) );
+function getFilterSize(n, fpp) {
+    return (-1) * Math.ceil((n * Math.log(fpp)) / Math.pow(Math.log(2), 2));
 }
 
-function getNumHashes(m, n){
-	return Math.ceil((m / n) * Math.log(2));
+function getNumHashes(m, n) {
+    return Math.ceil((m / n) * Math.log(2));
 }
 
-function createBloomFilter(){
-	var args = process.argv.slice(2);
-	var properties;
+function createBloomFilter() {
+    var args = process.argv.slice(2);
+    var properties;
 
-	// default to TAXI property set if no specific property file is given
-	if(!args.length){
-		args = ['./TAXI_properties.json'];
-	}
-	try{
-		properties = JSON.parse(fs.readFileSync(args[0], 'utf-8'));
-	}
-	catch(e){
-		console.log('Couldn\'t fetch properties: ' + e);
-		process.exit();
-	}
-	useMsgField = properties['BLOOMFILTER.USE_MSG_FIELD'] || 0;
-	testingRange = properties['BLOOMFILTER.EXPECTED_INSERTIONS'] || DEFAULT_INSERTIONS
-	var m = getFilterSize(testingRange, properties['BLOOMFILTER.FALSEPOSITIVE_RATIO'] || DEFAULT_FALSEPOSITIVE);
-	var k = getNumHashes(m, testingRange);
+    // default to TAXI property set if no specific property file is given
+    if (!args.length) {
+        args = ['./TAXI_properties.json'];
+    }
+    GFS.readFile(args[0], function(err2, data) {
+        if (err2) {
+            console.log('\x1b[44m%s\x1b[0m', 'Couldn\'t fetch properties: ' + err2);
+            process.exit();
+        }
+        properties = JSON.parse(data);
+        useMsgField = properties['BLOOMFILTER.USE_MSG_FIELD'] || 0;
+        testingRange = properties['BLOOMFILTER.EXPECTED_INSERTIONS'] || DEFAULT_INSERTIONS
+        var m = getFilterSize(testingRange, properties['BLOOMFILTER.FALSEPOSITIVE_RATIO'] || DEFAULT_FALSEPOSITIVE);
+        var k = getNumHashes(m, testingRange);
 
-	var modelPath = properties['BLOOMFILTER.MODEL_PATH'];
-	if(!modelPath){
-		console.log('Couldn\'t find existing model');
-		process.exit();
-	}
-	try{
-		var model = fs.readFileSync(modelPath);
-		bloomFilter = new bloom(JSON.parse(model), k);
-	}
-	catch(c){
-		console.log('A problem occured: ' + c);
-		process.exit();
-	}
+        var modelPath = properties['BLOOMFILTER.MODEL_PATH'];
+        if (!modelPath) {
+            console.log('Couldn\'t find existing model');
+            process.exit();
+        }
+        var model;
+        GFS.readFile(modelPath, function(err2, data) {
+            if (err2) throw err2;
+            try {
+                model = data;
+                bloomFilter = new bloom(JSON.parse(model), k);
+                console.log('Beginning bloom filter');
+        		pubsub.subscribe(pubsub_topic, doBloomFilter);
+            } catch (c) {
+                console.log('A problem occured: ' + c);
+                process.exit();
+            }
+
+        });
+    });
 }
 
-function doBloomFilter(data){
-	var value;
-	// if user specified they want to use a specific field value
-	if(useMsgField > 0){
-		var keys = Object.keys(data);
-		value = data[keys[useMsgField-1]];
-	}
-	else{
-		// generate a random value between 0 - testingRange
-		value = Math.floor(Math.random() * testingRange + 1);
-	}
-	var res = bloomFilter.test(String(value));
-	console.log('Bloom filter tested: ' + res);
-	if(res){
-		pubsub.publish(publish_topic, data);
-	}
+function doBloomFilter(data) {
+    var value;
+    // if user specified they want to use a specific field value
+    if (useMsgField > 0) {
+        var keys = Object.keys(data);
+        value = data[keys[useMsgField - 1]];
+    } else {
+        // generate a random value between 0 - testingRange
+        value = Math.floor(Math.random() * testingRange + 1);
+    }
+    var res = bloomFilter.test(String(value));
+    console.log('Bloom filter tested: ' + res);
+    if (res) {
+        pubsub.publish(publish_topic, data);
+    }
 }
 
-pubsub.on('ready', function(){
-	createBloomFilter();
-	console.log('Beginning bloom filter');
-	pubsub.subscribe(pubsub_topic, doBloomFilter);
+pubsub.on('ready', function() {
+    createBloomFilter();
 });
-

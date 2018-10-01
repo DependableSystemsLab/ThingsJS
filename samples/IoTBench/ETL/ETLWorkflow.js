@@ -6,8 +6,8 @@ var fs = require('fs');
 // TODO: generalize this later on for other benchmarks ... we can pass in the components as an arg
 const COMPONENTS = 
 [
-// 'CsvToSenML.js', 'Annotate.js', 'Interpolation.js',
-// 'BloomFilterCheck.js', 'RangeFilterCheck.js', 
+'CsvToSenML.js', 'Annotate.js', 'Interpolation.js',
+'BloomFilterCheck.js', 'RangeFilterCheck.js', 
 
 '../SenMLParse.js', '../SenMLSpout.js'];
 
