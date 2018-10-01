@@ -1,4 +1,4 @@
-(function(Σ) {
+require('things-js').bootstrap(module, function(Σ){
     Σ.setExtractor(function() {
         return this.capture({}, {
             kSplayTreeSize: kSplayTreeSize,
@@ -417,4 +417,4 @@
         Σ.setImmediate(doRun);
     }
     BM_Start();
-}(require('things-js').bootstrap('mqtt://localhost', 'splay.js')));
+}, 'mqtt://localhost', 'splay.js', {})

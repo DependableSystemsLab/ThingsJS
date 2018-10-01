@@ -1,4 +1,4 @@
-(function(Σ) {
+require('things-js').bootstrap(module, function(Σ){
     Σ.setExtractor(function() {
         return this.capture({}, {
             startTime: startTime,
@@ -63,4 +63,4 @@
         Σ.console.log('Currently computing n = ' + count + ', number of digits = ' + digits.length);
     }, Σ);
     timer = Σ.setInterval(printInterval, 500);
-}(require('things-js').bootstrap('mqtt://localhost', 'factorial.js')));
+}, 'mqtt://localhost', 'factorial.js', {})

@@ -1,4 +1,4 @@
-(function(Σ) {
+require('things-js').bootstrap(module, function(Σ){
     Σ.setExtractor(function() {
         return this.capture({}, {
             solver: solver,
@@ -673,4 +673,4 @@
         Σ.setImmediate(doRun);
     }
     BM_Start();
-}(require('things-js').bootstrap('mqtt://localhost', 'navier-stokes.js')));
+}, 'mqtt://localhost', 'navier-stokes.js', {})
