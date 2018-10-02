@@ -55,10 +55,10 @@ function DispatcherShell(){
 
 	this.FSPort = 3000;
 	this.FSURL = 'localhost';
-	this.FSPath = '/file-system';
+	this.FSPath = '/fs';
 	this.dir = '/';
 
-	console.log('=== Dispatcher Shell ===\n', 'For a list of commands, type \'cmds\'');
+	console.log('>>> Shell <<<\n', 'For a list of commands, type \'cmds\'');
 
 	function ready(obj){
 		return new Promise(function(resolve){
@@ -148,7 +148,7 @@ DispatcherShell.ERRORS = {
 
 	EDNE: 'Error: It looks like this code engine does not exist',
 
-	IDNE: 'Error: IT looks like this code instance does not exist',
+	IDNE: 'Error: It looks like this code instance does not exist',
 
 	EXISTS: function(path){
 		return 'Error: ' + path + ' already exists';
@@ -158,7 +158,7 @@ DispatcherShell.ERRORS = {
 		return 'ERROR: The path ' + dir + ' does not exist';
 	},
 
-	CONFIG: 'Error: Problem processing config',
+	CONFIG: 'Error: Problem processing config file',
 
 	FILE: 'Error: Problem reading file',
 
@@ -175,6 +175,7 @@ DispatcherShell.ERRORS = {
 
 /*****************************************************************************
                 FUNCTIONS RELATED TO CODE INSTANCES
+                AND ENGINES
 ******************************************************************************/
 
 DispatcherShell.prototype.programMeta = function(instanceId){
@@ -183,7 +184,7 @@ DispatcherShell.prototype.programMeta = function(instanceId){
 	if(!self.dispatcher.programs[instanceId]){
 		return DispatcherShell.ERRORS['IDNE'];
 	}
-	return 'UNDER CONSTRUCTION';
+	return 'NOT IMPLEMENTED';
 }
 
 /**
@@ -334,7 +335,9 @@ DispatcherShell.prototype.getPrograms = function(){
 	});
 }
 
-/* uses pubsub broadcast command */
+/**
+ * uses pubsub broadcast command 
+ */
 DispatcherShell.prototype.getDevices = function(){
 	var self = this;
 	console.log('[DispatcherShell] Please wait while I collect devices...\n');
@@ -667,91 +670,84 @@ DispatcherShell.prototype._get = function(absPath){
 					  SCHEDULING FUNCTIONS
 *****************************************************************************/
 
-DispatcherShell.prototype.runApplication = function(appConfig){
+/**
+ * Send a 'run application' request to the scheduler
+ * @param {string} schedulerId - the id of the scheduler to send the request to
+ * @param {json} appConfig - the application data described in json format
+ */
+DispatcherShell.prototype.runApplication = function(schedulerId, appConfig){
 	var self = this;
 	var config;
-	var sendChannel = 'runApplication';
-	var listenChannel = 'applicationDetails';
-	var requestToken = randKey();
+	var sendChannel = schedulerId + '/cmd';
+	var requestId = randKey();
+	var listenChannel = requestId;
 
 	return new Promise(function(resolve){
 		try{
 			config = JSON.parse(fs.readFileSync(appConfig, 'utf-8'));
-			config.request_token = requestToken;
+			var app = {
+				ctrl: 'run_application',
+				kwargs: config,
+				request_id: requestId,
+				reply_to: requestId
+			}
 		}
 		catch(e){
 			resolve(DispatcherShell.ERRORS['CONFIG']);
 		}
-		self._listenTimeout(5000, listenChannel + '/' +  requestToken + '/run')
+		self._listenTimeout(5000, listenChannel)
 			.then(function(res){
-				self._isPending(res).then(function(data){
-					resolve(JSON.stringify(data));
-				})
-				.catch(function(err){
-					resolve(err);
-				});
+				resolve(JSON.stringify(res));
 			})
 			.catch(function(err){
 				resolve(err);
 			});
 
-		self.pubsub.publish(sendChannel, config);
+		self.pubsub.publish(sendChannel, app);
 	});
 }
 
-DispatcherShell.prototype.stopApplication = function(id){
+/**
+ * Generic function to control an application
+ * @param {string} schedulerId - the id of the scheduler to send the request to
+ * @param {string} appToken - the token associated with the application to control
+ * @param {string} - one of pause_application/kill_application/resume_application
+ */
+DispatcherShell.prototype.ctrlApplication = function(schedulerId, appToken, cmd){
 	var self = this;
-	var sendChannel = 'stopApplication';
-	var listenChannel = 'applicationDetails';
-	var requestToken = randKey();
-	var appId = id.trim();
+	var sendChannel = schedulerId + '/cmd';
+	var requestId = randKey();
+	var listenChannel = requestId;
+
+	var req = {
+		ctrl: cmd,
+		kwargs: { token: appToken },
+		request_id: requestId,
+		reply_to: requestId;
+	}
 
 	return new Promise(function(resolve){
-		self._listenTimeout(5000, listenChannel + '/' + requestToken + '/stop')
+		self._listenTimeout(5000, listenChannel)
 			.then(function(res){
-				self._isPending(res).then(function(data){
-					resolve(JSON.stringify(data));
-				})
-				.catch(function(err){
-					resolve(err);
-				});
+				resolve(JSON.stringify(res));
 			})
 			.catch(function(err){
 				resolve(err);
 			});
-
-		var request = {
-			application_id: appId,
-			request_token: requestToken
-		}
-
-		self.pubsub.publish(sendChannel, request);
+		self.pubsub.publish(sendChannel, req);
 	});
 }
 
-DispatcherShell.prototype._isPending = function(json){
-	var self = this;
-	var listenChannel = 'applicationDetails';
+DispatcherShell.prototype.pauseApplication = function(schedulerId, appToken){
+	return this.ctrlApplication(schedulerId, appToken, 'pause_application');
+}
 
-	return new Promise(function(resolve, reject){
-		if(json.status === 'PENDING'){
-			console.log(JSON.stringify(json));
-			console.log('\nWaiting for a status update...\n');
+DispatcherShell.prototype.resumeApplication = function(schedulerId, appToken){
+	return this.ctrlApplication(schedulerIdm appToken, 'resume_application');
+}
 
-			self._listenAccumulate(5000, listenChannel).then(function(msgs){
-				msgs.forEach(function(update){
-					if(update.application_id === json.application_id){
-						resolve(update);
-						return;
-					}
-				});
-				reject(DispatcherShell.ERRORS['TIMEOUT']);
-			});
-		}
-		else{
-			resolve(json);
-		}
-	});
+DispatcherShell.prototype.killApplication = function(schedulerId, appToken){
+	return this.ctrlApplication(schedulerId, appToken, 'kill_application');
 }
 
 DispatcherShell.prototype._listenAccumulate = function(ms, channel){
@@ -837,17 +833,29 @@ DispatcherShell.prototype.executeScript = function(scriptFile){
  * All available commands on the shell
  */
 DispatcherShell.COMMANDS = {
-	stop_app: function(arg1){
+	kill_app: function(arg1, arg2){
 		if(arguments.length < 1){
-			return DispatcherShell.ERRORS['ARGS'](['application id']);
+			return DispatcherShell.ERRORS['ARGS'](['scheduler id', 'application token']);
 		}
-		return this.stopApplication(arg1);
+		return this.killApplication(arg1, arg2);
 	},
-	run_app: function(arg1){
-		if(arguments.length < 1){
-			return DispatcherShell.ERRORS['ARGS'](['application JSON']);
+	pause_app: function(arg1, arg2){
+		if(arguments.length < 2){
+			return DispatcherShell.ERRORS['ARGS'](['scheduler id', 'application token']);
 		}
-		return this.runApplication(arg1);
+		return this.pauseApplication(arg1, arg2);
+	},
+	resume_app: function(arg1, arg2){
+		if(arguments.length < 2){
+			return DispatcherShell.ERRORS['ARGS'](['scheduler id', 'application token']);
+		}
+		return this.resumeApplication(arg1, arg2);
+	}
+	run_app: function(arg1, arg2){
+		if(arguments.length < 2){
+			return DispatcherShell.ERRORS['ARGS'](['scheduler id', 'application JSON']);
+		}
+		return this.runApplication(arg1, arg2);
 	},
 	rm: function(arg1){
 		if(arguments.length < 1){
@@ -959,20 +967,7 @@ DispatcherShell.COMMANDS = {
 	},
 	clear: function(){
 		process.stdout.write('\033c');
-	},
-	// functions below are to test sequential execution
-	one: function(){
-		return new Promise(function(resolve){
-			setTimeout(function(){
-				resolve("LONG");
-			}, 5000);
-		});
-	},
-	two: function(){
-		return new Promise(function(resolve){
-			resolve("SHORT");
-		});
-	},
+	}
 }
 
 module.exports = DispatcherShell;
