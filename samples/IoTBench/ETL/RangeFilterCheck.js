@@ -33,7 +33,7 @@ function getRange(){
 	   		if (err2) {
             console.log('\x1b[44m%s\x1b[0m', 'Couldn\'t fetch properties: ' + err2);
             process.exit();
-        }
+        	}
 	 		properties = JSON.parse(data);
 	 		var validRanges = properties['FILTER.RANGE_FILTER.VALID_RANGE'];
 			for(field in validRanges){
@@ -50,7 +50,6 @@ function getRange(){
 			console.log('Beginning range filter');
     		pubsub.subscribe(pubsub_topic, checkRange);
 		});		
-	
 }
 
 function checkRange(data){

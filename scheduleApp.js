@@ -4,12 +4,12 @@ var fs = require('fs');
 
 // var args = process.argv.slice(2);
 pubsub.on('ready',function(){
-	pubsub.subscribe('TRAINGFS',function(data){
+	pubsub.subscribe('PREDGFS',function(data){
 	console.log(data);
 });
-	var testconf = JSON.parse(fs.readFileSync('./testTRAINGFS.conf','utf-8')) ;
+	var testconf = JSON.parse(fs.readFileSync('./testPREDGFS.conf','utf-8')) ;
 
-	pubsub.publish('test1/cmd',testconf);
+	pubsub.publish('things-scheduler/cmd',testconf);
 });
 
 

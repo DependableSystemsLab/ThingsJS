@@ -6,7 +6,7 @@ var GFS = require('things-js').addons.gfs(mongoUrl);
 var pubsub_url = 'mqtt://localhost';
 var pubsub_topic = 'thingsjs/IoTBench/ETL/RangeFilterCheck';
 var publish_topic = 'thingsjs/IoTBench/ETL/BloomFilterCheck';
-
+var model = [34263556, 142119048, 809554946, 67321864, -1073151776, 180220686, -1055686623, -1811897856, 184864902, 674317344, -2095042559, 289689626, -518930432, 157291776, 599807120, 428376870, 33624352, 270090256, 86310996, -931064831, 272646273, 563217941, -2129490875, 136987648, -801636288, 335553056, 1346914320, -976889591, 1430801504, -1441791912];
 
 /* bloom filter properties */
 var DEFAULT_FALSEPOSITIVE = 0.1;
@@ -42,25 +42,14 @@ function createBloomFilter() {
         var m = getFilterSize(testingRange, properties['BLOOMFILTER.FALSEPOSITIVE_RATIO'] || DEFAULT_FALSEPOSITIVE);
         var k = getNumHashes(m, testingRange);
 
-        var modelPath = properties['BLOOMFILTER.MODEL_PATH'];
-        if (!modelPath) {
-            console.log('Couldn\'t find existing model');
+        try {
+            bloomFilter = new bloom(model, k);
+            console.log('Beginning bloom filter');
+            pubsub.subscribe(pubsub_topic, doBloomFilter);
+        } catch (c) {
+            console.log('A problem occured: ' + c);
             process.exit();
         }
-        var model;
-        GFS.readFile(modelPath, function(err2, data) {
-            if (err2) throw err2;
-            try {
-                model = data;
-                bloomFilter = new bloom(JSON.parse(model), k);
-                console.log('Beginning bloom filter');
-        		pubsub.subscribe(pubsub_topic, doBloomFilter);
-            } catch (c) {
-                console.log('A problem occured: ' + c);
-                process.exit();
-            }
-
-        });
     });
 }
 
@@ -76,7 +65,8 @@ function doBloomFilter(data) {
     }
     var res = bloomFilter.test(String(value));
     console.log('Bloom filter tested: ' + res);
-    if (res) {
+    if (res ) {
+        console.log("PASS BLOOMING");
         pubsub.publish(publish_topic, data);
     }
 }

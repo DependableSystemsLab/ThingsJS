@@ -75,12 +75,12 @@ function MultiLinearRegressionTrain(data){
     var featureTypes = TRAIN_INPUT_TYPE;
     var target_data = [];
     datalist.push(data);
-    console.log("length of data" + datalist.length );
+
     traincount ++;
 
     if(traincount >= WINDOW_COUNT){
       traincount = 0;
-    console.log("collect 100 data to train by decisionTree");
+     console.log("collect" + WINDOW_COUNT + "data to train by decisionTree");
     feature_data = processdata(datalist,features);
     datalist.forEach(function(element){
       var newArray = [];

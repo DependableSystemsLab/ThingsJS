@@ -30,13 +30,8 @@ function setup(){
 	    properties = JSON.parse(data);
 		USE_MSG_FIELDLIST = properties['PREDICT.SIMPLE_LINEAR_REGRESSION.USE_MSG_FIELD_LIST'];
 		MODEL_PATH = properties['PREDICT.SIMPLE_LINEAR_REGRESSION.MODEL_PATH'];
-			b_0 = coefficients[0];
-			b_1 = coefficients[1];
-		// }
-		// catch(e){
-		// 	console.log('Problem fetching linear regression model from file path: ' + e);
-		// 	process.exit();
-		// 	}
+		b_0 = coefficients[0];
+		b_1 = coefficients[1];
 		console.log('Beginning linear regression');
 		pubsub.subscribe(pubsub_topic, linearRegression);
 		});

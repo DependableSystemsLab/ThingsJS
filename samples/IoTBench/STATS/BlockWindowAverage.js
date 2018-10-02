@@ -36,6 +36,8 @@ function setup(){
 	aggSum = 0;
 	console.log('Beginning Average');
 	pubsub.subscribe(pubsub_topic, average);
+});
+
 }
 
 function average(data){

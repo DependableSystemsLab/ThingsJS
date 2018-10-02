@@ -2,8 +2,11 @@ var things = require('things-js');
 var fs = require('fs');
 
 const COMPONENTS = 
-['./Plot.js', './Accumulator.js', './SimpleLinearRegression.js', './KalmanFilter.js',
-'./BlockWindowAverage.js', './DistinctApproxCount.js', '../SenMLParse.js', '../SenMLSpout.js'];
+[
+'./Plot.js', './Accumulator.js', './SimpleLinearRegression.js',
+ './KalmanFilter.js',
+'./BlockWindowAverage.js', 
+'./DistinctApproxCount.js', '../SenMLParse.js', '../SenMLSpout.js'];
 
 var instances = {};
 var noHeader = true;
@@ -12,7 +15,7 @@ var dispatcher, pubsub, logger;
 (function begin(){
 	dispatcher = new things.Dispatcher();
 	pubsub = new things.Pubsub();
-	logger = fs.createWriteStream('STAT_stats_' + Date.now() + '.csv');
+	// logger = fs.createWriteStream('STAT_stats_' + Date.now() + '.csv');
 
 	dispatcher.on('ready', function(){
 		pubsub.on('ready', function(){
@@ -30,7 +33,7 @@ function memToCSV(data){
 	var values = [data.component, data.timestamp, data.memory.rss,
 		data.memory.heapTotal, data.memory.heapUsed, data.memory.external];
 
-	logger.write(values.join(',') + '\n');
+	// logger.write(values.join(',') + '\n');
 }
 
 function runSTATS(){
@@ -44,7 +47,7 @@ function runSTATS(){
 	var index = 0;
 	COMPONENTS.forEach(function(comp){
 		try{
-			var source = fs.readFileSync('./' + comp, 'utf-8');
+			var source = fs.readFileSync('./' + comp,'utf-8');
 			var engine = currEngines[index];
 			console.log(engine + ' will try to execute: ' + comp);
 

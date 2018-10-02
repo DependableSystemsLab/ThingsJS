@@ -46,6 +46,8 @@ function setup(){
 
 	console.log('Beginning Distinct Approx. Count');
 	pubsub.subscribe(pubsub_topic, doUniqueCount);
+});
+
 }
 
 function doUniqueCount(data){

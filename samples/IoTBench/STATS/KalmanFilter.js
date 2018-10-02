@@ -36,6 +36,7 @@ function setup(){
 		previousEstimation = 0;
 		console.log('Beginning Kalman Filter');
 		pubsub.subscribe(pubsub_topic, kalmanfilter);
+});
 }
 
 function kalmanfilter(data){

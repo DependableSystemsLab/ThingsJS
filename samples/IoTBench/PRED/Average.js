@@ -50,7 +50,6 @@ function average(data){
 		if(aggCount>=WINDOW_SIZE){
 			var tempsum =0
 			datalist.forEach(function(element){
-				console.log("LALALALA" + tempsum);
 				tempsum += Number(element[AVERAGE_TARGET]);
 			});
 			var avg = tempsum/(aggCount+1)

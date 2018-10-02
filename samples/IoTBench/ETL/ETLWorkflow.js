@@ -6,9 +6,11 @@ var fs = require('fs');
 // TODO: generalize this later on for other benchmarks ... we can pass in the components as an arg
 const COMPONENTS = 
 [
-'CsvToSenML.js', 'Annotate.js', 'Interpolation.js',
-'BloomFilterCheck.js', 'RangeFilterCheck.js', 
-
+'./CsvToSenML.js', 
+'./Annotate.js',
+'./Interpolation.js',
+'./BloomFilterCheck.js', 
+'./RangeFilterCheck.js', 
 '../SenMLParse.js', '../SenMLSpout.js'];
 
 var instances = {};
@@ -18,7 +20,7 @@ var dispatcher, pubsub, logger;
 (function begin(){
 	dispatcher = new things.Dispatcher();
 	pubsub = new things.Pubsub();
-	logger = fs.createWriteStream('ETLStats_' + Date.now() + '.csv');
+	// logger = fs.createWriteStream('ETLStats_' + Date.now() + '.csv');
 
 	dispatcher.on('ready', function(){
 		pubsub.on('ready', function(){
@@ -37,7 +39,7 @@ function memToCSV(data){
 	var values = [data.component, data.timestamp, data.memory.rss,
 		data.memory.heapTotal, data.memory.heapUsed, data.memory.external];
 
-	logger.write(values.join(',') + '\n');
+	// logger.write(values.join(',') + '\n');
 }
 
 function runETL(){

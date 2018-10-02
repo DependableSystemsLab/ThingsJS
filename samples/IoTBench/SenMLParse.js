@@ -55,7 +55,7 @@ function processMessage(data) {
 	
 	
 	// Publish the output
-	console.log(mapkeyvalues);
+	// console.log(mapkeyvalues);
     pubsub.publish(publish_topic, mapkeyvalues);
 }
 
