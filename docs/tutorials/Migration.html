@@ -60,7 +60,7 @@
     <link rel="next" href="dashboard/Dashboard.html" />
     
     
-    <link rel="prev" href="./" />
+    <link rel="prev" href="Videostreamer.html" />
     
 
     </head>
@@ -219,7 +219,20 @@
             <ul class="articles">
                 
     
-        <li class="chapter active" data-level="1.3.1" data-path="Migration.html">
+        <li class="chapter " data-level="1.3.1" data-path="Videostreamer.html">
+            
+                <a href="Videostreamer.html">
+            
+                    
+                    Writing your First App
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.3.2" data-path="Migration.html">
             
                 <a href="Migration.html">
             
@@ -232,7 +245,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.2" data-path="dashboard/Dashboard.html">
+        <li class="chapter " data-level="1.3.3" data-path="dashboard/Dashboard.html">
             
                 <a href="dashboard/Dashboard.html">
             
@@ -464,13 +477,63 @@
                                 <section class="normal markdown-section">
                                 
                                 <h1 id="live-migrating-a-javascript-process">Live-migrating a JavaScript process</h1>
-<p>ThingsJS can be used to migrate a running Process from one Device to another in a stateful manner. For instance, a variable will retain its most recent value when it is resumed on a new Device instead of its initial value. In this tutorial, we will be performing live-migration of a simple Program - <code>factorial.js</code> - from one Worker to another.</p>
+<p>ThingsJS can be used to migrate a running Process from one Device to another in a stateful manner. For example, let&apos;s say we have a simple counter program with a variable <code>count</code> being incremented every second. After we run this program on Device A for 10 seconds, the variable <code>count</code> will have a value of <code>10</code>. If we then migrate this program to Device B, the program will resume from the same point, where <code>count</code> has the value <code>10</code>. In this tutorial, we will be performing live-migration of a simple Program, <code>factorial.js</code>, from one Worker to another.</p>
 <h2 id="setuprequirement">Setup/Requirement</h2>
 <ul>
-<li>At least one machine, but preferably two machines to really observe the migration</li>
+<li>At least one machine, but preferably two machines to perform live-migration over the network</li>
 <li>Code for <code>factorial.js</code></li>
 </ul>
 <h2 id="walk-through">Walk-through</h2>
+<p>We will refer to the two devices involved in this tutorial as Device A and B. We will assume that Device A has IP address <code>192.168.0.100</code> and Device B has IP address <code>192.168.0.200</code>.</p>
+<ol>
+<li>First, we will need to set up the ThingsJS Workers. <strong>On both Device A and B</strong>, create a directory to use as the Worker&apos;s runtime environment.</li>
+</ol>
+<pre><code>~$ mkdir migration-tutorial
+</code></pre><ol>
+<li>Navigate into the new directory and create the Worker configuration files <strong>(for both Device A and B)</strong>.</li>
+</ol>
+<pre><code>~$ cd migration-tutorial
+~/migration-tutorial$ vim my-worker.conf
+</code></pre><ol>
+<li>Configuration file should be a JSON string with the following properties: <code>pubsub_url</code>, <code>id</code>.</li>
+</ol>
+<pre><code>{
+    &quot;pubsub_url&quot;: &quot;mqtt://192.168.0.100&quot;,
+    &quot;id&quot;: &quot;worker-A&quot;
+}
+</code></pre><p>The value of <code>pubsub_url</code> should be a URL to the Publish/Subscribe service. In this tutorial, we will be hosting the Pub/Sub service on Device A, so we use the URL <code>mqtt://192.168.0.100</code> - replace this with the public IP of <em>your Device A</em>. <strong><code>pubsub_url</code> should have the same value</strong> on both Device A and B&apos;s configuration files, but <strong><code>id</code> should be assigned differently</strong>.</p>
+<ol>
+<li>Run the Publish/Subscribe service and verify that the workers connect okay.</li>
+</ol>
+<p>On Device A only:</p>
+<pre><code>~$ things-js pubsub -d
+</code></pre><p>Then on both devices:</p>
+<pre><code>~/migration-tutorial$ things-js worker my-worker.conf
+</code></pre><ol>
+<li>On successful launch, you should see some messages on the console:</li>
+</ol>
+<pre><code>~/migration-tutorial$ things-js worker my-worker.conf
+[Engine:worker-A] Initialized
+[Engine:worker-A] connected to Pub/Sub at mqtt://192.168.0.100
+</code></pre><p>If there is no message about connection to Pub/Sub, it is possible that the Pub/Sub service is not running, or that the configured IP address is not reachable.</p>
+<ol>
+<li>We will use the ThingsJS CLI to control the workers for this tutorial. On any machine (it does not have to Device A or B, it just needs to be able to reach the Pub/Sub service), enter the following CLI command to run <code>factorial.js</code> on worker A. The working directory where the following command is entered must contain <code>factorial.js</code> source file.</li>
+</ol>
+<pre><code>~$ things-js dispatch mqtt://192.168.0.100 run worker-A factorial.js
+</code></pre><p><code>things-js dispatch</code> is a command for performing <code>Dispatcher</code> operations. It will create a temporary <code>Dispatcher</code> object, connect to the Pub/Sub service, execute <code>Dispatcher</code> actions, then terminate. Supported <code>Dispatcher</code> actions are: <code>run</code>, <code>pause</code>, <code>resume</code>, <code>kill</code>, <code>migrate</code>. The signature for a <code>things-js dispatch</code> command is thus:</p>
+<pre><code>~$ things-js dispatch &lt;pubsub_url&gt; &lt;action&gt; [action_args...]
+</code></pre><p>Once the above command is successfully run, the CLI should display an output like shown in the example below:</p>
+<pre><code>{ engine: &apos;worker-A&apos;,
+  id: &apos;HwJIiOTD&apos;,
+  pid: 9398,
+  status: &apos;Running&apos; }
+</code></pre><p>The <code>id</code> field contains the ThingsJS Process ID (not the same as PID), which we need for controlling the <code>factorial.js</code> process. <strong>Take note of this value.</strong></p>
+<p>On Device A&apos;s console, you should also see the output from <code>factorial.js</code>.</p>
+<ol>
+<li>Next we will migrate the running <code>factorial.js</code> process from <code>worker-A</code> to <code>worker-B</code>. To do this, enter the following command:</li>
+</ol>
+<pre><code>~$ things-js dispatch mqtt://192.168.0.100 migrate worker-A worker-B factorial.js HwJIiOTD
+</code></pre><p>The last argument here is the ThingsJS Process ID we noted in step 6. Once the command is successful, you should see Device B continuing execution of <code>factorial.js</code>.</p>
 
                                 
                                 </section>
@@ -498,7 +561,7 @@
 
             
                 
-                <a href="./" class="navigation navigation-prev " aria-label="Previous page: Tutorials">
+                <a href="Videostreamer.html" class="navigation navigation-prev " aria-label="Previous page: Writing your First App">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
@@ -514,7 +577,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Live-Migration","level":"1.3.1","depth":2,"next":{"title":"Using the Dashboard","level":"1.3.2","depth":2,"path":"tutorials/dashboard/Dashboard.md","ref":"tutorials/dashboard/Dashboard.md","articles":[]},"previous":{"title":"Tutorials","level":"1.3","depth":1,"path":"tutorials/README.md","ref":"tutorials/README.md","articles":[{"title":"Live-Migration","level":"1.3.1","depth":2,"path":"tutorials/Migration.md","ref":"tutorials/Migration.md","articles":[]},{"title":"Using the Dashboard","level":"1.3.2","depth":2,"path":"tutorials/dashboard/Dashboard.md","ref":"tutorials/dashboard/Dashboard.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"tutorials/Migration.md","mtime":"2018-09-25T07:53:21.762Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-09-25T07:53:43.555Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Live-Migration","level":"1.3.2","depth":2,"next":{"title":"Using the Dashboard","level":"1.3.3","depth":2,"path":"tutorials/dashboard/Dashboard.md","ref":"tutorials/dashboard/Dashboard.md","articles":[]},"previous":{"title":"Writing your First App","level":"1.3.1","depth":2,"path":"tutorials/Videostreamer.md","ref":"tutorials/Videostreamer.md","articles":[]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"tutorials/Migration.md","mtime":"2018-10-01T21:35:36.831Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-10-01T21:37:34.347Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

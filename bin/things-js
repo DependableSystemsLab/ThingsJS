@@ -155,23 +155,96 @@ program
   });
 
 program
-  .command('dispatch <file_path> <pubsub_url> <worker_id>')
-  .description('Dispatch code to a worker')
-  .action(function(file_path, pubsub_url, worker_id){
+  .command('dispatch <pubsub_url> <ctrl> [args...]')
+  .description('Use the dispatcher to perform operations over the network such as running or migrating processes')
+  .action(function(pubsub_url, ctrl, args){
     var things = require('../lib/things.js');
-    var dispatcher = new things.Dispatcher({ pubsub_url: pubsub_url });
-    fs.readFile(file_path, function(err, data){
-      if (err) throw err;
-      var source = data.toString();
-      setTimeout(function(){
-        dispatcher.runCode(worker_id, path.basename(file_path), source)
-          .then(function(result){
-            console.log(">> Running Code ["+result.codeId+"] on CodeEngine ["+result.nodeId+"]");
-            process.exit();
-          });
-      }, 500);
+    var helpers = require('../lib/helpers.js');
+    // console.log(pubsub_url, ctrl, args);
+    var prepare = helpers.defer();
 
-    });
+    switch(ctrl){
+      case 'run':
+        var engine_id = args[0];
+        var file_path = args[1];
+        if (engine_id && file_path){
+          fs.readFile(file_path, function(err, data){
+            if (err) prepare.reject({ reason: 'Error reading file at '+file_path});
+            else {
+              var source = data.toString();
+              prepare.resolve({
+                type: ctrl,
+                args: [engine_id, path.basename(file_path), source]
+              })
+            }
+          })  
+        }
+        else {
+          prepare.reject({ reason: 'Invalid arguments for "run" command. It should be "run <engine_id> <local_file_path>"'});
+        }
+        break;
+      case 'pause':
+        if (args[0]){
+          prepare.resolve({ type: ctrl, args: args })  
+        }
+        else {
+          prepare.reject({ reason: 'Invalid argument for "'+ctrl+'" command. It should be "'+ctrl+' <process_id>"'})
+        }
+        break;
+      case 'resume':
+        if (args[0]){
+          prepare.resolve({ type: ctrl, args: args })  
+        }
+        else {
+          prepare.reject({ reason: 'Invalid argument for "'+ctrl+'" command. It should be "'+ctrl+' <process_id>"'})
+        }
+        break;
+      case 'kill':
+        if (args[0]){
+          prepare.resolve({ type: ctrl, args: args })  
+        }
+        else {
+          prepare.reject({ reason: 'Invalid argument for "'+ctrl+'" command. It should be "'+ctrl+' <process_id>"'})
+        }
+        break;
+      case 'migrate':
+        var from_id = args[0];
+        var to_id = args[1];
+        var code_name = args[2];
+        var proc_id = args[3];
+        if (from_id && to_id && code_name && proc_id){
+          prepare.resolve({ type: ctrl, args: args });
+        }
+        else {
+          prepare.reject({ reason: 'Invalid arguments for "migrate" command. It should be "run <from_engine_id> <to_engine_id> <code_name> <process_id>"'});
+        }
+        break;
+      default:
+        console.log('Invalid <ctrl> argument. It should be one of: run, pause, resume, kill, migrate')
+        break;
+    }
+
+    prepare.promise.then(function(action){
+      var dispatcher = new things.Dispatcher({ pubsub_url: pubsub_url });
+      var apply = helpers.defer();
+      dispatcher.on('ready', function(){
+        setTimeout(function(){
+          dispatcher.applyActions([action])
+            .then(function(results){
+              apply.resolve({ dispatcher: dispatcher, result: results[0] });
+            }).catch(function(error){
+              apply.reject(error);
+            })
+        }, 500); // Giving 500 ms timeout to ensure the target engine is discovered by the Dispatcher
+      });
+      return apply.promise;
+    }).catch(function(error){
+      console.log(error.reason);
+      process.exit(1);
+    }).then(function(data){
+      console.log(data.result);
+      data.dispatcher.kill();
+    })
   });
 
 program
