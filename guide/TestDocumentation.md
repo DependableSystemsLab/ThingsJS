@@ -1,5 +1,8 @@
 ### Test Documentation
 
+> The command to run any tests listed here is:
+> ```mocha <test file>```, e.g. ```mocha require-test.js```
+
 ####  ThingsJS
 Test file(s): ```test/require-test.js```
 * Require test: ```require('things-js')```
