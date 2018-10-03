@@ -723,7 +723,7 @@ DispatcherShell.prototype.ctrlApplication = function(schedulerId, appToken, cmd)
 		ctrl: cmd,
 		kwargs: { token: appToken },
 		request_id: requestId,
-		reply_to: requestId;
+		reply_to: requestId
 	}
 
 	return new Promise(function(resolve){
@@ -743,7 +743,7 @@ DispatcherShell.prototype.pauseApplication = function(schedulerId, appToken){
 }
 
 DispatcherShell.prototype.resumeApplication = function(schedulerId, appToken){
-	return this.ctrlApplication(schedulerIdm appToken, 'resume_application');
+	return this.ctrlApplication(schedulerId, appToken, 'resume_application');
 }
 
 DispatcherShell.prototype.killApplication = function(schedulerId, appToken){
@@ -850,7 +850,7 @@ DispatcherShell.COMMANDS = {
 			return DispatcherShell.ERRORS['ARGS'](['scheduler id', 'application token']);
 		}
 		return this.resumeApplication(arg1, arg2);
-	}
+	},
 	run_app: function(arg1, arg2){
 		if(arguments.length < 2){
 			return DispatcherShell.ERRORS['ARGS'](['scheduler id', 'application JSON']);

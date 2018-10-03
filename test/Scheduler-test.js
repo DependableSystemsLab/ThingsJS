@@ -8,7 +8,6 @@ var mqtt = require('mqtt');
 var mosca = require('mosca');
 var sinon = require('sinon');
 
-
 describe('API methods', function(){
 	var self = this;
 	self.SCHEDULING_INTERVAL = 10000;
@@ -25,7 +24,7 @@ describe('API methods', function(){
 		});
 	});
 
-	describe('First-fit scheduling algorithm', function(){
+	describe.skip('First-fit scheduling algorithm', function(){
 
 		it('Base case: devices = [], tasks = [], mapping = {}', function(){
 			var new_mapping = things.Scheduler.Algorithms['first_fit']([], [], {});
@@ -121,7 +120,7 @@ describe('API methods', function(){
 		});
 	});
 
-	describe('Test for compute actions', function(){
+	describe.skip('Test for compute actions', function(){
 
 		it('Base case: current mapping = {}, desired mapping = {}', function(){
 			var actions = things.Scheduler.computeActions({}, {});
@@ -355,6 +354,86 @@ describe('API methods', function(){
 				device.kill();
 			});
 		})
+	});
+
+	describe('Scheduler cmds', function(){
+		var engine;
+
+		before(function(done){
+			this.timeout(5000);
+			engine = new things.CodeEngine();
+			engine.on('ready', function(){
+				setTimeout(done, 2000);
+			});
+		});
+
+		var counter = "var count = 0\; setInterval(++count, 1000)";
+
+		var actions = ['pause_application', 'resume_application', 'kill_application'];
+
+		function schedule(ctrl, kwargs){
+			var reqId = helpers.randKey();
+
+			var req = {
+				ctrl: ctrl,
+				kwargs: kwargs,
+				request_id: reqId,
+				reply_to: reqId,
+
+			}
+			self.pubsub.publish(self.identity + '/cmd', req);
+			return reqId;
+		}
+
+		it('Schedule an application', function(){
+			this.timeout(10000);
+			var app = {
+				components: {
+					'comp0': { count: 1, source: counter.toString(), required_memory: 1 }
+				}
+			}
+			return new Promise(function(resolve){
+				var listen = schedule('run_application', app);
+				self.pubsub.subscribe(listen, function(res){
+					self.pubsub.unsubscribe(listen);
+					resolve(res);
+				})
+			}).then(function(data){
+				expect(data.payload.token).to.exist;
+				self.token = data.payload.token;
+			});
+		});
+
+		function makeAppRequest(action){
+			it(action, function(){
+				this.timeout(10000);
+
+				if(!self.token){
+					this.skip();
+				}
+				var req = {
+					token: self.token
+				}
+				return new Promise(function(resolve){
+					var listen = schedule(action, req);
+					self.pubsub.subscribe(listen, function(res){
+						self.pubsub.unsubscribe(listen);
+						resolve(res);
+					});
+				}).then(function(data){
+					expect(data.payload).to.exist;
+				});
+			});
+		}
+
+		actions.forEach(function(appCtrl){
+			makeAppRequest(appCtrl);
+		});
+
+		after(function(){
+			engine.kill();
+		});
+
 	});
 
 	describe.skip('Test scheduling an application', function(){
