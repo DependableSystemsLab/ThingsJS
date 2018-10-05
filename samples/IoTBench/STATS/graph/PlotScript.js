@@ -58,11 +58,19 @@ window.onload = function(){
 
 function getPoints(){
 	var req = new XMLHttpRequest();
+<<<<<<< HEAD
 	req.open('GET', 'http://localhost:3000/points');
+=======
+	req.open('GET', 'http://localhost:5000/points');
+>>>>>>> dev
 	req.onreadystatechange = function(){
 		if(req.readyState === 4 && req.status === 200){
 			dataset = JSON.parse(req.responseText);
 		}
 	}
 	req.send();
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> dev

@@ -1,11 +1,27 @@
+<<<<<<< HEAD
 var things = require('../../../lib/things.js');
 var fs = require('fs');
+=======
+var things = require('things-js');
+var fs = require('fs');
+// var gfs = require('FSServer');
+>>>>>>> dev
 
 /* components need to be loaded in OPPOSITE ORDER */
 // TODO: generalize this later on for other benchmarks ... we can pass in the components as an arg
 const COMPONENTS = 
+<<<<<<< HEAD
 ['CsvToSenML.js', 'Annotate.js', 'Interpolation.js',
 'BloomFilterCheck.js', 'RangeFilterCheck.js', 'SenMLParse.js', 'ETLSenMLSpout.js'];
+=======
+[
+'./CsvToSenML.js', 
+'./Annotate.js',
+'./Interpolation.js',
+'./BloomFilterCheck.js', 
+'./RangeFilterCheck.js', 
+'../SenMLParse.js', '../SenMLSpout.js'];
+>>>>>>> dev
 
 var instances = {};
 var noHeader = true;
@@ -14,7 +30,11 @@ var dispatcher, pubsub, logger;
 (function begin(){
 	dispatcher = new things.Dispatcher();
 	pubsub = new things.Pubsub();
+<<<<<<< HEAD
 	logger = fs.createWriteStream('ETL_stats_' + Date.now() + '.csv');
+=======
+	// logger = fs.createWriteStream('ETLStats_' + Date.now() + '.csv');
+>>>>>>> dev
 
 	dispatcher.on('ready', function(){
 		pubsub.on('ready', function(){
@@ -23,7 +43,12 @@ var dispatcher, pubsub, logger;
 	});
 
 })();
+<<<<<<< HEAD
 
+=======
+// mkdir RIOT/ETL folder if not exist 
+// save file inside 
+>>>>>>> dev
 function memToCSV(data){
 	if(noHeader){
 		logger.write('Component, Timestamp, rss, Heap total, Heap used, External\n');
@@ -32,7 +57,11 @@ function memToCSV(data){
 	var values = [data.component, data.timestamp, data.memory.rss,
 		data.memory.heapTotal, data.memory.heapUsed, data.memory.external];
 
+<<<<<<< HEAD
 	logger.write(values.join(',') + '\n');
+=======
+	// logger.write(values.join(',') + '\n');
+>>>>>>> dev
 }
 
 function runETL(){

@@ -66,7 +66,7 @@ Then on both devices:
 If there is no message about connection to Pub/Sub, it is possible that the Pub/Sub service is not running, or that the configured IP address is not reachable.
 
 
-6. We will use the ThingsJS CLI to control the workers for this tutorial. On any machine (it does not have to Device A or B, it just needs to be able to reach the Pub/Sub service), enter the following CLI command to run `factorial.js` on worker A. The working directory where the following command is entered must contain `factorial.js` source file.
+6. We will use the ThingsJS CLI to control the workers for this tutorial. On any machine (it does not have to be Device A or B, it just needs to be able to reach the Pub/Sub service), enter the following CLI command to run `factorial.js` on worker A. **The working directory where the following command is entered must contain `factorial.js` source file.**
 
 ```
 ~$ things-js dispatch mqtt://192.168.0.100 run worker-A factorial.js
@@ -85,7 +85,7 @@ Once the above command is successfully run, the CLI should display an output lik
   pid: 9398,
   status: 'Running' }
 ```
-The `id` field contains the ThingsJS Process ID (not the same as PID), which we need for controlling the `factorial.js` process. **Take note of this value.**
+The `id` field contains the ThingsJS Process ID (not the same as PID), which we need for controlling the `factorial.js` process. **Take note of this value.** (In the example it is `HwJIiOTD`)
 
 On Device A's console, you should also see the output from `factorial.js`.
 

@@ -1,7 +1,7 @@
-var assert = require('assert');
 var things = require('../lib/things.js');
 var helpers = require('../lib/helpers.js');
 var expect = require('chai').expect;
+var assert = require('chai').assert;
 var should = require('chai').should();
 var fs = require('fs');
 var mqtt = require('mqtt');
@@ -339,6 +339,70 @@ describe('Pubsub Test', function(){
 		});
 
 	});
+
+	describe('Streams', function(){
+		var tester, deferred, input, output, count;
+
+		before(function(){
+			return new Promise(function(resolve, reject){
+				deferred = helpers.defer();
+				tester = mqtt.connect(PUBSUB_URL);
+				tester.on('message', function(topic, data){
+					if (topic === 'ioloop-test-write'){
+						var frame = JSON.parse(data);
+						// console.log(frame);
+						if (frame.count === 9){
+							deferred.resolve(frame);
+						}
+					};
+				});
+				tester.on('connect', function(){
+					tester.subscribe('ioloop-test-write', function(){ resolve(); });
+				});
+			});
+		})
+
+		it('can create input streams', function(){
+			input = pubsubs[0].getInputPipe('ioloop-test-read');
+			assert(input instanceof things.Pubsub.InputStream);
+		})
+
+		it('can read from input streams', function(done){
+			this.timeout(10000);
+			input.on('data', function(data){
+				var frame = JSON.parse(data.toString());
+				// console.log(frame);
+				if (frame.count === 9){
+					done();
+				}
+			})
+
+			count = 0;
+			(function repeat(){
+				tester.publish('ioloop-test-read', JSON.stringify({ count: count++ }))
+				if (count < 10) setTimeout(repeat, 50);
+			}())
+		})
+
+		it('can create output streams', function(){
+			output = pubsubs[0].getOutputPipe('ioloop-test-write');
+			assert(output instanceof things.Pubsub.OutputStream);
+		})
+
+		it('can write to output streams', function(done){
+			this.timeout(10000);
+			deferred.promise.then(function(){
+				done();
+			})
+
+			count = 0;
+			(function repeat(){
+				output.write(JSON.stringify({ count: count++ }))
+				if (count < 10) setTimeout(repeat, 50);
+			}())
+		})
+		
+	})
 
 	after('dies gracefully on .kill()', function(done){
 		var promises = pubsubs.map(function(pubsub){

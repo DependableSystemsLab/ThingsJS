@@ -1,5 +1,12 @@
+<<<<<<< HEAD
 var things = require('../../../lib/things.js');
 var fs = require('fs');
+=======
+var things = require('things-js');
+var fs = require('fs');
+var mongoUrl = 'mongodb://localhost:27017/things-js-fs';
+var GFS = require('things-js').addons.gfs(mongoUrl);
+>>>>>>> dev
 var express = require('express');
 var bodyParser = require('body-parser');
 
@@ -20,6 +27,7 @@ function setup(){
 	var properties;
 
 	if(!args.length){
+<<<<<<< HEAD
 		args = ['../ETL/TAXI_properties.json'];
 	}
 	try{
@@ -31,6 +39,22 @@ function setup(){
 	}
 	PLOT_WINDOW = properties['VISUALZE.PLOT.WINDOW_SIZE'] || 10;
 	initServer();
+=======
+		args = ['./TAXI_properties.json'];
+	}
+	
+	GFS.readFile(args[0], function(err2, data) {
+        if (err2) {
+            console.log('\x1b[44m%s\x1b[0m', 'Couldn\'t fetch properties: ' + err2);
+            process.exit();
+        }
+        properties = JSON.parse(data);
+        PLOT_WINDOW = properties['VISUALZE.PLOT.WINDOW_SIZE'] || 10;
+        initServer();
+        console.log('Beginning plot');
+		pubsub.subscribe(pubsub_topic, task);
+	});
+>>>>>>> dev
 }
 
 function initServer(){
@@ -43,7 +67,11 @@ function initServer(){
 	  next();
 	});
 
+<<<<<<< HEAD
 	app.set('port', (process.env.PORT || 3000));
+=======
+	app.set('port', (process.env.PORT || 5000));
+>>>>>>> dev
 	app.listen(app.get('port'), function(){
 		console.log('Server started');
 		app.get('/points', function(req, res){
@@ -72,7 +100,11 @@ function task(data){
 
 pubsub.on('ready', function(){
 	setup();
+<<<<<<< HEAD
 	console.log('Beginning plot');
 	pubsub.subscribe(pubsub_topic, task);
 });
 
+=======
+});
+>>>>>>> dev

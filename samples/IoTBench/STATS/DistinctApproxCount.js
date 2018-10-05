@@ -1,9 +1,20 @@
+<<<<<<< HEAD
 var things = require('../../../lib/things.js');
 var fs = require('fs');
 var crypto = require('crypto');
 
 var pubsub_url = 'mqtt://localhost';
 var pubsub_topic = 'thingsjs/IoTBench/ETL/SenMLParse';
+=======
+var things = require('things-js');
+var fs = require('fs');
+var crypto = require('crypto');
+var mongoUrl = 'mongodb://localhost:27017/things-js-fs';
+var GFS = require('things-js').addons.gfs(mongoUrl);
+
+var pubsub_url = 'mqtt://localhost';
+var pubsub_topic = 'thingsjs/IoTBench/SenMLParse';
+>>>>>>> dev
 var publish_topic = 'thingsjs/IoTBench/STATS/DistinctApproxCount';
 
 var pubsub = new things.Pubsub(pubsub_url);
@@ -19,6 +30,7 @@ function setup(){
 
 	// default to TAXI property set if no specific property file is given
 	if(!args.length){
+<<<<<<< HEAD
 		args = ['../ETL/TAXI_properties.json'];
 	}
 	try{
@@ -29,6 +41,17 @@ function setup(){
 		process.exit();
 	}
 
+=======
+		args = ['./TAXI_properties.json'];
+	}
+
+	GFS.readFile(args[0], function(err2, data) {
+        if (err2) {
+            console.log('\x1b[44m%s\x1b[0m', 'Couldn\'t fetch properties: ' + err2);
+            process.exit();
+        }
+    properties = JSON.parse(data);		
+>>>>>>> dev
 	BUCKET_SIZE = properties['AGGREGATE.DISTINCT_APPROX_COUNT.BUCKETS'] || 10;
 	if(BUCKET_SIZE > 31){
 		console.log('Bucket size is too large. Must be less than or equal to 31');
@@ -42,6 +65,14 @@ function setup(){
 	for(var i = 0; i < numBuckets; i++){
 		maxZeroes[i] = 0;
 	}
+<<<<<<< HEAD
+=======
+
+	console.log('Beginning Distinct Approx. Count');
+	pubsub.subscribe(pubsub_topic, doUniqueCount);
+});
+
+>>>>>>> dev
 }
 
 function doUniqueCount(data){
@@ -65,6 +96,11 @@ function doUniqueCount(data){
 
 	console.log('Approx ' + count + ' unique items in ' + field);
 	pubsub.publish(publish_topic, uniqueCountJSON);
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> dev
 }
 
 function countUniqueItems(item){
@@ -105,7 +141,11 @@ function countTrailZeroes(val){
 
 pubsub.on('ready', function(){
 	setup();
+<<<<<<< HEAD
 	console.log('Beginning Distinct Approx. Count');
 	pubsub.subscribe(pubsub_topic, doUniqueCount);
 });
 
+=======
+});
+>>>>>>> dev

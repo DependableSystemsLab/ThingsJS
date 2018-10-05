@@ -1,8 +1,18 @@
+<<<<<<< HEAD
 var things = require('../../../lib/things.js');
 var fs = require('fs');
 
 var pubsub_url = 'mqtt://localhost';
 var pubsub_topic = 'thingsjs/IoTBench/ETL/SenMLParse';
+=======
+var things = require('things-js');
+var fs = require('fs');
+var mongoUrl = 'mongodb://localhost:27017/things-js-fs';
+var GFS = require('things-js').addons.gfs(mongoUrl);
+
+var pubsub_url = 'mqtt://localhost';
+var pubsub_topic = 'thingsjs/IoTBench/SenMLParse';
+>>>>>>> dev
 var publish_topic = 'thingsjs/IoTBench/STATS/KalmanFilter';
 
 var pubsub = new things.Pubsub(pubsub_url);
@@ -18,6 +28,7 @@ function setup(){
 
 	// default to TAXI property set if no specific property file is given
 	if(!args.length){
+<<<<<<< HEAD
 		args = ['../ETL/TAXI_properties.json'];
 	}
 	try{
@@ -33,6 +44,25 @@ function setup(){
 	PROCESS_NOISE = properties['STATISTICS.KALMAN_FILTER.PROCESS_NOISE'] || 0.1;
 	prevErrorCovariance = properties['STATISTICS.KALMAN_FILTER.ESTIMATED_ERROR'] || 1;
 	previousEstimation = 0;
+=======
+		args = ['./TAXI_properties.json'];
+	}
+	GFS.readFile(args[0], function(err2, data) {
+        if (err2) {
+            console.log('\x1b[44m%s\x1b[0m', 'Couldn\'t fetch properties: ' + err2);
+            process.exit();
+        }
+        properties = JSON.parse(data);
+		USE_MSG_FIELD = properties['STATISTICS.KALMAN_FILTER.USE_MSG_FIELD'] || 0;
+		USE_MSG_FIELDLIST = properties['STATISTICS.KALMAN_FILTER.USE_MSG_FIELD_LIST'];
+		SENSOR_NOISE = properties['STATISTICS.KALMAN_FILTER.SENSOR_NOISE'] || 0.1;
+		PROCESS_NOISE = properties['STATISTICS.KALMAN_FILTER.PROCESS_NOISE'] || 0.1;
+		prevErrorCovariance = properties['STATISTICS.KALMAN_FILTER.ESTIMATED_ERROR'] || 1;
+		previousEstimation = 0;
+		console.log('Beginning Kalman Filter');
+		pubsub.subscribe(pubsub_topic, kalmanfilter);
+});
+>>>>>>> dev
 }
 
 function kalmanfilter(data){
@@ -68,7 +98,11 @@ function kalmanfilter(data){
 
 pubsub.on('ready', function(){
 	setup();
+<<<<<<< HEAD
 	console.log('Beginning Kalman Filter');
 	pubsub.subscribe(pubsub_topic, kalmanfilter);
 });
 
+=======
+});
+>>>>>>> dev

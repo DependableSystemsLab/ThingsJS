@@ -1,9 +1,23 @@
+<<<<<<< HEAD
 var things = require('../../../lib/things.js');
 var slr = require('ml-regression').SLR;
 var fs = require('fs');
 
 var pubsub_url = 'mqtt://localhost';
 var pubsub_topic = 'thingsjs/IoTBench/ETL/SenMLParse';
+=======
+
+// USE ABSOLUTE PATH 
+var things = require('things-js');  
+var slr = require('ml-regression').SLR;
+var fs = require('fs');
+var mongoUrl = 'mongodb://localhost:27017/things-js-fs';
+var GFS = require('things-js').addons.gfs(mongoUrl);
+
+
+var pubsub_url = 'mqtt://localhost';
+var pubsub_topic = 'thingsjs/IoTBench/SenMLParse';
+>>>>>>> dev
 
 /* training variables */
 var TRAINING_SIZE, USE_MSG_FIELDLIST, MODEL_PATH;
@@ -20,10 +34,20 @@ function setup(){
 
 	// default to TAXI property set if no specific property file is given
 	if(!args.length){
+<<<<<<< HEAD
 		args = ['../ETL/TAXI_properties.json'];
 	}
 	try{
 		properties = JSON.parse(fs.readFileSync(args[0], 'utf-8'));
+=======
+		args = ['./TAXI_properties.json'];
+	}
+	try{
+		GFS.readFile(args[0], function(err2, data){
+	   		if (err2) throw err2;
+	 		properties = data;
+		});		
+>>>>>>> dev
 	}
 	catch(e){
 		console.log('Problem reading properties file: ' + e);
@@ -43,7 +67,12 @@ function train(data){
 		console.log('Finished training with '+ TRAINING_SIZE + ' points');
 		regressionModel = new slr(X, Y);
 		// save b_0 and b_1 coefficients into the model file
+<<<<<<< HEAD
 		fs.writeFile(MODEL_PATH, JSON.stringify(regressionModel.coefficients), function(err){
+=======
+		//use gfs api to save model 
+		GFS.writeFile(MODEL_PATH, JSON.stringify(regressionModel.coefficients), function(err){
+>>>>>>> dev
 			if(err){
 				console.log('Error with writing regression to path: ' + err);
 			}

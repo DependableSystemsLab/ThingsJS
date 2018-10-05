@@ -1,8 +1,18 @@
+<<<<<<< HEAD
 var things = require('../../../lib/things.js');
 var fs = require('fs');
 
 var pubsub_url = 'mqtt://localhost';
 var pubsub_topic = 'thingsjs/IoTBench/ETL/SenMLParse';
+=======
+var things = require('things-js');
+var fs = require('fs');
+var mongoUrl = 'mongodb://localhost:27017/things-js-fs';
+var GFS = require('things-js').addons.gfs(mongoUrl);
+
+var pubsub_url = 'mqtt://localhost';
+var pubsub_topic = 'thingsjs/IoTBench/SenMLParse';
+>>>>>>> dev
 var publish_topic = 'thingsjs/IoTBench/STATS/BlockWindowAverage';
 
 var pubsub = new things.Pubsub(pubsub_url);
@@ -17,6 +27,7 @@ function setup(){
 
 	// default to TAXI property set if no specific property file is given
 	if(!args.length){
+<<<<<<< HEAD
 		args = ['../ETL/TAXI_properties.json'];
 	}
 	try{
@@ -26,12 +37,30 @@ function setup(){
 		console.log('Problem reading properties file: ' + e);
 		process.exit();
 	}
+=======
+		args = ['./TAXI_properties.json'];
+	}
+	
+	GFS.readFile(args[0], function(err2, data) {
+        if (err2) {
+            console.log('\x1b[44m%s\x1b[0m', 'Couldn\'t fetch properties: ' + err2);
+            process.exit();
+        }
+    properties = JSON.parse(data);		
+>>>>>>> dev
 	BLOCK_AVG = properties['AGGREGATE.BLOCK_COUNT.WINDOW_SIZE'];
 	USE_MSG_FIELD = properties['AGGREGATE.BLOCK_COUNT.USE_MSG_FIELD'] || 0;
 	USE_MSG_FIELDLIST = properties['AGGREGATE.BLOCK_COUNT.USE_MSG_FIELD_LIST'];
 
 	aggCount = 0;
 	aggSum = 0;
+<<<<<<< HEAD
+=======
+	console.log('Beginning Average');
+	pubsub.subscribe(pubsub_topic, average);
+});
+
+>>>>>>> dev
 }
 
 function average(data){
@@ -68,7 +97,11 @@ function average(data){
 
 pubsub.on('ready', function(){
 	setup();
+<<<<<<< HEAD
 	console.log('Beginning Average');
 	pubsub.subscribe(pubsub_topic, average);
 });
 
+=======
+});
+>>>>>>> dev
