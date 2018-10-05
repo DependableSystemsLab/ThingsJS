@@ -20,6 +20,7 @@
     * [CodeEngine](api/CodeEngine.md)
     * [Dispatcher](api/Dispatcher.md)
     * [Scheduler](api/Scheduler.md)
+    * [File system](api/GFS.md)
 * [Community](Community/README.md)
     * [Get involved](Community/involve.md)
     * [Contribute](Community/contribute.md)

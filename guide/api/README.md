@@ -2,7 +2,7 @@
 
 ThingsJS is a framework for running JavaScript applications on IoT devices such as Raspberry PIs
 
-* NOTE: This repository is currently under active development and its contents are subject to breaking changes. 
+* NOTE: This repository is currently under active development and its contents are subject to breaking changes.
 
 
 # Directory Structure
@@ -26,6 +26,7 @@ This repository is organized thus:
 3. [`lib`](lib/) contains the core ThingsJS code
     1. [`core`](lib/core/) contains the main ThingsJS objects such as `Code`, `CodeEngine`, `Pubsub`, `Dispatcher`.
     2. [`util`](lib/util/) contains general-purpose utility modules used in the system.
+    3. [`extensions`](lib/extensions/) contains distributed file system for the workers.
 4. [`util`](util/) contains supplementary apps and debug tools
     1. [`dashboard`](lib/dashboard/) contains the ThingsJS Dashboard application; it is an `express` web-application
     2. [`gfs`](lib/gfs/) contains the ThingsJS distributed filesystem. The file server can be run as a standalone `express` web-application or as a `express.Router` object to be plugged into an existing application.
@@ -59,7 +60,7 @@ For trying out the framework, you can follow the steps below:
 
 2. `npm install -g` to install the package. (download all the npm dependencies and link the CLI tool)
 You may need to put `sudo` depending on your installation of NodeJS.
-You need the `-g` (global installation) option for using the CLI. If you don't plan on using the CLI, you can omit the `-g` option. 
+You need the `-g` (global installation) option for using the CLI. If you don't plan on using the CLI, you can omit the `-g` option.
 ```
 ~$ cd ThingsJS
 ~/ThingsJS$ npm install -g
@@ -104,7 +105,7 @@ e.g.
 This will start a web-application served at the specified port.
 You can watch the demo of the Dashboard here:
 
-<a href="http://ece.ubc.ca/~kumseok/assets/ThingsJS_Migration.mp4" target="_blank"><img src="http://ece.ubc.ca/~kumseok/assets/ThingsJS_Migration.png" 
+<a href="http://ece.ubc.ca/~kumseok/assets/ThingsJS_Migration.mp4" target="_blank"><img src="http://ece.ubc.ca/~kumseok/assets/ThingsJS_Migration.png"
 alt="Demo Screenshot" width="427" height="240" border="10" /><p>Click Image to see Demo Video</p></a>
 
 
@@ -117,7 +118,7 @@ To start a ThingsJS worker, first you need to create a directory that will provi
 ~$ cd hello_things
 ~$ npm link things-js
 
-#create a config file for the worker first (e.g. node_00.conf) 
+#create a config file for the worker first (e.g. node_00.conf)
 
 ~/hello_things$ things-js worker node_00.conf
 ```
