@@ -27,11 +27,12 @@ For message and data communication between components, we will use things-js pub
 
 
 # Application to scheduler 
-Instead of running components in each phase in order one by one, we plan to use our scheduler to schedule the running sequence of components on different engine worker according to its required memory, CPU, bandwidth, etc. so as to make the whole system more efficient. 
+Instead of running components in each phase in order one by one, we plan to use our scheduler to schedule the running sequence of components on different engine workers according to its required memory, CPU, bandwidth, etc. so as to make the whole system more efficient. 
 
 # Guide for user
-Currently user has to set up the dependency for the benchmark on their worker folder by creating a empty package.json with ```vi package.json``` and ```npm link things-js``` to load all necessary node-modules. Moreover, since the global file system cannot save huge data. User had to put the needed data inside worker folder for running. which is TAXI_properties.json, TAXI_sample_data_senml.csv, taxi-metadata-fulldataset.txt and taxi-schema_with_annotation.csv, all of them are available in samples/IoTBench.
-For the data and model generated during running process, we will save it to global file system in RIOT/ETL, RIOT/STAT, RIOT/TRAIN,RIOT/PRED.
+Currently user has to set up the dependency for the benchmark on their worker folder by creating a empty package.json with ```vi package.json``` and ```npm link things-js``` to load all necessary node-modules. Moreover, since the global file system cannot save huge data. User had to put the needed data inside worker folder for running. which is TAXI_sample_data_senml.csv all of them are available in samples/IoTBench.
+For the data and model generated during running process, we will save it to global file system. 
+There is a automation script benchmark.js in samples folder which can automatically trigger scheduling the components by command ```node benchamrk.js ETL/STAT/TRAIN/PRED```. After the GFS function is finalized, we will move the taxi data to file system and user can also change the data through GFS API. 
 
 
 All figures referenced from [dreamlab RIOT benchmark]( https://github.com/dream-lab/riot-bench)
