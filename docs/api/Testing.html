@@ -1,0 +1,806 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>Running Unit Tests · GitBook</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="Pubsub.html" />
+    
+    
+    <link rel="prev" href="./" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    What is ThingsJS?
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.1.1" data-path="../about/Architecture.html">
+            
+                <a href="../about/Architecture.html">
+            
+                    
+                    System Architecture
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.2" data-path="../about/Terminology.html">
+            
+                <a href="../about/Terminology.html">
+            
+                    
+                    Terminology
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.3" data-path="CLI.html">
+            
+                <a href="CLI.html">
+            
+                    
+                    CLI Commands
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.4" data-path="../Publications.html">
+            
+                <a href="../Publications.html">
+            
+                    
+                    Publications
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="../GettingStarted.html">
+            
+                <a href="../GettingStarted.html">
+            
+                    
+                    Getting Started
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.2.1" data-path="../tutorials/FirstApplication.html">
+            
+                <a href="../tutorials/FirstApplication.html">
+            
+                    
+                    Pocket Beagle
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.2" data-path="../tutorials/SecondApplication.html">
+            
+                <a href="../tutorials/SecondApplication.html">
+            
+                    
+                    Beaglebone Black
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.3" data-path="../samples/">
+            
+                <a href="../samples/">
+            
+                    
+                    Sample Components
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="../tutorials/">
+            
+                <a href="../tutorials/">
+            
+                    
+                    Tutorials
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.1" data-path="../tutorials/Videostreamer.html">
+            
+                <a href="../tutorials/Videostreamer.html">
+            
+                    
+                    Writing your First App
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2" data-path="../tutorials/Migration.html">
+            
+                <a href="../tutorials/Migration.html">
+            
+                    
+                    Live-Migration
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.3" data-path="../tutorials/dashboard/Dashboard.html">
+            
+                <a href="../tutorials/dashboard/Dashboard.html">
+            
+                    
+                    Using the Dashboard
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    Developer API
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter active" data-level="1.4.1" data-path="Testing.html">
+            
+                <a href="Testing.html">
+            
+                    
+                    Running Unit Tests
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.2" data-path="Pubsub.html">
+            
+                <a href="Pubsub.html">
+            
+                    
+                    Pubsub
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.3" data-path="Code.html">
+            
+                <a href="Code.html">
+            
+                    
+                    Code
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.4" data-path="CodeEngine.html">
+            
+                <a href="CodeEngine.html">
+            
+                    
+                    CodeEngine
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.5" data-path="Dispatcher.html">
+            
+                <a href="Dispatcher.html">
+            
+                    
+                    Dispatcher
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.6" data-path="Scheduler.html">
+            
+                <a href="Scheduler.html">
+            
+                    
+                    Scheduler
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.7" data-path="GFS.html">
+            
+                <a href="GFS.html">
+            
+                    
+                    File system
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5" data-path="../Community/">
+            
+                <a href="../Community/">
+            
+                    
+                    Community
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.5.1" data-path="../Community/involve.html">
+            
+                <a href="../Community/involve.html">
+            
+                    
+                    Get involved
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.2" data-path="../Community/contribute.html">
+            
+                <a href="../Community/contribute.html">
+            
+                    
+                    Contribute
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.3" data-path="../Community/feedback.html">
+            
+                <a href="../Community/feedback.html">
+            
+                    
+                    Feedback
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.4" data-path="../Community/comittee.html">
+            
+                <a href="../Community/comittee.html">
+            
+                    
+                    Committee
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >Running Unit Tests</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h3 id="test-documentation">Test Documentation</h3>
+<blockquote>
+<p>The command to run any tests listed here is:
+<code>mocha &lt;test file&gt;</code>, e.g. <code>mocha require-test.js</code></p>
+</blockquote>
+<h4 id="thingsjs">ThingsJS</h4>
+<p>Test file(s): <code>test/require-test.js</code></p>
+<ul>
+<li>Require test: <code>require(&apos;things-js&apos;)</code><ul>
+<li>No error should be thrown<h4 id="code">Code</h4>
+Test file: <code>test/Code-test.js</code></li>
+</ul>
+</li>
+<li>Output equivalency: <code>Code.run</code><ul>
+<li>Tests the output equivalency of instrumented <code>things-js</code> code versus raw code</li>
+</ul>
+</li>
+</ul>
+<h4 id="code-engine">Code Engine</h4>
+<p>Test file: <code>test/CodeEngine-test.js</code></p>
+<ul>
+<li>Initialization: <code>new CodeEngine()</code>:<ul>
+<li>Code Engine instance starts up and emits a <code>&apos;ready&apos;</code> signal</li>
+</ul>
+</li>
+<li>ID assignment: <code>CodeEngine.id</code>:<ul>
+<li>A unique ID is assigned to an initialized <code>Code Engine</code> object</li>
+</ul>
+</li>
+<li>Pubsub assignment: <code>CodeEngine.pubsub</code><ul>
+<li>A <code>pubsub</code> object is assigned to an initialized <code>Code Engine</code></li>
+</ul>
+</li>
+<li>Runs code: <code>CodeEngine.run_code</code><ul>
+<li>Runs a new code instance on the engine when the proper arguments are given</li>
+</ul>
+</li>
+<li>Dies gracefully: <code>CodeEngine.kill</code><ul>
+<li><code>Code Engine</code> exits and throws no errors<h4 id="pubsub">Pubsub</h4>
+Test file: <code>test/Pubsub-test.js</code></li>
+</ul>
+</li>
+<li>Initialization: <code>new Pubsub()</code><ul>
+<li>Pubsub instance starts up and emits a <code>ready</code> signal</li>
+</ul>
+</li>
+<li>ID assignment: <code>Pubsub.id</code><ul>
+<li>A unique ID is assigned to an initialized <code>Pubsub</code> object </li>
+</ul>
+</li>
+<li>Subscription works: <code>Pubsub.subscribe</code><ul>
+<li>Handles single and multiple topic subscriptions</li>
+<li>Receives messages for a topic it is subscribed to</li>
+<li>Receives message in order</li>
+</ul>
+</li>
+<li>Unsubscribe works: <code>Pubsub.unsubscribe</code><ul>
+<li>No longer receives messages for the topic it has unsubscribed from</li>
+</ul>
+</li>
+<li>Publishes to subscribed node: <code>Pubsub.publish</code><ul>
+<li>Is able to publish data for a given topic to all node listening to the topic</li>
+</ul>
+</li>
+<li>Dies gracefully on kill call: <code>Pubsub.kill</code><ul>
+<li><code>Pubsub</code> exits and throws no errors</li>
+</ul>
+</li>
+</ul>
+<h4 id="dispatcher">Dispatcher</h4>
+<p>Test file: <code>test/Dispatcher-test.js</code></p>
+<ul>
+<li>Initialization: <code>new Dispatcher()</code><ul>
+<li><code>Dispatcher</code> instance starts up and emits a <code>ready</code> signal</li>
+</ul>
+</li>
+<li>ID assignment: <code>Dispatcher.id</code><ul>
+<li>Dispatcher is assigned a unique ID</li>
+</ul>
+</li>
+<li>Pubsub assignment: <code>Dispatcher.pubsub</code><ul>
+<li>Dispatcher is assigned a <code>pubsub</code> object</li>
+</ul>
+</li>
+<li>Correct <code>Code Engine</code> view: <code>Dispatcher.Engines</code><ul>
+<li>Dispatcher detects the correct number of <code>code engine</code> instances in the network</li>
+</ul>
+</li>
+<li>Correct <code>Code Engine</code> statuses: <code>Dispatcher.Engines</code><ul>
+<li>Dispatcher detects the correct status of <code>idle</code> <code>code engine</code> instances</li>
+</ul>
+</li>
+<li>Run code on a <code>Code Engine</code>: <code>Dispatcher.runCode, Dispatcher.engines, Dispatcher.programs</code><ul>
+<li><code>Code Engine</code> returns a reply once code begins to execute</li>
+<li>Dispatcher detects engines running code to have status <code>busy</code></li>
+<li>Dispatcher detects new <code>program</code> running</li>
+<li>Dispatcher receives any <code>console output</code> by the new code instance</li>
+</ul>
+</li>
+<li>Migration between <code>Code Engines</code>: <code>Dispatcher.moveCode</code>, <code>Dispatcher.engines</code><ul>
+<li><code>Code Engine</code> returns a reply once code migrates</li>
+<li><code>Code Engine</code> that migrates its code instance changes status to <code>idle</code> </li>
+<li><code>Code Engine</code> that executes migrated snapshot changes status to <code>busy</code></li>
+<li>Migrated code executes from where it left off</li>
+</ul>
+</li>
+<li>Process control: <code>Dispatcher.pauseCode, Dispatcher.resumeCode</code><ul>
+<li>A <code>Code Engine</code> can receive consecutive <code>pause</code> and <code>resume</code> commands</li>
+<li>Replies are received for each <code>pause</code> or <code>resume</code> command sent</li>
+</ul>
+</li>
+</ul>
+<h4 id="scheduler">Scheduler</h4>
+<p>Test file: <code>test/Scheduler-test.js</code></p>
+<ul>
+<li>First fit scheduling algorithm: <code>Scheduler.algorithms[&apos;first_fit&apos;]</code><ul>
+<li>Passes the base case scenario of 0 tasks and 0 devices</li>
+<li>Throws an error when not enough memory exists for the given tasks and devices</li>
+<li>Returns a correct mapping when enough memory exists for the given tasks and devices</li>
+</ul>
+</li>
+<li>Computing actions to go from one mapping to another: <code>Scheduler.computeActions</code><ul>
+<li>Computes the correct <code>run</code> commands to initialize new code instances</li>
+<li>Computes the correct <code>kill</code> commands to stop existing code instances</li>
+<li>Computes the correct <code>migrate</code> command to move code instances</li>
+</ul>
+</li>
+<li>Initialization: <code>new Scheduler()</code>:<ul>
+<li><code>Scheduler</code> instance starts up and emits a <code>ready</code> signal</li>
+</ul>
+</li>
+<li>ID assignment: <code>Scheduler.id</code>:<ul>
+<li>Scheduler is assigned a unique ID</li>
+</ul>
+</li>
+<li>Scheduler logs itself booting as its first event: <code>Scheduler.history</code><ul>
+<li>The past history is non-empty</li>
+<li>The first event log is the Scheduler booting</li>
+</ul>
+</li>
+<li>Ignores rogue processes: <code>Scheduler._assess</code>:<ul>
+<li>Does not return an error when assessing the current state of the network </li>
+<li>Ignores any processes without <code>code engine</code> owners</li>
+</ul>
+</li>
+<li>Correct network view: <code>Scheduler._assess</code>:<ul>
+<li>Detects when a <code>Code Engine</code> has died</li>
+<li>Does not fail when nodes leave the network</li>
+</ul>
+</li>
+<li>Handles an application request with no available devices: <code>Scheduler.behaviours[&apos;run_application&apos;]</code><ul>
+<li>Request times out</li>
+</ul>
+</li>
+<li>Able to schedule an empty application (no components): <code>Scheduler.behaviours[&apos;run_application&apos;]</code><ul>
+<li>Sends back a reply over <code>pubsub</code> indicating success</li>
+</ul>
+</li>
+<li>Able to schedule an application with components on a running device: <code>Scheduler.behaviours[&apos;run_application&apos;]</code><ul>
+<li>Sends back a reply over <code>pubsub</code> indicating successs</li>
+</ul>
+</li>
+<li>Utilizes available <code>Code Engines</code> that join network by migrating code instances: <code>Scheduler._assess</code></li>
+</ul>
+<h4 id="filesystem-api">Filesystem API</h4>
+<p>Test file: <code>test/Filesystem-REST-test.js</code></p>
+<ul>
+<li>Writes a new file: <code>gfs.writeFile</code><ul>
+<li>Execution causes no error</li>
+</ul>
+</li>
+<li>Read an existing file: <code>gfs.readFile</code><ul>
+<li>File name and contents match the file to be expected</li>
+</ul>
+</li>
+<li>Read a non-existent file: <code>gfs.ReadFile</code><ul>
+<li>Error is thrown</li>
+</ul>
+</li>
+<li>Write an existing file: <code>gfs.writeFile</code><ul>
+<li>Content is overwritten </li>
+</ul>
+</li>
+<li>Append to a new file:  <code>gfs.appendFile</code><ul>
+<li>New file is created with the append content</li>
+</ul>
+</li>
+<li>Append to an existing file: <code>gfs.appendFile</code><ul>
+<li>The existing content is not overwritten but appended to for as long as <code>appendFile()</code> is called</li>
+</ul>
+</li>
+<li>Delete a non-existent file: <code>gfs.deleteFile</code><ul>
+<li>An error is thrown</li>
+</ul>
+</li>
+<li>Delete an existing file: <code>gfs.deleteFile</code><ul>
+<li>The file no longer exists and cannot be read</li>
+</ul>
+</li>
+</ul>
+<h4 id="filesystem-rest-api">Filesystem REST API</h4>
+<p>Test file: <code>test/Filesystem-test.js</code></p>
+<ul>
+<li><code>GET requests</code>:<ul>
+<li>Get the <code>root</code> directory</li>
+<li>Get a file from the <code>root</code> directory</li>
+<li>Get a folder from the <code>root</code> directory</li>
+<li>Get a file from a subdirectory</li>
+</ul>
+</li>
+<li><code>POST requests:</code>:<ul>
+<li>Create a file in the <code>root</code> directory</li>
+<li>Create a folder in the <code>root</code> directory</li>
+<li>Create a file in a subdirectory</li>
+</ul>
+</li>
+<li><code>DELETE requests:</code>:<ul>
+<li>Delete a file from the <code>root</code> directory</li>
+<li>Delete a non-empty folder</li>
+</ul>
+</li>
+</ul>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="./" class="navigation navigation-prev " aria-label="Previous page: Developer API">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="Pubsub.html" class="navigation navigation-next " aria-label="Next page: Pubsub">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"Running Unit Tests","level":"1.4.1","depth":2,"next":{"title":"Pubsub","level":"1.4.2","depth":2,"path":"api/Pubsub.md","ref":"api/Pubsub.md","articles":[]},"previous":{"title":"Developer API","level":"1.4","depth":1,"path":"api/README.md","ref":"api/README.md","articles":[{"title":"Running Unit Tests","level":"1.4.1","depth":2,"path":"api/Testing.md","ref":"api/Testing.md","articles":[]},{"title":"Pubsub","level":"1.4.2","depth":2,"path":"api/Pubsub.md","ref":"api/Pubsub.md","articles":[]},{"title":"Code","level":"1.4.3","depth":2,"path":"api/Code.md","ref":"api/Code.md","articles":[]},{"title":"CodeEngine","level":"1.4.4","depth":2,"path":"api/CodeEngine.md","ref":"api/CodeEngine.md","articles":[]},{"title":"Dispatcher","level":"1.4.5","depth":2,"path":"api/Dispatcher.md","ref":"api/Dispatcher.md","articles":[]},{"title":"Scheduler","level":"1.4.6","depth":2,"path":"api/Scheduler.md","ref":"api/Scheduler.md","articles":[]},{"title":"File system","level":"1.4.7","depth":2,"path":"api/GFS.md","ref":"api/GFS.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"api/Testing.md","mtime":"2018-10-02T17:42:22.476Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-10-05T23:44:29.969Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+
