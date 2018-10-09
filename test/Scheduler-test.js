@@ -24,7 +24,7 @@ describe('API methods', function(){
 		});
 	});
 
-	describe.skip('First-fit scheduling algorithm', function(){
+	describe('First-fit scheduling algorithm', function(){
 
 		it('Base case: devices = [], tasks = [], mapping = {}', function(){
 			var new_mapping = things.Scheduler.Algorithms['first_fit']([], [], {});
@@ -120,7 +120,7 @@ describe('API methods', function(){
 		});
 	});
 
-	describe.skip('Test for compute actions', function(){
+	describe('Test for compute actions', function(){
 
 		it('Base case: current mapping = {}, desired mapping = {}', function(){
 			var actions = things.Scheduler.computeActions({}, {});
@@ -271,7 +271,7 @@ describe('API methods', function(){
 
 	});
 
-	describe.skip('Process detection', function(){
+	describe('Process detection', function(){
 		it('Ignore rogue processes', function(){
 			this.timeout(10000);
 			var pubsub = new things.Pubsub();
@@ -294,7 +294,7 @@ describe('API methods', function(){
 		});
 	});
 
-	describe.skip('Correct view of the network', function(){
+	describe('Correct view of the network', function(){
 		var ENGINE_REPORT = 2000;
 		var id = 'THIS_ENGINE'
 
@@ -320,7 +320,7 @@ describe('API methods', function(){
 		})
 	});
 
-	describe.skip('Node failures', function(){
+	describe('Node failures', function(){
 		var engines = [];
 		var ready = [];
 		var num_engines = 3;
@@ -436,7 +436,7 @@ describe('API methods', function(){
 
 	});
 
-	describe.skip('Test scheduling an application', function(){
+	describe('Test scheduling an application', function(){
 
 		var simple_function = 'console.log(\"Testing\")';
 
@@ -520,6 +520,7 @@ describe('API methods', function(){
 		});
 
 		it('Test migration', function(){
+			this.skip();
 			this.timeout(30000);
 
 			var callback = sinon.fake();
@@ -529,19 +530,19 @@ describe('API methods', function(){
 			var app = { 
 				components: { 
 						'bar': { source: simple_function, count: 1 },
-						'foo': { source: simple_function, count: 1} 
+						'foo': { source: simple_function, count: 1 } 
 					}
 				};
 			var request = generate_app(app);
 
 			return new Promise(function(resolve){
-				var init = function(callback){
+				var init = function(){
 					second_device = new things.CodeEngine({ id: dev_two });
 					engines.push(second_device);
 					second_device.on('ready', function(){
 						setTimeout(function(){
 							self.scheduler._assess().then(function(data){
-								callback(data);
+								resolve(data);
 							});
 						}, self.SCHEDULING_INTERVAL);
 					});
@@ -549,7 +550,7 @@ describe('API methods', function(){
 
 				first_device = new things.CodeEngine({ id: dev_one });
 				engines.push(first_device);
-				self.pubsub.subscribe(request.reply_to, init.bind(null, resolve));
+				self.pubsub.subscribe(request.reply_to, init);
 				first_device.on('ready', function(){
 					setTimeout(function(){
 						self.pubsub.publish(self.identity + '/cmd', request);
