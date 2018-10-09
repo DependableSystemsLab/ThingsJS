@@ -174,9 +174,9 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.2.1" data-path="../tutorials/FirstApplication.html">
+        <li class="chapter " data-level="1.2.1" data-path="../tutorials/Setup-PocketBeagle.html">
             
-                <a href="../tutorials/FirstApplication.html">
+                <a href="../tutorials/Setup-PocketBeagle.html">
             
                     
                     Pocket Beagle
@@ -187,9 +187,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2.2" data-path="../tutorials/SecondApplication.html">
+        <li class="chapter " data-level="1.2.2" data-path="../tutorials/Setup-BeagleboneBlack.html">
             
-                <a href="../tutorials/SecondApplication.html">
+                <a href="../tutorials/Setup-BeagleboneBlack.html">
             
                     
                     Beaglebone Black
@@ -206,6 +206,19 @@
             
                     
                     Sample Components
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.4" data-path="../samples/RIoTBenchmarks.html">
+            
+                <a href="../samples/RIoTBenchmarks.html">
+            
+                    
+                    Sample Benchmarks
             
                 </a>
             
@@ -232,9 +245,9 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.3.1" data-path="../tutorials/Videostreamer.html">
+        <li class="chapter " data-level="1.3.1" data-path="../tutorials/FirstApplication.html">
             
-                <a href="../tutorials/Videostreamer.html">
+                <a href="../tutorials/FirstApplication.html">
             
                     
                     Writing your First App
@@ -368,6 +381,19 @@
             
         </li>
     
+        <li class="chapter " data-level="1.4.7" data-path="GFS.html">
+            
+                <a href="GFS.html">
+            
+                    
+                    File system
+            
+                </a>
+            
+
+            
+        </li>
+    
 
             </ul>
             
@@ -490,17 +516,33 @@
                                 <section class="normal markdown-section">
                                 
                                 <h1 id="cli-commands">CLI commands</h1>
+<ul>
+<li><a href="#things-js-pubsub"><code>things-js pubsub</code></a> - Start a MQTT Publish/Subscribe Server</li>
+<li><a href="#things-js-dashboard"><code>things-js dashboard</code></a> - Start a ThingsJS Web Dashboard server</li>
+<li><a href="#things-js-worker-confpath"><code>things-js worker</code></a> - Start a ThingsJS Worker process</li>
+<li><a href="#things-js-instrument-filepath"><code>things-js instrument</code></a> - Instrument a given JavaScript file to make it migratable</li>
+<li><a href="#things-js-restore-filepath"><code>things-js restore</code></a> - Restore program code from a given JSON snapshot file</li>
+<li><a href="#things-js-run-filepath"><code>things-js run</code></a> - Run a JavaScript program as a ThingsJS process</li>
+<li><a href="#things-js-dispatch-pubsuburl-ctrl-args"><code>things-js dispatch</code></a> - Control ThingsJS workers and processes using Dispatcher commands</li>
+<li><a href="#things-js-scheduler-confpath"><code>things-js scheduler</code></a> - Start a ThingsJS Scheduler processs</li>
+</ul>
+<hr>
 <h2 id="things-js-pubsub"><code>things-js pubsub</code></h2>
+<blockquote>
+<p>Start a MOSCA Publish/Subscribe Server, binding to port 1883 (MQTT).</p>
+</blockquote>
 <p><strong>Options:</strong></p>
 <ul>
-<li>[<code>-d</code> | <code>--debug</code>] - set debug flag to true</li>
+<li>[<code>-d</code> | <code>--debug</code>] - set debug flag to true, and messages will be printed to the stdout</li>
 </ul>
-<p><strong>Description:</strong></p>
-<p>Start a MOSCA Publish/Subscribe Server</p>
 <p><strong>Example:</strong></p>
 <pre><code>~$ things-js pubsub
-</code></pre><h2 id="things-js-dashboard"><code>things-js dashboard</code></h2>
+</code></pre><hr>
+<h2 id="things-js-dashboard"><code>things-js dashboard</code></h2>
 <p><strong>Alias:</strong> <code>things-js dash</code></p>
+<blockquote>
+<p>This command starts the web dashboard application, binding to port specified by <code>port</code>. It will use the Publish/Subscribe service located at <code>pubsub_url</code> and use Global File Storage service located at <code>fs_db_url</code>.</p>
+</blockquote>
 <p><strong>Options:</strong></p>
 <ul>
 <li>[<code>-c &lt;conf_path&gt;</code> | <code>--config &lt;conf_path&gt;</code>] - specify a configuration file to use</li>
@@ -511,11 +553,10 @@
     pubsub_url: &apos;mqtt://localhost&apos;,
     fs_db_url: &apos;mongodb://localhost:27017/things-js-fs&apos;
 }
-</code></pre><p><strong>Description:</strong></p>
-<p>This command starts the web dashboard application, binding to port specified by <code>port</code>. It will use the Publish/Subscribe service located at <code>pubsub_url</code> and use Global File Storage service located at <code>fs_db_url</code>.</p>
-<p><strong>Example:</strong></p>
+</code></pre><p><strong>Example:</strong></p>
 <pre><code>~$ things-js dash -c ./dashboard.conf
-</code></pre><h2 id="things-js-worker-confpath"><code>things-js worker &lt;conf_path&gt;</code></h2>
+</code></pre><hr>
+<h2 id="things-js-worker-confpath"><code>things-js worker &lt;conf_path&gt;</code></h2>
 <p><strong>Alias:</strong> <code>things-js engine &lt;conf_path&gt;</code></p>
 <p>The content of the file located at <code>&lt;conf_path&gt;</code> must be a json string. Default shown below :</p>
 <pre><code>{
@@ -523,37 +564,46 @@
     &quot;id&quot;: &quot;engine-&quot; + {randomly generated at runtime},
     &quot;device&quot;: &quot;raspberry-pi3&quot;
 }
-</code></pre><p><strong>Options:</strong></p>
+</code></pre><blockquote>
+<p>It starts a ThingsJS worker, connecting to Publish/Subscribe service at <code>pubsub_url</code>. If <code>id</code> is given in the configuration file, it will use that value. If not given, it will be generated randomly upon start.</p>
+</blockquote>
+<p><strong>Options:</strong></p>
 <ul>
 <li>[<code>-d</code> | <code>--debug</code>] - set debug flag to true</li>
 </ul>
-<p><strong>Description:</strong></p>
-<p>It starts a ThingsJS worker, connecting to Publish/Subscribe service at <code>pubsub_url</code>. If <code>id</code> is given in the configuration file, it will use that value. If not given, it will be generated randomly upon start.</p>
 <p><strong>Example:</strong></p>
 <pre><code>~$ things-js worker ./pi-01.conf
-</code></pre><h2 id="things-js-instrument-filepath"><code>things-js instrument &lt;file_path&gt;</code></h2>
+</code></pre><hr>
+<h2 id="things-js-instrument-filepath"><code>things-js instrument &lt;file_path&gt;</code></h2>
 <p><strong>Alias:</strong> <code>things-js inst &lt;file_path&gt;</code></p>
+<blockquote>
+<p>Instrument the JavaScript file located at <code>&lt;file_path&gt;</code> and write the instrumented source code to stdout.</p>
+</blockquote>
 <p><strong>Options:</strong></p>
 <ul>
 <li>[<code>-s &lt;save_path&gt;</code> | <code>--save &lt;save_path&gt;</code>] - File path to optionally save instrumented code</li>
 <li>[<code>-p &lt;pubsub_url&gt;</code> | <code>--pubsub &lt;pubsub_url&gt;</code>] - Pubsub URL to use for the output program. Defaults to <code>mqtt://localhost</code></li>
 <li>[<code>-d</code> | <code>--debug</code>] - set debug flag to true</li>
 </ul>
-<p><strong>Description:</strong></p>
-<p>Instrument the JavaScript file located at <code>&lt;file_path&gt;</code> and write the instrumented source code to stdout.</p>
 <p><strong>Example:</strong></p>
 <pre><code>~$ things-js inst ./myComponent.js &gt; ./myComponent.things.js
-</code></pre><h2 id="things-js-restore-filepath"><code>things-js restore &lt;file_path&gt;</code></h2>
+</code></pre><hr>
+<h2 id="things-js-restore-filepath"><code>things-js restore &lt;file_path&gt;</code></h2>
+<blockquote>
+<p>Restore the ThingsJS JSON snapshot file located at <code>&lt;file_path&gt;</code> and write the restored source code to stdout.</p>
+</blockquote>
 <p><strong>Options:</strong></p>
 <ul>
 <li>[<code>-s &lt;save_path&gt;</code> | <code>--save &lt;save_path&gt;</code>] - File path to optionally save instrumented code</li>
 <li>[<code>-d</code> | <code>--debug</code>] - set debug flag to true</li>
 </ul>
-<p><strong>Description:</strong></p>
-<p>Restore the ThingsJS JSON snapshot file located at <code>&lt;file_path&gt;</code> and write the restored source code to stdout.</p>
 <p><strong>Example:</strong></p>
 <pre><code>~$ things-js restore ./myComponent.json &gt; ./myComponent.restored.js
-</code></pre><h2 id="things-js-run-filepath"><code>things-js run &lt;file_path&gt;</code></h2>
+</code></pre><hr>
+<h2 id="things-js-run-filepath"><code>things-js run &lt;file_path&gt;</code></h2>
+<blockquote>
+<p>Instrument or Restore the input file located at <code>&lt;file_path&gt;</code> and then run the program. It should be noted that <strong>this command will run the process without a CodeEngine instance</strong>, so it will not be included during scheduling.</p>
+</blockquote>
 <p><strong>Options:</strong></p>
 <ul>
 <li>[<code>-r</code> | <code>--restore</code>] - indicate that input <code>&lt;file_path&gt;</code> is a JSON snapshot</li>
@@ -561,11 +611,44 @@
 <li>[<code>-p &lt;pubsub_url&gt;</code> | <code>--pubsub &lt;pubsub_url&gt;</code>] - Pubsub URL to use for the output program. Defaults to <code>mqtt://localhost</code></li>
 <li>[<code>-d</code> | <code>--debug</code>] - set debug flag to true</li>
 </ul>
-<p><strong>Description:</strong></p>
-<p>Instrument or Restore the input file located at <code>&lt;file_path&gt;</code> and then run the program. It should be noted that <strong>this command will run the process without a CodeEngine instance</strong>, so it will not be included during scheduling.</p>
 <p><strong>Example:</strong></p>
 <pre><code>~$ things-js run ./myComponent.js
-</code></pre>
+</code></pre><hr>
+<h2 id="things-js-dispatch-pubsuburl-ctrl-args"><code>things-js dispatch &lt;pubsub_url&gt; &lt;ctrl&gt; [args...]</code></h2>
+<blockquote>
+<p>Send <code>Dispatcher</code> commands over the Pub/Sub interface to control the ThingsJS workers</p>
+</blockquote>
+<ul>
+<li><p><code>pubsub_url</code> is the URL of the MQTT Pub/Sub service (e.g. <code>mqtt://localhost</code>); any worker connected to the same Pub/Sub server can be controlled.</p>
+</li>
+<li><p><code>ctrl</code> and <code>[args...]</code> specify what <code>Dispatcher</code> command to issue. The following commands are available:</p>
+<ul>
+<li><code>run &lt;engine_id&gt; &lt;file_path&gt;</code> - Run a JavaScript program found at <code>&lt;file_path&gt;</code> on <code>&lt;engine_id&gt;</code>. Upon success, a <code>&lt;process_id&gt;</code> for the newly started process will be returned.</li>
+<li><code>pause &lt;process_id&gt;</code> - Pause the process with ThingsJS process id <code>&lt;process_id&gt;</code></li>
+<li><code>resume &lt;process_id&gt;</code> - Resume the process with ThingsJS process id <code>&lt;process_id&gt;</code></li>
+<li><code>kill &lt;process_id&gt;</code> - Kill the process with ThingsJS process id <code>&lt;process_id&gt;</code></li>
+<li><code>migrate &lt;from_engine&gt; &lt;to_engine&gt; &lt;code_name&gt; &lt;process_id&gt;</code> - Live-migrate the process with ThingsJS process id <code>&lt;process_id&gt;</code> and name <code>&lt;code_name&gt;</code> from <code>&lt;from_engine&gt;</code> to <code>&lt;to_engine&gt;</code>.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Example:</strong></p>
+<pre><code>~$ things-js dispatch mqtt://localhost run pi-01 factorial.js
+</code></pre><p>In the above example, <code>&lt;pubsub_url&gt;</code> = <code>mqtt://localhost</code>, <code>&lt;ctrl&gt;</code> = <code>run</code>, <code>[args...]</code> = <code>pi-01 factorial.js</code>. This command will run <code>factorial.js</code> on Worker <code>pi-01</code>.</p>
+<hr>
+<h2 id="things-js-scheduler-confpath"><code>things-js scheduler &lt;conf_path&gt;</code></h2>
+<p><strong>Alias:</strong> <code>things-js sched &lt;conf_path&gt;</code></p>
+<p>The content of the file located at <code>&lt;conf_path&gt;</code> must be a json string. Default shown below :</p>
+<pre><code>{
+    &quot;pubsub_url&quot;: &quot;mqtt://localhost&quot;,
+    &quot;id&quot;: &quot;things-scheduler&quot;
+}
+</code></pre><blockquote>
+<p>It starts a ThingsJS scheduler, connecting to Publish/Subscribe service at <code>pubsub_url</code>.</p>
+</blockquote>
+<p><strong>Example:</strong></p>
+<pre><code>~$ things-js scheduler ./scheduler.conf
+</code></pre><hr>
+
                                 
                                 </section>
                             
@@ -608,7 +691,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"CLI Commands","level":"1.1.3","depth":2,"next":{"title":"Publications","level":"1.1.4","depth":2,"path":"Publications.md","ref":"Publications.md","articles":[]},"previous":{"title":"Terminology","level":"1.1.2","depth":2,"path":"about/Terminology.md","ref":"about/Terminology.md","articles":[]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"api/CLI.md","mtime":"2018-10-02T00:39:06.312Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-10-02T17:40:47.784Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"CLI Commands","level":"1.1.3","depth":2,"next":{"title":"Publications","level":"1.1.4","depth":2,"path":"Publications.md","ref":"Publications.md","articles":[]},"previous":{"title":"Terminology","level":"1.1.2","depth":2,"path":"about/Terminology.md","ref":"about/Terminology.md","articles":[]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"api/CLI.md","mtime":"2018-10-09T19:46:44.357Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-10-09T20:09:16.144Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

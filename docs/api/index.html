@@ -174,9 +174,9 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.2.1" data-path="../tutorials/FirstApplication.html">
+        <li class="chapter " data-level="1.2.1" data-path="../tutorials/Setup-PocketBeagle.html">
             
-                <a href="../tutorials/FirstApplication.html">
+                <a href="../tutorials/Setup-PocketBeagle.html">
             
                     
                     Pocket Beagle
@@ -187,9 +187,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2.2" data-path="../tutorials/SecondApplication.html">
+        <li class="chapter " data-level="1.2.2" data-path="../tutorials/Setup-BeagleboneBlack.html">
             
-                <a href="../tutorials/SecondApplication.html">
+                <a href="../tutorials/Setup-BeagleboneBlack.html">
             
                     
                     Beaglebone Black
@@ -206,6 +206,19 @@
             
                     
                     Sample Components
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.4" data-path="../samples/RIoTBenchmarks.html">
+            
+                <a href="../samples/RIoTBenchmarks.html">
+            
+                    
+                    Sample Benchmarks
             
                 </a>
             
@@ -232,9 +245,9 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.3.1" data-path="../tutorials/Videostreamer.html">
+        <li class="chapter " data-level="1.3.1" data-path="../tutorials/FirstApplication.html">
             
-                <a href="../tutorials/Videostreamer.html">
+                <a href="../tutorials/FirstApplication.html">
             
                     
                     Writing your First App
@@ -368,6 +381,19 @@
             
         </li>
     
+        <li class="chapter " data-level="1.4.7" data-path="GFS.html">
+            
+                <a href="GFS.html">
+            
+                    
+                    File system
+            
+                </a>
+            
+
+            
+        </li>
+    
 
             </ul>
             
@@ -492,7 +518,7 @@
                                 <h1 id="api-documentation-for-developers">API Documentation for Developers</h1>
 <p>ThingsJS is a framework for running JavaScript applications on IoT devices such as Raspberry PIs</p>
 <ul>
-<li>NOTE: This repository is currently under active development and its contents are subject to breaking changes. </li>
+<li>NOTE: This repository is currently under active development and its contents are subject to breaking changes.</li>
 </ul>
 <h1 id="directory-structure">Directory Structure</h1>
 <pre><code>/bin
@@ -511,6 +537,7 @@
 <li><a href="lib"><code>lib</code></a> contains the core ThingsJS code<ol>
 <li><a href="lib/core"><code>core</code></a> contains the main ThingsJS objects such as <code>Code</code>, <code>CodeEngine</code>, <code>Pubsub</code>, <code>Dispatcher</code>.</li>
 <li><a href="lib/util"><code>util</code></a> contains general-purpose utility modules used in the system.</li>
+<li><a href="lib/extensions"><code>extensions</code></a> contains distributed file system for the workers.</li>
 </ol>
 </li>
 <li><a href="util"><code>util</code></a> contains supplementary apps and debug tools<ol>
@@ -539,7 +566,7 @@
 </code></pre></li>
 <li><p><code>npm install -g</code> to install the package. (download all the npm dependencies and link the CLI tool)
 You may need to put <code>sudo</code> depending on your installation of NodeJS.
-You need the <code>-g</code> (global installation) option for using the CLI. If you don&apos;t plan on using the CLI, you can omit the <code>-g</code> option. </p>
+You need the <code>-g</code> (global installation) option for using the CLI. If you don&apos;t plan on using the CLI, you can omit the <code>-g</code> option.</p>
 <pre><code>~$ cd ThingsJS
 ~/ThingsJS$ npm install -g
 </code></pre></li>
@@ -580,7 +607,7 @@ You can watch the demo of the Dashboard here:</p>
 ~$ cd hello_things
 ~$ npm link things-js
 
-#create a config file for the worker first (e.g. node_00.conf) 
+#create a config file for the worker first (e.g. node_00.conf)
 
 ~/hello_things$ things-js worker node_00.conf
 </code></pre><p>The configuration file is a required argument for starting the worker. It should contain the following information:</p>
@@ -646,7 +673,7 @@ e.g.</p>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Developer API","level":"1.4","depth":1,"next":{"title":"Running Unit Tests","level":"1.4.1","depth":2,"path":"api/Testing.md","ref":"api/Testing.md","articles":[]},"previous":{"title":"Using the Dashboard","level":"1.3.3","depth":2,"path":"tutorials/dashboard/Dashboard.md","ref":"tutorials/dashboard/Dashboard.md","articles":[]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"api/README.md","mtime":"2018-10-02T00:39:06.312Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-10-02T17:40:47.784Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Developer API","level":"1.4","depth":1,"next":{"title":"Running Unit Tests","level":"1.4.1","depth":2,"path":"api/Testing.md","ref":"api/Testing.md","articles":[]},"previous":{"title":"Using the Dashboard","level":"1.3.3","depth":2,"path":"tutorials/dashboard/Dashboard.md","ref":"tutorials/dashboard/Dashboard.md","articles":[]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"api/README.md","mtime":"2018-10-05T23:47:53.483Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-10-09T20:09:16.144Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

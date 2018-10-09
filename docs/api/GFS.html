@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>Pubsub · GitBook</title>
+        <title>File system · GitBook</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -57,10 +57,10 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="Code.html" />
+    <link rel="next" href="../Community/" />
     
     
-    <link rel="prev" href="Testing.html" />
+    <link rel="prev" href="Scheduler.html" />
     
 
     </head>
@@ -316,7 +316,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.4.2" data-path="Pubsub.html">
+        <li class="chapter " data-level="1.4.2" data-path="Pubsub.html">
             
                 <a href="Pubsub.html">
             
@@ -381,7 +381,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.7" data-path="GFS.html">
+        <li class="chapter active" data-level="1.4.7" data-path="GFS.html">
             
                 <a href="GFS.html">
             
@@ -500,7 +500,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".." >Pubsub</a>
+        <a href=".." >File system</a>
     </h1>
 </div>
 
@@ -515,216 +515,71 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h2 id="classes">Classes</h2>
+                                <h2 id="members">Members</h2>
 <dl>
-<dt><a href="#Pubsub">Pubsub</a></dt>
-<dd></dd>
-<dt><a href="#PubsubServer">PubsubServer</a></dt>
-<dd></dd>
+<dt><a href="#mongoose">mongoose</a></dt>
+<dd><p>Global File System for ThingsJS</p>
+<ul>
+<li>Technically this is just a wrapper object providing an API for talking to the GFS service provider.</li>
+<li>GFS provider is assumed to be an external service accessible over the network.</li>
+<li>Default GFS provider is ThingsJS distributed file system.</li>
+<li>To set an alternative GFS provider (e.g. Hadoop, Google FS, Amazon S3),
+the developer must provide the read and write functions and the appropriate credentials.</li>
+</ul>
+</dd>
 </dl>
 
 <h2 id="functions">Functions</h2>
 <dl>
-<dt><a href="#InputStream">InputStream(pubsub, topic)</a></dt>
-<dd><p>A Readable Pub/Sub stream. Pubsub topic -&gt; Process
-A new message (a frame) published under <code>topic</code> triggers the &apos;data&apos; event,
-with the message passed as the event data.</p>
-</dd>
-<dt><a href="#OutputStream">OutputStream(pubsub, topic)</a></dt>
-<dd><p>A Writable Pub/Sub stream. Process -&gt; Pubsub topic
-A call to <code>.write(data)</code> will write to the output stream identified by <code>topic</code>.</p>
-</dd>
-<dt><a href="#DummyPubsub">DummyPubsub()</a></dt>
-<dd><p>Dummy Pubsub used for instrumenting code without connecting.</p>
-<ul>
-<li>does not extend Pubsub, this is a standalone object</li>
-<li>this object is created instead of actual Pubsub when user code is initialized via Code.run().</li>
-<li>when user code is executed via Code.run(), it has an IPC channel to the master process.
-in that case, pubsub.publish is done by the master process, and the child process (this process) sends
-the message to the master process.</li>
-</ul>
+<dt><a href="#GFS">GFS()</a></dt>
+<dd><p>The API provided by this object mirrors the native &apos;fs&apos; API
+  so that it is trivial for a user to switch to using GFS instead.
+  e.g.
+      var fs = require(&apos;fs&apos;);                            // this line is replaced by the line below
+      var fs = require(&apos;things-js&apos;).gfs(globalScope);    // globalScope needs to be passed in to link the Pubsub instance</p>
 </dd>
 </dl>
 
-<p><a name="Pubsub"></a></p>
-<h2 id="pubsub">Pubsub</h2>
-<p><strong>Kind</strong>: global class  </p>
+<p><a name="mongoose"></a></p>
+<h2 id="mongoose">mongoose</h2>
+<p>Global File System for ThingsJS</p>
 <ul>
-<li><a href="#Pubsub">Pubsub</a><ul>
-<li><a href="#new_Pubsub_new">new Pubsub(url, options)</a></li>
-<li><a href="#Pubsub+subscribe">.subscribe(topic, handler)</a> &#x21D2; <code>Promise</code></li>
-<li><a href="#Pubsub+unsubscribe">.unsubscribe(topic)</a> &#x21D2; <code>Promise</code></li>
-<li><a href="#Pubsub+publish">.publish(topic, message)</a> &#x21D2; <code>Promise</code></li>
-<li><a href="#Pubsub+kill">.kill()</a> &#x21D2; <code>Promise</code></li>
+<li>Technically this is just a wrapper object providing an API for talking to the GFS service provider.</li>
+<li>GFS provider is assumed to be an external service accessible over the network.</li>
+<li>Default GFS provider is ThingsJS distributed file system.</li>
+<li>To set an alternative GFS provider (e.g. Hadoop, Google FS, Amazon S3),
+the developer must provide the read and write functions and the appropriate credentials.</li>
+</ul>
+<p><strong>Kind</strong>: global variable<br><a name="GFS"></a></p>
+<h2 id="gfs">GFS()</h2>
+<p>The API provided by this object mirrors the native &apos;fs&apos; API
+  so that it is trivial for a user to switch to using GFS instead.
+  e.g.
+      var fs = require(&apos;fs&apos;);                            // this line is replaced by the line below
+      var fs = require(&apos;things-js&apos;).gfs(globalScope);    // globalScope needs to be passed in to link the Pubsub instance</p>
+<p><strong>Kind</strong>: global function  </p>
+<ul>
+<li><a href="#GFS">GFS()</a><ul>
+<li><a href="#GFS+readFile">.readFile()</a></li>
+<li><a href="#GFS+writeFile">.writeFile()</a></li>
+<li><a href="#GFS+appendFile">.appendFile()</a></li>
+<li><a href="#GFS+deleteFile">.deleteFile()</a></li>
 </ul>
 </li>
 </ul>
-<p><a name="new_Pubsub_new"></a></p>
-<h3 id="new-pubsuburl-options">new Pubsub(url, options)</h3>
-<p>[Pubsub]</p>
-<table>
-<thead>
-<tr>
-<th>Param</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>url</td>
-<td><code>string</code></td>
-<td>[description]</td>
-</tr>
-<tr>
-<td>options</td>
-<td><code>object</code></td>
-<td>[description]</td>
-</tr>
-</tbody>
-</table>
-<p><a name="Pubsub+subscribe"></a></p>
-<h3 id="pubsubsubscribetopic-handler-&#x21D2;-promise">pubsub.subscribe(topic, handler) &#x21D2; <code>Promise</code></h3>
-<p>[subscribe description]</p>
-<p><strong>Kind</strong>: instance method of <a href="#Pubsub"><code>Pubsub</code></a><br><strong>Returns</strong>: <code>Promise</code> - [description]  </p>
-<table>
-<thead>
-<tr>
-<th>Param</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>topic</td>
-<td><code>String</code></td>
-<td>[description]</td>
-</tr>
-<tr>
-<td>handler</td>
-<td><code>function</code></td>
-<td>[description]</td>
-</tr>
-</tbody>
-</table>
-<p><a name="Pubsub+unsubscribe"></a></p>
-<h3 id="pubsubunsubscribetopic-&#x21D2;-promise">pubsub.unsubscribe(topic) &#x21D2; <code>Promise</code></h3>
-<p>[unsubscribe description]</p>
-<p><strong>Kind</strong>: instance method of <a href="#Pubsub"><code>Pubsub</code></a><br><strong>Returns</strong>: <code>Promise</code> - [description]  </p>
-<table>
-<thead>
-<tr>
-<th>Param</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>topic</td>
-<td><code>String</code></td>
-<td>[description]</td>
-</tr>
-</tbody>
-</table>
-<p><a name="Pubsub+publish"></a></p>
-<h3 id="pubsubpublishtopic-message-&#x21D2;-promise">pubsub.publish(topic, message) &#x21D2; <code>Promise</code></h3>
-<p>[publish description]</p>
-<p><strong>Kind</strong>: instance method of <a href="#Pubsub"><code>Pubsub</code></a><br><strong>Returns</strong>: <code>Promise</code> - [description]  </p>
-<table>
-<thead>
-<tr>
-<th>Param</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>topic</td>
-<td><code>String</code></td>
-<td>[description]</td>
-</tr>
-<tr>
-<td>message</td>
-<td><code>Object</code></td>
-<td>[description]</td>
-</tr>
-</tbody>
-</table>
-<p><a name="Pubsub+kill"></a></p>
-<h3 id="pubsubkill-&#x21D2;-promise">pubsub.kill() &#x21D2; <code>Promise</code></h3>
-<p>[kill description]</p>
-<p><strong>Kind</strong>: instance method of <a href="#Pubsub"><code>Pubsub</code></a><br><strong>Returns</strong>: <code>Promise</code> - [description]<br><a name="PubsubServer"></a></p>
-<h2 id="pubsubserver">PubsubServer</h2>
-<p><strong>Kind</strong>: global class<br><a name="new_PubsubServer_new"></a></p>
-<h3 id="new-pubsubserver">new PubsubServer()</h3>
-<p>Basic wrapper around the Mosca Server</p>
-<p><a name="InputStream"></a></p>
-<h2 id="inputstreampubsub-topic">InputStream(pubsub, topic)</h2>
-<p>A Readable Pub/Sub stream. Pubsub topic -&gt; Process
-A new message (a frame) published under <code>topic</code> triggers the &apos;data&apos; event,
-with the message passed as the event data.</p>
-<p><strong>Kind</strong>: global function  </p>
-<table>
-<thead>
-<tr>
-<th>Param</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>pubsub</td>
-<td><a href="#Pubsub"><code>Pubsub</code></a></td>
-<td>the Pubsub object</td>
-</tr>
-<tr>
-<td>topic</td>
-<td><code>string</code></td>
-<td>the topic to read from</td>
-</tr>
-</tbody>
-</table>
-<p><a name="OutputStream"></a></p>
-<h2 id="outputstreampubsub-topic">OutputStream(pubsub, topic)</h2>
-<p>A Writable Pub/Sub stream. Process -&gt; Pubsub topic
-A call to <code>.write(data)</code> will write to the output stream identified by <code>topic</code>.</p>
-<p><strong>Kind</strong>: global function  </p>
-<table>
-<thead>
-<tr>
-<th>Param</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>pubsub</td>
-<td><a href="#Pubsub"><code>Pubsub</code></a></td>
-<td>the Pubsub object</td>
-</tr>
-<tr>
-<td>topic</td>
-<td><code>string</code></td>
-<td>the topic to write to</td>
-</tr>
-</tbody>
-</table>
-<p><a name="DummyPubsub"></a></p>
-<h2 id="dummypubsub">DummyPubsub()</h2>
-<p>Dummy Pubsub used for instrumenting code without connecting.</p>
-<ul>
-<li>does not extend Pubsub, this is a standalone object</li>
-<li>this object is created instead of actual Pubsub when user code is initialized via Code.run().</li>
-<li>when user code is executed via Code.run(), it has an IPC channel to the master process.
-in that case, pubsub.publish is done by the master process, and the child process (this process) sends
-the message to the master process.</li>
-</ul>
-<p><strong>Kind</strong>: global function  </p>
+<p><a name="GFS+readFile"></a></p>
+<h3 id="gfsreadfile">gfS.readFile()</h3>
+<p>Reading from the file</p>
+<p><strong>Kind</strong>: instance method of <a href="#GFS"><code>GFS</code></a><br><a name="GFS+writeFile"></a></p>
+<h3 id="gfswritefile">gfS.writeFile()</h3>
+<p>Writing to the file</p>
+<p><strong>Kind</strong>: instance method of <a href="#GFS"><code>GFS</code></a><br><a name="GFS+appendFile"></a></p>
+<h3 id="gfsappendfile">gfS.appendFile()</h3>
+<p>Appending to an existing file</p>
+<p><strong>Kind</strong>: instance method of <a href="#GFS"><code>GFS</code></a><br><a name="GFS+deleteFile"></a></p>
+<h3 id="gfsdeletefile">gfS.deleteFile()</h3>
+<p>Deleting the file</p>
+<p><strong>Kind</strong>: instance method of <a href="#GFS"><code>GFS</code></a>  </p>
 
                                 
                                 </section>
@@ -752,12 +607,12 @@ the message to the master process.</li>
 
             
                 
-                <a href="Testing.html" class="navigation navigation-prev " aria-label="Previous page: Running Unit Tests">
+                <a href="Scheduler.html" class="navigation navigation-prev " aria-label="Previous page: Scheduler">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
                 
-                <a href="Code.html" class="navigation navigation-next " aria-label="Next page: Code">
+                <a href="../Community/" class="navigation navigation-next " aria-label="Next page: Community">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -768,7 +623,7 @@ the message to the master process.</li>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Pubsub","level":"1.4.2","depth":2,"next":{"title":"Code","level":"1.4.3","depth":2,"path":"api/Code.md","ref":"api/Code.md","articles":[]},"previous":{"title":"Running Unit Tests","level":"1.4.1","depth":2,"path":"api/Testing.md","ref":"api/Testing.md","articles":[]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"api/Pubsub.md","mtime":"2018-10-02T00:39:06.312Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-10-09T20:09:16.144Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"File system","level":"1.4.7","depth":2,"next":{"title":"Community","level":"1.5","depth":1,"path":"Community/README.md","ref":"Community/README.md","articles":[{"title":"Get involved","level":"1.5.1","depth":2,"path":"Community/involve.md","ref":"Community/involve.md","articles":[]},{"title":"Contribute","level":"1.5.2","depth":2,"path":"Community/contribute.md","ref":"Community/contribute.md","articles":[]},{"title":"Feedback","level":"1.5.3","depth":2,"path":"Community/feedback.md","ref":"Community/feedback.md","articles":[]},{"title":"Committee","level":"1.5.4","depth":2,"path":"Community/comittee.md","ref":"Community/comittee.md","articles":[]}]},"previous":{"title":"Scheduler","level":"1.4.6","depth":2,"path":"api/Scheduler.md","ref":"api/Scheduler.md","articles":[]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"api/GFS.md","mtime":"2018-10-05T23:47:53.483Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-10-09T20:09:16.144Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

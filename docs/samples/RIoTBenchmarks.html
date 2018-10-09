@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>Pubsub · GitBook</title>
+        <title>Sample Benchmarks · GitBook</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -57,10 +57,10 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="Code.html" />
+    <link rel="next" href="../tutorials/" />
     
     
-    <link rel="prev" href="Testing.html" />
+    <link rel="prev" href="./" />
     
 
     </head>
@@ -129,9 +129,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.1.3" data-path="CLI.html">
+        <li class="chapter " data-level="1.1.3" data-path="../api/CLI.html">
             
-                <a href="CLI.html">
+                <a href="../api/CLI.html">
             
                     
                     CLI Commands
@@ -200,9 +200,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2.3" data-path="../samples/">
+        <li class="chapter " data-level="1.2.3" data-path="./">
             
-                <a href="../samples/">
+                <a href="./">
             
                     
                     Sample Components
@@ -213,9 +213,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2.4" data-path="../samples/RIoTBenchmarks.html">
+        <li class="chapter active" data-level="1.2.4" data-path="RIoTBenchmarks.html">
             
-                <a href="../samples/RIoTBenchmarks.html">
+                <a href="RIoTBenchmarks.html">
             
                     
                     Sample Benchmarks
@@ -289,9 +289,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4" data-path="./">
+        <li class="chapter " data-level="1.4" data-path="../api/">
             
-                <a href="./">
+                <a href="../api/">
             
                     
                     Developer API
@@ -303,9 +303,9 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.4.1" data-path="Testing.html">
+        <li class="chapter " data-level="1.4.1" data-path="../api/Testing.html">
             
-                <a href="Testing.html">
+                <a href="../api/Testing.html">
             
                     
                     Running Unit Tests
@@ -316,9 +316,9 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.4.2" data-path="Pubsub.html">
+        <li class="chapter " data-level="1.4.2" data-path="../api/Pubsub.html">
             
-                <a href="Pubsub.html">
+                <a href="../api/Pubsub.html">
             
                     
                     Pubsub
@@ -329,9 +329,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.3" data-path="Code.html">
+        <li class="chapter " data-level="1.4.3" data-path="../api/Code.html">
             
-                <a href="Code.html">
+                <a href="../api/Code.html">
             
                     
                     Code
@@ -342,9 +342,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.4" data-path="CodeEngine.html">
+        <li class="chapter " data-level="1.4.4" data-path="../api/CodeEngine.html">
             
-                <a href="CodeEngine.html">
+                <a href="../api/CodeEngine.html">
             
                     
                     CodeEngine
@@ -355,9 +355,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.5" data-path="Dispatcher.html">
+        <li class="chapter " data-level="1.4.5" data-path="../api/Dispatcher.html">
             
-                <a href="Dispatcher.html">
+                <a href="../api/Dispatcher.html">
             
                     
                     Dispatcher
@@ -368,9 +368,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.6" data-path="Scheduler.html">
+        <li class="chapter " data-level="1.4.6" data-path="../api/Scheduler.html">
             
-                <a href="Scheduler.html">
+                <a href="../api/Scheduler.html">
             
                     
                     Scheduler
@@ -381,9 +381,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.7" data-path="GFS.html">
+        <li class="chapter " data-level="1.4.7" data-path="../api/GFS.html">
             
-                <a href="GFS.html">
+                <a href="../api/GFS.html">
             
                     
                     File system
@@ -500,7 +500,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".." >Pubsub</a>
+        <a href=".." >Sample Benchmarks</a>
     </h1>
 </div>
 
@@ -515,216 +515,29 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h2 id="classes">Classes</h2>
-<dl>
-<dt><a href="#Pubsub">Pubsub</a></dt>
-<dd></dd>
-<dt><a href="#PubsubServer">PubsubServer</a></dt>
-<dd></dd>
-</dl>
-
-<h2 id="functions">Functions</h2>
-<dl>
-<dt><a href="#InputStream">InputStream(pubsub, topic)</a></dt>
-<dd><p>A Readable Pub/Sub stream. Pubsub topic -&gt; Process
-A new message (a frame) published under <code>topic</code> triggers the &apos;data&apos; event,
-with the message passed as the event data.</p>
-</dd>
-<dt><a href="#OutputStream">OutputStream(pubsub, topic)</a></dt>
-<dd><p>A Writable Pub/Sub stream. Process -&gt; Pubsub topic
-A call to <code>.write(data)</code> will write to the output stream identified by <code>topic</code>.</p>
-</dd>
-<dt><a href="#DummyPubsub">DummyPubsub()</a></dt>
-<dd><p>Dummy Pubsub used for instrumenting code without connecting.</p>
-<ul>
-<li>does not extend Pubsub, this is a standalone object</li>
-<li>this object is created instead of actual Pubsub when user code is initialized via Code.run().</li>
-<li>when user code is executed via Code.run(), it has an IPC channel to the master process.
-in that case, pubsub.publish is done by the master process, and the child process (this process) sends
-the message to the master process.</li>
-</ul>
-</dd>
-</dl>
-
-<p><a name="Pubsub"></a></p>
-<h2 id="pubsub">Pubsub</h2>
-<p><strong>Kind</strong>: global class  </p>
-<ul>
-<li><a href="#Pubsub">Pubsub</a><ul>
-<li><a href="#new_Pubsub_new">new Pubsub(url, options)</a></li>
-<li><a href="#Pubsub+subscribe">.subscribe(topic, handler)</a> &#x21D2; <code>Promise</code></li>
-<li><a href="#Pubsub+unsubscribe">.unsubscribe(topic)</a> &#x21D2; <code>Promise</code></li>
-<li><a href="#Pubsub+publish">.publish(topic, message)</a> &#x21D2; <code>Promise</code></li>
-<li><a href="#Pubsub+kill">.kill()</a> &#x21D2; <code>Promise</code></li>
-</ul>
-</li>
-</ul>
-<p><a name="new_Pubsub_new"></a></p>
-<h3 id="new-pubsuburl-options">new Pubsub(url, options)</h3>
-<p>[Pubsub]</p>
-<table>
-<thead>
-<tr>
-<th>Param</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>url</td>
-<td><code>string</code></td>
-<td>[description]</td>
-</tr>
-<tr>
-<td>options</td>
-<td><code>object</code></td>
-<td>[description]</td>
-</tr>
-</tbody>
-</table>
-<p><a name="Pubsub+subscribe"></a></p>
-<h3 id="pubsubsubscribetopic-handler-&#x21D2;-promise">pubsub.subscribe(topic, handler) &#x21D2; <code>Promise</code></h3>
-<p>[subscribe description]</p>
-<p><strong>Kind</strong>: instance method of <a href="#Pubsub"><code>Pubsub</code></a><br><strong>Returns</strong>: <code>Promise</code> - [description]  </p>
-<table>
-<thead>
-<tr>
-<th>Param</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>topic</td>
-<td><code>String</code></td>
-<td>[description]</td>
-</tr>
-<tr>
-<td>handler</td>
-<td><code>function</code></td>
-<td>[description]</td>
-</tr>
-</tbody>
-</table>
-<p><a name="Pubsub+unsubscribe"></a></p>
-<h3 id="pubsubunsubscribetopic-&#x21D2;-promise">pubsub.unsubscribe(topic) &#x21D2; <code>Promise</code></h3>
-<p>[unsubscribe description]</p>
-<p><strong>Kind</strong>: instance method of <a href="#Pubsub"><code>Pubsub</code></a><br><strong>Returns</strong>: <code>Promise</code> - [description]  </p>
-<table>
-<thead>
-<tr>
-<th>Param</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>topic</td>
-<td><code>String</code></td>
-<td>[description]</td>
-</tr>
-</tbody>
-</table>
-<p><a name="Pubsub+publish"></a></p>
-<h3 id="pubsubpublishtopic-message-&#x21D2;-promise">pubsub.publish(topic, message) &#x21D2; <code>Promise</code></h3>
-<p>[publish description]</p>
-<p><strong>Kind</strong>: instance method of <a href="#Pubsub"><code>Pubsub</code></a><br><strong>Returns</strong>: <code>Promise</code> - [description]  </p>
-<table>
-<thead>
-<tr>
-<th>Param</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>topic</td>
-<td><code>String</code></td>
-<td>[description]</td>
-</tr>
-<tr>
-<td>message</td>
-<td><code>Object</code></td>
-<td>[description]</td>
-</tr>
-</tbody>
-</table>
-<p><a name="Pubsub+kill"></a></p>
-<h3 id="pubsubkill-&#x21D2;-promise">pubsub.kill() &#x21D2; <code>Promise</code></h3>
-<p>[kill description]</p>
-<p><strong>Kind</strong>: instance method of <a href="#Pubsub"><code>Pubsub</code></a><br><strong>Returns</strong>: <code>Promise</code> - [description]<br><a name="PubsubServer"></a></p>
-<h2 id="pubsubserver">PubsubServer</h2>
-<p><strong>Kind</strong>: global class<br><a name="new_PubsubServer_new"></a></p>
-<h3 id="new-pubsubserver">new PubsubServer()</h3>
-<p>Basic wrapper around the Mosca Server</p>
-<p><a name="InputStream"></a></p>
-<h2 id="inputstreampubsub-topic">InputStream(pubsub, topic)</h2>
-<p>A Readable Pub/Sub stream. Pubsub topic -&gt; Process
-A new message (a frame) published under <code>topic</code> triggers the &apos;data&apos; event,
-with the message passed as the event data.</p>
-<p><strong>Kind</strong>: global function  </p>
-<table>
-<thead>
-<tr>
-<th>Param</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>pubsub</td>
-<td><a href="#Pubsub"><code>Pubsub</code></a></td>
-<td>the Pubsub object</td>
-</tr>
-<tr>
-<td>topic</td>
-<td><code>string</code></td>
-<td>the topic to read from</td>
-</tr>
-</tbody>
-</table>
-<p><a name="OutputStream"></a></p>
-<h2 id="outputstreampubsub-topic">OutputStream(pubsub, topic)</h2>
-<p>A Writable Pub/Sub stream. Process -&gt; Pubsub topic
-A call to <code>.write(data)</code> will write to the output stream identified by <code>topic</code>.</p>
-<p><strong>Kind</strong>: global function  </p>
-<table>
-<thead>
-<tr>
-<th>Param</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>pubsub</td>
-<td><a href="#Pubsub"><code>Pubsub</code></a></td>
-<td>the Pubsub object</td>
-</tr>
-<tr>
-<td>topic</td>
-<td><code>string</code></td>
-<td>the topic to write to</td>
-</tr>
-</tbody>
-</table>
-<p><a name="DummyPubsub"></a></p>
-<h2 id="dummypubsub">DummyPubsub()</h2>
-<p>Dummy Pubsub used for instrumenting code without connecting.</p>
-<ul>
-<li>does not extend Pubsub, this is a standalone object</li>
-<li>this object is created instead of actual Pubsub when user code is initialized via Code.run().</li>
-<li>when user code is executed via Code.run(), it has an IPC channel to the master process.
-in that case, pubsub.publish is done by the master process, and the child process (this process) sends
-the message to the master process.</li>
-</ul>
-<p><strong>Kind</strong>: global function  </p>
+                                <h1 id="benchmark-apps">BENCHMARK Apps</h1>
+<p>This benchmark app is originated/referenced from <a href="https://github.com/dream-lab/riot-bench" target="_blank">dreamlab RIOT benchmark</a> which intend to test ThingsJs different function as IoT middleware project like scheduling job.</p>
+<h1 id="detail">Detail</h1>
+<p>This benchmark app consists of four phases: ETL(Extraction, Transform and Load dataflow), STATS(Statistical Summarization dataflow), TRAIN(Model Training dataflow) and PRED(Predictive Analytics dataflow). We are using taxidata as example. In each phase, we will generate ETLSTATS_date.csv with the heap used, cpu used information for monitoring the effect. </p>
+<p>ETL: 
+First parse the data from csv to key value data type and publish them line by line and then hash the data by different key value and join the data together. 
+ <img src="https://github.com/anshuiisc/FIG/blob/master/ETL-1.png" alt="FCAST"></p>
+<p>STAT: 
+Calculated the summary statistics for the data and fitted a simple linear regression model and then plotted the fitted model 
+<img src="https://github.com/anshuiisc/FIG/blob/master/stats-1.png" alt="FCAST"></p>
+<p>TRAIN: 
+Use data to train the regression tree and multi-variate model and save it on global file system. For modeling, we currently use &#x2018;c4.5&#x2019; package for J48decisiontree model and &#x2018;ml-regression-multivariate-linear&#x2019; package for training. 
+ <img src="https://github.com/anshuiisc/FIG/blob/master/Train-1.png" alt="FCAST"></p>
+<p>PRED:
+Fetch the training model saved from file system in the TRAIN phase and predict the taxi fee by provided data and publish residual errors to mqtt. 
+<img src="https://github.com/anshuiisc/FIG/blob/master/pred-1.png" alt="FCAST"></p>
+<p>For message and data communication between components, we will use things-js pubsub channel. For measurements, we will generate csv for device stats like memory used, cpu etc and save in file system </p>
+<h1 id="application-to-scheduler">Application to scheduler</h1>
+<p>Instead of running components in each phase in order one by one, we plan to use our scheduler to schedule the running sequence of components on different engine worker according to its required memory, CPU, bandwidth, etc. so as to make the whole system more efficient. </p>
+<h1 id="guide-for-user">Guide for user</h1>
+<p>Currently user has to set up the dependency for the benchmark on their worker folder by creating a empty package.json with <code>vi package.json</code> and <code>npm link things-js</code> to load all necessary node-modules. Moreover, since the global file system cannot save huge data. User had to put the needed data inside worker folder for running. which is TAXI_properties.json, TAXI_sample_data_senml.csv, taxi-metadata-fulldataset.txt and taxi-schema_with_annotation.csv, all of them are available in samples/IoTBench.
+For the data and model generated during running process, we will save it to global file system in RIOT/ETL, RIOT/STAT, RIOT/TRAIN,RIOT/PRED.</p>
+<p>All figures referenced from <a href="https://github.com/dream-lab/riot-bench" target="_blank">dreamlab RIOT benchmark</a></p>
 
                                 
                                 </section>
@@ -752,12 +565,12 @@ the message to the master process.</li>
 
             
                 
-                <a href="Testing.html" class="navigation navigation-prev " aria-label="Previous page: Running Unit Tests">
+                <a href="./" class="navigation navigation-prev " aria-label="Previous page: Sample Components">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
                 
-                <a href="Code.html" class="navigation navigation-next " aria-label="Next page: Code">
+                <a href="../tutorials/" class="navigation navigation-next " aria-label="Next page: Tutorials">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -768,7 +581,7 @@ the message to the master process.</li>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Pubsub","level":"1.4.2","depth":2,"next":{"title":"Code","level":"1.4.3","depth":2,"path":"api/Code.md","ref":"api/Code.md","articles":[]},"previous":{"title":"Running Unit Tests","level":"1.4.1","depth":2,"path":"api/Testing.md","ref":"api/Testing.md","articles":[]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"api/Pubsub.md","mtime":"2018-10-02T00:39:06.312Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-10-09T20:09:16.144Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Sample Benchmarks","level":"1.2.4","depth":2,"next":{"title":"Tutorials","level":"1.3","depth":1,"path":"tutorials/README.md","ref":"tutorials/README.md","articles":[{"title":"Writing your First App","level":"1.3.1","depth":2,"path":"tutorials/FirstApplication.md","ref":"tutorials/FirstApplication.md","articles":[]},{"title":"Live-Migration","level":"1.3.2","depth":2,"path":"tutorials/Migration.md","ref":"tutorials/Migration.md","articles":[]},{"title":"Using the Dashboard","level":"1.3.3","depth":2,"path":"tutorials/dashboard/Dashboard.md","ref":"tutorials/dashboard/Dashboard.md","articles":[]}]},"previous":{"title":"Sample Components","level":"1.2.3","depth":2,"path":"samples/README.md","ref":"samples/README.md","articles":[]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"samples/RIoTBenchmarks.md","mtime":"2018-10-02T17:42:22.476Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-10-09T20:09:16.144Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
