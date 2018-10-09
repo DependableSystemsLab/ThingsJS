@@ -1,4 +1,4 @@
-# Building your first First Application
+# Building your first First Program using ThingsJS
 
 ##Experimental setup
 
@@ -26,10 +26,13 @@ function factorialize(num) {
 ####However, the above code will not be compatible with ThingsJS.
 
 ###ThingsJS Compatible code
-To write a ThingsJS compatible code certain changes have to made in the way we write the code.
+To write a ThingsJS compatible code, certain changes have to made.
 
-We cannot use a while loop or a recursive function as doing so would block the thread, preventing the migration signal from being processed. We use a setImmediate to call the next step of the factorial computation.
+First, we cannot use a while loops or recursive functions as doing so would block the thread, preventing the migration signal from being processed. Instead, we use ```setImmediate``` to call the next step of the factorial computation.
 
+ThingsJS gives us the ability to migrate the code from one platform to another in case of a reboot of the device. In order to ensure that the code is able to migrate and continue running from the same point  the code needs to be written in a certain format.
+
+After making the modifications to our factorial program in accordance with the suggested changes, we get the following:
 ```
 
 var target = 100000;
@@ -73,6 +76,8 @@ timer = setInterval(printInterval, 500);
 ```
 ####Evaluating the code
 
+Here we walkthrough the code to understand how exactly it is working.
+
 ```
 var target = 100000;
 
@@ -88,4 +93,4 @@ setImmediate(factorial);
 
 * When multiple calls to setImmediate() are made, the callback functions are queued for execution in the order in which they are created. The entire callback queue is processed every event loop iteration. If an immediate timer is queued from inside an executing callback, that timer will not be triggered until the next event loop iteration.
 
-* The reason for doing this for writing the code according to the migration part.
+* The usage of setImmediate shows how this code DOES NOT block the event loop, which was the entire point of writing the Factorial code in this fashion.
