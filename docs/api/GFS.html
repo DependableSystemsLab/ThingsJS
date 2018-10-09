@@ -502,7 +502,72 @@
     
                                 <section class="normal markdown-section">
                                 
-                                
+                                <h2 id="members">Members</h2>
+<dl>
+<dt><a href="#mongoose">mongoose</a></dt>
+<dd><p>Global File System for ThingsJS</p>
+<ul>
+<li>Technically this is just a wrapper object providing an API for talking to the GFS service provider.</li>
+<li>GFS provider is assumed to be an external service accessible over the network.</li>
+<li>Default GFS provider is ThingsJS distributed file system.</li>
+<li>To set an alternative GFS provider (e.g. Hadoop, Google FS, Amazon S3),
+the developer must provide the read and write functions and the appropriate credentials.</li>
+</ul>
+</dd>
+</dl>
+
+<h2 id="functions">Functions</h2>
+<dl>
+<dt><a href="#GFS">GFS()</a></dt>
+<dd><p>The API provided by this object mirrors the native &apos;fs&apos; API
+  so that it is trivial for a user to switch to using GFS instead.
+  e.g.
+      var fs = require(&apos;fs&apos;);                            // this line is replaced by the line below
+      var fs = require(&apos;things-js&apos;).gfs(globalScope);    // globalScope needs to be passed in to link the Pubsub instance</p>
+</dd>
+</dl>
+
+<p><a name="mongoose"></a></p>
+<h2 id="mongoose">mongoose</h2>
+<p>Global File System for ThingsJS</p>
+<ul>
+<li>Technically this is just a wrapper object providing an API for talking to the GFS service provider.</li>
+<li>GFS provider is assumed to be an external service accessible over the network.</li>
+<li>Default GFS provider is ThingsJS distributed file system.</li>
+<li>To set an alternative GFS provider (e.g. Hadoop, Google FS, Amazon S3),
+the developer must provide the read and write functions and the appropriate credentials.</li>
+</ul>
+<p><strong>Kind</strong>: global variable<br><a name="GFS"></a></p>
+<h2 id="gfs">GFS()</h2>
+<p>The API provided by this object mirrors the native &apos;fs&apos; API
+  so that it is trivial for a user to switch to using GFS instead.
+  e.g.
+      var fs = require(&apos;fs&apos;);                            // this line is replaced by the line below
+      var fs = require(&apos;things-js&apos;).gfs(globalScope);    // globalScope needs to be passed in to link the Pubsub instance</p>
+<p><strong>Kind</strong>: global function  </p>
+<ul>
+<li><a href="#GFS">GFS()</a><ul>
+<li><a href="#GFS+readFile">.readFile()</a></li>
+<li><a href="#GFS+writeFile">.writeFile()</a></li>
+<li><a href="#GFS+appendFile">.appendFile()</a></li>
+<li><a href="#GFS+deleteFile">.deleteFile()</a></li>
+</ul>
+</li>
+</ul>
+<p><a name="GFS+readFile"></a></p>
+<h3 id="gfsreadfile">gfS.readFile()</h3>
+<p>Reading from the file</p>
+<p><strong>Kind</strong>: instance method of <a href="#GFS"><code>GFS</code></a><br><a name="GFS+writeFile"></a></p>
+<h3 id="gfswritefile">gfS.writeFile()</h3>
+<p>Writing to the file</p>
+<p><strong>Kind</strong>: instance method of <a href="#GFS"><code>GFS</code></a><br><a name="GFS+appendFile"></a></p>
+<h3 id="gfsappendfile">gfS.appendFile()</h3>
+<p>Appending to an existing file</p>
+<p><strong>Kind</strong>: instance method of <a href="#GFS"><code>GFS</code></a><br><a name="GFS+deleteFile"></a></p>
+<h3 id="gfsdeletefile">gfS.deleteFile()</h3>
+<p>Deleting the file</p>
+<p><strong>Kind</strong>: instance method of <a href="#GFS"><code>GFS</code></a>  </p>
+
                                 
                                 </section>
                             
@@ -545,7 +610,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"File system","level":"1.4.7","depth":2,"next":{"title":"Community","level":"1.5","depth":1,"path":"Community/README.md","ref":"Community/README.md","articles":[{"title":"Get involved","level":"1.5.1","depth":2,"path":"Community/involve.md","ref":"Community/involve.md","articles":[]},{"title":"Contribute","level":"1.5.2","depth":2,"path":"Community/contribute.md","ref":"Community/contribute.md","articles":[]},{"title":"Feedback","level":"1.5.3","depth":2,"path":"Community/feedback.md","ref":"Community/feedback.md","articles":[]},{"title":"Committee","level":"1.5.4","depth":2,"path":"Community/comittee.md","ref":"Community/comittee.md","articles":[]}]},"previous":{"title":"Scheduler","level":"1.4.6","depth":2,"path":"api/Scheduler.md","ref":"api/Scheduler.md","articles":[]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"api/GFS.md","mtime":"2018-10-05T20:52:59.744Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-10-05T23:44:29.969Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"File system","level":"1.4.7","depth":2,"next":{"title":"Community","level":"1.5","depth":1,"path":"Community/README.md","ref":"Community/README.md","articles":[{"title":"Get involved","level":"1.5.1","depth":2,"path":"Community/involve.md","ref":"Community/involve.md","articles":[]},{"title":"Contribute","level":"1.5.2","depth":2,"path":"Community/contribute.md","ref":"Community/contribute.md","articles":[]},{"title":"Feedback","level":"1.5.3","depth":2,"path":"Community/feedback.md","ref":"Community/feedback.md","articles":[]},{"title":"Committee","level":"1.5.4","depth":2,"path":"Community/comittee.md","ref":"Community/comittee.md","articles":[]}]},"previous":{"title":"Scheduler","level":"1.4.6","depth":2,"path":"api/Scheduler.md","ref":"api/Scheduler.md","articles":[]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"api/GFS.md","mtime":"2018-10-05T23:47:53.483Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-10-09T19:45:39.112Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
