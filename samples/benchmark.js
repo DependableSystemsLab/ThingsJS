@@ -49,5 +49,4 @@ pubsub.on('ready',function(){
 	pubsub.publish('things-scheduler/cmd',config);
 });
 
-
 })();

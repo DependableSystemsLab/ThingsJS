@@ -13,7 +13,7 @@ var file_data = {'test':3003};
 // var MetaData = fs.readFileSync('./taxi-metadata-fulldataset.txt');
 // var AnnotateData = fs.readFileSync('taxi-schema_with_annotation.csv');
 
-console.log('\x1b[44m%s\x1b[0m', 'finish writing')
+// console.log('\x1b[44m%s\x1b[0m', 'finish writing')
 
 // GFS.writeFile('RIOT/test.json', 'testLOL', function(err){
 //   if (err) throw err;
@@ -21,7 +21,7 @@ console.log('\x1b[44m%s\x1b[0m', 'finish writing')
 // })
 
 
-GFS.readFile('./code/test.json', function(err,data){
+GFS.readFile('/code/test1.js', function(err,data){
   if (err) throw err;
   console.log('\x1b[44m%s\x1b[0m', 'READ DATA' + data);
 })
