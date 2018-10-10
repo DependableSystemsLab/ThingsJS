@@ -12,17 +12,17 @@ describe('API methods', function(){
 	var self = this;
 	self.SCHEDULING_INTERVAL = 10000;
 
-	before(function(){
-		this.timeout(10000);
+	// before(function(){
+	// 	this.timeout(10000);
 
-		return new Promise(function(resolve){
-			self.server = mosca.Server({ port: 1883 });
-			self.server.on('ready', function(){
-				self.pubsub = new things.Pubsub('mqtt://localhost');
-				self.pubsub.on('ready', resolve);
-			});
-		});
-	});
+	// 	return new Promise(function(resolve){
+	// 		self.server = mosca.Server({ port: 1883 });
+	// 		self.server.on('ready', function(){
+	// 			self.pubsub = new things.Pubsub('mqtt://localhost');
+	// 			self.pubsub.on('ready', resolve);
+	// 		});
+	// 	});
+	// });
 
 	describe('First-fit scheduling algorithm', function(){
 
