@@ -97,6 +97,13 @@ Test file: ```test/Scheduler-test.js```
 * Able to schedule an application with components on a running device: ```Scheduler.behaviours['run_application']```
 	* Sends back a reply over ```pubsub``` indicating successs
 * Utilizes available ```Code Engines``` that join network by migrating code instances: ```Scheduler._assess```
+* Able to pause a running application: ```Scheduler.behaviours['pause_application']```
+    * Sends back a reply over ```pubsub``` indicating success
+* Able to resume a paused application: ```Scheduler.behaviours['resume_application']```
+    * Sends back a reply over ```pubsub``` indicating success
+* Able to kill an application: ```Scheduler.behaviours['kill_application']```
+    * Sends back a reply over ```pubsub``` inddicating success
+
 
 #### Filesystem API
 Test file: ```test/Filesystem-REST-test.js```
