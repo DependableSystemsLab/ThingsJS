@@ -18,7 +18,9 @@ runTest('Pubsub', './Pubsub-test.js');
 runTest('Code', './Code-test.js');
 runTest('CodeEngine', './CodeEngine-test.js');
 runTest('Dispatcher', './Dispatcher-test.js');
-// runTest('Scheduler', './Scheduler-test.js');
+runTest('Scheduler', './Scheduler-test.js');
+runTest('Global FileSystem', './Filesystem-test.js');
+runTest('Global FileSystem REST API', './Filesystem-REST-test.js');
 
 after(function(done){
  	server.kill().then(function(){
