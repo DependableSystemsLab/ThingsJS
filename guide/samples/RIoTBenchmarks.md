@@ -33,8 +33,7 @@ Instead of running components in each phase in order one by one, we plan to use 
 # Guide for user
 Currently user has to set up the dependency for the benchmark on their worker folder by creating a empty package.json with ```vi package.json``` and ```npm link things-js``` to load all necessary node-modules. 
 All necessary data and properties files are stored in global file systems, which also act as a communication
-channel for writing and reading models during the training and predicting phase. There is an automation script benchmark.js in samples folder which can automatically trigger scheduling the components by command ```node benchamrk.js ETL/STAT/TRAIN/PRED```.
-
+channel for writing and reading models during the training and predicting phase. User can also use GFS api to change the taxi data for their own training. There is an automation script benchmark.js in samples folder which can automatically trigger scheduling the components by command ```node benchamrk.js ETL/STAT/TRAIN/PRED```.
 
 All figures referenced from [dreamlab RIOT benchmark]( https://github.com/dream-lab/riot-bench)
 
