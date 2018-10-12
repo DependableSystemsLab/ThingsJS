@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>Pocket Beagle · GitBook</title>
+        <title>Writing your First App · GitBook</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -57,10 +57,10 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="SecondApplication.html" />
+    <link rel="next" href="Migration.html" />
     
     
-    <link rel="prev" href="../GettingStarted.html" />
+    <link rel="prev" href="./" />
     
 
     </head>
@@ -174,9 +174,9 @@
             <ul class="articles">
                 
     
-        <li class="chapter active" data-level="1.2.1" data-path="FirstApplication.html">
+        <li class="chapter " data-level="1.2.1" data-path="Setup-PocketBeagle.html">
             
-                <a href="FirstApplication.html">
+                <a href="Setup-PocketBeagle.html">
             
                     
                     Pocket Beagle
@@ -187,9 +187,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2.2" data-path="SecondApplication.html">
+        <li class="chapter " data-level="1.2.2" data-path="Setup-BeagleboneBlack.html">
             
-                <a href="SecondApplication.html">
+                <a href="Setup-BeagleboneBlack.html">
             
                     
                     Beaglebone Black
@@ -206,6 +206,19 @@
             
                     
                     Sample Components
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.4" data-path="../samples/RIoTBenchmarks.html">
+            
+                <a href="../samples/RIoTBenchmarks.html">
+            
+                    
+                    Sample Benchmarks
             
                 </a>
             
@@ -232,9 +245,9 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.3.1" data-path="Videostreamer.html">
+        <li class="chapter active" data-level="1.3.1" data-path="FirstApplication.html">
             
-                <a href="Videostreamer.html">
+                <a href="FirstApplication.html">
             
                     
                     Writing your First App
@@ -487,7 +500,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".." >Pocket Beagle</a>
+        <a href=".." >Writing your First App</a>
     </h1>
 </div>
 
@@ -502,38 +515,79 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="using-a-pocket-beagle">Using a Pocket Beagle</h1>
-<p>PocketBeagle is an ultra-tiny-yet-complete open-source USB-key-For computer. For more information on <a href="https://beagleboard.org/pocket" target="_blank">Pocket Beagle</a></p>
-<h2 id="setting-up-the-pocket-beagle">Setting up the Pocket beagle</h2>
-<ul>
-<li><p>Install the debian image in 4GB or greater memory card from <a href="https://beagleboard.org/latest-images" target="_blank">here</a>.</p>
-</li>
-<li><p>Plug in the PocketBeagle to the PC using the USB cable.</p>
-</li>
-<li><p>You have two ways to use the PocketBeagle terminal</p>
-<ul>
-<li><p>When the PocketBeagle is connected it automatically acquires the local IP of 192.168.7.1 or 192.168.6.1 depending on the Operating system. 192.168.7.1 is for Linux based distros. Going on the local IP we get access to Cloud9 IDE and Bonescript which comes preinstalled. You can directly run commands from the terminal provided in CLoud 9 IDE.</p>
-</li>
-<li><p>The second way to proceed is to ssh into the machine like any other embedded device.</p>
-</li>
-</ul>
-<pre><code>~$ ssh debian@192.168.7.2
-</code></pre><p>The default password is temppwd</p>
-</li>
-<li><p>For Ubuntu share internet from the host PC through USB, however, the internet connection is quite slow when we use internet over the USB. Hence, you can consider the option of cross-compiling it on the host PC and them using it on the PocketBeagle.</p>
-</li>
-<li><p>Check your internet connection.</p>
-</li>
-</ul>
-<pre><code>~$ ping 8.8.8.8
-</code></pre><p>Follow the Getting started steps to install ThingsJS running</p>
-<p>The configuration file is a required argument for starting the worker. It should contain the following information:</p>
-<pre><code>{
-    &quot;pubsub_url&quot;: &quot;mqtt://localhost&quot;,
-    &quot;id&quot;: &quot;node_00&quot;,
-    &quot;device&quot;: &quot;PocketBeagle&quot;
+                                <h1 id="building-your-first-first-program-using-thingsjs">Building your first First Program using ThingsJS</h1>
+<h2 id="experimental-setup">Experimental setup</h2>
+<p>In order to write a ThingsJS component certain things should be taken into account</p>
+<p>Below we will demonstrate an application to write your first application which is a factorial application using the ThingsJS compatible rules.</p>
+<p>The code for this application can be found on our Github page if you want to experiment with it. It&apos;s located in the samples folder.</p>
+<h3 id="usual-way-of-writing-a-factorial-code-in-javascript">Usual way of writing a factorial code in Javascript</h3>
+<pre><code>function factorialize(num) {
+  if (num &lt; 0)
+        return -1;
+  else if (num == 0)
+      return 1;
+  else {
+      return (num * factorialize(num - 1));
+  }
 }
-</code></pre><p>Make the required changes to the PocketBeagle file.</p>
+</code></pre><h4 id="however-the-above-code-will-not-be-compatible-with-thingsjs">However, the above code will not be compatible with ThingsJS.</h4>
+<h3 id="thingsjs-compatible-code">ThingsJS Compatible code</h3>
+<p>To write a ThingsJS compatible code, certain changes have to made.</p>
+<p>First, we cannot use a while loops or recursive functions as doing so would block the thread, preventing the migration signal from being processed. Instead, we use <code>setImmediate</code> to call the next step of the factorial computation.</p>
+<p>ThingsJS gives us the ability to migrate the code from one platform to another in case of a reboot of the device. In order to ensure that the code is able to migrate and continue running from the same point  the code needs to be written in a certain format.</p>
+<p>After making the modifications to our factorial program in accordance with the suggested changes, we get the following:</p>
+<pre><code>
+var target = 100000;
+var timer;
+var count = 0;
+var digits = [ 1 ];
+
+function factorial(){
+    count ++;
+    var carry = 0;
+    var product = 0;
+    for (var i=0; i &lt; digits.length; i++){
+        product = digits[i] * count;
+        product += carry;
+        digits[i] = product % 10;
+        carry = Math.floor(product / 10);
+    }
+    while (carry &gt; 0){
+        digits.push(carry % 10);
+        carry = Math.floor(carry / 10);
+    }
+
+    if (count &lt; target){
+        setImmediate(factorial);
+    }
+    else {
+        digits.reverse();
+        var value = digits.join(&apos;&apos;);
+        clearInterval(timer);
+        console.log(&quot;&lt;&lt;&lt; Computation Finished &gt;&gt;&gt;&quot;);
+        console.log(&quot;factorial(&quot;+target+&quot;) = &quot;+value);
+    }
+};
+setImmediate(factorial);
+
+function printInterval(){
+    console.log(&quot;Currently computing n = &quot;+count+&quot;, number of digits = &quot;+digits.length);
+};
+timer = setInterval(printInterval, 500);
+</code></pre><h4 id="evaluating-the-code">Evaluating the code</h4>
+<p>Here we walkthrough the code to understand how exactly it is working.</p>
+<pre><code>var target = 100000;
+</code></pre><p>This is used to specify the argument. In this case we want to compute the factorial of 100000.</p>
+<pre><code>
+setImmediate(factorial);
+</code></pre><ul>
+<li><p>The setImmediate Schedules the &quot;immediate&quot; execution of the callback after I/O events&apos; callbacks.</p>
+</li>
+<li><p>When multiple calls to setImmediate() are made, the callback functions are queued for execution in the order in which they are created. The entire callback queue is processed every event loop iteration. If an immediate timer is queued from inside an executing callback, that timer will not be triggered until the next event loop iteration.</p>
+</li>
+<li><p>The usage of setImmediate shows how this code DOES NOT block the event loop, which was the entire point of writing the Factorial code in this fashion.</p>
+</li>
+</ul>
 
                                 
                                 </section>
@@ -561,12 +615,12 @@
 
             
                 
-                <a href="../GettingStarted.html" class="navigation navigation-prev " aria-label="Previous page: Getting Started">
+                <a href="./" class="navigation navigation-prev " aria-label="Previous page: Tutorials">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
                 
-                <a href="SecondApplication.html" class="navigation navigation-next " aria-label="Next page: Beaglebone Black">
+                <a href="Migration.html" class="navigation navigation-next " aria-label="Next page: Live-Migration">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -577,7 +631,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Pocket Beagle","level":"1.2.1","depth":2,"next":{"title":"Beaglebone Black","level":"1.2.2","depth":2,"path":"tutorials/SecondApplication.md","ref":"tutorials/SecondApplication.md","articles":[]},"previous":{"title":"Getting Started","level":"1.2","depth":1,"path":"GettingStarted.md","ref":"GettingStarted.md","articles":[{"title":"Pocket Beagle","level":"1.2.1","depth":2,"path":"tutorials/FirstApplication.md","ref":"tutorials/FirstApplication.md","articles":[]},{"title":"Beaglebone Black","level":"1.2.2","depth":2,"path":"tutorials/SecondApplication.md","ref":"tutorials/SecondApplication.md","articles":[]},{"title":"Sample Components","level":"1.2.3","depth":2,"path":"samples/README.md","ref":"samples/README.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"tutorials/FirstApplication.md","mtime":"2018-10-02T00:39:06.312Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-10-05T23:44:29.969Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Writing your First App","level":"1.3.1","depth":2,"next":{"title":"Live-Migration","level":"1.3.2","depth":2,"path":"tutorials/Migration.md","ref":"tutorials/Migration.md","articles":[]},"previous":{"title":"Tutorials","level":"1.3","depth":1,"path":"tutorials/README.md","ref":"tutorials/README.md","articles":[{"title":"Writing your First App","level":"1.3.1","depth":2,"path":"tutorials/FirstApplication.md","ref":"tutorials/FirstApplication.md","articles":[]},{"title":"Live-Migration","level":"1.3.2","depth":2,"path":"tutorials/Migration.md","ref":"tutorials/Migration.md","articles":[]},{"title":"Using the Dashboard","level":"1.3.3","depth":2,"path":"tutorials/dashboard/Dashboard.md","ref":"tutorials/dashboard/Dashboard.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"tutorials/FirstApplication.md","mtime":"2018-10-09T19:46:44.357Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-10-09T20:09:16.144Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
