@@ -8,7 +8,8 @@ var mongourl = 'mongodb://localhost:27017/things-js-fs-test';
 
 describe('GFS Userland API', function(){
 	var self = this;
-	var testPath = '/'+helpers.randKey()+'_js';
+	var testPath = '/'+helpers.randKey()+'.js';
+	var testDir = '/'+helpers.randKey();
 
 	var gfs;
 	it('Should require without error', function(){
@@ -65,6 +66,28 @@ describe('GFS Userland API', function(){
 			});
 		});
 
+		it('Create a directory', function(done){
+			gfs.mkdir(testDir, function(err){
+				expect(err).to.eql(null);
+				done();
+			});
+		});
+
+		it('Read a directory', function(done){
+			gfs.readdir(testDir, function(err, files){
+				expect(err).to.eql(null);
+				assert.equal(files instanceof Array, true);
+				done();
+			});
+		});
+
+		it('Remove a directory', function(done){
+			gfs.rmdir(testDir, function(err){
+				expect(err).to.eql(null);
+				done();
+			});
+		});
+
 	});
 
 	describe('Append tests', function(){
@@ -108,25 +131,6 @@ describe('GFS Userland API', function(){
 				done();
 			});
 		});
-
-		// function deleteFile(file){
-		// 	function readBack(cb){
-		// 		return gfs.readFile(file, function(err, data){
-		// 			return expect(err).to.be.instanceOf(Error);
-		// 		});
-		// 	}
-
-		// 	it('Delete ' + file, function(){
-		// 		return gfs.deleteFile(file, function(err){
-		// 			expect(err).to.eql(null);
-		// 			return readBack();
-		// 		});
-		// 	});
-		// }
-
-		// self.fpaths.forEach(function(filepath){
-		// 	deleteFile(filepath);
-		// });
  	});
 })
 
@@ -141,16 +145,9 @@ describe('GFS RESTful API', function(){
 		});
 	});
 
-	it('returns the root directory', function(done){
-		request('http://localhost:3000', { json: true }, function(error, response, data){
-			expect(data.type).to.equal('root');
-			done();
-		})
-	});
-
 	it('can read the root directory via get request', function(done){
 		request('http://localhost:3000', { json: true }, function(error, response, data){
-			expect(data.type).to.equal('root');
+			expect(data.type).to.equal('directory');
 			done();
 		})
 	});
@@ -159,6 +156,7 @@ describe('GFS RESTful API', function(){
 		request.post('http://localhost:3000', { 
 			json: true, 
 			body: {
+				type: 'file',
 				name: testFile,
 				content: testContent
 			} 
