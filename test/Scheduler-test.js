@@ -12,15 +12,13 @@ describe('API methods', function(){
 	var self = this;
 	self.SCHEDULING_INTERVAL = 10000;
 
-	before(function(){
+	before(function(done){
 		this.timeout(10000);
-		return new Promise(function(resolve){
-			self.pubsub = new things.Pubsub('mqtt://localhost');
-			self.pubsub.on('ready', resolve);
-		});
+		self.pubsub = new things.Pubsub('mqtt://localhost');
+		self.pubsub.on('ready', done);
 	});
 
-	describe('First-fit scheduling algorithm', function(){
+	describe('Tests for first-fit scheduling algorithm', function(){
 
 		it('Base case: devices = [], tasks = [], mapping = {}', function(){
 			var new_mapping = things.Scheduler.Algorithms['first_fit']([], [], {});
@@ -116,7 +114,7 @@ describe('API methods', function(){
 		});
 	});
 
-	describe('Test for compute actions', function(){
+	describe('Tests for compute actions', function(){
 
 		it('Base case: current mapping = {}, desired mapping = {}', function(){
 			var actions = things.Scheduler.computeActions({}, {});
@@ -243,12 +241,10 @@ describe('API methods', function(){
 	});
 
 	describe('Initialization', function(){
-		before(function(){
+		before(function(done){
 			self.identity = 'TEST-SCHEDULER';
 			self.scheduler = new things.Scheduler({ id: self.identity });
-			return new Promise(function(resolve){
-				self.scheduler.on('ready', resolve);
-			});
+			self.scheduler.on('ready', done);
 		});
 
 		it('Has correct configurations', function(){
@@ -270,34 +266,37 @@ describe('API methods', function(){
 	describe('Process detection', function(){
 		it('Ignore rogue processes', function(){
 			this.timeout(10000);
-			var pubsub = new things.Pubsub();
-			var code = things.Code.fromString(pubsub, 'test-rogue', 'console.log(\"test\")\;');
-		    code.run().then(function(instance){
-		      	instance.on('finished', function(){
-		      		setTimeout(code.kill, 1000);
-		       	 	process.exit();
-		       	 });
-		    });
 
-		    return new Promise(function(resolve){
-		    	self.scheduler._assess().then(function(data){
-		    		resolve(data);
-		    	});
-		    }).then(function(res){
-		    	expect(res).to.exist;
-		    });
+			return new Promise(function(resolve){
+				var pubsub = new things.Pubsub();
+				var code = things.Code.fromString(pubsub, 'test-rogue', 'console.log(\"test\")\;');
+				code.run({ silent: true }).then(function(instance){
+
+					instance.on('finished', function(){
+						setTimeout(code.kill, 1000);
+						process.exit();
+					});
+
+					self.scheduler._assess().then(function(data){
+						resolve(data);
+					});
+				});
+
+			}).then(function(res){
+				expect(res).to.exist;
+			});
 		});
 	});
 
 	describe('Correct view of the network', function(){
-		var ENGINE_REPORT = 2000;
+		var REPORT_INTERVAL = 2000;
 		var id = 'THIS_ENGINE'
 
 		it('Detects when an engine is dead', function(){
 			this.timeout(15000);
 
 			return new Promise(function(resolve){
-				var eng = new things.CodeEngine({ id: id });
+				var eng = new things.CodeEngine({ id: id }, { mute_code_output: true });
 				eng.on('ready', function(){
 					setTimeout(function(){
 						eng.kill();
@@ -305,8 +304,8 @@ describe('API methods', function(){
 							self.scheduler._assess().then(function(data){
 								resolve(data);
 							});
-						}, 2*ENGINE_REPORT);
-					}, ENGINE_REPORT);
+						}, 2*REPORT_INTERVAL);
+					}, REPORT_INTERVAL);
 				});
 			}).then(function(data){
 				expect(data.engines.length).to.eql(0);
@@ -317,18 +316,19 @@ describe('API methods', function(){
 
 	describe('Scheduler cmds', function(){
 		var engine;
+		var counter = "var count = 0\; setInterval(++count, 1000)";
+		var actions = ['pause_application', 'resume_application', 'kill_application'];
 
 		before(function(done){
 			this.timeout(5000);
-			engine = new things.CodeEngine();
+			engine = new things.CodeEngine({}, { mute_code_output: true });
 			engine.on('ready', function(){
+				/* make sure engine has enough time to report its existence to
+				 * the scheduler
+				 */
 				setTimeout(done, 2000);
 			});
 		});
-
-		var counter = "var count = 0\; setInterval(++count, 1000)";
-
-		var actions = ['pause_application', 'resume_application', 'kill_application'];
 
 		function schedule(ctrl, kwargs){
 			var reqId = helpers.randKey();
@@ -348,7 +348,7 @@ describe('API methods', function(){
 			this.timeout(10000);
 			var app = {
 				components: {
-					'comp0': { count: 1, source: counter.toString(), required_memory: 1 }
+					'comp0': { count: 1, source: counter, required_memory: 1 }
 				}
 			}
 			return new Promise(function(resolve){
@@ -437,7 +437,7 @@ describe('API methods', function(){
 			self.pubsub.subscribe(request.reply_to, callback);
 
 			return new Promise(function(resolve){
-				engine = new things.CodeEngine({ id: 'TEST-EMPTY' });
+				engine = new things.CodeEngine({ id: 'TEST-EMPTY' }, { mute_code_output: true });
 				engine.on('ready', function(){
 					setTimeout(function(){
 						self.pubsub.publish(self.identity + '/cmd', request);
@@ -451,7 +451,7 @@ describe('API methods', function(){
 		});
 
 
-		it('Schedule an application', function(){
+		it('Schedule an application that should succeed', function(){
 			this.timeout(20000);
 			var engine;
 			var callback = sinon.fake();
@@ -463,7 +463,7 @@ describe('API methods', function(){
 					}
 				};
 				var request = generate_app(app);
-				engine = new things.CodeEngine({ id: 'TEST-ENGINE '});
+				engine = new things.CodeEngine({}, { mute_code_output: true });
 				engine.on('ready', function(){
 					setTimeout(function(){
 						self.pubsub.publish(self.identity + '/cmd', request);
@@ -496,7 +496,7 @@ describe('API methods', function(){
 
 			return new Promise(function(resolve){
 				var init = function(){
-					second_device = new things.CodeEngine({ id: dev_two });
+					second_device = new things.CodeEngine({ id: dev_two }, { mute_code_output: true });
 					engines.push(second_device);
 					second_device.on('ready', function(){
 						setTimeout(function(){
@@ -507,7 +507,7 @@ describe('API methods', function(){
 					});
 				}
 
-				first_device = new things.CodeEngine({ id: dev_one });
+				first_device = new things.CodeEngine({ id: dev_one }, { mute_code_output: true });
 				engines.push(first_device);
 				self.pubsub.subscribe(request.reply_to, init);
 				first_device.on('ready', function(){
@@ -522,14 +522,14 @@ describe('API methods', function(){
 			});
 		});
 
-		after(function(){
-			self.engine = undefined;
-		});
 	});
 
-	after(function(){
-		self.scheduler.kill();
-		self.pubsub.kill();
+	after(function(done){
+		var p1 = self.scheduler.kill();
+		var p2 = self.pubsub.kill();
+		Promise.all([p1, p2]).then(function(){
+			done();
+		});
 	});
 
 });
