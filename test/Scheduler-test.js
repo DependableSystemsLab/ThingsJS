@@ -12,17 +12,13 @@ describe('API methods', function(){
 	var self = this;
 	self.SCHEDULING_INTERVAL = 10000;
 
-	// before(function(){
-	// 	this.timeout(10000);
-
-	// 	return new Promise(function(resolve){
-	// 		self.server = mosca.Server({ port: 1883 });
-	// 		self.server.on('ready', function(){
-	// 			self.pubsub = new things.Pubsub('mqtt://localhost');
-	// 			self.pubsub.on('ready', resolve);
-	// 		});
-	// 	});
-	// });
+	before(function(){
+		this.timeout(10000);
+		return new Promise(function(resolve){
+			self.pubsub = new things.Pubsub('mqtt://localhost');
+			self.pubsub.on('ready', resolve);
+		});
+	});
 
 	describe('First-fit scheduling algorithm', function(){
 
@@ -288,7 +284,6 @@ describe('API methods', function(){
 		    		resolve(data);
 		    	});
 		    }).then(function(res){
-		    	console.log(res);
 		    	expect(res).to.exist;
 		    });
 		});
@@ -316,42 +311,6 @@ describe('API methods', function(){
 			}).then(function(data){
 				expect(data.engines.length).to.eql(0);
 				expect(data.mapping).to.not.have.all.keys(id);
-			});
-		})
-	});
-
-	describe('Node failures', function(){
-		var engines = [];
-		var ready = [];
-		var num_engines = 3;
-
-		before(function(){
-			for(var i = 0; i < num_engines; i++){
-				var device = new things.CodeEngine({ id: i.toString() });
-				engines.push(device);
-				var is_ready = function(){
-					return new Promise(function(resolve){
-						device.on('ready', resolve);
-					});
-				}
-				ready.push(is_ready);
-			}
-			return new Promise(function(resolve){
-				Promise.all(ready).then(resolve);
-			});
-		});
-
-		it('Test scheduler does not fail when engines leave the network', function(){
-			this.timeout(20000);
-			return self.scheduler._assess()
-				.then(function(data){
-					expect(Object.keys(data.mapping).length).to.eql(0);
-				});
-		});
-
-		after(function(){
-			engines.forEach(function(device){
-				device.kill();
 			});
 		})
 	});
@@ -569,8 +528,8 @@ describe('API methods', function(){
 	});
 
 	after(function(){
+		self.scheduler.kill();
 		self.pubsub.kill();
-		self.server.close();
 	});
 
 });
