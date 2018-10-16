@@ -519,31 +519,10 @@
 <dl>
 <dt><a href="#Pubsub">Pubsub</a></dt>
 <dd></dd>
+<dt><a href="#DummyPubsub">DummyPubsub</a></dt>
+<dd></dd>
 <dt><a href="#PubsubServer">PubsubServer</a></dt>
 <dd></dd>
-</dl>
-
-<h2 id="functions">Functions</h2>
-<dl>
-<dt><a href="#InputStream">InputStream(pubsub, topic)</a></dt>
-<dd><p>A Readable Pub/Sub stream.
-A new message (a frame) published under <code>topic</code> triggers the &apos;data&apos; event,
-with the message passed as the event data.</p>
-</dd>
-<dt><a href="#OutputStream">OutputStream(pubsub, topic)</a></dt>
-<dd><p>A Writable Pub/Sub stream.
-A call to <code>.write(data)</code> will write to the output stream identified by <code>topic</code>.</p>
-</dd>
-<dt><a href="#DummyPubsub">DummyPubsub()</a></dt>
-<dd><p>Dummy Pubsub used for instrumenting code without connecting.</p>
-<ul>
-<li>does not extend Pubsub, this is a standalone object</li>
-<li>this object is created instead of actual Pubsub when user code is initialized via Code.run().</li>
-<li>when user code is executed via Code.run(), it has an IPC channel to the master process.
-in that case, pubsub.publish is done by the master process, and the child process (this process) sends
-the message to the master process.</li>
-</ul>
-</dd>
 </dl>
 
 <p><a name="Pubsub"></a></p>
@@ -552,16 +531,25 @@ the message to the master process.</li>
 <ul>
 <li><a href="#Pubsub">Pubsub</a><ul>
 <li><a href="#new_Pubsub_new">new Pubsub(url, options)</a></li>
+<li><em>instance</em><ul>
 <li><a href="#Pubsub+subscribe">.subscribe(topic, handler)</a> &#x21D2; <code>Promise</code></li>
 <li><a href="#Pubsub+unsubscribe">.unsubscribe(topic)</a> &#x21D2; <code>Promise</code></li>
 <li><a href="#Pubsub+publish">.publish(topic, message)</a> &#x21D2; <code>Promise</code></li>
 <li><a href="#Pubsub+kill">.kill()</a> &#x21D2; <code>Promise</code></li>
 </ul>
 </li>
+<li><em>static</em><ul>
+<li><a href="#Pubsub.Server">.Server</a></li>
+<li><a href="#Pubsub.Dummy">.Dummy</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 <p><a name="new_Pubsub_new"></a></p>
 <h3 id="new-pubsuburl-options">new Pubsub(url, options)</h3>
-<p>[Pubsub]</p>
+<p>Pubsub object provides client-side interface for talking to a MQTT Publish/Subscribe Server.
+It is a thin wrapper around the <a href="https://github.com/mqttjs/MQTT.js" target="_blank">mqtt</a> client</p>
 <table>
 <thead>
 <tr>
@@ -574,19 +562,24 @@ the message to the master process.</li>
 <tr>
 <td>url</td>
 <td><code>string</code></td>
-<td>[description]</td>
+<td>The URL of the Pub/Sub service</td>
 </tr>
 <tr>
 <td>options</td>
 <td><code>object</code></td>
-<td>[description]</td>
+<td>additional options object</td>
+</tr>
+<tr>
+<td>options.handlers</td>
+<td><code>object</code></td>
+<td>a dictionary of <topic>:<function> for initializing subscriptions</function></topic></td>
 </tr>
 </tbody>
 </table>
 <p><a name="Pubsub+subscribe"></a></p>
 <h3 id="pubsubsubscribetopic-handler-&#x21D2;-promise">pubsub.subscribe(topic, handler) &#x21D2; <code>Promise</code></h3>
-<p>[subscribe description]</p>
-<p><strong>Kind</strong>: instance method of <a href="#Pubsub"><code>Pubsub</code></a><br><strong>Returns</strong>: <code>Promise</code> - [description]  </p>
+<p>Subscribe to a given topic, passing in a callback to invoke upon reception of the message under the said topic.</p>
+<p><strong>Kind</strong>: instance method of <a href="#Pubsub"><code>Pubsub</code></a><br><strong>Returns</strong>: <code>Promise</code> - - On successful subscription, the Promise resolves to the topic.  </p>
 <table>
 <thead>
 <tr>
@@ -599,19 +592,19 @@ the message to the master process.</li>
 <tr>
 <td>topic</td>
 <td><code>String</code></td>
-<td>[description]</td>
+<td>the topic to subscribe to</td>
 </tr>
 <tr>
 <td>handler</td>
 <td><code>function</code></td>
-<td>[description]</td>
+<td>the callback function to invoke when a message arrives under the given topic. The callback must have the signature <code>function(message, topic, rawBuffer)</code></td>
 </tr>
 </tbody>
 </table>
 <p><a name="Pubsub+unsubscribe"></a></p>
 <h3 id="pubsubunsubscribetopic-&#x21D2;-promise">pubsub.unsubscribe(topic) &#x21D2; <code>Promise</code></h3>
-<p>[unsubscribe description]</p>
-<p><strong>Kind</strong>: instance method of <a href="#Pubsub"><code>Pubsub</code></a><br><strong>Returns</strong>: <code>Promise</code> - [description]  </p>
+<p>Unsubscribe from a given topic. If the client is not subscribed, it will immediately resolve and will not reject with an error</p>
+<p><strong>Kind</strong>: instance method of <a href="#Pubsub"><code>Pubsub</code></a><br><strong>Returns</strong>: <code>Promise</code> - - the Promise always resolves to the topic regardless of the outcome.  </p>
 <table>
 <thead>
 <tr>
@@ -624,14 +617,14 @@ the message to the master process.</li>
 <tr>
 <td>topic</td>
 <td><code>String</code></td>
-<td>[description]</td>
+<td>the topic to unsubscribe from</td>
 </tr>
 </tbody>
 </table>
 <p><a name="Pubsub+publish"></a></p>
 <h3 id="pubsubpublishtopic-message-&#x21D2;-promise">pubsub.publish(topic, message) &#x21D2; <code>Promise</code></h3>
-<p>[publish description]</p>
-<p><strong>Kind</strong>: instance method of <a href="#Pubsub"><code>Pubsub</code></a><br><strong>Returns</strong>: <code>Promise</code> - [description]  </p>
+<p>Publish to a given topic. If the given message is not a Buffer object, it will try and JSON.stringify it.</p>
+<p><strong>Kind</strong>: instance method of <a href="#Pubsub"><code>Pubsub</code></a><br><strong>Returns</strong>: <code>Promise</code> - - resolves to through on successful publish  </p>
 <table>
 <thead>
 <tr>
@@ -644,87 +637,54 @@ the message to the master process.</li>
 <tr>
 <td>topic</td>
 <td><code>String</code></td>
-<td>[description]</td>
+<td>the topic to publish to</td>
 </tr>
 <tr>
 <td>message</td>
-<td><code>Object</code></td>
-<td>[description]</td>
+<td><code>Object</code> \</td>
+<td><code>Buffer</code></td>
+<td>message to send (assumed to be a JSON-serializable object by default)</td>
 </tr>
 </tbody>
 </table>
 <p><a name="Pubsub+kill"></a></p>
 <h3 id="pubsubkill-&#x21D2;-promise">pubsub.kill() &#x21D2; <code>Promise</code></h3>
-<p>[kill description]</p>
-<p><strong>Kind</strong>: instance method of <a href="#Pubsub"><code>Pubsub</code></a><br><strong>Returns</strong>: <code>Promise</code> - [description]<br><a name="PubsubServer"></a></p>
-<h2 id="pubsubserver">PubsubServer</h2>
-<p><strong>Kind</strong>: global class<br><a name="new_PubsubServer_new"></a></p>
-<h3 id="new-pubsubserver">new PubsubServer()</h3>
-<p>Basic wrapper around the Mosca Server</p>
-<p><a name="InputStream"></a></p>
-<h2 id="inputstreampubsub-topic">InputStream(pubsub, topic)</h2>
-<p>A Readable Pub/Sub stream.
-A new message (a frame) published under <code>topic</code> triggers the &apos;data&apos; event,
-with the message passed as the event data.</p>
-<p><strong>Kind</strong>: global function  </p>
-<table>
-<thead>
-<tr>
-<th>Param</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>pubsub</td>
-<td><a href="#Pubsub"><code>Pubsub</code></a></td>
-<td>the Pubsub object</td>
-</tr>
-<tr>
-<td>topic</td>
-<td><code>string</code></td>
-<td>the topic to read from</td>
-</tr>
-</tbody>
-</table>
-<p><a name="OutputStream"></a></p>
-<h2 id="outputstreampubsub-topic">OutputStream(pubsub, topic)</h2>
-<p>A Writable Pub/Sub stream.
-A call to <code>.write(data)</code> will write to the output stream identified by <code>topic</code>.</p>
-<p><strong>Kind</strong>: global function  </p>
-<table>
-<thead>
-<tr>
-<th>Param</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>pubsub</td>
-<td><a href="#Pubsub"><code>Pubsub</code></a></td>
-<td>the Pubsub object</td>
-</tr>
-<tr>
-<td>topic</td>
-<td><code>string</code></td>
-<td>the topic to write to</td>
-</tr>
-</tbody>
-</table>
-<p><a name="DummyPubsub"></a></p>
-<h2 id="dummypubsub">DummyPubsub()</h2>
+<p>Kill the Pubsub instance, closing the connection.</p>
+<p><strong>Kind</strong>: instance method of <a href="#Pubsub"><code>Pubsub</code></a><br><strong>Returns</strong>: <code>Promise</code> - - the Promise always resolves true regardless of the outcome.<br><a name="Pubsub.Server"></a></p>
+<h3 id="pubsubserver">Pubsub.Server</h3>
+<p>PubsubServer is available as a property of Pubsub</p>
+<p><strong>Kind</strong>: static property of <a href="#Pubsub"><code>Pubsub</code></a><br><a name="Pubsub.Dummy"></a></p>
+<h3 id="pubsubdummy">Pubsub.Dummy</h3>
+<p>DummyPubsub is available as a property of Pubsub</p>
+<p><strong>Kind</strong>: static property of <a href="#Pubsub"><code>Pubsub</code></a><br><a name="DummyPubsub"></a></p>
+<h2 id="dummypubsub">DummyPubsub</h2>
+<p><strong>Kind</strong>: global class<br><a name="new_DummyPubsub_new"></a></p>
+<h3 id="new-dummypubsub">new DummyPubsub()</h3>
 <p>Dummy Pubsub used for instrumenting code without connecting.</p>
 <ul>
-<li>does not extend Pubsub, this is a standalone object</li>
-<li>this object is created instead of actual Pubsub when user code is initialized via Code.run().</li>
+<li>does not extend Pubsub (i.e. not a subclass), this is a standalone definition</li>
+<li>this object is created instead of actual Pubsub when user code is initialized as a Process via Code.run().</li>
 <li>when user code is executed via Code.run(), it has an IPC channel to the master process.
 in that case, pubsub.publish is done by the master process, and the child process (this process) sends
 the message to the master process.</li>
 </ul>
-<p><strong>Kind</strong>: global function  </p>
+<p><a name="PubsubServer"></a></p>
+<h2 id="pubsubserver">PubsubServer</h2>
+<p><strong>Kind</strong>: global class  </p>
+<ul>
+<li><a href="#PubsubServer">PubsubServer</a><ul>
+<li><a href="#new_PubsubServer_new">new PubsubServer()</a></li>
+<li><a href="#PubsubServer+kill">.kill()</a> &#x21D2; <code>Promise</code></li>
+</ul>
+</li>
+</ul>
+<p><a name="new_PubsubServer_new"></a></p>
+<h3 id="new-pubsubserver">new PubsubServer()</h3>
+<p>PubsubServer is a thin wrapper around the Mosca Server</p>
+<p><a name="PubsubServer+kill"></a></p>
+<h3 id="pubsubserverkill-&#x21D2;-promise">pubsubServer.kill() &#x21D2; <code>Promise</code></h3>
+<p>Kill the PubsubServer</p>
+<p><strong>Kind</strong>: instance method of <a href="#PubsubServer"><code>PubsubServer</code></a>  </p>
 
                                 
                                 </section>
@@ -768,7 +728,7 @@ the message to the master process.</li>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Pubsub","level":"1.4.2","depth":2,"next":{"title":"Code","level":"1.4.3","depth":2,"path":"api/Code.md","ref":"api/Code.md","articles":[]},"previous":{"title":"Running Unit Tests","level":"1.4.1","depth":2,"path":"api/Testing.md","ref":"api/Testing.md","articles":[]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"api/Pubsub.md","mtime":"2018-10-02T00:39:06.312Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-10-14T08:44:20.872Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Pubsub","level":"1.4.2","depth":2,"next":{"title":"Code","level":"1.4.3","depth":2,"path":"api/Code.md","ref":"api/Code.md","articles":[]},"previous":{"title":"Running Unit Tests","level":"1.4.1","depth":2,"path":"api/Testing.md","ref":"api/Testing.md","articles":[]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"api/Pubsub.md","mtime":"2018-10-15T23:34:02.479Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-10-16T04:39:51.468Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
