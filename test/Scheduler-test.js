@@ -476,49 +476,49 @@ describe('API methods', function(){
 			});
 		});
 
-		it('Test migration', function(){
-			this.skip();
-			this.timeout(30000);
+		// it('Test migration', function(){
+		// 	this.skip();
+		// 	this.timeout(30000);
 
-			var callback = sinon.fake();
-			var engines = [];
-			var dev_one = 'DEV1';
-			var dev_two = 'DEV2';
-			var app = { 
-				components: { 
-						'bar': { source: simple_function, count: 1 },
-						'foo': { source: simple_function, count: 1 } 
-					}
-				};
-			var request = generate_app(app);
+		// 	var callback = sinon.fake();
+		// 	var engines = [];
+		// 	var dev_one = 'DEV1';
+		// 	var dev_two = 'DEV2';
+		// 	var app = { 
+		// 		components: { 
+		// 				'bar': { source: simple_function, count: 1 },
+		// 				'foo': { source: simple_function, count: 1 } 
+		// 			}
+		// 		};
+		// 	var request = generate_app(app);
 
-			return new Promise(function(resolve){
-				var init = function(){
-					second_device = new things.CodeEngine({ id: dev_two }, { mute_code_output: true });
-					engines.push(second_device);
-					second_device.on('ready', function(){
-						setTimeout(function(){
-							self.scheduler._assess().then(function(data){
-								resolve(data);
-							});
-						}, self.SCHEDULING_INTERVAL);
-					});
-				}
+		// 	return new Promise(function(resolve){
+		// 		var init = function(){
+		// 			second_device = new things.CodeEngine({ id: dev_two }, { mute_code_output: true });
+		// 			engines.push(second_device);
+		// 			second_device.on('ready', function(){
+		// 				setTimeout(function(){
+		// 					self.scheduler._assess().then(function(data){
+		// 						resolve(data);
+		// 					});
+		// 				}, self.SCHEDULING_INTERVAL);
+		// 			});
+		// 		}
 
-				first_device = new things.CodeEngine({ id: dev_one }, { mute_code_output: true });
-				engines.push(first_device);
-				self.pubsub.subscribe(request.reply_to, init);
-				first_device.on('ready', function(){
-					setTimeout(function(){
-						self.pubsub.publish(self.identity + '/cmd', request);
-					}, 2000);
-				});
+		// 		first_device = new things.CodeEngine({ id: dev_one }, { mute_code_output: true });
+		// 		engines.push(first_device);
+		// 		self.pubsub.subscribe(request.reply_to, init);
+		// 		first_device.on('ready', function(){
+		// 			setTimeout(function(){
+		// 				self.pubsub.publish(self.identity + '/cmd', request);
+		// 			}, 2000);
+		// 		});
 
-			}).then(function(res){
-				expect(Object.keys(res.mapping[dev_one]['processes']).length).to.eql(1);
-				expect(Object.keys(res.mapping[dev_two]['processes']).length).to.eql(1);
-			});
-		});
+		// 	}).then(function(res){
+		// 		expect(Object.keys(res.mapping[dev_one]['processes']).length).to.eql(1);
+		// 		expect(Object.keys(res.mapping[dev_two]['processes']).length).to.eql(1);
+		// 	});
+		// });
 
 	});
 
