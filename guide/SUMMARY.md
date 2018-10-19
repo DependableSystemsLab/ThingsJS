@@ -26,4 +26,4 @@
     * [Get involved](Community/involve.md)
     * [Contribute](Community/contribute.md)
     * [Feedback](Community/feedback.md)
-    * [Committee](Community/comittee.md)
+    * [Team](Community/comittee.md)
