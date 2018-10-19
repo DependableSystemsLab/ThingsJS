@@ -21,8 +21,9 @@ describe('API methods', function(){
 	describe('Tests for first-fit scheduling algorithm', function(){
 
 		it('Base case: devices = [], tasks = [], mapping = {}', function(){
-			var new_mapping = things.Scheduler.Algorithms['first_fit']([], [], {});
-			expect(new_mapping).to.eql({});
+			expect(function(){
+				var new_mapping = things.Scheduler.Algorithms['first_fit']([], [], {});				
+			}).to.throw();
 		});
 
 		it('1 device, 0 tasks', function(){
@@ -36,9 +37,9 @@ describe('API methods', function(){
 		it('0 devices, 1 task', function(){
 			var devices = [];
 			var tasks = [{ id: 'A', required_memory: 100 }];
-
-			var new_mapping = things.Scheduler.Algorithms['first_fit'](devices, tasks, {});
-			expect(Object.keys(new_mapping).length).to.eql(0);
+			expect(function(){
+				var new_mapping = things.Scheduler.Algorithms['first_fit'](devices, tasks, {});
+			}).to.throw();
 		});
 
 		it('1 device, 1 task with enough memory', function(){
@@ -417,14 +418,11 @@ describe('API methods', function(){
 			var request = generate_app(app);
 			self.pubsub.subscribe(request.reply_to, callback);
 
-			/* currently assume that the application fails from the 
-			 * client-side if there is no response after x time
-			 */
 			return new Promise(function(resolve){
 				self.pubsub.publish(self.identity + '/cmd', request);
 				setTimeout(resolve, 2000);
 			}).then(function(){
-				expect(callback.called).to.eql(false);
+				expect(callback.called).to.eql(true);
 			});
 		})
 
