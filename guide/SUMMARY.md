@@ -22,6 +22,7 @@
     * [Dispatcher](api/Dispatcher.md)
     * [Scheduler](api/Scheduler.md)
     * [File system](api/GFS.md)
+    * [Web Dashboard](api/Dashboard.md)
 * [Community](Community/README.md)
     * [Get involved](Community/involve.md)
     * [Contribute](Community/contribute.md)
