@@ -4,7 +4,7 @@ The best way to stay up to date with the ThingsJS Open Source Project is to join
 
 * ####ThingsJS User mailing list     [Join](https://groups.google.com/forum/#!forum/thingsjs)
 
-* ####ThingsJS Developer mailing list [Join](Dummy link)
+* ####ThingsJS Developer mailing list [Join](https://groups.google.com/forum/#!forum/thingsjs-dev)
 
 #Follow ThingsJS on Github
 
