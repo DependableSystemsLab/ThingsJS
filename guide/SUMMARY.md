@@ -15,7 +15,7 @@
     * [Live-Migration](tutorials/Migration.md)
     * [Using the Dashboard](tutorials/dashboard/Dashboard.md)
 * [Developer API](api/README.md)
-    * [Deveoper Documentation](api/Devdocs.md)
+    * [Developer Documentation](api/Devdocs.md)
     * [Running Unit Tests](api/Testing.md)
     * [Pubsub](api/Pubsub.md)
     * [Code](api/Code.md)
