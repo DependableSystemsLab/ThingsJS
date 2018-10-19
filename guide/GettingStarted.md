@@ -79,7 +79,7 @@ The configuration file is a required argument for starting the worker. It should
 ```
 
 
-3. To instrument raw JavaScript code into a "ThingJS-compatible" code:
+To instrument raw JavaScript code into a "ThingJS-compatible" code:
 ```
 ~$ things-js inst my_code.js
 
