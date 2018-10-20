@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>Code · GitBook</title>
+        <title>Web Dashboard · GitBook</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -57,10 +57,10 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="CodeEngine.html" />
+    <link rel="next" href="../Community/" />
     
     
-    <link rel="prev" href="Pubsub.html" />
+    <link rel="prev" href="GFS.html" />
     
 
     </head>
@@ -329,7 +329,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.4.3" data-path="Code.html">
+        <li class="chapter " data-level="1.4.3" data-path="Code.html">
             
                 <a href="Code.html">
             
@@ -394,7 +394,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.8" data-path="Dashboard.html">
+        <li class="chapter active" data-level="1.4.8" data-path="Dashboard.html">
             
                 <a href="Dashboard.html">
             
@@ -513,7 +513,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".." >Code</a>
+        <a href=".." >Web Dashboard</a>
     </h1>
 </div>
 
@@ -528,238 +528,8 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <p><a name="Code"></a></p>
-<h2 id="code">Code</h2>
-<p><strong>Kind</strong>: global class  </p>
-<ul>
-<li><a href="#Code">Code</a><ul>
-<li><a href="#new_Code_new">new Code(pubsub, name, raw_code)</a></li>
-<li><em>instance</em><ul>
-<li><a href="#Code+save">.save(file_path)</a> &#x21D2; <code>Promise</code></li>
-<li><a href="#Code+run">.run(options)</a> &#x21D2; <code>Promise</code></li>
-</ul>
-</li>
-<li><em>static</em><ul>
-<li><a href="#Code.readMetadata">.readMetadata(raw_code)</a> &#x21D2; <code>object</code></li>
-<li><a href="#Code.instrument">.instrument(pubsub, code_name, raw_code)</a> &#x21D2; <code>string</code></li>
-<li><a href="#Code.fromString">.fromString(pubsub, code_name, raw_code)</a> &#x21D2; <a href="#Code"><code>Code</code></a></li>
-<li><a href="#Code.fromFile">.fromFile(file_path)</a></li>
-<li><a href="#Code.fromSnapshot">.fromSnapshot(snapshot)</a> &#x21D2; <a href="#Code"><code>Code</code></a></li>
-<li><a href="#Code.fromSnapshotFile">.fromSnapshotFile(snapshot_path)</a> &#x21D2; <a href="#Code"><code>Code</code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<p><a name="new_Code_new"></a></p>
-<h3 id="new-codepubsub-name-rawcode">new Code(pubsub, name, raw_code)</h3>
-<p>The Code object provides API for processing raw JavaScript code.</p>
-<table>
-<thead>
-<tr>
-<th>Param</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>pubsub</td>
-<td><code>Pubsub</code></td>
-<td>Pubsub interface the code should use</td>
-</tr>
-<tr>
-<td>name</td>
-<td><code>string</code></td>
-<td>Name of the code (e.g. file name)</td>
-</tr>
-<tr>
-<td>raw_code</td>
-<td><code>string</code></td>
-<td>String content of the code</td>
-</tr>
-</tbody>
-</table>
-<p><a name="Code+save"></a></p>
-<h3 id="codesavefilepath-&#x21D2;-promise">code.save(file_path) &#x21D2; <code>Promise</code></h3>
-<p>Save the instrumented code as a file</p>
-<p><strong>Kind</strong>: instance method of <a href="#Code"><code>Code</code></a><br><strong>Returns</strong>: <code>Promise</code> - - On successful write, the Promise resolves to <code>file_path</code>.  </p>
-<table>
-<thead>
-<tr>
-<th>Param</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>file_path</td>
-<td><code>string</code></td>
-<td>the path to write to</td>
-</tr>
-</tbody>
-</table>
-<p><a name="Code+run"></a></p>
-<h3 id="coderunoptions-&#x21D2;-promise">code.run(options) &#x21D2; <code>Promise</code></h3>
-<p>Execute a new process as a forked child process.</p>
-<p><strong>Kind</strong>: instance method of <a href="#Code"><code>Code</code></a><br><strong>Returns</strong>: <code>Promise</code> - - On successful execution, the Promise is resolved with a Process object.  </p>
-<table>
-<thead>
-<tr>
-<th>Param</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>options</td>
-<td><code>object</code></td>
-<td>Options object used for initializing the Process object.</td>
-</tr>
-</tbody>
-</table>
-<p><a name="Code.readMetadata"></a></p>
-<h3 id="codereadmetadatarawcode-&#x21D2;-object">Code.readMetadata(raw_code) &#x21D2; <code>object</code></h3>
-<p>Standalone static function for reading ThingsJS metadata from raw code</p>
-<p><strong>Kind</strong>: static method of <a href="#Code"><code>Code</code></a><br><strong>Returns</strong>: <code>object</code> - - Object representing the YAML metadata from the code  </p>
-<table>
-<thead>
-<tr>
-<th>Param</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>raw_code</td>
-<td><code>string</code></td>
-<td>Raw user code in UTF-8 string</td>
-</tr>
-</tbody>
-</table>
-<p><a name="Code.instrument"></a></p>
-<h3 id="codeinstrumentpubsub-codename-rawcode-&#x21D2;-string">Code.instrument(pubsub, code_name, raw_code) &#x21D2; <code>string</code></h3>
-<p>Instrument raw JavaScript code and return a live-migratable version</p>
-<p><strong>Kind</strong>: static method of <a href="#Code"><code>Code</code></a><br><strong>Returns</strong>: <code>string</code> - - Instrumented (live-migratable) user code in UTF-8 string  </p>
-<table>
-<thead>
-<tr>
-<th>Param</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>pubsub</td>
-<td><code>Pubsub</code></td>
-<td>The Pubsub instance to bind to the program instance</td>
-</tr>
-<tr>
-<td>code_name</td>
-<td><code>string</code></td>
-<td>The name to assign to the program instance</td>
-</tr>
-<tr>
-<td>raw_code</td>
-<td><code>string</code></td>
-<td>Raw user code in UTF-8 string</td>
-</tr>
-</tbody>
-</table>
-<p><a name="Code.fromString"></a></p>
-<h3 id="codefromstringpubsub-codename-rawcode-&#x21D2;-code">Code.fromString(pubsub, code_name, raw_code) &#x21D2; <a href="#Code"><code>Code</code></a></h3>
-<p>Create a new Code object from raw JavaScript code provided as a utf-8 string</p>
-<p><strong>Kind</strong>: static method of <a href="#Code"><code>Code</code></a><br><strong>Returns</strong>: <a href="#Code"><code>Code</code></a> - Returns a new Code instance  </p>
-<table>
-<thead>
-<tr>
-<th>Param</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>pubsub</td>
-<td><code>Pubsub</code></td>
-<td>Pubsub object to use for instrumentation - this determines which Pubsub service a Process connects to</td>
-</tr>
-<tr>
-<td>code_name</td>
-<td><code>string</code></td>
-<td>Name to assign the code (e.g. factorial.js)</td>
-</tr>
-<tr>
-<td>raw_code</td>
-<td><code>string</code></td>
-<td>JavaScript code string</td>
-</tr>
-</tbody>
-</table>
-<p><a name="Code.fromFile"></a></p>
-<h3 id="codefromfilefilepath">Code.fromFile(file_path)</h3>
-<p>Create a new Code object from file path</p>
-<p><strong>Kind</strong>: static method of <a href="#Code"><code>Code</code></a>  </p>
-<table>
-<thead>
-<tr>
-<th>Param</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>file_path</td>
-<td><code>string</code></td>
-<td>the path to the raw JS file</td>
-</tr>
-</tbody>
-</table>
-<p><a name="Code.fromSnapshot"></a></p>
-<h3 id="codefromsnapshotsnapshot-&#x21D2;-code">Code.fromSnapshot(snapshot) &#x21D2; <a href="#Code"><code>Code</code></a></h3>
-<p>Create a new Code object from given Snapshot object</p>
-<p><strong>Kind</strong>: static method of <a href="#Code"><code>Code</code></a><br><strong>Returns</strong>: <a href="#Code"><code>Code</code></a> - Returns a new Code instance  </p>
-<table>
-<thead>
-<tr>
-<th>Param</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>snapshot</td>
-<td><code>object</code></td>
-<td>The Snapshot object produced when Process.snapshot() is called</td>
-</tr>
-</tbody>
-</table>
-<p><a name="Code.fromSnapshotFile"></a></p>
-<h3 id="codefromsnapshotfilesnapshotpath-&#x21D2;-code">Code.fromSnapshotFile(snapshot_path) &#x21D2; <a href="#Code"><code>Code</code></a></h3>
-<p>Create a new Code object from given Snapshot file. This static method calls Code.fromSnapshot after reading from file.</p>
-<p><strong>Kind</strong>: static method of <a href="#Code"><code>Code</code></a><br><strong>Returns</strong>: <a href="#Code"><code>Code</code></a> - Returns a new Code instance  </p>
-<table>
-<thead>
-<tr>
-<th>Param</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>snapshot_path</td>
-<td><code>string</code></td>
-<td>The path to the snapshot file</td>
-</tr>
-</tbody>
-</table>
+                                <h2 id="thingsjs-dashboard">ThingsJS Dashboard</h2>
+<p><a href="https://github.com/DependableSystemsLab/ThingsJS-dashboard" target="_blank">ThingsJS Dashboard</a> has a separate repository for development. The main ThingsJS repository only contains the <strong>bundled</strong> version of the ThingsJS Dashboard.</p>
 
                                 
                                 </section>
@@ -787,12 +557,12 @@
 
             
                 
-                <a href="Pubsub.html" class="navigation navigation-prev " aria-label="Previous page: Pubsub">
+                <a href="GFS.html" class="navigation navigation-prev " aria-label="Previous page: File system">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
                 
-                <a href="CodeEngine.html" class="navigation navigation-next " aria-label="Next page: CodeEngine">
+                <a href="../Community/" class="navigation navigation-next " aria-label="Next page: Community">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -803,7 +573,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Code","level":"1.4.3","depth":2,"next":{"title":"CodeEngine","level":"1.4.4","depth":2,"path":"api/CodeEngine.md","ref":"api/CodeEngine.md","articles":[]},"previous":{"title":"Pubsub","level":"1.4.2","depth":2,"path":"api/Pubsub.md","ref":"api/Pubsub.md","articles":[]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"api/Code.md","mtime":"2018-10-15T23:34:02.475Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-10-19T23:59:58.231Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Web Dashboard","level":"1.4.8","depth":2,"next":{"title":"Community","level":"1.5","depth":1,"path":"Community/README.md","ref":"Community/README.md","articles":[{"title":"Get involved","level":"1.5.1","depth":2,"path":"Community/involve.md","ref":"Community/involve.md","articles":[]},{"title":"Contribute","level":"1.5.2","depth":2,"path":"Community/contribute.md","ref":"Community/contribute.md","articles":[]},{"title":"Feedback","level":"1.5.3","depth":2,"path":"Community/feedback.md","ref":"Community/feedback.md","articles":[]},{"title":"Team","level":"1.5.4","depth":2,"path":"Community/team.md","ref":"Community/team.md","articles":[]}]},"previous":{"title":"File system","level":"1.4.7","depth":2,"path":"api/GFS.md","ref":"api/GFS.md","articles":[]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"api/Dashboard.md","mtime":"2018-10-19T23:59:47.907Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-10-19T23:59:58.231Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
