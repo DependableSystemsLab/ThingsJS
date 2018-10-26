@@ -303,7 +303,20 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.4.1" data-path="api/Testing.html">
+        <li class="chapter " data-level="1.4.1" data-path="api/Devdocs.html">
+            
+                <a href="api/Devdocs.html">
+            
+                    
+                    Developer Documentation
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.2" data-path="api/Testing.html">
             
                 <a href="api/Testing.html">
             
@@ -316,7 +329,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.2" data-path="api/Pubsub.html">
+        <li class="chapter " data-level="1.4.3" data-path="api/Pubsub.html">
             
                 <a href="api/Pubsub.html">
             
@@ -329,7 +342,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.3" data-path="api/Code.html">
+        <li class="chapter " data-level="1.4.4" data-path="api/Code.html">
             
                 <a href="api/Code.html">
             
@@ -342,7 +355,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.4" data-path="api/CodeEngine.html">
+        <li class="chapter " data-level="1.4.5" data-path="api/CodeEngine.html">
             
                 <a href="api/CodeEngine.html">
             
@@ -355,7 +368,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.5" data-path="api/Dispatcher.html">
+        <li class="chapter " data-level="1.4.6" data-path="api/Dispatcher.html">
             
                 <a href="api/Dispatcher.html">
             
@@ -368,7 +381,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.6" data-path="api/Scheduler.html">
+        <li class="chapter " data-level="1.4.7" data-path="api/Scheduler.html">
             
                 <a href="api/Scheduler.html">
             
@@ -381,12 +394,25 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.7" data-path="api/GFS.html">
+        <li class="chapter " data-level="1.4.8" data-path="api/GFS.html">
             
                 <a href="api/GFS.html">
             
                     
                     File system
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.9" data-path="api/Dashboard.html">
+            
+                <a href="api/Dashboard.html">
+            
+                    
+                    Web Dashboard
             
                 </a>
             
@@ -452,12 +478,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.5.4" data-path="Community/comittee.html">
+        <li class="chapter " data-level="1.5.4" data-path="Community/team.html">
             
-                <a href="Community/comittee.html">
+                <a href="Community/team.html">
             
                     
-                    Committee
+                    Team
             
                 </a>
             
@@ -562,19 +588,17 @@ You can watch the demo of the Dashboard here:</p>
     &quot;id&quot;: &quot;node_00&quot;,
     &quot;device&quot;: &quot;raspberry-pi3&quot;
 }
-</code></pre><ol>
-<li>To instrument raw JavaScript code into a &quot;ThingJS-compatible&quot; code:
-```
-~$ things-js inst my_code.js</li>
-</ol>
-<h1 id="or">OR</h1>
-<p>~$ things-js instrument my_code.js</p>
-<pre><code>By default the output file will have the same file name, with the extension `.things.js`.
-To specify the output file name, provide the optional argument with `-o` or `--output`.
-e.g.
-</code></pre><p>~$ things-js inst my_code.js -o my_code.instrumented.js
-```</p>
+</code></pre><p>To instrument raw JavaScript code into a &quot;ThingJS-compatible&quot; code:</p>
+<pre><code>~$ things-js inst my_code.js
 
+#OR
+
+~$ things-js instrument my_code.js
+</code></pre><p>By default the output file will have the same file name, with the extension <code>.things.js</code>.
+To specify the output file name, provide the optional argument with <code>-o</code> or <code>--output</code>.
+e.g.</p>
+<pre><code>~$ things-js inst my_code.js -o my_code.instrumented.js
+</code></pre>
                                 
                                 </section>
                             
@@ -617,7 +641,7 @@ e.g.
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Getting Started","level":"1.2","depth":1,"next":{"title":"Pocket Beagle","level":"1.2.1","depth":2,"path":"tutorials/Setup-PocketBeagle.md","ref":"tutorials/Setup-PocketBeagle.md","articles":[]},"previous":{"title":"Publications","level":"1.1.4","depth":2,"path":"Publications.md","ref":"Publications.md","articles":[]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"GettingStarted.md","mtime":"2018-10-15T23:34:02.475Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-10-16T04:39:51.468Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Getting Started","level":"1.2","depth":1,"next":{"title":"Pocket Beagle","level":"1.2.1","depth":2,"path":"tutorials/Setup-PocketBeagle.md","ref":"tutorials/Setup-PocketBeagle.md","articles":[]},"previous":{"title":"Publications","level":"1.1.4","depth":2,"path":"Publications.md","ref":"Publications.md","articles":[]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"GettingStarted.md","mtime":"2018-10-19T21:29:27.076Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-10-20T00:13:03.890Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>

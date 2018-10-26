@@ -303,7 +303,20 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.4.1" data-path="../api/Testing.html">
+        <li class="chapter " data-level="1.4.1" data-path="../api/Devdocs.html">
+            
+                <a href="../api/Devdocs.html">
+            
+                    
+                    Developer Documentation
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.2" data-path="../api/Testing.html">
             
                 <a href="../api/Testing.html">
             
@@ -316,7 +329,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.2" data-path="../api/Pubsub.html">
+        <li class="chapter " data-level="1.4.3" data-path="../api/Pubsub.html">
             
                 <a href="../api/Pubsub.html">
             
@@ -329,7 +342,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.3" data-path="../api/Code.html">
+        <li class="chapter " data-level="1.4.4" data-path="../api/Code.html">
             
                 <a href="../api/Code.html">
             
@@ -342,7 +355,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.4" data-path="../api/CodeEngine.html">
+        <li class="chapter " data-level="1.4.5" data-path="../api/CodeEngine.html">
             
                 <a href="../api/CodeEngine.html">
             
@@ -355,7 +368,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.5" data-path="../api/Dispatcher.html">
+        <li class="chapter " data-level="1.4.6" data-path="../api/Dispatcher.html">
             
                 <a href="../api/Dispatcher.html">
             
@@ -368,7 +381,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.6" data-path="../api/Scheduler.html">
+        <li class="chapter " data-level="1.4.7" data-path="../api/Scheduler.html">
             
                 <a href="../api/Scheduler.html">
             
@@ -381,12 +394,25 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.7" data-path="../api/GFS.html">
+        <li class="chapter " data-level="1.4.8" data-path="../api/GFS.html">
             
                 <a href="../api/GFS.html">
             
                     
                     File system
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.9" data-path="../api/Dashboard.html">
+            
+                <a href="../api/Dashboard.html">
+            
+                    
+                    Web Dashboard
             
                 </a>
             
@@ -452,12 +478,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.5.4" data-path="../Community/comittee.html">
+        <li class="chapter " data-level="1.5.4" data-path="../Community/team.html">
             
-                <a href="../Community/comittee.html">
+                <a href="../Community/team.html">
             
                     
-                    Committee
+                    Team
             
                 </a>
             
@@ -521,17 +547,17 @@
 <p>This benchmark app consists of four phases: ETL(Extraction, Transform and Load dataflow), STATS(Statistical Summarization dataflow), TRAIN(Model Training dataflow) and PRED(Predictive Analytics dataflow). We are using taxidata as example. In each phase, we will generate ETLSTATS_date.csv with the heap used, cpu used information for monitoring the effect. </p>
 <p>ETL: 
 First parse the data from csv to key value data type and publish them line by line and then hash the data by different key value and join the data together. 
- <img src="https://github.com/anshuiisc/FIG/blob/master/ETL-1.png" alt="FCAST"></p>
+ <img src="https://raw.githubusercontent.com/anshuiisc/FIG/master/ETL-1.png" alt="FCAST"></p>
 <p>STAT: 
 Calculated the summary statistics for the data and fitted a simple linear regression model and then plotted the fitted model. For plotting, user had to put the graph folder in workers space, open the plot.html inside
 the folder will generate the plot dynamically. 
-<img src="https://github.com/anshuiisc/FIG/blob/master/stats-1.png" alt="FCAST"></p>
+<img src="https://raw.githubusercontent.com/anshuiisc/FIG/master/stats-1.png" alt="FCAST"></p>
 <p>TRAIN: 
 Use data to train the regression tree and multi-variate model and save it on global file system. For modeling, we currently use &#x2018;c4.5&#x2019; package for J48decisiontree model and &#x2018;ml-regression-multivariate-linear&#x2019; package for training. 
- <img src="https://github.com/anshuiisc/FIG/blob/master/Train-1.png" alt="FCAST"></p>
+ <img src="https://raw.githubusercontent.com/anshuiisc/FIG/master/Train-1.png" alt="FCAST"></p>
 <p>PRED:
 Fetch the training model saved from file system in the TRAIN phase and predict the taxi fee by provided data and publish residual errors to mqtt. 
-<img src="https://github.com/anshuiisc/FIG/blob/master/pred-1.png" alt="FCAST"></p>
+<img src="https://raw.githubusercontent.com/anshuiisc/FIG/master/pred-1.png" alt="FCAST"></p>
 <p>For message and data communication between components, we will use things-js pubsub channel. For measurements, we will generate csv for device stats like memory used, cpu etc and save in file system </p>
 <h1 id="application-to-scheduler">Application to scheduler</h1>
 <p>Instead of running components in each phase in order one by one, we plan to use our scheduler to schedule the running sequence of components on different engine workers according to its required memory, CPU, bandwidth, etc. so as to make the whole system more efficient. </p>
@@ -583,7 +609,7 @@ channel for writing and reading models during the training and predicting phase.
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Sample Benchmarks","level":"1.2.4","depth":2,"next":{"title":"Tutorials","level":"1.3","depth":1,"path":"tutorials/README.md","ref":"tutorials/README.md","articles":[{"title":"Writing your First App","level":"1.3.1","depth":2,"path":"tutorials/FirstApplication.md","ref":"tutorials/FirstApplication.md","articles":[]},{"title":"Live-Migration","level":"1.3.2","depth":2,"path":"tutorials/Migration.md","ref":"tutorials/Migration.md","articles":[]},{"title":"Using the Dashboard","level":"1.3.3","depth":2,"path":"tutorials/dashboard/Dashboard.md","ref":"tutorials/dashboard/Dashboard.md","articles":[]}]},"previous":{"title":"Sample Components","level":"1.2.3","depth":2,"path":"samples/README.md","ref":"samples/README.md","articles":[]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"samples/RIoTBenchmarks.md","mtime":"2018-10-15T23:34:02.479Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-10-16T04:39:51.468Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Sample Benchmarks","level":"1.2.4","depth":2,"next":{"title":"Tutorials","level":"1.3","depth":1,"path":"tutorials/README.md","ref":"tutorials/README.md","articles":[{"title":"Writing your First App","level":"1.3.1","depth":2,"path":"tutorials/FirstApplication.md","ref":"tutorials/FirstApplication.md","articles":[]},{"title":"Live-Migration","level":"1.3.2","depth":2,"path":"tutorials/Migration.md","ref":"tutorials/Migration.md","articles":[]},{"title":"Using the Dashboard","level":"1.3.3","depth":2,"path":"tutorials/dashboard/Dashboard.md","ref":"tutorials/dashboard/Dashboard.md","articles":[]}]},"previous":{"title":"Sample Components","level":"1.2.3","depth":2,"path":"samples/README.md","ref":"samples/README.md","articles":[]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"samples/RIoTBenchmarks.md","mtime":"2018-10-20T00:01:24.735Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-10-20T00:13:03.890Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
