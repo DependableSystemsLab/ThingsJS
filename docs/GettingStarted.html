@@ -544,6 +544,27 @@
                                 <h1 id="getting-started">Getting Started</h1>
 <p>ThingsJS is packaged as an NPM module; you will need to have Node.js installed on the machines you would like to use ThingsJS on.</p>
 <h2 id="installation">Installation</h2>
+<h4 id="option-1">Option 1</h4>
+<ol>
+<li><p><code>git clone</code> ThingsJS</p>
+<pre><code> ~$ git clone https://github.com/DependableSystemsLab/ThingsJS.git
+</code></pre></li>
+<li><p>Navigate into the directory and <code>npm install</code> to install dependencies.</p>
+</li>
+<li><p><code>npm link</code> to set the global <code>node_modules</code> to point to the project.</p>
+</li>
+<li><p>Finally, <code>npm link things-js</code> to enable ThingsJS to find itself.</p>
+</li>
+<li><p>Check if everything works by typing <code>npm test</code>.</p>
+</li>
+</ol>
+<pre><code>~$ git clone https://github.com/DependableSystemsLab/ThingsJS.git
+~$ cd ThingsJS
+~/ThingsJS$ npm install
+~/ThingsJS$ npm link
+~/ThingsJS$ npm link things-js
+~/ThingsJS$ npm test
+</code></pre><h4 id="option-2">Option 2</h4>
 <p>You can install via the following NPM command:</p>
 <pre><code>~$ sudo npm install -g things-js
 </code></pre><ul>
@@ -641,7 +662,7 @@ e.g.</p>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Getting Started","level":"1.2","depth":1,"next":{"title":"Pocket Beagle","level":"1.2.1","depth":2,"path":"tutorials/Setup-PocketBeagle.md","ref":"tutorials/Setup-PocketBeagle.md","articles":[]},"previous":{"title":"Publications","level":"1.1.4","depth":2,"path":"Publications.md","ref":"Publications.md","articles":[]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"GettingStarted.md","mtime":"2018-10-19T21:29:27.076Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-10-20T00:13:03.890Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Getting Started","level":"1.2","depth":1,"next":{"title":"Pocket Beagle","level":"1.2.1","depth":2,"path":"tutorials/Setup-PocketBeagle.md","ref":"tutorials/Setup-PocketBeagle.md","articles":[]},"previous":{"title":"Publications","level":"1.1.4","depth":2,"path":"Publications.md","ref":"Publications.md","articles":[]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"GettingStarted.md","mtime":"2018-11-10T00:00:19.282Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-11-10T00:02:02.898Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>
