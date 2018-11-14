@@ -303,7 +303,20 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.4.1" data-path="Testing.html">
+        <li class="chapter " data-level="1.4.1" data-path="Devdocs.html">
+            
+                <a href="Devdocs.html">
+            
+                    
+                    Developer Documentation
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.2" data-path="Testing.html">
             
                 <a href="Testing.html">
             
@@ -316,7 +329,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.2" data-path="Pubsub.html">
+        <li class="chapter " data-level="1.4.3" data-path="Pubsub.html">
             
                 <a href="Pubsub.html">
             
@@ -329,7 +342,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.3" data-path="Code.html">
+        <li class="chapter " data-level="1.4.4" data-path="Code.html">
             
                 <a href="Code.html">
             
@@ -342,7 +355,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.4.4" data-path="CodeEngine.html">
+        <li class="chapter active" data-level="1.4.5" data-path="CodeEngine.html">
             
                 <a href="CodeEngine.html">
             
@@ -355,7 +368,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.5" data-path="Dispatcher.html">
+        <li class="chapter " data-level="1.4.6" data-path="Dispatcher.html">
             
                 <a href="Dispatcher.html">
             
@@ -368,7 +381,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.6" data-path="Scheduler.html">
+        <li class="chapter " data-level="1.4.7" data-path="Scheduler.html">
             
                 <a href="Scheduler.html">
             
@@ -381,12 +394,25 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.7" data-path="GFS.html">
+        <li class="chapter " data-level="1.4.8" data-path="GFS.html">
             
                 <a href="GFS.html">
             
                     
                     File system
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.9" data-path="Dashboard.html">
+            
+                <a href="Dashboard.html">
+            
+                    
+                    Web Dashboard
             
                 </a>
             
@@ -452,12 +478,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.5.4" data-path="../Community/comittee.html">
+        <li class="chapter " data-level="1.5.4" data-path="../Community/team.html">
             
-                <a href="../Community/comittee.html">
+                <a href="../Community/team.html">
             
                     
-                    Committee
+                    Team
             
                 </a>
             
@@ -532,8 +558,12 @@
 </ul>
 </li>
 <li><em>static</em><ul>
-<li><a href="#CodeEngine.initCode">.initCode</a> : <code>Object</code></li>
-<li><a href="#CodeEngine.Behaviours">.Behaviours</a></li>
+<li><a href="#CodeEngine.Behaviours">.Behaviours</a><ul>
+<li><a href="#CodeEngine.Behaviours.run_code">.run_code(self, kwargs)</a> &#x21D2; <code>Promise</code></li>
+<li><a href="#CodeEngine.Behaviours.restore_code">.restore_code(self, kwargs)</a> &#x21D2; <code>Promise</code></li>
+<li><a href="#CodeEngine.Behaviours.migrate_code">.migrate_code(self, kwargs)</a> &#x21D2; <code>Promise</code></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -564,6 +594,11 @@ Once connected, CodeEngine listens for incoming commands by subscribing to a uni
 <td>URL of the Publish/Subscribe service</td>
 </tr>
 <tr>
+<td>[config.id]</td>
+<td><code>string</code></td>
+<td>ID to assign to the CodeEngine instance</td>
+</tr>
+<tr>
 <td>[options]</td>
 <td><code>Object</code></td>
 <td>Additional options object for customizing the CodeEngine behaviour</td>
@@ -572,8 +607,8 @@ Once connected, CodeEngine listens for incoming commands by subscribing to a uni
 </table>
 <p><a name="CodeEngine+reportStatus"></a></p>
 <h3 id="codeenginereportstatuseventname-&#x21D2;-promise">codeEngine.reportStatus(eventName) &#x21D2; <code>Promise</code></h3>
-<p>[reportStatus description]</p>
-<p><strong>Kind</strong>: instance method of <a href="#CodeEngine"><code>CodeEngine</code></a><br><strong>Returns</strong>: <code>Promise</code> - [description]  </p>
+<p>Publish its status to ENGINE_REGISTRY_NAMESPACE</p>
+<p><strong>Kind</strong>: instance method of <a href="#CodeEngine"><code>CodeEngine</code></a><br><strong>Returns</strong>: <code>Promise</code> - - resolves to <code>true</code>, as per Pubsub.prototype.publish  </p>
 <table>
 <thead>
 <tr>
@@ -586,23 +621,20 @@ Once connected, CodeEngine listens for incoming commands by subscribing to a uni
 <tr>
 <td>eventName</td>
 <td><code>String</code></td>
-<td>[description]</td>
+<td>In addition to the default message published, the message object can have an additional &quot;eventName&quot; field to further categorize the message.</td>
 </tr>
 </tbody>
 </table>
 <p><a name="CodeEngine+reportResource"></a></p>
 <h3 id="codeenginereportresource-&#x21D2;-undefined">codeEngine.reportResource() &#x21D2; <code>undefined</code></h3>
-<p>[reportResource description]</p>
+<p>Publish its resource usage</p>
 <p><strong>Kind</strong>: instance method of <a href="#CodeEngine"><code>CodeEngine</code></a><br><strong>Returns</strong>: <code>undefined</code> - [description]<br><a name="CodeEngine+log"></a></p>
 <h3 id="codeenginelog">codeEngine.log()</h3>
-<p>Augmented console.log function for debugging purposes, the log is published to pubsub</p>
+<p>Augmented console.log function for debugging purposes,
+the log is published to pubsub so we can see the debug messages on the dashboard as well</p>
 <p><strong>Kind</strong>: instance method of <a href="#CodeEngine"><code>CodeEngine</code></a><br><a name="CodeEngine+run_code"></a></p>
 <h3 id="codeengineruncode">codeEngine.run_code()</h3>
-<p>&quot;Behaviour&quot; functions
-   the reason the following functions are defined in this particular style
-   is because we consider these operations to be &quot;behaviour&quot;s in the actor model,
-   which can be triggered by external signals. For example in our case the external signal comes from Pubsub.
-   Of course, the functions can be called directly as well.</p>
+<p>[restore_code description]</p>
 <p><strong>Kind</strong>: instance method of <a href="#CodeEngine"><code>CodeEngine</code></a><br><a name="CodeEngine+restore_code"></a></p>
 <h3 id="codeenginerestorecode">codeEngine.restore_code()</h3>
 <p>[restore_code description]</p>
@@ -612,16 +644,124 @@ Once connected, CodeEngine listens for incoming commands by subscribing to a uni
 <p><strong>Kind</strong>: instance method of <a href="#CodeEngine"><code>CodeEngine</code></a><br><a name="CodeEngine+kill"></a></p>
 <h3 id="codeenginekill">codeEngine.kill()</h3>
 <p>[kill description]</p>
-<p><strong>Kind</strong>: instance method of <a href="#CodeEngine"><code>CodeEngine</code></a><br><a name="CodeEngine.initCode"></a></p>
-<h3 id="codeengineinitcode--object">CodeEngine.initCode : <code>Object</code></h3>
-<p>[description]</p>
-<p><strong>Kind</strong>: static property of <a href="#CodeEngine"><code>CodeEngine</code></a><br><a name="CodeEngine.Behaviours"></a></p>
+<p><strong>Kind</strong>: instance method of <a href="#CodeEngine"><code>CodeEngine</code></a><br><a name="CodeEngine.Behaviours"></a></p>
 <h3 id="codeenginebehaviours">CodeEngine.Behaviours</h3>
-<p>Defines a set of &quot;behaviours&quot; for the CodeEngine. (Actor pattern)
-  these behaviours are either triggered via Pubsub or directly called by the instance.
-  All of these should return a Promise object that resolves to a JSON-serializable object
-  as the result will be transmitted over HTTP/MQTT.</p>
+<p>CodeEngine Behaviours are a set of functions with the following
+ signature: function(self, kwargs), where self points to the
+ CodeEngine instance, and kwargs is an object carrying
+ additional arguments. The function must return a Promise object
+ that resolves to a JSON-serializable object; the result will be
+ transmitted over the network via HTTP/MQTT.
+ These functions are invoked when a CodeEngine receives a message.</p>
 <p><strong>Kind</strong>: static property of <a href="#CodeEngine"><code>CodeEngine</code></a>  </p>
+<ul>
+<li><a href="#CodeEngine.Behaviours">.Behaviours</a><ul>
+<li><a href="#CodeEngine.Behaviours.run_code">.run_code(self, kwargs)</a> &#x21D2; <code>Promise</code></li>
+<li><a href="#CodeEngine.Behaviours.restore_code">.restore_code(self, kwargs)</a> &#x21D2; <code>Promise</code></li>
+<li><a href="#CodeEngine.Behaviours.migrate_code">.migrate_code(self, kwargs)</a> &#x21D2; <code>Promise</code></li>
+</ul>
+</li>
+</ul>
+<p><a name="CodeEngine.Behaviours.run_code"></a></p>
+<h4 id="behavioursruncodeself-kwargs-&#x21D2;-promise">Behaviours.run_code(self, kwargs) &#x21D2; <code>Promise</code></h4>
+<p>Run the given code as a ThingsJS process.</p>
+<p><strong>Kind</strong>: static method of <a href="#CodeEngine.Behaviours"><code>Behaviours</code></a><br><strong>Returns</strong>: <code>Promise</code> - - resolves to the JSON object representing a ThingsJS process  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>self</td>
+<td><a href="#CodeEngine"><code>CodeEngine</code></a></td>
+<td>The CodeEngine instance to run on</td>
+</tr>
+<tr>
+<td>kwargs</td>
+<td><code>object</code></td>
+<td>extra arguments</td>
+</tr>
+<tr>
+<td>kwargs.source</td>
+<td><code>object</code></td>
+<td>the source code to run</td>
+</tr>
+<tr>
+<td>[kwargs.code_name]</td>
+<td><code>object</code></td>
+<td>name to assign to the Code instance</td>
+</tr>
+</tbody>
+</table>
+<p><a name="CodeEngine.Behaviours.restore_code"></a></p>
+<h4 id="behavioursrestorecodeself-kwargs-&#x21D2;-promise">Behaviours.restore_code(self, kwargs) &#x21D2; <code>Promise</code></h4>
+<p>Restore the given JSON snapshot as a ThingsJS process.</p>
+<p><strong>Kind</strong>: static method of <a href="#CodeEngine.Behaviours"><code>Behaviours</code></a><br><strong>Returns</strong>: <code>Promise</code> - - resolves to the JSON object representing a ThingsJS process  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>self</td>
+<td><a href="#CodeEngine"><code>CodeEngine</code></a></td>
+<td>The CodeEngine instance to run on</td>
+</tr>
+<tr>
+<td>kwargs</td>
+<td><code>object</code></td>
+<td>extra arguments</td>
+</tr>
+<tr>
+<td>kwargs.snapshot</td>
+<td><code>object</code></td>
+<td>the JSON snapshot</td>
+</tr>
+</tbody>
+</table>
+<p><a name="CodeEngine.Behaviours.migrate_code"></a></p>
+<h4 id="behavioursmigratecodeself-kwargs-&#x21D2;-promise">Behaviours.migrate_code(self, kwargs) &#x21D2; <code>Promise</code></h4>
+<p>Migrate the specified ThingsJS process to another CodeEngine.</p>
+<p><strong>Kind</strong>: static method of <a href="#CodeEngine.Behaviours"><code>Behaviours</code></a><br><strong>Returns</strong>: <code>Promise</code> - - resolves to the JSON object representing a ThingsJS process  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>self</td>
+<td><a href="#CodeEngine"><code>CodeEngine</code></a></td>
+<td>The CodeEngine instance to migrate from</td>
+</tr>
+<tr>
+<td>kwargs</td>
+<td><code>object</code></td>
+<td>extra arguments</td>
+</tr>
+<tr>
+<td>kwargs.instance_id</td>
+<td><code>object</code></td>
+<td>the ID of the ThingsJS process</td>
+</tr>
+<tr>
+<td>kwargs.engine</td>
+<td><code>object</code></td>
+<td>the ID of the CodeEngine to migrate to</td>
+</tr>
+</tbody>
+</table>
 
                                 
                                 </section>
@@ -665,7 +805,7 @@ Once connected, CodeEngine listens for incoming commands by subscribing to a uni
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"CodeEngine","level":"1.4.4","depth":2,"next":{"title":"Dispatcher","level":"1.4.5","depth":2,"path":"api/Dispatcher.md","ref":"api/Dispatcher.md","articles":[]},"previous":{"title":"Code","level":"1.4.3","depth":2,"path":"api/Code.md","ref":"api/Code.md","articles":[]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"api/CodeEngine.md","mtime":"2018-10-02T00:39:06.312Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-10-09T20:09:16.144Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"CodeEngine","level":"1.4.5","depth":2,"next":{"title":"Dispatcher","level":"1.4.6","depth":2,"path":"api/Dispatcher.md","ref":"api/Dispatcher.md","articles":[]},"previous":{"title":"Code","level":"1.4.4","depth":2,"path":"api/Code.md","ref":"api/Code.md","articles":[]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"api/CodeEngine.md","mtime":"2018-10-15T23:34:02.475Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-11-10T00:02:02.898Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

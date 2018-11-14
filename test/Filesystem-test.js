@@ -1,6 +1,7 @@
-var assert = require('assert');
-var GFS = require('../lib/things.js').addons.gfs;
+// var assert = require('assert');
+// var GFS = require('../lib/things.js').addons.gfs;
 var helpers = require('../lib/helpers.js');
+var assert = require('chai').assert;
 var expect = require('chai').expect;
 var should = require('chai').should();
 var fs = require('fs');
@@ -11,14 +12,13 @@ var sinon = require('sinon');
 
 describe('API tests', function(){
 	var self = this;
-	this.mongourl = 'mongodb://localhost:27017/things-js-fs-test';
-	this.fpaths = ['/test.txt', '/append.txt'];
+	var mongourl = 'mongodb://localhost:27017/things-js-fs-test';
+	var testPath = '/'+helpers.randKey();
 
-	// initialize the gfs
-	before(function(done){
-		self.gfs = GFS(self.mongourl);
-		setTimeout(done, 1000);
-	});
+	var gfs;
+	it('Should require without error', function(){
+		gfs = require('things-js').addons.gfs(mongourl);
+	})
 
 	/**
 	 * R/W
@@ -26,66 +26,47 @@ describe('API tests', function(){
 	describe('R/W tests', function(){
 		var content = 'hello world';
 
-		it('Write a new file', function(){
-			var fpath = self.fpaths[0];
-
-			return new Promise(function(resolve){
-				self.gfs.writeFile(fpath, Date.now(), function(err){
-					resolve(err);
-				});
-			}).then(function(res){
-				// no error was thrown
-				expect(res).to.eql(null);
-			})
-		});
-
-		it('Read an existing file', function(){
-			var fpath = self.fpaths[0];
-
-			return new Promise(function(resolve){
-				self.gfs.readFile(fpath, function(err, data){
-					expect(err).to.eql(null);
-					resolve(data);
-				});
-			}).then(function(res){
-				expect(isNaN(res.toString())).to.eql(false);
+		it('Write a new file', function(done){
+			gfs.writeFile(testPath, Date.now(), function(err){
+				expect(err).to.eql(null);
+				done();
 			});
 		});
 
-		it('Read a nonexistent file', function(){
-
-			return new Promise(function(resolve){
-				self.gfs.readFile('NONEXISTENTPATH', function(err, data){
-					resolve(err);
-				});
-			}).then(function(res){
-				expect(res).to.be.instanceOf(Error);
-			})
-
-		});
-
-		it('Write to an existing file', function(){
-			var fpath = self.fpaths[0];
-
-			return new Promise(function(resolve){
-				self.gfs.writeFile(fpath, content, function(err){
-					resolve(err);
-				});
-			}).then(function(res){
-				expect(res).to.eql(null);
+		it('Read an existing file', function(done){
+			gfs.readFile(testPath, function(err, data){
+				expect(err).to.eql(null);
+				expect(isNaN(data.toString())).to.eql(false);
+				done();
 			});
 		});
 
-		it('Read back a write update', function(){
-			var fpath = self.fpaths[0];
+		it('The data read and passed to the callback is a Buffer', function(done){
+			gfs.readFile(testPath, function(err, data){
+				assert.equal(data instanceof Buffer, true);
+				done();
+			});
+		});
 
-			return new Promise(function(resolve){
-				self.gfs.readFile(fpath, function(err, data){
-					expect(err).to.eql(null);
-					resolve(data);
-				});
-			}).then(function(res){
-				expect(res.toString()).to.eql(content);
+		it('Read a nonexistent file', function(done){
+			gfs.readFile('NONEXISTENTPATH', function(err, data){
+				expect(err).to.be.instanceOf(Error);
+				done();
+			});
+		});
+
+		it('Write to an existing file', function(done){
+			gfs.writeFile(testPath, content, function(err){
+				expect(err).to.eql(null);
+				done();
+			});
+		});
+
+		it('Read back a write update', function(done){
+			gfs.readFile(testPath, function(err, data){
+				expect(err).to.eql(null);
+				expect(data.toString()).to.eql(content);
+				done();
 			});
 		});
 
@@ -94,25 +75,18 @@ describe('API tests', function(){
 	describe('Append tests', function(){
 		var str = 'hello*';
 		var numAppends = 5;
-		var fpath = self.fpaths[1];
 
 		function append(count){
-			function readBack(cb){
-				self.gfs.readFile(fpath, function(err, data){
+			it('Append count: ' + count, function(done){
+				gfs.appendFile(testPath, str, function(err){
 					expect(err).to.eql(null);
-					cb(data.toString());
-				});
-			}
 
-			it('Append count: ' + count, function(){
-				return new Promise(function(resolve){
-					self.gfs.appendFile(fpath, str, function(err){
+					gfs.readFile(testPath, function(err, data){
 						expect(err).to.eql(null);
-						readBack(resolve);
+						var tokens = data.toString().split('*');
+						expect(tokens.length).to.eql(count + 2);
+						done();
 					});
-				}).then(function(res){
-					var tokens = res.split('*');
-					expect(tokens.length).to.eql(count + 2);
 				});
 			});
 		}
@@ -124,36 +98,32 @@ describe('API tests', function(){
 
 	describe('Delete tests', function(){
 
-		it('Delete a nonexistent file', function(){
+		it('Delete a nonexistent file', function(done){
 			this.timeout(10000);
-
-			return new Promise(function(resolve){
-				self.gfs.deleteFile('DNE', function(err){
-					resolve(err);
-				})
-			}).then(function(res){
-				expect(res).to.be.instanceOf(Error);
+			gfs.unlink('/NONEXISTENTPATH', function(err){
+				expect(err).to.be.instanceOf(Error);
+				done();
 			});
 		});
 
-		function deleteFile(file){
-			function readBack(cb){
-				return self.gfs.readFile(file, function(err, data){
-					return expect(err).to.be.instanceOf(Error);
-				});
-			}
+		// function deleteFile(file){
+		// 	function readBack(cb){
+		// 		return gfs.readFile(file, function(err, data){
+		// 			return expect(err).to.be.instanceOf(Error);
+		// 		});
+		// 	}
 
-			it('Delete ' + file, function(){
-				return self.gfs.deleteFile(file, function(err){
-					expect(err).to.eql(null);
-					return readBack();
-				});
-			});
-		}
+		// 	it('Delete ' + file, function(){
+		// 		return gfs.deleteFile(file, function(err){
+		// 			expect(err).to.eql(null);
+		// 			return readBack();
+		// 		});
+		// 	});
+		// }
 
-		self.fpaths.forEach(function(filepath){
-			deleteFile(filepath);
-		});
+		// self.fpaths.forEach(function(filepath){
+		// 	deleteFile(filepath);
+		// });
  	});
 
 });

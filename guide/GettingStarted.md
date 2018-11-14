@@ -5,6 +5,32 @@ ThingsJS is packaged as an NPM module; you will need to have Node.js installed o
 
 ## Installation
 
+#### Option 1
+
+1. `git clone` ThingsJS
+	```
+	~$ git clone https://github.com/DependableSystemsLab/ThingsJS.git
+	```
+
+2. Navigate into the directory and `npm install` to install dependencies.
+
+3. `npm link` to set the global `node_modules` to point to the project.
+
+4. Finally, `npm link things-js` to enable ThingsJS to find itself.
+
+5. Check if everything works by typing `npm test`.
+
+```
+~$ git clone https://github.com/DependableSystemsLab/ThingsJS.git
+~$ cd ThingsJS
+~/ThingsJS$ npm install
+~/ThingsJS$ npm link
+~/ThingsJS$ npm link things-js
+~/ThingsJS$ npm test
+```
+
+#### Option 2
+
 You can install via the following NPM command:
 
 ```
@@ -79,7 +105,7 @@ The configuration file is a required argument for starting the worker. It should
 ```
 
 
-3. To instrument raw JavaScript code into a "ThingJS-compatible" code:
+To instrument raw JavaScript code into a "ThingJS-compatible" code:
 ```
 ~$ things-js inst my_code.js
 

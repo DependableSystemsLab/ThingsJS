@@ -1,1 +1,1 @@
-{{ "./lib/extensions/gfs/gfs.js" | jsdoc }}
+{{ "./lib/core/GFS.js" | jsdoc }}
