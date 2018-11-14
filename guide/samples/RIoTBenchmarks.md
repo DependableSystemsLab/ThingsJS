@@ -6,7 +6,7 @@ This benchmark app consists of four phases: ETL(Extraction, Transform and Load d
 
 
 ETL: 
-First parse the data from csv to key value data type and publish them line by line and then hash the data by different key value and join the data together. 
+First parse the data from csv to key value data type and publish them line by line and then hash the data by different key value and join the data together. For our implementation, we removed the join part due to its requirement of connecting to Azure. 
  ![FCAST](https://raw.githubusercontent.com/anshuiisc/FIG/master/ETL-1.png)
 
 
