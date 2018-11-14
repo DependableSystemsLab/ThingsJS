@@ -57,7 +57,7 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="../Community/" />
+    <link rel="next" href="Dashboard.html" />
     
     
     <link rel="prev" href="Scheduler.html" />
@@ -303,7 +303,20 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.4.1" data-path="Testing.html">
+        <li class="chapter " data-level="1.4.1" data-path="Devdocs.html">
+            
+                <a href="Devdocs.html">
+            
+                    
+                    Developer Documentation
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.2" data-path="Testing.html">
             
                 <a href="Testing.html">
             
@@ -316,7 +329,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.2" data-path="Pubsub.html">
+        <li class="chapter " data-level="1.4.3" data-path="Pubsub.html">
             
                 <a href="Pubsub.html">
             
@@ -329,7 +342,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.3" data-path="Code.html">
+        <li class="chapter " data-level="1.4.4" data-path="Code.html">
             
                 <a href="Code.html">
             
@@ -342,7 +355,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.4" data-path="CodeEngine.html">
+        <li class="chapter " data-level="1.4.5" data-path="CodeEngine.html">
             
                 <a href="CodeEngine.html">
             
@@ -355,7 +368,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.5" data-path="Dispatcher.html">
+        <li class="chapter " data-level="1.4.6" data-path="Dispatcher.html">
             
                 <a href="Dispatcher.html">
             
@@ -368,7 +381,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.6" data-path="Scheduler.html">
+        <li class="chapter " data-level="1.4.7" data-path="Scheduler.html">
             
                 <a href="Scheduler.html">
             
@@ -381,12 +394,25 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.4.7" data-path="GFS.html">
+        <li class="chapter active" data-level="1.4.8" data-path="GFS.html">
             
                 <a href="GFS.html">
             
                     
                     File system
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.9" data-path="Dashboard.html">
+            
+                <a href="Dashboard.html">
+            
+                    
+                    Web Dashboard
             
                 </a>
             
@@ -452,12 +478,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.5.4" data-path="../Community/comittee.html">
+        <li class="chapter " data-level="1.5.4" data-path="../Community/team.html">
             
-                <a href="../Community/comittee.html">
+                <a href="../Community/team.html">
             
                     
-                    Committee
+                    Team
             
                 </a>
             
@@ -515,71 +541,174 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h2 id="members">Members</h2>
+                                <h2 id="classes">Classes</h2>
 <dl>
-<dt><a href="#mongoose">mongoose</a></dt>
-<dd><p>Global File System for ThingsJS</p>
-<ul>
-<li>Technically this is just a wrapper object providing an API for talking to the GFS service provider.</li>
-<li>GFS provider is assumed to be an external service accessible over the network.</li>
-<li>Default GFS provider is ThingsJS distributed file system.</li>
-<li>To set an alternative GFS provider (e.g. Hadoop, Google FS, Amazon S3),
-the developer must provide the read and write functions and the appropriate credentials.</li>
-</ul>
+<dt><a href="#GFS">GFS</a></dt>
+<dd></dd>
+</dl>
+
+<h2 id="members">Members</h2>
+<dl>
+<dt><a href="#FSIndex">FSIndex</a></dt>
+<dd><p>FSIndex is a Mongoose Model representing a directory tree</p>
+</dd>
+<dt><a href="#FSHandle">FSHandle</a></dt>
+<dd><p>FSHandle is a Mongoose Model representing a File</p>
 </dd>
 </dl>
 
 <h2 id="functions">Functions</h2>
 <dl>
-<dt><a href="#GFS">GFS()</a></dt>
-<dd><p>The API provided by this object mirrors the native &apos;fs&apos; API
-  so that it is trivial for a user to switch to using GFS instead.
-  e.g.
-      var fs = require(&apos;fs&apos;);                            // this line is replaced by the line below
-      var fs = require(&apos;things-js&apos;).gfs(globalScope);    // globalScope needs to be passed in to link the Pubsub instance</p>
+<dt><a href="#createServer">createServer()</a></dt>
+<dd><p>Return an express app serving the filesystem&apos;s RESTful API</p>
 </dd>
 </dl>
 
-<p><a name="mongoose"></a></p>
-<h2 id="mongoose">mongoose</h2>
-<p>Global File System for ThingsJS</p>
+<p><a name="GFS"></a></p>
+<h2 id="gfs">GFS</h2>
+<p><strong>Kind</strong>: global class  </p>
 <ul>
-<li>Technically this is just a wrapper object providing an API for talking to the GFS service provider.</li>
-<li>GFS provider is assumed to be an external service accessible over the network.</li>
-<li>Default GFS provider is ThingsJS distributed file system.</li>
-<li>To set an alternative GFS provider (e.g. Hadoop, Google FS, Amazon S3),
-the developer must provide the read and write functions and the appropriate credentials.</li>
+<li><a href="#GFS">GFS</a><ul>
+<li><a href="#new_GFS_new">new GFS()</a></li>
+<li><em>instance</em><ul>
+<li><a href="#GFS+readFile">.readFile(path, arg1, arg2)</a></li>
+<li><a href="#GFS+writeFile">.writeFile(path, data, arg1, arg2)</a></li>
+<li><a href="#GFS+appendFile">.appendFile(path, data, arg1, arg2)</a></li>
 </ul>
-<p><strong>Kind</strong>: global variable<br><a name="GFS"></a></p>
-<h2 id="gfs">GFS()</h2>
-<p>The API provided by this object mirrors the native &apos;fs&apos; API
+</li>
+<li><em>static</em><ul>
+<li><a href="#GFS.bootstrap">.bootstrap()</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><a name="new_GFS_new"></a></p>
+<h3 id="new-gfs">new GFS()</h3>
+<p>This is a &quot;userland&quot; object, meant to be explicitly <code>require</code>d and used by a user.
+  The API provided by this object mirrors the native &apos;fs&apos; API
   so that it is trivial for a user to switch to using GFS instead.
   e.g.
       var fs = require(&apos;fs&apos;);                            // this line is replaced by the line below
       var fs = require(&apos;things-js&apos;).gfs(globalScope);    // globalScope needs to be passed in to link the Pubsub instance</p>
-<p><strong>Kind</strong>: global function  </p>
-<ul>
-<li><a href="#GFS">GFS()</a><ul>
-<li><a href="#GFS+readFile">.readFile()</a></li>
-<li><a href="#GFS+writeFile">.writeFile()</a></li>
-<li><a href="#GFS+appendFile">.appendFile()</a></li>
-<li><a href="#GFS+deleteFile">.deleteFile()</a></li>
-</ul>
-</li>
-</ul>
 <p><a name="GFS+readFile"></a></p>
-<h3 id="gfsreadfile">gfS.readFile()</h3>
-<p>Reading from the file</p>
-<p><strong>Kind</strong>: instance method of <a href="#GFS"><code>GFS</code></a><br><a name="GFS+writeFile"></a></p>
-<h3 id="gfswritefile">gfS.writeFile()</h3>
-<p>Writing to the file</p>
-<p><strong>Kind</strong>: instance method of <a href="#GFS"><code>GFS</code></a><br><a name="GFS+appendFile"></a></p>
-<h3 id="gfsappendfile">gfS.appendFile()</h3>
-<p>Appending to an existing file</p>
-<p><strong>Kind</strong>: instance method of <a href="#GFS"><code>GFS</code></a><br><a name="GFS+deleteFile"></a></p>
-<h3 id="gfsdeletefile">gfS.deleteFile()</h3>
-<p>Deleting the file</p>
+<h3 id="gfsreadfilepath-arg1-arg2">gfS.readFile(path, arg1, arg2)</h3>
+<p>Read from a file asynchronously; it has the same interface as fs.readFile</p>
 <p><strong>Kind</strong>: instance method of <a href="#GFS"><code>GFS</code></a>  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>path</td>
+<td><code>string</code></td>
+<td>absolute path to the file (currently relative paths cannot be resolved)</td>
+</tr>
+<tr>
+<td>arg1</td>
+<td><code>function</code> \</td>
+<td><code>Object</code></td>
+<td>if given a function, it is used as the callback. if given an object, it is used as the options object</td>
+</tr>
+<tr>
+<td>arg2</td>
+<td><code>function</code></td>
+<td>if arg1 is an object, this is used as the callback.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="GFS+writeFile"></a></p>
+<h3 id="gfswritefilepath-data-arg1-arg2">gfS.writeFile(path, data, arg1, arg2)</h3>
+<p>Write to a file asynchronously; it has the same interface as fs.writeFile</p>
+<p><strong>Kind</strong>: instance method of <a href="#GFS"><code>GFS</code></a>  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>path</td>
+<td><code>string</code></td>
+<td>absolute path to the file</td>
+</tr>
+<tr>
+<td>data</td>
+<td><code>string</code></td>
+<td>text to write (currently only supports string)</td>
+</tr>
+<tr>
+<td>arg1</td>
+<td><code>function</code> \</td>
+<td><code>Object</code></td>
+<td>if given a function, it is used as the callback. if given an object, it is used as the options object</td>
+</tr>
+<tr>
+<td>arg2</td>
+<td><code>function</code></td>
+<td>if arg1 is an object, this is used as the callback.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="GFS+appendFile"></a></p>
+<h3 id="gfsappendfilepath-data-arg1-arg2">gfS.appendFile(path, data, arg1, arg2)</h3>
+<p>Append to a file asynchronously; it has the same interface as fs.appendFile</p>
+<p><strong>Kind</strong>: instance method of <a href="#GFS"><code>GFS</code></a>  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>path</td>
+<td><code>string</code></td>
+<td>absolute path to the file</td>
+</tr>
+<tr>
+<td>data</td>
+<td><code>string</code></td>
+<td>text to write (currently only supports string)</td>
+</tr>
+<tr>
+<td>arg1</td>
+<td><code>function</code> \</td>
+<td><code>Object</code></td>
+<td>if given a function, it is used as the callback. if given an object, it is used as the options object</td>
+</tr>
+<tr>
+<td>arg2</td>
+<td><code>function</code></td>
+<td>if arg1 is an object, this is used as the callback.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="GFS.bootstrap"></a></p>
+<h3 id="gfsbootstrap">GFS.bootstrap()</h3>
+<p>This is the function that is exported as the gfs module, used to bootstrap the file system.
+ After a user <code>require</code>s this module, it can be used thus:
+ var fs = require(&apos;things-js&apos;).gfs(&apos;mongodb://localhost/my-database&apos;);</p>
+<p><strong>Kind</strong>: static method of <a href="#GFS"><code>GFS</code></a><br><a name="FSIndex"></a></p>
+<h2 id="fsindex">FSIndex</h2>
+<p>FSIndex is a Mongoose Model representing a directory tree</p>
+<p><strong>Kind</strong>: global variable<br><a name="FSHandle"></a></p>
+<h2 id="fshandle">FSHandle</h2>
+<p>FSHandle is a Mongoose Model representing a File</p>
+<p><strong>Kind</strong>: global variable<br><a name="createServer"></a></p>
+<h2 id="createserver">createServer()</h2>
+<p>Return an express app serving the filesystem&apos;s RESTful API</p>
+<p><strong>Kind</strong>: global function  </p>
 
                                 
                                 </section>
@@ -612,7 +741,7 @@ the developer must provide the read and write functions and the appropriate cred
                 </a>
                 
                 
-                <a href="../Community/" class="navigation navigation-next " aria-label="Next page: Community">
+                <a href="Dashboard.html" class="navigation navigation-next " aria-label="Next page: Web Dashboard">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -623,7 +752,7 @@ the developer must provide the read and write functions and the appropriate cred
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"File system","level":"1.4.7","depth":2,"next":{"title":"Community","level":"1.5","depth":1,"path":"Community/README.md","ref":"Community/README.md","articles":[{"title":"Get involved","level":"1.5.1","depth":2,"path":"Community/involve.md","ref":"Community/involve.md","articles":[]},{"title":"Contribute","level":"1.5.2","depth":2,"path":"Community/contribute.md","ref":"Community/contribute.md","articles":[]},{"title":"Feedback","level":"1.5.3","depth":2,"path":"Community/feedback.md","ref":"Community/feedback.md","articles":[]},{"title":"Committee","level":"1.5.4","depth":2,"path":"Community/comittee.md","ref":"Community/comittee.md","articles":[]}]},"previous":{"title":"Scheduler","level":"1.4.6","depth":2,"path":"api/Scheduler.md","ref":"api/Scheduler.md","articles":[]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"api/GFS.md","mtime":"2018-10-05T23:47:53.483Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-10-09T20:09:16.144Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"File system","level":"1.4.8","depth":2,"next":{"title":"Web Dashboard","level":"1.4.9","depth":2,"path":"api/Dashboard.md","ref":"api/Dashboard.md","articles":[]},"previous":{"title":"Scheduler","level":"1.4.7","depth":2,"path":"api/Scheduler.md","ref":"api/Scheduler.md","articles":[]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"api/GFS.md","mtime":"2018-10-16T02:51:45.563Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-11-10T00:02:02.898Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

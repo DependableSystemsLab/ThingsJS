@@ -1,6 +1,6 @@
 {
   "name": "things-js",
-  "version": "1.0.2",
+  "version": "2.0.0",
   "description": "Framework for building distribute IoT applications",
   "main": "index.js",
   "scripts": {
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/karthikp-ubc/ThingsJS.git"
+    "url": "git+https://github.com/DependableSystemsLab/ThingsJS.git"
   },
   "keywords": [
     "IoT",
@@ -24,24 +24,26 @@
   "author": "University of British Columbia",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/karthikp-ubc/ThingsJS/issues"
+    "url": "https://github.com/DependableSystemsLab/ThingsJS/issues"
   },
-  "homepage": "https://github.com/karthikp-ubc/ThingsJS#readme",
+  "homepage": "https://github.com/DependableSystemsLab/ThingsJS#readme",
   "dependencies": {
     "escodegen": "^1.9.0",
     "esprima": "^4.0.0",
-    "express": "^4.16.2",
+    "express": "^4.16.4",
     "helmet": "^3.13.0",
-    "js-beautify": "^1.7.4",
+    "js-beautify": "^1.8.7",
     "js-yaml": "^3.12.0",
     "jsonschema": "^1.2.0",
     "mongodb": "^2.2.33",
-    "mongoose": "^5.0.17",
+    "mongoose": "^5.3.3",
     "mosca": "^2.8.1",
     "mqtt": "^2.14.0",
+    "onoff": "^3.2.2",
     "pidusage": "^1.2.0",
     "request": "^2.87.0",
     "request-promise": "^4.2.2",
+    "uuid": "^3.3.2",
     "ws": "^5.1.1"
   },
   "devDependencies": {

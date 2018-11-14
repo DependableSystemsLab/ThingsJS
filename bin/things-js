@@ -23,13 +23,16 @@ program
 program
   .command('worker <conf_path>')
   .option('-d, --debug', 'Set environment variable DEBUG to "true" and see debug output')
+  .option('--statusLED', 'Set CodeEngine to indicate busy status on LED connected to GPIO (works only if device has GPIO)')
   .alias('engine')
   .description('Start a ThingsJS Worker')
   .action(function(conf_path, options){
     process.env['DEBUG'] = options.debug ? "true": "false";
     var things = require('../lib/things.js');
     var config = things.CodeEngine.validateConfig(conf_path);
-    var engine = new things.CodeEngine(config);
+    var engine = new things.CodeEngine(config, {
+      enable_status_led: options.statusLED
+    });
     process.on('SIGINT', function(){
       engine.kill().then(function(){
           process.exit();
