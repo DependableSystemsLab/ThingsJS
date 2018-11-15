@@ -39,6 +39,7 @@
     "mongoose": "^5.3.3",
     "mosca": "^2.8.1",
     "mqtt": "^2.14.0",
+    "onoff": "^3.2.2",
     "pidusage": "^1.2.0",
     "request": "^2.87.0",
     "request-promise": "^4.2.2",
