@@ -6,7 +6,7 @@ var helmet = require('helmet');
 var chalk = require('chalk');
 
 var MqttWsBridge = require('../../lib/things.js').util.MqttWsBridge;
-var GFS = require('things-js').util.GFS;
+var GFS = require('../../lib/core/GFS.js').devland;
 
 /* helpers */
 function httpDebugger(req, res, next){

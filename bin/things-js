@@ -28,9 +28,9 @@ program
   .description('Start a ThingsJS Worker')
   .action(function(conf_path, options){
     process.env['DEBUG'] = options.debug ? "true": "false";
-    var things = require('../lib/things.js');
-    var config = things.CodeEngine.validateConfig(conf_path);
-    var engine = new things.CodeEngine(config, {
+    var CodeEngine = require('../lib/core/CodeEngine.js');
+    var config = CodeEngine.validateConfig(conf_path);
+    var engine = new CodeEngine(config, {
       enable_status_led: options.statusLED
     });
     process.on('SIGINT', function(){
@@ -46,10 +46,11 @@ program
   .alias('sched')
   .description('Start a ThingsJS Scheduler')
   .action(function(conf_path){
-    var things = require('../lib/things.js');
-    var config = things.CodeEngine.validateConfig(conf_path);
+    var CodeEngine = require('../lib/core/CodeEngine.js');
+    var Scheduler = require('../lib/core/Scheduler.js');
+    var config = CodeEngine.validateConfig(conf_path);
     // var engine = new things.CodeEngine(config);
-    var scheduler = new things.Scheduler(config);
+    var scheduler = new Scheduler(config);
     process.on('SIGINT', function(){
       scheduler.kill().then(function(){
           process.exit();
@@ -67,9 +68,9 @@ program
   .description('Instrument raw JavaScript code to make it migrate-able')
   .action(function(file_path, options){
     process.env['DEBUG'] = options.debug ? "true": "false";
-    var things = require('../lib/things.js');
+    var Code = require('../lib/core/Code.js');
     var pubsub = { url: (options.pubsub_url || 'mqtt://localhost') }; // use a dummy pubsub, no need to connect
-    var code = things.Code.fromFile(pubsub, file_path);
+    var code = Code.fromFile(pubsub, file_path);
     if (options.save) code.save(options.save);
     else console.log(code.source);
   });
@@ -81,8 +82,8 @@ program
   .description('Instrument raw JavaScript code to make it migrate-able')
   .action(function(file_path, options){
     process.env['DEBUG'] = options.debug ? "true": "false";
-    var things = require('../lib/things.js');
-    var code = things.Code.fromSnapshotFile(file_path, true);
+    var Code = require('../lib/core/Code.js');
+    var code = Code.fromSnapshotFile(file_path, true);
     if (options.save) code.save(options.save);
     else console.log(code.source);
   });
@@ -97,13 +98,14 @@ program
   .description('Instrument and run raw JavaScript code.')
   .action(function(file_path, options){
     process.env['DEBUG'] = options.debug ? "true": "false";
-    var things = require('../lib/things.js');
+    var Pubsub = require("../lib/core/Pubsub.js");
+    var Code = require('../lib/core/Code.js');
     if (options.restore){
-      var code = things.Code.fromSnapshotFile(file_path);
+      var code = Code.fromSnapshotFile(file_path);
     }
     else {
-      var pubsub = new things.Pubsub(options.pubsub_url || 'mqtt://localhost');
-      var code = things.Code.fromFile(pubsub, file_path);
+      var pubsub = new Pubsub(options.pubsub_url || 'mqtt://localhost');
+      var code = Code.fromFile(pubsub, file_path);
     }
 
     if (options.save) code.save(options.save);
@@ -158,7 +160,7 @@ program
   .command('dispatch <pubsub_url> <ctrl> [args...]')
   .description('Use the dispatcher to perform operations over the network such as running or migrating processes')
   .action(function(pubsub_url, ctrl, args){
-    var things = require('../lib/things.js');
+    var Dispatcher = require('../lib/core/Dispatcher.js');
     var helpers = require('../lib/helpers.js');
     // console.log(pubsub_url, ctrl, args);
     var prepare = helpers.defer();
@@ -225,7 +227,7 @@ program
     }
 
     prepare.promise.then(function(action){
-      var dispatcher = new things.Dispatcher({ pubsub_url: pubsub_url });
+      var dispatcher = new Dispatcher({ pubsub_url: pubsub_url });
       var apply = helpers.defer();
       dispatcher.on('ready', function(){
         setTimeout(function(){
@@ -254,8 +256,8 @@ program
   .description('Start a Pubsub Server')
   .action(function(options){
     process.env['DEBUG'] = options.debug ? "true": "false";
-    var things = require('../lib/things.js');
-    var server = new things.Pubsub.Server();
+    var Pubsub = require('../lib/core/Pubsub.js');
+    var server = new Pubsub.Server();
     process.on('SIGINT', function(){
       server.kill().then(function(){
           process.exit();
@@ -268,8 +270,8 @@ program
   .command('debug <action> [args...]')
   .description('Use Debug Commands')
   .action(function(action, args){
-    var things = require('../lib/things.js');
-    var pubsub = new things.Pubsub('mqtt://localhost');
+    var Pubsub = require('../lib/core/Pubsub.js');
+    var pubsub = new Pubsub('mqtt://localhost');
     pubsub.on('ready', function(){
       console.log(args);
       pubsub.publish(args[0], JSON.parse(args[1]))
@@ -284,6 +286,6 @@ program
 
 program.parse(process.argv);
 if (process.argv.length === 2){
-  var things = require('../lib/things.js');
-  var shell = new things.util.Shell;
+  var Shell = require('../lib/util/Shell.js');
+  var shell = new Shell;
 }
