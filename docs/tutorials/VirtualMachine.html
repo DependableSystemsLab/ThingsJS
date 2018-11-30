@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>Tutorials · GitBook</title>
+        <title>ThingsJS VM Image · GitBook</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -57,10 +57,10 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="FirstApplication.html" />
+    <link rel="next" href="Setup-PocketBeagle.html" />
     
     
-    <link rel="prev" href="../samples/RIoTBenchmarks.html" />
+    <link rel="prev" href="../GettingStarted.html" />
     
 
     </head>
@@ -174,7 +174,7 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.2.1" data-path="VirtualMachine.html">
+        <li class="chapter active" data-level="1.2.1" data-path="VirtualMachine.html">
             
                 <a href="VirtualMachine.html">
             
@@ -244,7 +244,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.3" data-path="./">
+        <li class="chapter " data-level="1.3" data-path="./">
             
                 <a href="./">
             
@@ -539,7 +539,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".." >Tutorials</a>
+        <a href=".." >ThingsJS VM Image</a>
     </h1>
 </div>
 
@@ -554,12 +554,63 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="tutorials">Tutorials</h1>
+                                <h1 id="thingsjs-vm-image">ThingsJS VM Image</h1>
+<p>For your convenience, we provide a pre-built VM image that contains the following:</p>
 <ul>
-<li>The following tutorials are to demonstrate that the heterogeneous devices support the ThingJS application.</li>
-<li>The live migration tutorial demonstrates how you can use the ThingsJS to migrate your applications on different devices when necessary.</li>
-<li>The dashboard tutorial gives a walkthrough for using the GUI and creating your applications using ThingJS.</li>
+<li><a href="https://github.com/DependableSystemsLab/ThingsJS/releases" target="_blank">ThingsJS v2.0</a> with all Node.JS packages and other prerequisites (e.g., MongoDB, npm, MQTT broker)<ul>
+<li>Installed under <code>~/ThingsJS</code></li>
 </ul>
+</li>
+<li>Sample JavaScript components:<ul>
+<li><code>factorial.js</code>: sample factorial application</li>
+<li><code>video_streamer.js</code>: emulates a video camera (from a local mp4 file), and streams the frames over a publish-subscribe channel</li>
+<li><code>motion_detector.js</code>: detects motion in the stream over the publish-subscribe channel</li>
+</ul>
+</li>
+<li>The ThingsJS dashboard</li>
+</ul>
+<p>The VM image provides a default install of Ubuntu 16.04 and the Chromium web browser to access the dashboard (note: if Chromium prompts you for a keyring password, simply hit the <code>Cancel</code> button -- you might have to press a few times).</p>
+<p>You should have a recent version of VirtualBox, at least 4 GB of RAM and a dual-core processor (or better). It is also recommended that you enable Hardware Virtualization in your BIOS.</p>
+<p>VM Credentials:</p>
+<ul>
+<li>Username: thingsmigrate</li>
+<li>Password: thingsmigrate</li>
+</ul>
+<h2 id="linux-terminal">Linux Terminal</h2>
+<p>To execute the following commands, you will have to use the Linux terminal (black screen shortcut in the Ubuntu toolbar). You will need to open multiple terminal tabs or windows to run multiple commands simultaneously -- to do so, you can use the <code>New Terminal</code> command form the <code>Terminal</code> menu (new window), or you can use the Ctrl+Shift+T shortcut (new tab).</p>
+<h2 id="launching-the-pubsub-broker">Launching the pub/sub broker</h2>
+<p>As described in more details in the <a href="https://dependablesystemslab.github.io/ThingsJS/GettingStarted.html" target="_blank">Getting Started</a> page, the ThingsJS infrastructure and all applications/components use the publish/subscribe (MQTT) protocol. The ThingsJS MQTT broker must first be launched as follows. The terminal window must remain open.</p>
+<pre><code>~$ things-js pubsub
+</code></pre><h2 id="launching-the-dashboard-service">Launching the dashboard service</h2>
+<p>To launch the dashboard service, open a new terminal tab/window, and type:</p>
+<pre><code>~$ things-js dashboard
+</code></pre><p>Then, open the built-in Chromium web browser to <code>http://localhost:3000</code></p>
+<h2 id="launching-workers">Launching workers</h2>
+<p>Each IoT device typically hosts one worker, which can execute several ThingsJS components. In this VM, we have preconfigured three workers (to emulate three devices). The configuration files for these workers are located under: <code>~/ThingsJS-Workers</code>. To launch the workers, type each of the following commands in a new terminal:</p>
+<pre><code>~$ cd ~/ThingsJS-Workers
+~$ things-js worker node_00.conf
+~$ things-js worker node_01.conf
+~$ things-js worker node_02.conf
+</code></pre><p>The three devices should then appear in the <code>Home</code> tab of the dashboard.</p>
+<h2 id="source-code-for-the-sample-applications">Source code for the sample applications</h2>
+<p>Under the <code>Files</code> tab, navigate to the <code>codes</code> directory. You&apos;ll be able to view the source code for the 3 sample applications.</p>
+<h2 id="interacting-with-the-dashboard-launching-stopping-migrating-applications">Interacting with the dashboard: launching, stopping, migrating applications</h2>
+<p>This demo allows you to launch, stop and migrate the three sample applications, observe the state of the workers and components, and view the output of the applications. Please follow the <a href="https://dependablesystemslab.github.io/ThingsJS/tutorials/dashboard/Dashboard.html" target="_blank">dashboard instructions</a> for more details on how to use the dashboard.</p>
+<p>You can try to do the following:</p>
+<ul>
+<li>Launching <code>factorial.js</code> and migrating it between two workers.</li>
+<li>Launching <code>video_streamer.js</code> and observing the output video stream.</li>
+<li>Launching <code>motion_detector.js</code> and observing the output video stream.</li>
+<li>Migrating the <code>video_streamer.js</code> and <code>motion_detector.js</code> components between workers.</li>
+<li>For all workers, observing the status and system metrics (e.g., CPU, memory), as well as the output and console output.</li>
+<li>Stopping the execution of the different components.</li>
+</ul>
+<p><strong>Note</strong>: for this demo, due to the fact that all workers run in the same VM, the scheduler is disabled. You have to launch the components manually onto the target devices.</p>
+<p><strong>Important</strong>: please shutdown the VM gracefully (using the top-right shutdown icon in Ubuntu) to avoid file system corruption.</p>
+<h2 id="resetting-the-vm-to-its-default-state-if-something-goes-wrong">Resetting the VM to its default state (if something goes wrong!)</h2>
+<p>If anything goes wrong, you can use the Snapshots configuration page of the VM in VirtualBox (after having stopped it) to revert to the &quot;ThingsJS V2 Demo Setup&quot; snapshot. If prompted, please uncheck the box asking if you&apos;d like to keep your changes.</p>
+<h2 id="previous-vm-image-v1">Previous VM Image (V1)</h2>
+<p><strong>Note</strong>: these instructions apply to the version 2 of the VM image. To access version 1, you can restore snapshot &quot;ThingsJS V1.0 Demo Setup&quot;.</p>
 
                                 
                                 </section>
@@ -587,12 +638,12 @@
 
             
                 
-                <a href="../samples/RIoTBenchmarks.html" class="navigation navigation-prev " aria-label="Previous page: Sample Benchmarks">
+                <a href="../GettingStarted.html" class="navigation navigation-prev " aria-label="Previous page: Getting Started">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
                 
-                <a href="FirstApplication.html" class="navigation navigation-next " aria-label="Next page: Writing your First App">
+                <a href="Setup-PocketBeagle.html" class="navigation navigation-next " aria-label="Next page: Pocket Beagle">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -603,7 +654,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Tutorials","level":"1.3","depth":1,"next":{"title":"Writing your First App","level":"1.3.1","depth":2,"path":"tutorials/FirstApplication.md","ref":"tutorials/FirstApplication.md","articles":[]},"previous":{"title":"Sample Benchmarks","level":"1.2.5","depth":2,"path":"samples/RIoTBenchmarks.md","ref":"samples/RIoTBenchmarks.md","articles":[]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"tutorials/README.md","mtime":"2018-10-15T23:34:02.479Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-11-30T04:59:13.472Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"ThingsJS VM Image","level":"1.2.1","depth":2,"next":{"title":"Pocket Beagle","level":"1.2.2","depth":2,"path":"tutorials/Setup-PocketBeagle.md","ref":"tutorials/Setup-PocketBeagle.md","articles":[]},"previous":{"title":"Getting Started","level":"1.2","depth":1,"path":"GettingStarted.md","ref":"GettingStarted.md","articles":[{"title":"ThingsJS VM Image","level":"1.2.1","depth":2,"path":"tutorials/VirtualMachine.md","ref":"tutorials/VirtualMachine.md","articles":[]},{"title":"Pocket Beagle","level":"1.2.2","depth":2,"path":"tutorials/Setup-PocketBeagle.md","ref":"tutorials/Setup-PocketBeagle.md","articles":[]},{"title":"Beaglebone Black","level":"1.2.3","depth":2,"path":"tutorials/Setup-BeagleboneBlack.md","ref":"tutorials/Setup-BeagleboneBlack.md","articles":[]},{"title":"Sample Components","level":"1.2.4","depth":2,"path":"samples/README.md","ref":"samples/README.md","articles":[]},{"title":"Sample Benchmarks","level":"1.2.5","depth":2,"path":"samples/RIoTBenchmarks.md","ref":"samples/RIoTBenchmarks.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"tutorials/VirtualMachine.md","mtime":"2018-11-30T04:58:17.510Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-11-30T04:59:13.472Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
