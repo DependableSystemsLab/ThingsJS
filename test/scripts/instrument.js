@@ -1,7 +1,9 @@
 var fs = require('fs');
 var path = require('path');
 var chalk = require('chalk');
-var things = require('../../lib/things.js');
+// var things = require('../../lib/things.js');
+var Pubsub = require('../../lib/core/Pubsub.js');
+var Code = require('../../lib/core/Code.js');
 var helpers = require('../../lib/helpers.js');
 
 if ((process.argv.length < 3) || (process.argv.length < 4)) {
@@ -28,7 +30,7 @@ var CODES = [
 ]
 
 var result = {};
-var pubsub = new things.Pubsub.Dummy('mqtt://localhost'); // use a dummy pubsub, no need to connect
+var pubsub = new Pubsub.Dummy('mqtt://localhost'); // use a dummy pubsub, no need to connect
 
 // Run the test
 CODES.forEach(function(code_name){
@@ -43,7 +45,7 @@ CODES.forEach(function(code_name){
 
 	// Measure
 	for (var i=0; i < NUM_RUNS; i++){
-		var measured = helpers.measureSync(things.Code.instrument, [pubsub, code_name, raw]);
+		var measured = helpers.measureSync(Code.instrument, [pubsub, code_name, raw]);
 		// console.log(measured.result);
 		result[code_name].times.push(measured.elapsed);
 	}

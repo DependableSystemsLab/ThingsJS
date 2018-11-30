@@ -6,7 +6,7 @@ var fs = require('fs');
 var mosca = require('mosca');
 var mqtt = require('mqtt');
 const fork = require('child_process').fork;
-var things = require('../lib/things.js');
+var CodeEngine = require('../lib/core/CodeEngine.js');
 
 /**
  * A framework for testing the basic functionalities of the code engine
@@ -22,7 +22,7 @@ describe('Single instance', function(){
 	var engine;
 
 	it('Initialize CodeEngine instance', function(done){
-		engine = new things.CodeEngine({}, { mute_code_output: true });
+		engine = new CodeEngine({}, { mute_code_output: true });
 		engine.on('ready', done);
 	});
 
