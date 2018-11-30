@@ -1,4 +1,5 @@
 # ThingsJS
+
 ThingsJS is a framework for running JavaScript applications on IoT devices such as Raspberry PIs
 
 * NOTE: This repository is currently under active development and its contents are subject to breaking changes. 
@@ -14,7 +15,6 @@ ThingsJS is a framework for running JavaScript applications on IoT devices such 
     /util
 /util
     /dashboard
-    /gfs
 /samples
 
 ```
@@ -27,7 +27,6 @@ This repository is organized thus:
     2. [`util`](lib/util/) contains general-purpose utility modules used in the system.
 4. [`util`](util/) contains supplementary apps and debug tools
     1. [`dashboard`](lib/dashboard/) contains the ThingsJS Dashboard application; it is an `express` web-application
-    2. [`gfs`](lib/gfs/) contains the ThingsJS distributed filesystem. The file server can be run as a standalone `express` web-application or as a `express.Router` object to be plugged into an existing application.
 5. [`samples`](samples/) contains raw JavaScript sample code (non-instrumented) that can be dispatched to ThingsJS workers.
 
 
@@ -53,7 +52,7 @@ For trying out the framework, you can follow the steps below:
 
 1. `git clone` this repository
 ```
-~$ git clone https://github.com/karthikp-ubc/ThingsJS.git
+~$ git clone https://github.com/DependableSystemsLab/ThingsJS.git
 ```
 
 2. `npm install -g` to install the package. (download all the npm dependencies and link the CLI tool)
@@ -76,10 +75,12 @@ You may omit the `sudo` depending on your NodeJS install settings.
 #### Using the CLI
 
 Along with the API provided, CLI is included for easy use.
-Commands available currently:
-* things-js dashboard
-* things-js worker {config}
-* things-js instrument {code}
+Here are some of the commands:
+    * things-js pubsub
+    * things-js dashboard
+    * things-js worker {config}
+    * things-js instrument {code}
+You can find the full list of commands [here](https://dependablesystemslab.github.io/ThingsJS/api/CLI.html).
 
 
 1. To start the Dashboard Application:
@@ -90,7 +91,7 @@ Commands available currently:
 
 ~$ things-js dashboard
 ```
-By default it connects to MQTT at `localhost:1883`, MongoDB at `localhost:27017/things_dashboard`, and listens on `localhost:3000`.
+By default it connects to MQTT at `localhost:1883`, MongoDB at `localhost:27017/things-js-fs`, and listens on `localhost:3000`.
 To start the dashboard with a different configuration, you can use the `-c` or `--config` options with the config file path provided as an argument.
 e.g.
 ```
@@ -100,7 +101,7 @@ e.g.
 This will start a web-application served at the specified port.
 You can watch the demo of the Dashboard here:
 
-<a href="http://ece.ubc.ca/~kumseok/assets/ThingsJS_Migration.mp4" target="_blank"><img src="http://ece.ubc.ca/~kumseok/assets/ThingsJS_Migration.png" 
+<a href="http://ece.ubc.ca/~kumseok/assets/ThingsMigrate_201811.mp4" target="_blank"><img src="http://ece.ubc.ca/~kumseok/assets/ThingsJS_Migration.png" 
 alt="Demo Screenshot" width="427" height="240" border="10" /><p>Click Image to see Demo Video</p></a>
 
 

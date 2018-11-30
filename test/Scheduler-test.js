@@ -1,5 +1,9 @@
 var assert = require('assert');
-var things = require('../lib/things.js');
+// var things = require('../lib/things.js');
+var Pubsub = require('../lib/core/Pubsub.js');
+var Code = require('../lib/core/Code.js');
+var CodeEngine = require('../lib/core/CodeEngine.js');
+var Scheduler = require('../lib/core/Scheduler.js');
 var helpers = require('../lib/helpers.js');
 var expect = require('chai').expect;
 var should = require('chai').should();
@@ -14,7 +18,7 @@ describe('API methods', function(){
 
 	before(function(done){
 		this.timeout(10000);
-		self.pubsub = new things.Pubsub('mqtt://localhost');
+		self.pubsub = new Pubsub('mqtt://localhost');
 		self.pubsub.on('ready', done);
 	});
 
@@ -22,7 +26,7 @@ describe('API methods', function(){
 
 		it('Base case: devices = [], tasks = [], mapping = {}', function(){
 			expect(function(){
-				var new_mapping = things.Scheduler.Algorithms['first_fit']([], [], {});				
+				var new_mapping = Scheduler.Algorithms['first_fit']([], [], {});				
 			}).to.throw();
 		});
 
@@ -30,7 +34,7 @@ describe('API methods', function(){
 			var devices = [{ id: 'pi0', available_memory: 150 }];
 			var tasks = [];
 
-			var new_mapping = things.Scheduler.Algorithms['first_fit'](devices, tasks, {});
+			var new_mapping = Scheduler.Algorithms['first_fit'](devices, tasks, {});
 			expect(Object.keys(new_mapping['pi0']['processes']).length).to.eql(0);
 		})
 
@@ -38,7 +42,7 @@ describe('API methods', function(){
 			var devices = [];
 			var tasks = [{ id: 'A', required_memory: 100 }];
 			expect(function(){
-				var new_mapping = things.Scheduler.Algorithms['first_fit'](devices, tasks, {});
+				var new_mapping = Scheduler.Algorithms['first_fit'](devices, tasks, {});
 			}).to.throw();
 		});
 
@@ -46,7 +50,7 @@ describe('API methods', function(){
 			var devices = [{ id: 'pi0', available_memory: 150 }];
 			var tasks = [{ id: 'A', required_memory: 100 }];
 
-			var new_mapping = things.Scheduler.Algorithms['first_fit'](devices, tasks, {});
+			var new_mapping = Scheduler.Algorithms['first_fit'](devices, tasks, {});
 			expect(new_mapping['pi0']['processes']['A']).to.exist;
 		});
 
@@ -55,7 +59,7 @@ describe('API methods', function(){
 			var tasks = [{ id: 'A', required_memory: 1 }];
 
 			expect(function(){
-				things.Scheduler.Algorithms['first_fit'](devices, tasks, {});
+				Scheduler.Algorithms['first_fit'](devices, tasks, {});
 			}).to.throw(Error);
 		});
 
@@ -63,7 +67,7 @@ describe('API methods', function(){
 			var devices = [{ id: 'pi0', available_memory: 100 }];
 			var tasks = [{ id: 'A', required_memory: 99.99 }];
 
-			var new_mapping = things.Scheduler.Algorithms['first_fit'](devices, tasks, {});
+			var new_mapping = Scheduler.Algorithms['first_fit'](devices, tasks, {});
 			expect(new_mapping['pi0']['processes']['A']).to.exist;
 		});
 
@@ -72,7 +76,7 @@ describe('API methods', function(){
 			var tasks = [{ id: 'A', required_memory: 100 }];
 
 			expect(function(){
-				things.Scheduler.Algorithms['first_fit'](devices, tasks, {});
+				Scheduler.Algorithms['first_fit'](devices, tasks, {});
 			}).to.throw(Error);
 		});
 
@@ -87,7 +91,7 @@ describe('API methods', function(){
 				available_memory++;
 			});
 
-			var new_mapping = things.Scheduler.Algorithms['first_fit'](devices, tasks, {});
+			var new_mapping = Scheduler.Algorithms['first_fit'](devices, tasks, {});
 			expect(new_mapping['pi3']['processes']['A']).to.exist;
 
 			device_ids.forEach(function(id){
@@ -100,7 +104,7 @@ describe('API methods', function(){
 			var devices = [{ id: 'pi0', available_memory: 100 }, { id: 'pi1', available_memory: 10 }];
 			var tasks = [{ id: 'A', required_memory: 50 }, { id: 'B', required_memory: 40 }];
 
-			var new_mapping = things.Scheduler.Algorithms['first_fit'](devices, tasks, {});
+			var new_mapping = Scheduler.Algorithms['first_fit'](devices, tasks, {});
 			expect(Object.keys(new_mapping['pi0']['processes'])).to.include('A', 'B')
 			expect(Object.keys(new_mapping['pi1']['processes']).length).to.eql(0);
 		});
@@ -109,7 +113,7 @@ describe('API methods', function(){
 			var devices = [{ id: 'pi0', available_memory: 10}, { id: 'pi1', available_memory: 15 }];
 			var tasks = [{ id: 'A', required_memory: 10 }, { id: 'B', required_memory: 5}];
 
-			var new_mapping = things.Scheduler.Algorithms['first_fit'](devices, tasks, {});
+			var new_mapping = Scheduler.Algorithms['first_fit'](devices, tasks, {});
 			expect(Object.keys(new_mapping['pi0']['processes'])).to.eql(['B']);
 			expect(Object.keys(new_mapping['pi1']['processes'])).to.eql(['A']);
 		});
@@ -118,7 +122,7 @@ describe('API methods', function(){
 	describe('Tests for compute actions', function(){
 
 		it('Base case: current mapping = {}, desired mapping = {}', function(){
-			var actions = things.Scheduler.computeActions({}, {});
+			var actions = Scheduler.computeActions({}, {});
 			expect(actions).to.eql([]);
 		});
 
@@ -132,7 +136,7 @@ describe('API methods', function(){
 				tested_processes.push(id);
 			});
 
-			var actions = things.Scheduler.computeActions({}, desired_mapping);
+			var actions = Scheduler.computeActions({}, desired_mapping);
 			console.log(actions);
 
 			var programs_to_run = actions.reduce(function(arr, act){
@@ -160,7 +164,7 @@ describe('API methods', function(){
 				to_kill.push(killId);
 				delete desired_mapping['pi0']['processes'][killId];
 
-				actions = things.Scheduler.computeActions(current_mapping, desired_mapping);
+				actions = Scheduler.computeActions(current_mapping, desired_mapping);
 
 				var programs_to_kill = actions.reduce(function(arr, act){
 					expect(act.type).to.eql('kill');
@@ -187,7 +191,7 @@ describe('API methods', function(){
 				to_migrate.push(migrateId);
 				desired_mapping['pi1']['processes'][migrateId] = { code_name: migrateId };
 
-				actions = things.Scheduler.computeActions(current_mapping, desired_mapping);
+				actions = Scheduler.computeActions(current_mapping, desired_mapping);
 
 				var programs_to_migrate = actions.reduce(function(arr, act){
 					expect(act.type).to.eql('migrate'); 
@@ -217,7 +221,7 @@ describe('API methods', function(){
 			desired_mapping['pi1']['processes'][to_migrate] = current_mapping['pi0']['processes'][to_migrate];
 			delete desired_mapping['pi0']['processes'][to_migrate];
 
-			actions = things.Scheduler.computeActions(current_mapping, desired_mapping);
+			actions = Scheduler.computeActions(current_mapping, desired_mapping);
 
 			actions.forEach(function(act){
 				var args = act.args; 
@@ -244,7 +248,7 @@ describe('API methods', function(){
 	describe('Initialization', function(){
 		before(function(done){
 			self.identity = 'TEST-SCHEDULER';
-			self.scheduler = new things.Scheduler({ id: self.identity });
+			self.scheduler = new Scheduler({ id: self.identity });
 			self.scheduler.on('ready', done);
 		});
 
@@ -269,8 +273,8 @@ describe('API methods', function(){
 			this.timeout(10000);
 
 			return new Promise(function(resolve){
-				var pubsub = new things.Pubsub();
-				var code = things.Code.fromString(pubsub, 'test-rogue', 'console.log(\"test\")\;');
+				var pubsub = new Pubsub();
+				var code = Code.fromString(pubsub, 'test-rogue', 'console.log(\"test\")\;');
 				code.run({ silent: true }).then(function(instance){
 
 					instance.on('finished', function(){
@@ -297,7 +301,7 @@ describe('API methods', function(){
 			this.timeout(15000);
 
 			return new Promise(function(resolve){
-				var eng = new things.CodeEngine({ id: id }, { mute_code_output: true });
+				var eng = new CodeEngine({ id: id }, { mute_code_output: true });
 				eng.on('ready', function(){
 					setTimeout(function(){
 						eng.kill();
@@ -322,7 +326,7 @@ describe('API methods', function(){
 
 		before(function(done){
 			this.timeout(5000);
-			engine = new things.CodeEngine({}, { mute_code_output: true });
+			engine = new CodeEngine({}, { mute_code_output: true });
 			engine.on('ready', function(){
 				/* make sure engine has enough time to report its existence to
 				 * the scheduler
@@ -435,7 +439,7 @@ describe('API methods', function(){
 			self.pubsub.subscribe(request.reply_to, callback);
 
 			return new Promise(function(resolve){
-				engine = new things.CodeEngine({ id: 'TEST-EMPTY' }, { mute_code_output: true });
+				engine = new CodeEngine({ id: 'TEST-EMPTY' }, { mute_code_output: true });
 				engine.on('ready', function(){
 					setTimeout(function(){
 						self.pubsub.publish(self.identity + '/cmd', request);
@@ -461,7 +465,7 @@ describe('API methods', function(){
 					}
 				};
 				var request = generate_app(app);
-				engine = new things.CodeEngine({}, { mute_code_output: true });
+				engine = new CodeEngine({}, { mute_code_output: true });
 				engine.on('ready', function(){
 					setTimeout(function(){
 						self.pubsub.publish(self.identity + '/cmd', request);

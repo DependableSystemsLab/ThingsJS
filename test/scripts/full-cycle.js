@@ -1,7 +1,9 @@
 var fs = require('fs');
 var path = require('path');
 var chalk = require('chalk');
-var things = require('../../lib/things.js');
+// var things = require('../../lib/things.js');
+var Pubsub = require('../../lib/core/Pubsub.js');
+var Code = require('../../lib/core/Code.js');
 var helpers = require('../../lib/helpers.js');
 
 if (process.argv.length < 3) {
@@ -11,10 +13,10 @@ if (process.argv.length < 3) {
 var codePath = process.argv[2];
 codePath = path.join(__dirname, codePath);
 
-var pubsub = new things.Pubsub('mqtt://localhost');
+var pubsub = new Pubsub('mqtt://localhost');
 pubsub.on('ready', function(){
 
-	var original = things.Code.fromFile(pubsub, codePath);
+	var original = Code.fromFile(pubsub, codePath);
 	var singleHop, multiHop;
 
 	original.save(path.join(__dirname, 'temp/1-original.inst.js'))
@@ -35,7 +37,7 @@ pubsub.on('ready', function(){
 	})
 	.then(function(snapshot){
 		original.kill();
-		singleHop = things.Code.fromSnapshot(snapshot);
+		singleHop = Code.fromSnapshot(snapshot);
 		return singleHop.save(path.join(__dirname, 'temp/3-restored.js'))
 			.then(function(){
 				return singleHop.run();
@@ -55,7 +57,7 @@ pubsub.on('ready', function(){
 	})
 	.then(function(snapshot){
 		singleHop.kill();
-		multiHop = things.Code.fromSnapshot(snapshot);
+		multiHop = Code.fromSnapshot(snapshot);
 		return multiHop.save(path.join(__dirname, 'temp/5-restored.js'))
 			.then(function(){
 				return multiHop.run();
