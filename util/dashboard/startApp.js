@@ -5,7 +5,7 @@ var express = require('express');
 var helmet = require('helmet');
 var chalk = require('chalk');
 
-var MqttWsBridge = require('../../lib/things.js').util.MqttWsBridge;
+var MqttWsBridge = require('../../lib/util/MqttWsBridge.js');
 var GFS = require('../../lib/core/GFS.js').devland;
 
 /* helpers */
@@ -31,7 +31,10 @@ function startApp(config){
 		pubsub_url: 'mqtt://localhost'
 	}, config)
 
-	mongoose.connect(config.fs_db_url, { useNewUrlParser: true });
+	mongoose.connect(config.fs_db_url, {
+		useNewUrlParser: true,
+		useCreateIndex: true
+	});
 	var db = mongoose.connection;
 	db.on('error', function(){
 		console.log('[DB] Connection ERROR');

@@ -28,45 +28,56 @@ var dropped = Promise.all([
 ]);
 
 dropped.then(()=>{
-	gfs.mkdir('/codes', function(err){
-		console.log('Created directory /codes');
-		var ops = [];
-		// Read from samples directory and "upload" to GFS
-		ops.push(new Promise((resolve, reject)=>{
+	return new Promise((resolve, reject)=>{
+		gfs.mkdir('/codes', (err)=>{
+			if (err) reject(err);
+			else {
+				console.log('Created directory /codes');
+				resolve();
+			}
+		});
+	}).then(()=>{
+		return new Promise((resolve, reject)=>{
+			gfs.mkdir('/apps', function(err){
+				if (err) reject(err);
+				else {
+					console.log('Created directory /apps');
+					resolve();
+				}
+			});
+		})
+	}).then(()=>{
+		return new Promise((resolve, reject)=>{
 	 		fs.readFile(path.resolve(__dirname, '../../samples/factorial.js'), function(rErr, data){
 	 			gfs.writeFile('/codes/factorial.js', data.toString(), function(wErr){
 					console.log('Created file /codes/factorial.js');
 					resolve();
 		 		})
 		 	});
-		}));
-		ops.push(new Promise((resolve, reject)=>{
+		})
+	}).then(()=>{
+		return new Promise((resolve, reject)=>{
 			fs.readFile(path.resolve(__dirname, '../../samples/video_streamer.js'), function(rErr, data){
 	 			gfs.writeFile('/codes/video_streamer.js', data.toString(), function(wErr){
 					console.log('Created file /codes/video_streamer.js');
 					resolve();
 		 		})
 		 	});
-		}));
-		ops.push(new Promise((resolve, reject)=>{
+		})
+	}).then(()=>{
+		return new Promise((resolve, reject)=>{
 		 	fs.readFile(path.resolve(__dirname, '../../samples/motion_detector.js'), function(rErr, data){
 		 		gfs.writeFile('/codes/motion_detector.js', data.toString(), function(wErr){
-					console.log('Created files /codes/motion_detector.js');
+					console.log('Created file /codes/motion_detector.js');
 					resolve();
 		 		})
 		 	});
-		}));
-		ops.push(new Promise((resolve, reject)=>{
-			gfs.mkdir('/apps', function(err){
-				console.log('Created directory /apps');
-				resolve();
-			});
-		}));
-		Promise.all(ops)
-			.then(()=>{
-				console.log('All done.');
-				process.exit();
-			});
+		})
+	}).then(()=>{
+		console.log('All done.');
+		process.exit();
 	});
+}).catch((error)=>{
+	console.log(error, 'Failed to reset the database');
 });
 
