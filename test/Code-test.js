@@ -2,7 +2,9 @@ var fs = require('fs');
 var path = require('path');
 var spawn = require('child_process').spawn;
 var expect = require('chai').expect;
-var things = require('../lib/things.js');
+// var things = require('../lib/things.js');
+var Pubsub = require('../lib/core/Pubsub.js');
+var Code = require('../lib/core/Code.js');
 
 /* Helper functions */
 
@@ -23,9 +25,9 @@ function runRawCode(file_path){
 /** Instrument and run a JS file and return the stdout */
 function runCode(file_path){
 	return new Promise(function(resolve, reject){
-		var pubsub = new things.Pubsub('mqtt://localhost');
+		var pubsub = new Pubsub('mqtt://localhost');
 		var inst_output = '';
-		var code = things.Code.fromFile(pubsub, file_path);
+		var code = Code.fromFile(pubsub, file_path);
 		code.run({
 			onStdout: function(line){
 				inst_output += line;
@@ -47,13 +49,13 @@ describe('API methods', function(){
 
 	// Setup a Pubsub instance
 	before(function(done){
-		pubsub = new things.Pubsub('mqtt://localhost');
+		pubsub = new Pubsub('mqtt://localhost');
 		pubsub.on('ready', done);
 	});
 
 	// Tests
 	it('Initialize Code instance', function(done){
-		code = things.Code.fromString(pubsub, 'count.js', 'var c=0;setInterval(function(){ console.log(c++); }, 100)');
+		code = Code.fromString(pubsub, 'count.js', 'var c=0;setInterval(function(){ console.log(c++); }, 100)');
 		expect(code.name).to.equal('count.js');
 		done();
 	});

@@ -1,4 +1,3 @@
-var things = require('../lib/things.js');
 // var assert = require('assert');
 var assert = require('chai').assert;
 const expect = require('chai').expect;
@@ -7,6 +6,8 @@ const should = require('chai').should();
 var fs = require('fs');
 const mosca = require('mosca');
 const fork = require('child_process').fork;
+var CodeEngine = require('../lib/core/CodeEngine.js');
+var Dispatcher = require('../lib/core/Dispatcher.js');
 
 var NUMINSTANCES = 3;
 var dispatcher, engines, code_instance_id;
@@ -16,7 +17,7 @@ before('Prepare Code Engine instances', function(done){
 	engines = [];
 	for (var i=0; i<NUMINSTANCES; i++){
 		promises.push(new Promise(function(resolve, reject){
-			var engine = new things.CodeEngine({}, { mute_code_output: true });
+			var engine = new CodeEngine({}, { mute_code_output: true });
 			engines.push(engine);
 			engine.on('ready', resolve);
 		}));
@@ -28,7 +29,7 @@ before('Prepare Code Engine instances', function(done){
 });
 
 it('initializes', function(done){
-	dispatcher = new things.Dispatcher();
+	dispatcher = new Dispatcher();
 	dispatcher.on('ready', function(){
 		done();
 	})

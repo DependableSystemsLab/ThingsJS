@@ -2,7 +2,9 @@ var fs = require('fs');
 var path = require('path');
 var spawn = require('child_process').spawn;
 var expect = require('chai').expect;
-var things = require('../lib/things.js');
+// var things = require('../lib/things.js');
+var Pubsub = require('../lib/core/Pubsub.js');
+var Code = require('../lib/core/Code.js');
 
 /** Run a JS file and return the stdout */
 function runRawCode(file_path){
@@ -21,9 +23,9 @@ function runRawCode(file_path){
 /** Instrument and run a JS file and return the stdout */
 function runCode(file_path){
 	return new Promise(function(resolve, reject){
-		var pubsub = new things.Pubsub('mqtt://localhost');
+		var pubsub = new Pubsub('mqtt://localhost');
 		var inst_output = '';
-		var code = things.Code.fromFile(pubsub, file_path);
+		var code = Code.fromFile(pubsub, file_path);
 		code.run({
 			onStdout: function(line){
 				inst_output += line;

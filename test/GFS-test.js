@@ -135,7 +135,7 @@ describe('GFS Userland API', function(){
 })
 
 describe('GFS RESTful API', function(){
-	var gfs = require('things-js').util.GFS;
+	var gfs = require('../lib/core/GFS.js').devland;
 	var testFile = helpers.randKey()+'_txt';
 	var testContent = helpers.randKey(100);
 

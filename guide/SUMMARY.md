@@ -6,6 +6,7 @@
     * [CLI Commands](api/CLI.md)
     * [Publications](Publications.md)
 * [Getting Started](GettingStarted.md)
+	* [ThingsJS VM Image](tutorials/VirtualMachine.md)
     * [Pocket Beagle](tutorials/Setup-PocketBeagle.md)
     * [Beaglebone Black](tutorials/Setup-BeagleboneBlack.md)
     * [Sample Components](samples/README.md)

@@ -1,7 +1,8 @@
 var fs = require('fs');
 var path = require('path');
 var chalk = require('chalk');
-var things = require('../../lib/things.js');
+// var things = require('../../lib/things.js');
+var Code = require('../../lib/core/Code.js');
 var helpers = require('../../lib/helpers.js');
 
 if ((process.argv.length < 3) || (process.argv.length < 4)) {
@@ -35,7 +36,7 @@ CODES.forEach(function(code_name){
 
 	// Measure
 	for (var i=0; i < NUM_RUNS; i++){
-		var measured = helpers.measureSync(things.Code.fromSnapshot, [ snapshot, true ]);
+		var measured = helpers.measureSync(Code.fromSnapshot, [ snapshot, true ]);
 		// console.log(measured.result);
 		result[code_name].times.push(measured.elapsed);
 		measured.result.pubsub.kill();
