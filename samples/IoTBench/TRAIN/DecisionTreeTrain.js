@@ -8,6 +8,7 @@ var GFS = require('things-js').addons.gfs(mongoUrl);
 var pubsub_url = 'mqtt://localhost';
 var pubsub_topic = 'thingsjs/IoTBench/TRAIN/DecisionTreeClassify';
 var publish_topic = 'thingsjs/IoTBench/TRAIN/DecisionTreeTrain';
+var measurement_topic = 'iotbench/processing';
 
 var pubsub = new things.Pubsub(pubsub_url);
 var USE_MSG_FIELD_LIST; 
@@ -63,12 +64,15 @@ function setup(){
 
 
 function decisionTreeTrain(saveddatalist){
-
+    var date = new Date(); var timestamp = date.getTime();
+    var saveddatalist = JSON.parse(saveddatalist)
+    console.log(timestamp+" : "+saveddatalist["line_id"]);
+    var content = saveddatalist["content"];
       var features = MODEL_TRAIN_INPUT;
       var target = TRAIN_RESULT_HEADER;
       var featureTypes = MODEL_TRAIN_INPUT_TYPE;
 
-      processeddata = processdata(saveddatalist,features,target);
+      processeddata = processdata(content,features,target);
       var c45 = C45(); 
       c45.train({
         data: processeddata,
@@ -82,6 +86,8 @@ function decisionTreeTrain(saveddatalist){
       }  
       console.log("tree model"+ model.toJSON());
       console.log("TRAIN DECISION TREE MODEL",c45.toJSON());
+      var timeobj = {"id":saveddatalist["line_id"],"component":"decisiontreetrain","time":timestamp};
+      pubsub.publish(measurement_topic,JSON.stringify(timeobj));
       //pubsub.publish(publish_topic,c45.toJSON()); no pubsub to make it stateless for prediction
       GFS.writeFile(MODEL_FILE_PATH, c45.toJSON(),function(err){
         if(err) throw err;

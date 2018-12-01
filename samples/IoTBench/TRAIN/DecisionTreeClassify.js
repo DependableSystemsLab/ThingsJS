@@ -10,6 +10,8 @@ var GFS = require('things-js').addons.gfs(mongoUrl);
 var pubsub_url = 'mqtt://localhost';
 var pubsub_topic = 'thingsjs/IoTBench/SenMLParse';
 var publish_topic = 'thingsjs/IoTBench/TRAIN/DecisionTreeClassify';
+var measurement_topic = 'iotbench/processing';
+
 
 var pubsub = new things.Pubsub(pubsub_url);
 var USE_MSG_FIELD_LIST; 
@@ -69,10 +71,13 @@ function setup() {
 }
 
 function DecisionTreeClassify(data){
-
+  var date = new Date(); var timestamp = date.getTime();
+  data = JSON.parse(data);
+  var content = data["content"];
+  console.log(timestamp+" : "+data["line_id"]);
 traincount ++;
 var target ="total_amount";
-datalist.push(data);
+datalist.push(content);
 
 if(traincount>= WINDOW_COUNT){
     traincount = 0;
@@ -89,7 +94,15 @@ if(traincount>= WINDOW_COUNT){
         element[CLASS_HEADER] = getQuantile(element[TRAIN_RESULT_HEADER], bar1, bar2, bar3, bar4);
     });
 
-    pubsub.publish(publish_topic,datalist);
+
+
+    var object = {"line_id":data["line_id"],"content":datalist};
+    var timeobj = {"id":data["line_id"],"component":"decisiontreeclassify","time":timestamp};
+    pubsub.publish(measurement_topic,JSON.stringify(timeobj));
+    pubsub.publish(publish_topic, JSON.stringify(object));
+
+
+    // pubsub.publish(publish_topic,datalist);
     console.log("CLASSIFIED DATA" + datalist);
     datalist = [];
 	}

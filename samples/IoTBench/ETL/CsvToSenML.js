@@ -7,6 +7,7 @@ var GFS = require('things-js').addons.gfs(mongoUrl);
 var pubsub_url = 'mqtt://localhost';
 var pubsub_topic = 'thingsjs/IoTBench/ETL/Annotate';
 var publish_topic = 'thingsjs/IoTBench/ETL/CsvToSenML';
+var measurement_topic = 'iotbench/processing';
 
 var pubsub = new things.Pubsub(pubsub_url);
 
@@ -101,8 +102,12 @@ function setup() {
 // }
 
 function convertToSenML(data) {
+    var date = new Date(); var timestamp = date.getTime();
+    data = JSON.parse(data)
+    console.log(timestamp+" : "+data["line_id"] + "FOR convertToSenML");
     var arr = [];
-    var keys = Object.keys(data);
+    var content = data["content"];
+    var keys = Object.keys(content);
 
     keys.forEach(function(field) {
         var senml = {};
@@ -112,12 +117,16 @@ function convertToSenML(data) {
         var val = schemaValues[index];
 
         senml["u"] = type;
-        senml[val] = data[field];
+        senml[val] = content[field];
 
         arr.push(senml);
     });
     console.log(JSON.stringify(arr));
-    pubsub.publish(publish_topic, JSON.stringify({ "e": arr }));
+    var object = {"line_id":data["line_id"],"content":JSON.stringify({ "e": arr })};
+    pubsub.publish(publish_topic, JSON.stringify(object));
+
+    var timeobj = {"id":data["line_id"],"component":"csvtosenml","time":timestamp};
+    pubsub.publish(measurement_topic,JSON.stringify(timeobj));
 }
 
 pubsub.on('ready', function() {

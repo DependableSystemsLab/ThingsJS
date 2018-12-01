@@ -7,6 +7,7 @@ var GFS = require('things-js').addons.gfs(mongoUrl);
 var pubsub_url = 'mqtt://localhost';
 var pubsub_topic = 'thingsjs/IoTBench/ETL/Interpolation';
 var publish_topic = 'thingsjs/IoTBench/ETL/Annotate';
+var measurement_topic = 'iotbench/processing';
 
 var pubsub = new things.Pubsub(pubsub_url);
 
@@ -109,9 +110,14 @@ function setup() {
 
 function annotate(data) {
     // get the annotation key
-    var keys = Object.keys(data);
+    var date = new Date(); var timestamp = date.getTime();
+    data = JSON.parse(data);
+    console.log(timestamp+" : "+data["line_id"]+"FOR ANNOTATE");
+    var content = data["content"];
+    var keys = Object.keys(content);
+
     var field = keys[useMsgField];
-    var fieldValue = data[field];
+    var fieldValue = content[field];
     var annotateValue = annotationMap[fieldValue];
 
     if (annotateValue) {
@@ -122,14 +128,20 @@ function annotate(data) {
 
         for (var i = 0; i < parsedFields.length; i++) {
             var fieldName = schemaArr[i];
-            data[fieldName] = parsedFields[i];
+            content[fieldName] = parsedFields[i];
         }
         console.log('Made annotations to data');
         console.log(schemaArr, parsedFields);
         console.log('\n');
     }
     console.log('Publishing annotate');
-    pubsub.publish(publish_topic, data);
+    var object = {"line_id":data["line_id"],"content":content};
+    pubsub.publish(publish_topic, JSON.stringify(object));
+    var timeobj = {"id":data["line_id"],"component":"annotate","time":timestamp};
+    pubsub.publish(measurement_topic,JSON.stringify(timeobj));
+
+
+    // 
 }
 
 pubsub.on('ready', function() {

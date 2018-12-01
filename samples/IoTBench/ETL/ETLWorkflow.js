@@ -11,7 +11,8 @@ const COMPONENTS =
 './Interpolation.js',
 './BloomFilterCheck.js', 
 './RangeFilterCheck.js', 
-'../SenMLParse.js', '../SenMLSpout.js'];
+'../SenMLParse.js', 
+'../SenMLSpout.js'];
 
 var instances = {};
 var noHeader = true;
@@ -63,7 +64,7 @@ function runETL(){
 
 				pubsub.subscribe(comp + '/' + meta.id + '/resource', function(data){
 					data.component = comp;
-					memToCSV(data);
+					// memToCSV(data);
 				});
  			});
 

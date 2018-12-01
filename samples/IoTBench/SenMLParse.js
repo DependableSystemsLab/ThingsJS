@@ -10,19 +10,26 @@ var things = require('things-js')
 var pubsub_url = 'mqtt://localhost';
 var pubsub_topic = 'thingsjs/IoTBench/SenMLSpout';
 var publish_topic = 'thingsjs/IoTBench/SenMLParse';
+var measurement_topic = 'iotbench/processing';
 
 var pubsub = new things.Pubsub(pubsub_url);
 // mkdir RIOT/ETL folder if not exist 
 // save file inside 
 function processMessage(data) {
-	var line = data.toString();
+	// console.log(data);
+	var date = new Date(); var timestamp = date.getTime();
+	data = JSON.parse(data)
+    console.log(timestamp+" : "+data["line_id"]);
+	var content = data["content"];
+	var line = content.toString();
+	// console.log(line);
 	
 	// Remove everything before first { -- dunno why the data is made like that
 	var trimmedLine = line.substr(line.indexOf('{'));
 	
 	// JSON-parse object
 	var obj = JSON.parse(trimmedLine);
-	//console.log(obj);
+	// console.log(obj);
 	
 	// What follows is derived from the logic in SenMLParse
 	// Ensuring compatibility as much as possible so that we can properly
@@ -56,7 +63,11 @@ function processMessage(data) {
 	
 	// Publish the output
 	// console.log(mapkeyvalues);
-    pubsub.publish(publish_topic, mapkeyvalues);
+	var object = {"line_id":data["line_id"],"content":mapkeyvalues};
+	var timeobj = {"id":data["line_id"],"component":"parse","time":timestamp};
+	pubsub.publish(measurement_topic,JSON.stringify(timeobj));
+    pubsub.publish(publish_topic, JSON.stringify(object));
+
 }
 
 /* Connect pubsub */

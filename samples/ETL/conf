@@ -1,0 +1,3 @@
+{
+	"pubsub_url": "mqtt://test.mosquitto.org"
+}

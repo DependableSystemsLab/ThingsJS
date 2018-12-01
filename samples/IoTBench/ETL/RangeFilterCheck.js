@@ -9,7 +9,7 @@ var GFS = require('things-js').addons.gfs(mongoUrl);
 var pubsub_url = 'mqtt://localhost';
 var pubsub_topic = 'thingsjs/IoTBench/SenMLParse';
 var publish_topic = 'thingsjs/IoTBench/ETL/RangeFilterCheck';
-
+var measurement_topic = 'iotbench/processing';
 var pubsub = new things.Pubsub(pubsub_url);
 
 /* range filter definitions */
@@ -53,17 +53,26 @@ function getRange(){
 }
 
 function checkRange(data){
+	// console.log(data);
+
+	var date = new Date(); var timestamp = date.getTime();
+	data = JSON.parse(data);
+    console.log(timestamp+" : "+data["line_id"]+ "For RangeFilterCheck");
+	var content = data["content"];
 	var success = true;
 	for(field in ranges){
-		if(field in data){
-			if( (data[field] > ranges[field].max) || (data[field] < ranges[field].min) ){
+		if(field in content){
+			if( (content[field] > ranges[field].max) || (content[field] < ranges[field].min) ){
 				success = false;
 			}
 		}
 	}
 	if(success){
 		console.log('Data met the range criteria');
-		pubsub.publish(publish_topic, data);
+		var object = {"line_id":data["line_id"],"content":content};
+		pubsub.publish(publish_topic, JSON.stringify(object));
+		var timeobj = {"id":data["line_id"],"component":"rangefilter","time":timestamp};
+		pubsub.publish(measurement_topic,JSON.stringify(timeobj));
 	}
 }
 

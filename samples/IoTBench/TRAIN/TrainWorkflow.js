@@ -58,7 +58,7 @@ function runTRAIN(){
 
 				pubsub.subscribe(comp + '/' + meta.id + '/resource', function(data){
 					data.component = comp;
-					memToCSV(data);
+					// memToCSV(data);
 				});
  			});
 

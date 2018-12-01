@@ -1,0 +1,28 @@
+{
+	"FILTER.RANGE_FILTER.VALID_RANGE": 
+	{
+ 		"trip_time_in_secs": "140:3155",
+		"trip_distance"    : "1.37:29.86",
+		"fare_amount"      : "6.00:201.00",
+		"tip_amount"       : "0.65:38.55",
+		"tolls_amount"     : "2.50:18.00" 
+	},
+	"FILTER.RANGE_FILTER.USE_MSG_FIELD": 0,
+
+	"PARSE.CSV_SCHEMA_WITH_ANNOTATEDFIELDS_FILEPATH" : "./taxi-schema_with_annotation.csv",
+	"PARSE.CSV_SENML_USE_MSG_FIELD" : 0,
+
+	"BLOOMFILTER.USE_MSG_FIELD" : 1,
+	"BLOOMFILTER.EXPECTED_INSERTIONS" : 400,
+	"BLOOMFILTER.FALSEPOSITIVE_RATIO" : 0.01,
+	"BLOOMFILTER.MODEL_PATH" : "./bloomfilter_taxi_.model",
+
+	"INTERPOLATION.USE_MSG_FIELD" : 0,
+	"INTERPOLATION.USE_MSG_FIELD_LIST": ["trip_time_in_secs", "trip_distance"],
+	"INTERPOLATION.WINDOW_SIZE" : 0,
+
+	"ANNOTATE.ANNOTATE_FILE_PATH" : "./taxi-metadata-fulldataset.txt",
+	"ANNOTATE.ANNOTATE_SCHEMA" : "./taxi-schema_with_annotation.csv",
+	"ANNOTATE.ANNOTATE_MSG_USE_FIELD" : 0
+	
+}

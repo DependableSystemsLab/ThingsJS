@@ -6,6 +6,7 @@ var GFS = require('things-js').addons.gfs(mongoUrl);
 var pubsub_url = 'mqtt://localhost';
 var pubsub_topic = 'thingsjs/IoTBench/ETL/BloomFilterCheck';
 var publish_topic = 'thingsjs/IoTBench/ETL/Interpolation';
+var measurement_topic = 'iotbench/processing';
 
 var pubsub = new things.Pubsub(pubsub_url);
 
@@ -43,42 +44,54 @@ function setup() {
 }
 
 function interpolate(data) {
+    var date = new Date(); var timestamp = date.getTime();
+    data = JSON.parse(data);
+    console.log(timestamp+" : "+data["line_id"] + " For "+"INTERPOLATION");
     console.log("START INTERPOLATION!!!!");
+
+     var content = data["content"];
 
     if (WINDOW_SIZE == 0) {
         // do nothing with the data
         console.log('No interpolation needed. Publishing data');
-        pubsub.publish(publish_topic, data);
+        pubsub.publish(publish_topic, JSON.stringify(data));
+        var timeobj = {"id":data["line_id"],"component":"interpolate","time":timestamp};
+        pubsub.publish(measurement_topic,JSON.stringify(timeobj));
         return;
     }
 
     USE_MSG_FIELD_LIST.forEach(function(field) {
         var key = ID + field;
 
-        if (field in data) {
+        if (field in content) {
 
             if (key in valuesMap) {
-                if (data[field] === null) {
+                if (content[field] === null) {
                     var count = 0;
                     valuesMap[key].forEach(function(val) {
                         count += val;
                     });
                     var newValue = (count) / (valuesMap[key].length);
                     console.log('Interpolated field ' + field + 'with new value: ' + newValue);
-                    data[field] = newValue;
+                    content[field] = newValue;
                 } else {
                     // add the new data in
                     if (valuesMap[key].length === WINDOW_SIZE) {
                         valuesMap.splice(0, 1);
                     }
-                    valuesMap[key].push(data[field]);
+                    valuesMap[key].push(content[field]);
                 }
-            } else if (data[field] !== null) {
-                valuesMap[key] = [data[Field]];
+            } else if (content[field] !== null) {
+                valuesMap[key] = [content[Field]];
             }
         }
     });
-    pubsub.publish(publish_topic, data);
+
+
+    var object = {"line_id":data["line_id"],"content":content};
+    pubsub.publish(publish_topic, JSON.stringify(object));
+    var timeobj = {"id":data["line_id"],"component":"interpolate","time":timestamp};
+    pubsub.publish(measurement_topic,JSON.stringify(timeobj));
 }
 
 pubsub.on('ready', function() {

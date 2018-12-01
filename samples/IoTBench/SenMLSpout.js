@@ -7,12 +7,18 @@ var things = require('things-js');
 var readline = require('readline');
 var mongoUrl = 'mongodb://localhost:27017/things-js-fs';
 var GFS = require('things-js').addons.gfs(mongoUrl);
-
+var measurement_topic = 'iotbench/processing';
 
 /* configurable variables */
 var pubsub_url = 'mqtt://localhost';
 var pubsub_topic = 'thingsjs/IoTBench/SenMLSpout';
-var publish_interval = 1000;
+var publish_interval1 = 1000;
+var publish_interval2 = 500;
+var publish_interval3 = 200;
+var publish_interval4 = 100;
+var publish_interval5 = 50;
+var publish_interval6 = 10;
+
 
 var pubsub = new things.Pubsub(pubsub_url);
 
@@ -36,6 +42,16 @@ var currentLine = 0;
 // 		setInterval(publishLine, publish_interval);
 // 	});	
 // }
+
+function randKey(length, charset){
+    var text = "";
+    if (!length) length = 8;
+    if (!charset) charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    for( var i=0; i < length; i++ ){
+        text += charset.charAt(Math.floor(Math.random() * charset.length));
+    }
+    return text;
+};
 function startSpout() {
 	 var args = ['./TAXI_sample_data_senml.csv'];
     GFS.readFile(args[0], function(err2, data) {
@@ -60,7 +76,7 @@ function startSpout() {
         lineReader.on('close', function() {
             // File ended
             console.log('Done reading file... Starting to publish');
-            setInterval(publishLine, publish_interval);
+            setInterval(publishLine, publish_interval1);
         });
 
     });
@@ -70,6 +86,9 @@ function startSpout() {
 function publishLine() {
     // For the moment, publish as a raw string rather than json-serializing
     // since de-jsoning will be performed by the next 'bolt'
+    var lineid = randKey();
+    var date = new Date(); var timestamp = date.getTime();
+    console.log(timestamp+" : "+lineid);
     if (currentLine >= lines.length) {
         /*
         console.log("Done sending data.");
@@ -77,8 +96,13 @@ function publishLine() {
         */
         currentLine = 0;
     }
-    console.log("Publishing line " + currentLine);
-    pubsub.publish(pubsub_topic, lines[currentLine]);
+   
+    var object = {"line_id":lineid,"content":lines[currentLine]};
+    console.log("Publishing line " + currentLine + lineid);
+
+    pubsub.publish(pubsub_topic, JSON.stringify(object));
+    var timeobj = {"id":lineid,"component":"spout","time":timestamp};
+    pubsub.publish(measurement_topic,JSON.stringify(timeobj));
     currentLine++;
 }
 

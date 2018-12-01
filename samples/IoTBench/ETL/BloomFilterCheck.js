@@ -6,6 +6,8 @@ var GFS = require('things-js').addons.gfs(mongoUrl);
 var pubsub_url = 'mqtt://localhost';
 var pubsub_topic = 'thingsjs/IoTBench/ETL/RangeFilterCheck';
 var publish_topic = 'thingsjs/IoTBench/ETL/BloomFilterCheck';
+var measurement_topic = 'iotbench/processing';
+
 var model = [34263556, 142119048, 809554946, 67321864, -1073151776, 180220686, -1055686623, -1811897856, 184864902, 674317344, -2095042559, 289689626, -518930432, 157291776, 599807120, 428376870, 33624352, 270090256, 86310996, -931064831, 272646273, 563217941, -2129490875, 136987648, -801636288, 335553056, 1346914320, -976889591, 1430801504, -1441791912];
 
 /* bloom filter properties */
@@ -54,11 +56,15 @@ function createBloomFilter() {
 }
 
 function doBloomFilter(data) {
+    var date = new Date(); var timestamp = date.getTime();
+    data = JSON.parse(data);
+    console.log(timestamp+" : "+data["line_id"]+"For BloomFilterCheck");
     var value;
+    var content = data["content"];
     // if user specified they want to use a specific field value
     if (useMsgField > 0) {
         var keys = Object.keys(data);
-        value = data[keys[useMsgField - 1]];
+        value = content[keys[useMsgField - 1]];
     } else {
         // generate a random value between 0 - testingRange
         value = Math.floor(Math.random() * testingRange + 1);
@@ -67,7 +73,11 @@ function doBloomFilter(data) {
     console.log('Bloom filter tested: ' + res);
     if (res ) {
         console.log("PASS BLOOMING");
-        pubsub.publish(publish_topic, data);
+        object = {"line_id":data["line_id"],"content":content};
+        pubsub.publish(publish_topic, JSON.stringify(object));
+        var timeobj = {"id":data["line_id"],"component":"bloomfilter","time":timestamp};
+        pubsub.publish(measurement_topic,JSON.stringify(timeobj));
+
     }
 }
 
