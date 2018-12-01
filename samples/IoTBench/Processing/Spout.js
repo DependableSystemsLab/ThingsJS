@@ -16,8 +16,15 @@ var pubsub = new things.Pubsub(pubsubUrl);
 var lines = [];
 var currentLine = 0;
 
-/* processing */
-var timestamps = {};
+function randKey(length, charset) {
+    var text = "";
+    if (!length) length = 8;
+    if (!charset) charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    for ( var i=0; i < length; i++ ){
+        text += charset.charAt(Math.floor(Math.random() * charset.length));
+    }
+    return text;
+}
 
 function startSpout() {
 	var lineReader = readline.createInterface({

@@ -18,27 +18,36 @@ var components = {
 	decisiontreeclassify: 'decisiontreeclassify'
 };
 
+var endComponents = {
+	mltrain: 'mltrain',
+	decisiontreetrain: 'decisiontreetrain',
+	csvtosenml: 'csvtosenml'
+}
+
 var timestamps = {};
 
 var pubsub = new things.Pubsub(pubsubUrl);
 
 function analyze(data) {
-	var endComponent = components.csvtosenml;
+	var ids = ('id' in data) ? [data.id] : data.ids;
+	var comp = data.component;
+	var time = data.time;
 
-	id = data.id || data.ids.join(',');
-	comp = data.component;
-	time = data.time;
-	console.log(id, comp, time);
+	console.log(ids.join(','), comp, time);
 
-	if (timestamps[id]) {
-		timestamps[id] += time;
-	} else {
-		timestamps[id] = time;
-	}
+	ids.forEach(function(tag) {
+		if (timestamps[tag]) {
+			timestamps[tag] += time;
+		} else {
+			timestamps[tag] = time;
+		}
+	});
 
-	if (comp === endComponent) {
-		console.log('RTT: ' + timestamps[id]);
-		console.log('Avg processing time: ' + timestamps[id] / Object.keys(components).length);
+	if (comp in endComponents) {
+		ids.forEach(function(tag) {
+			console.log('RTT', tag, timestamps[tag]);
+			timestamps[tag] -= time;
+		});
 	}
 }
 

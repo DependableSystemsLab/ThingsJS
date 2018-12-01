@@ -1,4 +1,5 @@
 var things = require('things-js');
+var fs = require('fs');
 
 /* configurable variables */
 var pubsubUrl = 'mqtt://test.mosquitto.org';
@@ -19,7 +20,7 @@ function setup() {
 	try {
 		properties = JSON.parse(fs.readFileSync(propertiesPath, 'utf-8'));
 	} catch(e) {
-		console.log('Could not fetch properties');
+		console.log('Could not fetch properties: ' + e);
 		process.exit();
 	}
 	AVERAGE_TARGET = properties['AVERAGE.MULTIPLELINEAR_REGRESSION'];
