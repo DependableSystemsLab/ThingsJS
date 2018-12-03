@@ -99,7 +99,7 @@ function createAnnotationMap(file) {
 					process.exit();
 				}
 				var lines = data.split('\n');
-				for(var i = 1; i < lines.length; i++) {
+				for(var i = 0; i < lines.length; i++) {
 					var token = lines[i].split(':');
 					if ( token[0] && token[1]) {
 						annotationMap[token[0]] = token[1];
