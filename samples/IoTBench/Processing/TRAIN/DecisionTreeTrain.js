@@ -1,9 +1,12 @@
 var things = require('things-js');
 var fs = require('fs');
+var mongoUrl = 'mongodb://localhost:27017/things-js-fs';
+var GFS = require('things-js').GFS(mongoUrl);
 var csv = require('csv');
 var C45 = require('c4.5');
 
 /* configurable variables */
+var gfsFlag = true;
 var pubsubUrl = 'mqtt://test.mosquitto.org';
 var processingTopic = 'iotbench/processing';
 var subscribeTopic = processingTopic + '/decisiontreeclassify';
@@ -31,15 +34,7 @@ function setup() {
   }
 }
 
-function setup() {
-  var properties;
-
-  try {
-    properties = JSON.parse(fs.readFileSync(propertiesPath, 'utf-8'));
-  } catch(e) {
-    console.log('Couldn\'t fetch properties: ' + e);
-    process.exit();
-  }
+function beginComponent(properties) {
   USE_MSG_FIELD_LIST = properties['TRAIN.DECISION_TREE.USE_MSG_FIELD_LIST'];
   if (!USE_MSG_FIELD_LIST) {
     console.log('No fields to train');
@@ -52,6 +47,30 @@ function setup() {
   TRAIN_RESULT_HEADER = properties['TRAIN.DECISION_TREE.TARGET'];
   MODEL_TRAIN_INPUT = properties['TRAIN.DECISION_TREE.TRAIN_INPUT'];
   MODEL_TRAIN_INPUT_TYPE = properties['TRAIN.DECISION_TREE.TRAIN_INPUT_TYPE'];
+  console.log('Beginning decision tree train');
+  pubsub.subscribe(subscribeTopic, decisionTreeTrain);
+}
+
+function setup() {
+  var properties;
+  if (gfsFlag) {
+    GFS.readFile(propertiesPath, function(err, data) {
+      if (err) {
+        console.log('Problem fetching properties: ' + err);
+        process.exit();
+      }
+      properties = JSON.parse(data);
+      beginComponent(properties);
+    });
+  } else {
+    try {
+      properties = JSON.parse(fs.readFileSync(propertiesPath, 'utf-8'));
+    } catch (e) {
+      console.log('Problem fetching properties: ' + e);
+      process.exit();
+    }
+    beginComponent(properties);
+  }
 }
 
 function decisionTreeTrain(msg) {
@@ -107,6 +126,4 @@ function processData(savedDataList, features, targets) {
 
 pubsub.on('ready', function() {
   setup();
-  console.log('Beginning decision tree train');
-  pubsub.subscribe(subscribeTopic, decisionTreeTrain);
 });

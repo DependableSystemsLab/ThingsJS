@@ -1,9 +1,12 @@
 var things = require('things-js');
 var fs = require('fs');
+var mongoUrl = 'mongodb://localhost:27017/things-js-fs';
+var GFS = require('things-js').GFS(mongoUrl);
 var csv = require('csv');
 var MLR  = require('ml-regression-multivariate-linear');
 
 /* configurable variables */
+var gfsFlag = true;
 var pubsubUrl = 'mqtt://test.mosquitto.org';
 var processingTopic = 'iotbench/processing';
 var publishTopic = processingTopic + '/parse';  
@@ -16,20 +19,12 @@ PRED_INPUT, PRED_OUTPUT, PRED_INPUT_TYPE, weights;
 
 var pubsub = new things.Pubsub(pubsubUrl);
 
-function setup() {
-  var properties;
-  try {
-    properties = JSON.parse(fs.readFileSync(propertiesPath, 'utf-8'));
-  } catch(e) {
-    console.log('Could not fetch properties: ' + e);
-    process.exit();
-  }
+function beginComponent(properties) {
   USE_MSG_FIELD_LIST = properties['PREDICT.MULTIPLELINEAR_REGRESSION.USE_MSG_FIELD_LIST'];
   if (!USE_MSG_FIELD_LIST) {
     console.log('No fields to TRAIN');
     process.exit();
   }
-
   USE_MSG_FIELD = properties["PREDICT.MULTIPLELINEAR_REGRESSION.USE_MSG_FIELD"] || 0;
   SAMPLE_HEADER = properties["CLASSIFICATION.DECISION_TREE.SAMPLE_HEADER"];
   MODEL_FILE_PATH = properties["PREDICT.MULTIPLELINEAR_REGRESSION.MODEL_PATH"];
@@ -43,6 +38,31 @@ function setup() {
   } catch(e) {
     console.log('Could not fetch weights: ' + e);
     process.exit();
+  }
+  console.log('Beginning MRL prediction');
+  pubsub.subscribe(subscribeTopic, MultiLinearRegressionPred);
+}
+
+function setup() {
+  var properties;
+  if (gfsFlag) {
+    GFS.readFile(propertiesPath, function(err, data) {
+      if (err) {
+        console.log('Could not fetch properties: ' + err);
+        process.exit();
+      }
+      properties = JSON.parse(data);
+      beginComponent(properties);
+    });
+
+  } else {
+    try {
+      properties = JSON.parse(fs.readFileSync(propertiesPath, 'utf-8'));
+    } catch(e) {
+      console.log('Could not fetch properties: ' + e);
+      process.exit();
+    }
+    beginComponent(properties);
   }
 }
 
@@ -78,6 +98,4 @@ function MultiLinearRegressionPred(msg) {
 
 pubsub.on('ready', function() {
   setup();
-  console.log('Beginning MRL prediction');
-  pubsub.subscribe(subscribeTopic, MultiLinearRegressionPred);
 });

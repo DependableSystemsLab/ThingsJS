@@ -3,9 +3,12 @@
  */
 var things = require('things-js');
 var fs = require('fs');
+var mongoUrl = 'mongodb://localhost:27017/things-js-fs';
+var GFS = require('things-js').GFS(mongoUrl);
 var readline = require('readline');
 
 /* configurable variables */
+var gfsFlag = false;
 var pubsubUrl = 'mqtt://test.mosquitto.org';
 var processingTopic = 'iotbench/processing';
 var subscribeTopic = processingTopic + '/annotate';
@@ -19,20 +22,38 @@ var schemaFields = {};
 var schemaTypes = [];
 var schemaValues = [];
 
-function setup() {
-	var properties;
-	try {
-		properties = JSON.parse(fs.readFileSync(propertiesPath, 'utf-8'));
-	} catch(e) {
-		console.log('Problem with reading properties file: ' + e);
-		process.exit();
-	}
+function beginComponent(properties) {
 	var schemaFile = properties['PARSE.CSV_SCHEMA_WITH_ANNOTATEDFIELDS_FILEPATH'];
 	if (!schemaFile) {
 		console.log('Schema file does not exist');
 		process.exit();
 	}
-	return parseEntireSchema(schemaFile);
+	parseEntireSchema(schemaFile).then(function() {
+		console.log('Beginning conversion to SenML format');
+		pubsub.subscribe(subscribeTopic, convertToSenML);	
+	});
+}
+
+function setup() {
+	var properties;
+	if (gfsFlag) {
+		GFS.readFileSync(propertiesPath, function(err, data) {
+			if (err) {
+				console.log('Could not fetch properties: ' + err);
+				process.exit();
+			}
+			properties = JSON.parse(data);
+			beginComponent(properties);
+		});
+	} else {
+		try {
+			properties = JSON.parse(fs.readFileSync(propertiesPath, 'utf-8'));
+		} catch(e) {
+			console.log('Problem with reading properties file: ' + e);
+			process.exit();
+		}
+		beginComponent(properties);
+	}
 }
 
 function parseEntireSchema(file) {
@@ -98,14 +119,12 @@ function convertToSenML(msg) {
 	var end = Date.now();
 	var elapsed = end - start;
 	pubsub.publish(processingTopic, { id: id, component: 'csvtosenml', time: elapsed });
-	pubsub.publish(publishTopic, JSON.stringify({ id: id, content: { 'e': arr } });
+	pubsub.publish(publishTopic, JSON.stringify({ id: id, content: { 'e': arr } }));
 
 	console.log(JSON.stringify(arr));
 }
 
-setup().then(function() {
-	pubsub.on('ready', function() {
-		console.log('Beginning conversion to SenML format');
-		pubsub.subscribe(subscribeTopic, convertToSenML);
-	});
+pubsub.on('ready', function() {
+	setup();
 });
+

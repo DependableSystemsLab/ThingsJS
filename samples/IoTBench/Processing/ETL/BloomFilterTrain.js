@@ -3,8 +3,11 @@
 var things = require('things-js');
 var bloom = require('bloomfilter').BloomFilter;
 var fs = require('fs');
+var mongoUrl = 'mongodb://localhost:27017/things-js-fs';
+var GFS = require('things-js').GFS(mongoUrl);
 
 /* configurable variables */
+var gfsFlag = false;
 var pubsubUrl = 'mqtt://test.mosquitto.org';
 var subscribeTopic = 'iotbench/processing/parse';
 var propertiesPath = './TAXI_properties.json';
@@ -26,14 +29,26 @@ function getNumHashes(m, n) {
 
 function serializeBloom() {
 	var array = [].slice.call(bloomFilter.buckets);
-	fs.writeFile(modelPath, JSON.stringify(array), function(err) {
-		if (err) {
-			console.log(err);
-		} else {
-			console.log('Serialized bloom filter to ' + modelPath);
-		}
-		process.exit();
-	});
+
+	if (gfsFlag) {
+		GFS.writeFile(modelPath, JSON.stringify(array), function(err) {
+			if (err) {
+				console.log(err);
+			} else {
+				console.log('Serialized bloom filter to ' + modelPath);
+			}
+			process.exit();
+		});
+	} else {
+		fs.writeFile(modelPath, JSON.stringify(array), function(err) {
+			if (err) {
+				console.log(err);
+			} else {
+				console.log('Serialized bloom filter to ' + modelPath);
+			}
+			process.exit();
+		});
+	}
 }
 
 function setup() {

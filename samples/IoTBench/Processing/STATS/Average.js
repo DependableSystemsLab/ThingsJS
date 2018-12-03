@@ -3,8 +3,11 @@
  */
 var things = require('things-js');
 var fs = require('fs');
+var mongoUrl = 'mongodb://localhost:27017/things-js-fs';
+var GFS = require('things-js').GFS(mongoUrl);
 
 /* configurable variables */
+var gfsFlag = true;
 var pubsubUrl = 'mqtt://test.mosquitto.org';
 var processingTopic = 'iotbench/processing';
 var subscribeTopic = processingTopic + '/parse';
@@ -17,18 +20,35 @@ var pubsub = new things.Pubsub(pubsubUrl);
 var BLOCK_AVG, USE_MSG_FIELD, USE_MSG_FIELDLIST;
 var aggCount, aggSum, aggRes;
 
-function setup() {
-	var properties;
-	try {
-		properties = JSON.parse(fs.readFileSync(propertiesPath, 'utf-8'));
-	} catch(e) {
-		console.log('Problem reading properties file: ' + e);
-		process.exit();
-	}
+function beginComponent(properties) {
 	BLOCK_AVG = properties['AGGREGATE.BLOCK_COUNT.WINDOW_SIZE'];
 	USE_MSG_FIELD = properties['AGGREGATE.BLOCK_COUNT.USE_MSG_FIELD'] || 0;
 	USE_MSG_FIELDLIST = properties['AGGREGATE.BLOCK_COUNT.USE_MSG_FIELD_LIST'];
-	aggCount, aggSum = 0;
+	aggCount, aggSum = 0;	
+	console.log('Beginning averaging');
+	pubsub.subscribe(subscribeTopic, average);
+}
+
+function setup() {
+	var properties;
+	if (gfsFlag) {
+		GFS.readFile(propertiesPath, function(err, data) {
+			if (err) {
+				console.log('Problem fetching properties: ' + err);
+				process.exit();
+			}
+			properties = JSON.parse(data);
+			beginComponent(properties);
+		});
+	} else {
+		try {
+			properties = JSON.parse(fs.readFileSync(propertiesPath, 'utf-8'));
+		} catch (e) {
+			console.log('Problem fetching properties: ' + e);
+			process.exit();
+		}
+		beginComponent(properties);
+	}
 }
 
 function average(msg) {
@@ -69,6 +89,4 @@ function average(msg) {
 
 pubsub.on('ready', function() {
 	setup();
-	console.log('Beginning averaging');
-	pubsub.subscribe(subscribeTopic, average);
 });	

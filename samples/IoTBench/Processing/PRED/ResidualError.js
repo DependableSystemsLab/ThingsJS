@@ -1,9 +1,12 @@
 var things = require('things-js');
 var fs = require('fs');
+var mongoUrl = 'mongodb://localhost:27017/things-js-fs';
+var GFS = require('things-js').GFS(mongoUrl);
 var csv = require('csv');
 var MLR  = require('ml-regression-multivariate-linear');
 
 /* configurable variables */
+var gfsFlag = true;
 var pubsubUrl = 'mqtt://test.moquitto.org';
 var processingTopic = 'iotbench/processing';
 var subscribeTopic = processingTopic + '/mlrpredict';  
@@ -16,14 +19,7 @@ PRED_INPUT, PRED_OUTPUT, PRED_INPUT_TYPE;
 
 var pubsub = new things.Pubsub(pubsubUrl);
 
-function setup() {
-  var properties;
-  try {
-    properties = JSON.parse(fs.readFileSync(propertiesPath, 'utf-8'));
-  } catch(e) {
-    console.log('Could not fetch properties');
-    process.exit();
-  }
+function beginComponent(properties) {
   USE_MSG_FIELD_LIST = properties['PREDICT.MULTIPLELINEAR_REGRESSION.USE_MSG_FIELD_LIST'];
   if (!USE_MSG_FIELD_LIST) {
     console.log('No fields to TRAIN');
@@ -36,6 +32,31 @@ function setup() {
   PRED_INPUT = properties["PREDICT.MULTIPLELINEAR_REGRESSION.TRAIN_INPUT"];
   PRED_OUTPUT = properties["PREDICT.MULTIPLELINEAR_REGRESSION.TRAIN_OUTPUT"];
   PRED_INPUT_TYPE = properties["PREDICT.MULTIPLELINEAR_REGRESSION.TRAIN_INPUT_TYPE"]; 
+
+  console.log('Calculating residual error');
+  pubsub.subscribe(subscribeTopic, CalculateRE);
+}
+
+function setup() {
+  var properties;
+  if (gfsFlag) {
+    GFS.readFile(propertiesPath, function(err, data) {
+      if (err) {
+        console.log('Could not fetch properties: ' + err);
+        process.exit();
+      }
+      properties = JSON.parse(data);
+      beginComponent(properties);
+    });
+  } else {
+    try {
+      properties = JSON.parse(fs.readFileSync(propertiesPath, 'utf-8'));
+    } catch(e) {
+      console.log('Could not fetch properties');
+      process.exit();
+    }
+    beginComponent(properties);
+  }
 }
 
 function CalculateRE(msg) {
@@ -58,6 +79,4 @@ function CalculateRE(msg) {
 
 pubsub.on('ready', function() {
   setup();
-  console.log('Calculating residual error');
-  pubsub.subscribe(subscribeTopic, CalculateRE);
 });

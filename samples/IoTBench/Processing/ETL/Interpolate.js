@@ -3,8 +3,11 @@
  */
 var things = require('things-js');
 var fs = require('fs');
+var mongoUrl = 'mongodb://localhost:27017/things-js-fs';
+var GFS = require('things-js').GFS(mongoUrl);
 
 /* configurable variables */
+var gfsFlag = false;
 var pubsubUrl = 'mqtt://test.mosquitto.org';
 var processingTopic = 'iotbench/processing';
 var subscribeTopic = processingTopic + '/bloomfilter';
@@ -18,20 +21,37 @@ var ID = 'ID';
 var USE_MSG_FIELD_LIST, WINDOW_SIZE;
 var valuesMap = {};
 
+function beginComponent(properties) {
+	USE_MSG_FIELD_LIST = properties['INTERPOLATION.USE_MSG_FIELD_LIST'];
+	WINDOW_SIZE = properties['INTERPOLATION.WINDOW_SIZE'] || 0;
+
+	if (!USE_MSG_FIELD_LIST) {
+		console.log('No fields to interpolate');
+		process.exit();
+	}
+	console.log('Beginning Interpolation');
+	pubsub.subscribe(subscribeTopic, interpolate);
+}
+
 function setup() {
 	var properties;
-	try {
-		properties = JSON.parse(fs.readFileSync(propertiesPath, 'utf-8'));
-		USE_MSG_FIELD_LIST = properties['INTERPOLATION.USE_MSG_FIELD_LIST'];
-		WINDOW_SIZE = properties['INTERPOLATION.WINDOW_SIZE'] || 0;
-
-		if (!USE_MSG_FIELD_LIST) {
-			console.log('No fields to interpolate');
+	if (gfsFlag) {
+		GFS.readFile(propertiesPath, function(err, data) {
+			if (err) {
+				console.log('Problem fetching properties: ' + err);
+				process.exit();
+			}
+			properties = JSON.parse(data);
+			beginComponent(properties);
+		});
+	} else {
+		try {
+			properties = JSON.parse(fs.readFileSync(propertiesPath, 'utf-8'));
+		} catch (e) {
+			console.log('Problem fetching properties: ' + e);
 			process.exit();
 		}
-	} catch(e) {
-		console.log('Couldn\'t fetch properties: ' + e);
-		process.exit();
+		beginComponent(properties);
 	}
 }
 
@@ -82,6 +102,4 @@ function interpolate(msg) {
 
 pubsub.on('ready', function(){
 	setup();
-	console.log('Beginning Interpolation');
-	pubsub.subscribe(subscribeTopic, interpolate);
 });

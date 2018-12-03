@@ -2,8 +2,11 @@
  */
 var things = require('things-js');
 var fs = require('fs');
+var mongoUrl = 'mongodb://localhost:27017/things-js-fs';
+var GFS = require('things-js').GFS(mongoUrl);
 
 /* configurable variables */
+var gfsFlag = true;
 var pubsubUrl = 'mqtt://test.mosquitto.org';
 var processingTopic = 'iotbench/processing';
 var subscribeTopic = processingTopic + '/kalmanfilter';
@@ -17,14 +20,7 @@ var b0, b1;
 
 var pubsub = new things.Pubsub(pubsubUrl);
 
-function setup() {
-	var properties;
-	try {
-		properties = JSON.parse(fs.readFileSync(propertiesPath, 'utf-8'));
-	} catch(e) {
-		console.log('Problem reading with properties file: ' + e);
-		process.exit();
-	}
+function beginComponent(properties) {
 	USE_MSG_FIELDLIST = properties['PREDICT.SIMPLE_LINEAR_REGRESSION.USE_MSG_FIELD_LIST'];
 	MODEL_PATH = properties['PREDICT.SIMPLE_LINEAR_REGRESSION.MODEL_PATH'];
 	try {
@@ -33,6 +29,30 @@ function setup() {
 	} catch(e) {
 		console.log('Problem fetching linear regression model from file path: ' + e);
 		process.exit();
+	}
+	console.log('Beginning linear regression');
+	pubsub.subscribe(subscribeTopic, linearRegression);
+}
+
+function setup() {
+	var properties;
+	if (gfsFlag) {
+		GFS.readFile(propertiesPath, function(err, data) {
+			if (err) {
+				console.log('Problem fetching properties: ' + err);
+				process.exit();
+			}
+			properties = JSON.parse(data);
+			beginComponent(properties);
+		});
+	} else {
+		try {
+			properties = JSON.parse(fs.readFileSync(propertiesPath, 'utf-8'));
+		} catch (e) {
+			console.log('Problem fetching properties: ' + e);
+			process.exit();
+		}
+		beginComponent(properties);
 	}
 }
 
@@ -62,6 +82,4 @@ function linearRegression(msg) {
 
 pubsub.on('ready', function() {
 	setup();
-	console.log('Beginning linear regression');
-	pubsub.subscribe(subscribeTopic, linearRegression);
 });

@@ -1,8 +1,11 @@
 var things = require('things-js');
 var fs = require('fs');
 var MLR = require('ml-regression-multivariate-linear');
+var mongoUrl = 'mongodb://localhost:27017/things-js-fs';
+var GFS = require('things-js').GFS(mongoUrl);
 
 /* configurable variables */
+var gfsFlag = true;
 var pubsubUrl = 'mqtt://test.mosquitto.org';
 var processingTopic = 'iotbench/processing';
 var subscribeTopic = processingTopic + '/parse';
@@ -20,20 +23,7 @@ var trainCount, processedData, start;
 
 var pubsub = new things.Pubsub(pubsubUrl);
 
-function setup() {
-  var properties;
-
-  try {
-    properties = JSON.parse(fs.readFileSync(propertiesPath, 'utf-8'));
-  } catch(e) {
-    console.log('Couldn\'t fetch properties: ' + e);
-    process.exit();
-  }
-  USE_MSG_FIELD_LIST = properties['PREDICT.MULTIPLELINEAR_REGRESSION.USE_MSG_FIELD_LIST'];
-  if (!USE_MSG_FIELD_LIST) {
-    console.log('No fields to TRAIN');
-    process.exit();
-  }
+function beginComponent(properties) {
   USE_MSG_FIELD = properties["PREDICT.MULTIPLELINEAR_REGRESSION.USE_MSG_FIELD"] || 0;
   SAMPLE_HEADER = properties["CLASSIFICATION.DECISION_TREE.SAMPLE_HEADER"];
   MODEL_FILE_PATH = properties["PREDICT.MULTIPLELINEAR_REGRESSION.MODEL_PATH"];
@@ -41,6 +31,30 @@ function setup() {
   TRAIN_INPUT = properties["TRAIN.MULTIPLELINEAR_REGRESSION.TRAIN_INPUT"];
   TRAIN_OUTPUT = properties["TRAIN.MULTIPLELINEAR_REGRESSION.TRAIN_OUTPUT"];
   TRAIN_INPUT_TYPE = properties["TRAIN.MULTIPLELINEAR_REGRESSION.TRAIN_INPUT_TYPE"];
+  console.log('Beginning MLR');
+  pubsub.subscribe(subscribeTopic, MultiLinearRegressionTrain);
+}
+
+function setup() {
+  var properties;
+  if (gfsFlag) {
+    GFS.readFile(propertiesPath, function(err, data) {
+      if (err) {
+        console.log('Problem fetching properties: ' + err);
+        process.exit();
+      }
+      properties = JSON.parse(data);
+      beginComponent(properties);
+    });
+  } else {
+    try {
+      properties = JSON.parse(fs.readFileSync(propertiesPath, 'utf-8'));
+    } catch (e) {
+      console.log('Problem fetching properties: ' + e);
+      process.exit();
+    }
+    beginComponent(properties);
+  }
 }
 
 function MultiLinearRegressionTrain(msg) {
@@ -103,6 +117,4 @@ function processData(dataList, features) {
 
 pubsub.on('ready', function() {
   setup();
-  console.log('Beginning MLR');
-  pubsub.subscribe(subscribeTopic, MultiLinearRegressionTrain);
 });

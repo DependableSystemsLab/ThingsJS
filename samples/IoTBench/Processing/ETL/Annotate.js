@@ -3,9 +3,12 @@
  */
 var things = require('things-js');
 var fs = require('fs');
+var mongoUrl = 'mongodb://localhost:27017/things-js-fs';
+var GFS = require('things-js').GFS(mongoUrl);
 var readline = require('readline');
 
 /* configurable variables */
+var gfsFlag = false;
 var pubsubUrl = 'mqtt://test.mosquitto.org';
 var processingTopic = 'iotbench/processing';
 var subscribeTopic = processingTopic + '/interpolate';
@@ -18,15 +21,7 @@ var annotationMap = {};
 
 var pubsub = new things.Pubsub(pubsubUrl);
 
-function setup() {
-	var properties;
-
-	try {
-		properties = JSON.parse(fs.readFileSync(propertiesPath, 'utf-8'));
-	} catch(e) {
-		console.log('Couldn\'t fetch properties: ' + e);
-		process.exit();
-	}
+function beginComponent(properties) {
 	useMsgField = properties['ANNOTATE.ANNOTATE_MSG_USE_FIELD'] || 0;
 	filePath = properties['ANNOTATE.ANNOTATE_FILE_PATH'];
 	var schemaPath = properties['ANNOTATE.ANNOTATE_SCHEMA'];
@@ -38,47 +33,101 @@ function setup() {
 		});
 	});
 	var y = createAnnotationMap(filePath);
-	return Promise.all([x, y]);
+
+	Promise.all([x, y]).then(function() {
+		console.log('Beginning annotation');
+		pubsub.subscribe(subscribeTopic, annotate);
+	});
+}
+
+function setup() {
+	var properties;
+	if (gfsFlag) {
+		GFS.readFile(propertiesPath, function(err, data) {
+			if (err) {
+				console.log('Could not fetch properties: ' + err);
+				process.exit();
+			}
+			properties = JSON.parse(data);
+			beginComponent(properties);
+		});
+	} else {
+		try {
+			properties = JSON.parse(fs.readFileSync(propertiesPath, 'utf-8'));
+		} catch(e) {
+			console.log('Couldn\'t fetch properties: ' + e);
+			process.exit();
+		}
+		beginComponent(properties);		
+	}
 }
 
 function readSchemaTypes(file) {
-	var lineReader;
 	return new Promise(function(resolve, reject) {
-		try {
-			lineReader = readline.createInterface({
-				input: fs.createReadStream(file)
+		if (gfsFlag) {
+			GFS.readFile(file, function(err, data) {
+				if (err) {
+					console.log('Problem reading schema: ' + e);
+					process.exit();
+				}
+				var lines = data.split('\n');
+				resolve(lines[0]);
 			});
-		} catch(e) {
-			console.log('Problem reading schema: ' + e);
-			process.exit();
+		} else {
+			var lineReader;
+			try {
+				lineReader = readline.createInterface({
+					input: fs.createReadStream(file)
+				});
+			} catch(e) {
+				console.log('Problem reading schema: ' + e);
+				process.exit();
+			}
+			lineReader.on('line', function(line) {
+				resolve(line);
+			});		
 		}
-		lineReader.on('line', function(line) {
-			resolve(line);
-		});
 	});
 }
 
 function createAnnotationMap(file) {
-	var lineReader;
 	return new Promise(function(resolve, reject) {
-		try {
-			lineReader = readline.createInterface({
-				input: fs.createReadStream(file)
+		if (gfsFlag) {
+			GFS.readFile(file, function(err, data) {
+				if (err) {
+					console.log('Could not create annotation map: ' + err);
+					process.exit();
+				}
+				var lines = data.split('\n');
+				for(var i = 1; i < lines.length; i++) {
+					var token = lines[i].split(':');
+					if ( token[0] && token[1]) {
+						annotationMap[token[0]] = token[1];
+					}
+				}
+				resolve();
 			});
-		} catch(e) {
-			console.log('Could not create annotation map: ' + e);
-			process.exit();
-		}
-		lineReader.on('line', function(line){
-			var token = line.split(':');
-			if (token[0] && token[1]) {
-				annotationMap[token[0]] = token[1];
+		} else {
+			var lineReader;
+			try {
+				lineReader = readline.createInterface({
+					input: fs.createReadStream(file)
+				});
+			} catch(e) {
+				console.log('Could not create annotation map: ' + e);
+				process.exit();
 			}
-		});
-		lineReader.on('close', function() {
-			console.log('Completed annotation map from file');
-			resolve();
-		});
+			lineReader.on('line', function(line){
+				var token = line.split(':');
+				if (token[0] && token[1]) {
+					annotationMap[token[0]] = token[1];
+				}
+			});
+			lineReader.on('close', function() {
+				console.log('Completed annotation map from file');
+				resolve();
+			});
+		}
 	});
 }
 
@@ -113,9 +162,7 @@ function annotate(msg) {
 	pubsub.publish(publishTopic, JSON.stringify({ id: id, content: content }));
 }
 
-setup().then(function() {
-	pubsub.on('ready', function() {
-		pubsub.subscribe(subscribeTopic, annotate);
-	});
+pubsub.on('ready', function() {
+	setup();
 });
 

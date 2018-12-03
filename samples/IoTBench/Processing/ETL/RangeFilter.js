@@ -4,8 +4,11 @@
  */
 var things = require('things-js');
 var fs = require('fs');
+var mongoUrl = 'mongodb://localhost:27017/things-js-fs';
+var GFS = require('things-js').GFS(mongoUrl);
 
 /* configurable variables */
+var gfsFlag = false;
 var pubsubUrl = 'mqtt://test.mosquitto.org';
 var processingTopic = 'iotbench/processing';
 var subscribeTopic = processingTopic + '/parse';
@@ -22,26 +25,42 @@ function MinMax(min, max){
 	this.max = max;
 }
 
-function loadRanges() {
-	try {
-		var properties = JSON.parse(fs.readFileSync(propertiesPath, 'utf-8'));
-		var validRanges = properties['FILTER.RANGE_FILTER.VALID_RANGE'];
+function beginComponent(properties) {
+	var validRanges = properties['FILTER.RANGE_FILTER.VALID_RANGE'];
 
-		for (field in validRanges) {
-			var tokens = validRanges[field].split(':');
-			try {
-				var rng = new MinMax(parseFloat(tokens[0]), parseFloat(tokens[1]));
-				ranges[field] = rng;
-			} catch(e) {
-				console.log('Error parsing value: ' + e);
+	for (field in validRanges) {
+		var tokens = validRanges[field].split(':');
+		try {
+			var rng = new MinMax(parseFloat(tokens[0]), parseFloat(tokens[1]));
+			ranges[field] = rng;
+		} catch(e) {
+			console.log('Error parsing value: ' + e);
+			process.exit();
+		}
+	}
+	console.log('Beginning range filter');
+	pubsub.subscribe(subscribeTopic, checkRange);	
+}
+
+function setup() {
+	var properties;
+	if (gfsFlag) {
+		GFS.readFile(propertiesPath, function(err, data) {
+			if (err) {
+				console.log('Problem fetching properties: ' + err);
 				process.exit();
 			}
+			properties = JSON.parse(data);
+			beginComponent(properties);
+		});
+	} else {
+		try {
+			properties = JSON.parse(fs.readFileSync(propertiesPath, 'utf-8'));
+		} catch (e) {
+			console.log('Problem fetching properties: ' + e);
+			process.exit();
 		}
-		console.log('Beginning range filter');
-		pubsub.subscribe(subscribeTopic, checkRange);
-	} catch(c) {
-		console.log('An error occurred: ' + c);
-		process.exit();
+		beginComponent(properties);
 	}
 }
 
@@ -73,5 +92,5 @@ function checkRange(msg) {
 
 
 pubsub.on('ready', function(){
-	loadRanges();
+	setup();
 });

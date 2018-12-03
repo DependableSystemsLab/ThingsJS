@@ -3,8 +3,11 @@
  */
 var things = require('things-js');
 var fs = require('fs');
+var mongoUrl = 'mongodb://localhost:27017/things-js-fs';
+var GFS = require('things-js').GFS(mongoUrl);
 
 /* configurable variables */
+var gfsFlag = true;
 var pubsubUrl = 'mqtt://test.mosquitto.org';
 var processingTopic = 'iotbench/processing';
 var subscribeTopic = processingTopic + '/parse';
@@ -18,20 +21,37 @@ var PROCESS_NOISE, SENSOR_NOISE, USE_MSG_FIELD, USE_MSG_FIELDLIST;
 var previousEstimation;
 var prevErrorCovariance;
 
-function setup() {
-	var properties; 
-	try {
-		properties = JSON.parse(fs.readFileSync(propertiesPath, 'utf-8'));
-	} catch(e) {
-		console.log('Problem reading properties file: ' + e);
-		process.exit();
-	}
+function beginComponent(properties) {
 	USE_MSG_FIELD = properties['STATISTICS.KALMAN_FILTER.USE_MSG_FIELD'] || 0;
 	USE_MSG_FIELDLIST = properties['STATISTICS.KALMAN_FILTER.USE_MSG_FIELD_LIST'];
 	SENSOR_NOISE = properties['STATISTICS.KALMAN_FILTER.SENSOR_NOISE'] || 0.1;
 	PROCESS_NOISE = properties['STATISTICS.KALMAN_FILTER.PROCESS_NOISE'] || 0.1;
 	prevErrorCovariance = properties['STATISTICS.KALMAN_FILTER.ESTIMATED_ERROR'] || 1;
 	previousEstimation = 0;
+	console.log('Beginning Kalman Filter');
+	pubsub.subscribe(subscribeTopic, kalmanfilter);
+}
+
+function setup() {
+	var properties;
+	if (gfsFlag) {
+		GFS.readFile(propertiesPath, function(err, data) {
+			if (err) {
+				console.log('Problem fetching properties: ' + err);
+				process.exit();
+			}
+			properties = JSON.parse(data);
+			beginComponent(properties);
+		});
+	} else {
+		try {
+			properties = JSON.parse(fs.readFileSync(propertiesPath, 'utf-8'));
+		} catch (e) {
+			console.log('Problem fetching properties: ' + e);
+			process.exit();
+		}
+		beginComponent(properties);
+	}
 }
 
 function kalmanfilter(msg) {
@@ -72,6 +92,4 @@ function kalmanfilter(msg) {
 
 pubsub.on('ready', function() {
 	setup();
-	console.log('Beginning Kalman Filter');
-	pubsub.subscribe(subscribeTopic, kalmanfilter);
 });

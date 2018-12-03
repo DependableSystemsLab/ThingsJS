@@ -1,7 +1,10 @@
 var things = require('things-js');
 var fs = require('fs');
+var mongoUrl = 'mongodb://localhost:27017/things-js-fs';
+var GFS = require('things-js').GFS(mongoUrl);
 
 /* configurable variables */
+var gfsFlag = true;
 var pubsubUrl = 'mqtt://test.mosquitto.org';
 var processingTopic = 'iotbench/processing';
 var subscribeTopic = processingTopic + '/parse';
@@ -15,15 +18,32 @@ var WINDOW_SIZE = 10;
 
 var pubsub = new things.Pubsub(pubsubUrl);
 
+function beginComponent(properties) {
+	AVERAGE_TARGET = properties['AVERAGE.MULTIPLELINEAR_REGRESSION'];
+	console.log('Beginning average');
+	pubsub.subscribe(subscribeTopic, average);
+}
+
 function setup() {
 	var properties;
-	try {
-		properties = JSON.parse(fs.readFileSync(propertiesPath, 'utf-8'));
-	} catch(e) {
-		console.log('Could not fetch properties: ' + e);
-		process.exit();
+	if (gfsFlag) {
+		GFS.readFile(propertiesPath, function(err, data) {
+			if (err) {
+				console.log('Could not fetch properties: ' + err);
+				process.exit();
+			}
+			properties = JSON.parse(data);
+			beginComponent(properties);
+		});
+	} else {
+		try {
+			properties = JSON.parse(fs.readFileSync(propertiesPath, 'utf-8'));
+		} catch(e) {
+			console.log('Could not fetch properties: ' + e);
+			process.exit();
+		}
+		beginComponent(properties);
 	}
-	AVERAGE_TARGET = properties['AVERAGE.MULTIPLELINEAR_REGRESSION'];
 }
 
 function average(msg) {
@@ -57,6 +77,4 @@ function average(msg) {
 
 pubsub.on('ready', function() {
 	setup();
-	console.log('Beginning average');
-	pubsub.subscribe(subscribeTopic, average);
 });

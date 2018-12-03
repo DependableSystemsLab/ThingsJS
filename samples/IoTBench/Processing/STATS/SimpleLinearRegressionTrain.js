@@ -1,7 +1,11 @@
 var things = require('things-js');
 var slr = require('ml-regression').SLR;
 var fs = require('fs');
+var mongoUrl = 'mongodb://localhost:27017/things-js-fs';
+var GFS = require('things-js').GFS(mongoUrl);
 
+/* configurable variables */
+var gfsFlag = true;
 var pubsubUrl = 'mqtt://test.mosquitto.org';
 var processingTopic = 'iotbench/processing';
 var subscribeTopic = processingTopic + '/parse';
@@ -15,18 +19,34 @@ var regressionModel;
 
 var pubsub = new things.Pubsub(pubsubUrl);
 
-function setup() {
-	var properties;
-
-	try {
-		properties = JSON.parse(fs.readFileSync(propertiesPath, 'utf-8'));
-	} catch(e) {
-		console.log('Problem reading properties file: ' + e);
-		process.exit();
-	}
+function beginComponent(properties) {
 	USE_MSG_FIELDLIST = properties['PREDICT.SIMPLE_LINEAR_REGRESSION.USE_MSG_FIELD_LIST'];
 	TRAINING_SIZE = properties['PREDICT.SIMPLE_LINEAR_REGRESSION.WINDOW_SIZE_TRAIN'] || 300;
-	MODEL_PATH = properties['PREDICT.SIMPLE_LINEAR_REGRESSION.MODEL_PATH'];
+	MODEL_PATH = properties['PREDICT.SIMPLE_LINEAR_REGRESSION.MODEL_PATH'];	
+	console.log('Beginning training for linear regression');
+	pubsub.subscribe(subscribeTopic, train);
+}
+
+function setup() {
+	var properties;
+	if (gfsFlag) {
+		GFS.readFile(propertiesPath, function(err, data) {
+			if (err) {
+				console.log('Problem fetching properties: ' + err);
+				process.exit();
+			}
+			properties = JSON.parse(data);
+			beginComponent(properties);
+		});
+	} else {
+		try {
+			properties = JSON.parse(fs.readFileSync(propertiesPath, 'utf-8'));
+		} catch (e) {
+			console.log('Problem fetching properties: ' + e);
+			process.exit();
+		}
+		beginComponent(properties);
+	}
 }
 
 function train(msg) {
@@ -57,6 +77,4 @@ function train(msg) {
 
 pubsub.on('ready', function() {
 	setup();
-	console.log('Beginning training for linear regression');
-	pubsub.subscribe(subscribeTopic, train);
 });

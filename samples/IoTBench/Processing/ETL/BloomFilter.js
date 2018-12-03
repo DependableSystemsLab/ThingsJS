@@ -4,8 +4,11 @@
 var things = require('things-js');
 var bloom = require('bloomfilter').BloomFilter;
 var fs = require('fs');
+var mongoUrl = 'mongodb://localhost:27017/things-js-fs';
+var GFS = require('things-js').GFS(mongoUrl);
 
 /* configurable variables */
+var gfsFlag =  false;
 var pubsubUrl = 'mqtt://test.mosquitto.org';
 var processingTopic = 'iotbench/processing';
 var subscribeTopic = processingTopic + '/rangefilter';
@@ -27,8 +30,7 @@ function getNumHashes(m, n) {
     return Math.ceil((m / n) * Math.log(2));
 }
 
-function loadBloomFilter() {
-	var properties = JSON.parse(fs.readFileSync(propertiesPath));
+function beginComponent(properties) {
 	var modelPath = properties['BLOOMFILTER.MODEL_PATH'];
 	useMsgField = properties['BLOOMFILTER.USE_MSG_FIELD'] || 0;
 	testingRange = properties['BLOOMFILTER.EXPECTED_INSERTIONS'] || DEFAULT_INSERTIONS;
@@ -45,6 +47,27 @@ function loadBloomFilter() {
 	} catch(c) {
 		console.log('A problem occurred: ' + c);
 		process.exit();
+	}
+}
+
+function loadBloomFilter() {
+	var properties;
+	if (gfsFlag) {
+		GFS.readFile(propertiesPath, function(err, data) {
+			if (err) {
+				console.log('Could not fetch properties: ' + err);
+				process.exit();
+			}
+			properties = JSON.parse(data);
+			beginComponent(properties);
+		});
+	} else {
+		try {
+			properties = JSON.parse(fs.readFileSync(propertiesPath));
+		} catch(e) {
+			console.log('Could not fetch properties: ' + e);
+		}
+		beginComponent(properties);
 	}
 }
 
