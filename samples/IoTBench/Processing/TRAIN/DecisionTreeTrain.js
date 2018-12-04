@@ -97,16 +97,28 @@ function decisionTreeTrain(msg) {
       console.log('An error occured with training: ' + err);
       return false;
     }
-    try {
-      fs.writeFileSync(MODEL_FILE_PATH  , c45.toJSON());
-    } catch(e) {
-      console.log('Error writing model to file: ' + e);
-    }
-    console.log('Wrote model to: ' + MODEL_FILE_PATH  );
-    var end = Date.now();
-    var elapsed = end - start;
-    pubsub.publish(processingTopic , { ids: ids, component: 'decisiontreetrain', time: elapsed });
-
+    if (gfsFlag) {
+      GFS.writeFile(MODEL_FILE_PATH, c45.toJSON(), function(err) {
+        if (err) {
+          console.log('Error writing model to file: ' + err);
+        } else {
+          console.log('Wrote model to: ' + MODEL_FILE_PATH);
+          var end = Date.now();
+          var elapsed = end - start; 
+          pubsub.publish(processingTopic , { ids: ids, component: 'decisiontreetrain', time: elapsed });
+        }
+      });
+    } else {
+        try {
+          fs.writeFileSync(MODEL_FILE_PATH  , c45.toJSON());
+        } catch(e) {
+          console.log('Error writing model to file: ' + e);
+        }
+        console.log('Wrote model to: ' + MODEL_FILE_PATH  );
+        var end = Date.now();
+        var elapsed = end - start;
+        pubsub.publish(processingTopic , { ids: ids, component: 'decisiontreetrain', time: elapsed });
+      }
   });
 }
 

@@ -87,16 +87,30 @@ function MultiLinearRegressionTrain(msg) {
     var mlr = new MLR(featureData, targetData);
     var weights = mlr.weights;
 
-    var end = Date.now();
-    var elapsed = end - start;
-    pubsub.publish(processingTopic, { ids: ids, component: 'mlrtrain', time: elapsed });
-
-    dataList = [];
-    ids = [];
-
-    fs.writeFileSync(MODEL_FILE_PATH, JSON.stringify(weights), function(err) {
-      if (err) throw err;
-    });
+    if (gfsFlag) {
+      GFS.writeFile(MODEL_FILE_PATH, JSON.stringify(weights), function(err) {
+        if (err) {
+          console.log('Problem writing model to file: ' + err);
+        } else {
+          var end = Date.now();
+          var elapsed = end - start;
+          pubsub.publish(processingTopic, { ids: ids, component: 'mlrtrain', time: elapsed });
+          dataList = [];
+          ids = [];
+        }
+      });
+    } else {
+      try {
+        fs.writeFileSync(MODEL_FILE_PATH, JSON.stringify(weights));
+        var end = Date.now();
+        var elapsed = end - start;
+        pubsub.publish(processingTopic, { ids: ids, component: 'mlrtrain', time: elapsed });
+        dataList = [];
+        ids = [];
+      } catch(e) {
+        console.log('Problem writing model to file: ' + err);
+      }
+    }
   }
 }
 
