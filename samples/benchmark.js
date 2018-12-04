@@ -36,13 +36,9 @@ function randKey(length, charset) {
     pubsub = new things.Pubsub();
 
     var benchdata = fs.readFileSync(files[args], 'utf-8');
-     GFS.writeFile(writePath[args], benchdata, function(err){
+     GFS.writeFile(writePath[args], benchdata, function(err) {
        if (err) throw err;
-       console.log('\x1b[44m%s\x1b[0m', '[BENCHMARK Service] START UPLOADING APP FILES FOR BENCHMARK' + args);
-       // GFS.readFile(files.get(args),function(err2){
-       // if (err2) throw err2;
-       // console.log('\x1b[44m%s\x1b[0m', 'SUCCEED UPLOAD DATA');
-       // })
+       console.log('[Benchmark Service] Started uploading the benchmark application for ' + args);
     });
     var config = {"ctrl": "run_application", "reply_to": args, "request_token": randKey(), "kwargs": JSON.parse(benchdata)};
     // send command to scheduler 

@@ -8,7 +8,7 @@ var gfsFlag = true;
 var pubsubUrl = 'mqtt://test.mosquitto.org';
 var processingTopic = 'iotbench/processing';
 var subscribeTopic = processingTopic + '/parse';
-var publishTopic = processingTopic + '/average';
+var publishTopic = processingTopic + '/blockwindowavg';
 var propertiesPath = './TAXI_properties.json';
 
 /* avg fields */
@@ -73,14 +73,13 @@ function average(msg) {
 		console.log('Field value must be a number');
 		return;
 	}
-	aggCount++;
 
 	if (aggCount > BLOCK_AVG) {
 		var aggRes = aggSum / BLOCK_AVG;
 
 		var end = Date.now();
 		var elapsed = end - start;
-		pubsub.publish(subscribeTopic, { ids: ids, component: 'average', time: elapsed });
+		pubsub.publish(subscribeTopic, { ids: ids, component: 'blockwindowavg', time: elapsed });
 
 		var avg = {};
 		avg[field + '_average'] = aggRes;
@@ -90,7 +89,7 @@ function average(msg) {
 		aggSum = 0;
 		ids = [];
 	}
-
+	aggCount++;
 }
 
 pubsub.on('ready', function() {
