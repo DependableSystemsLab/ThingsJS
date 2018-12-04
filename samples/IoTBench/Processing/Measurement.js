@@ -34,7 +34,7 @@ var endComponents = {
 	accumulator: 'accumulator',
 	mltrain: 'mltrain',
 	decisiontreetrain: 'decisiontreetrain',
-	csvtosenml: 'csvtosenml'
+	csvtosenml: 'csvtosenml',
 	residualerror: 'residualerror',
 	decisiontreepredict: 'decisiontreepredict'
 }

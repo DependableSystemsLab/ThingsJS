@@ -12,7 +12,7 @@ var pubsubUrl = 'mqtt://test.mosquitto.org';
 var processingTopic = 'iotbench/processing';
 var subscribeTopic = processingTopic + '/parse';
 var publishTopic = processingTopic + '/decisiontreeclassify';
-var propertiesPath = './TAXI_PROPERTIES.json';
+var propertiesPath = './TAXI_properties.json';
 
 var pubsub = new things.Pubsub(pubsubUrl);
 
