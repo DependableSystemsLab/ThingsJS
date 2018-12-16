@@ -1,5 +1,5 @@
-// launch the benchmark for different components 
-
+/* Upload and launch a benchmark
+ */
 var things = require('things-js');
 var mongoUrl = 'mongodb://localhost:27017/things-js-fs';
 var GFS = require('things-js').addons.gfs(mongoUrl);

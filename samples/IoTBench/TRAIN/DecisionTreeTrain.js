@@ -1,128 +1,141 @@
+var things = require('things-js');
 var fs = require('fs');
+var mongoUrl = 'mongodb://localhost:27017/things-js-fs';
+var GFS = require('things-js').GFS(mongoUrl);
 var csv = require('csv');
 var C45 = require('c4.5');
-var things = require('things-js'); 
-var mongoUrl = 'mongodb://localhost:27017/things-js-fs';
-var GFS = require('things-js').addons.gfs(mongoUrl);
 
-var pubsub_url = 'mqtt://localhost';
-var pubsub_topic = 'thingsjs/IoTBench/TRAIN/DecisionTreeClassify';
-var publish_topic = 'thingsjs/IoTBench/TRAIN/DecisionTreeTrain';
-var measurement_topic = 'iotbench/processing';
+/* configurable variables */
+var gfsFlag = true;
+var pubsubUrl = 'mqtt://test.mosquitto.org';
+var processingTopic = 'iotbench/processing';
+var subscribeTopic = processingTopic + '/decisiontreeclassify';
+var publishTopic = processingTopic + '/decisiontreetrain';
+var propertiesPath = './TAXI_properties.json';
 
-var pubsub = new things.Pubsub(pubsub_url);
-var USE_MSG_FIELD_LIST; 
-var SAMPLE_HEADER;
-var MODEL_FILE_PATH;
-var MODEL_UPDATE_FREQUENCY;
-var TRAIN_RESULT_HEADER;
-var MODEL_TRAIN_INPUT;
+/* decision tree training parameters */
+var USE_MSG_FIELD_LIST, SAMPLE_HEADER, MODEL_FILE_PATH, MODEL_UPDATE_FREQUENCY, 
+USE_MSG_FIELD, MODEL_TRAIN_INPUT_TYPE, TRAIN_RESULT_HEADER, MODEL_TRAIN_INPUT, processeddata;
+var dataList = [];
+var traincount = 0;
 var WINDOW_COUNT = 10;
-var traincount;
-var datalist=[];
-var processeddata;
 
-function setup(){
-  var args = process.argv.slice(2);
-  var properties;
+var pubsub = new things.Pubsub(pubsubUrl);
 
-  // default to TAXI property set if no specific property file is given
-  if(!args.length){
-    args = ['./TAXI_properties.json'];
+function setup() {
+  var properties; 
+
+  try {
+    properties = JSON.parse(fs.readFileSync(propertiesPath, 'utf-8'));
+
+  } catch(e) {
+    console.log('Couldn\'t fetch properties: ' + e);
+    process.exit();
   }
-   GFS.readFile(args[0], function(err2, data){
-        if (err2) {
-          console.log('\x1b[44m%s\x1b[0m', 'Couldn\'t fetch properties: ' + err2);
-          process.exit();
-        }
-        properties = JSON.parse(data);
-        USE_MSG_FIELD_LIST = properties['TRAIN.DECISION_TREE.USE_MSG_FIELD_LIST'];
-        USE_MSG_FIELD = properties['TRAIN.DECISION_TREE.USE_MSG_FIELD']||0;
-        MODEL_TRAIN_INPUT = properties["CLASSIFICATION.DECISION_TREE.SAMPLE_HEADER"];
-        MODEL_FILE_PATH = properties['TRAIN.DECISION_TREE.MODEL_PATH'];
-        MODEL_UPDATE_FREQUENCY = properties["TRAIN.DECISION_TREE.TRAIN.MODEL_UPDATE_FREQUENCY"];
-        TRAIN_RESULT_HEADER = properties['TRAIN.DECISION_TREE.TARGET'];
-        MODEL_TRAIN_INPUT = properties['TRAIN.DECISION_TREE.TRAIN_INPUT'];
-        MODEL_TRAIN_INPUT_TYPE = properties['TRAIN.DECISION_TREE.TRAIN_INPUT_TYPE'];
-
-        console.log("USE_MSG_FIELD" + USE_MSG_FIELD);
-        console.log("MODEL_FILE_PATH" + MODEL_FILE_PATH);
-        console.log("MODEL_UPDATE_FREQUENCY" + MODEL_UPDATE_FREQUENCY);
-
-        if(!USE_MSG_FIELD_LIST){
-          console.log('No fields to TRAIN');
-          process.exit();
-        }
-
-        traincount = 0;
-        datalist = [];
-        console.log('Beginning training by decisiontree');
-        pubsub.subscribe(pubsub_topic, decisionTreeTrain);
-        });   
-
 }
 
+function beginComponent(properties) {
+  USE_MSG_FIELD_LIST = properties['TRAIN.DECISION_TREE.USE_MSG_FIELD_LIST'];
+  if (!USE_MSG_FIELD_LIST) {
+    console.log('No fields to train');
+    process.exit();
+  }
+  USE_MSG_FIELD = properties['TRAIN.DECISION_TREE.USE_MSG_FIELD'] || 0;
+  MODEL_TRAIN_INPUT = properties["CLASSIFICATION.DECISION_TREE.SAMPLE_HEADER"];
+  MODEL_FILE_PATH = properties['TRAIN.DECISION_TREE.MODEL_PATH'];
+  MODEL_UPDATE_FREQUENCY = properties["TRAIN.DECISION_TREE.TRAIN.MODEL_UPDATE_FREQUENCY"];
+  TRAIN_RESULT_HEADER = properties['TRAIN.DECISION_TREE.TARGET'];
+  MODEL_TRAIN_INPUT = properties['TRAIN.DECISION_TREE.TRAIN_INPUT'];
+  MODEL_TRAIN_INPUT_TYPE = properties['TRAIN.DECISION_TREE.TRAIN_INPUT_TYPE'];
+  console.log('Beginning decision tree train');
+  pubsub.subscribe(subscribeTopic, decisionTreeTrain);
+}
 
-function decisionTreeTrain(saveddatalist){
-    var date = new Date(); var timestamp = date.getTime();
-    var saveddatalist = JSON.parse(saveddatalist)
-    console.log(timestamp+" : "+saveddatalist["line_id"]);
-    var content = saveddatalist["content"];
-      var features = MODEL_TRAIN_INPUT;
-      var target = TRAIN_RESULT_HEADER;
-      var featureTypes = MODEL_TRAIN_INPUT_TYPE;
+function setup() {
+  var properties;
+  if (gfsFlag) {
+    GFS.readFile(propertiesPath, function(err, data) {
+      if (err) {
+        console.log('Problem fetching properties: ' + err);
+        process.exit();
+      }
+      properties = JSON.parse(data);
+      beginComponent(properties);
+    });
+  } else {
+    try {
+      properties = JSON.parse(fs.readFileSync(propertiesPath, 'utf-8'));
+    } catch (e) {
+      console.log('Problem fetching properties: ' + e);
+      process.exit();
+    }
+    beginComponent(properties);
+  }
+}
 
-      processeddata = processdata(content,features,target);
-      var c45 = C45(); 
-      c45.train({
-        data: processeddata,
-        target: target,
-        features: features,
-        featureTypes: featureTypes
-    }, function(error, model) {
-      if (error) {
-        console.error(error);
-        return false;
-      }  
-      console.log("tree model"+ model.toJSON());
-      console.log("TRAIN DECISION TREE MODEL",c45.toJSON());
-      var timeobj = {"id":saveddatalist["line_id"],"component":"decisiontreetrain","time":timestamp};
-      pubsub.publish(measurement_topic,JSON.stringify(timeobj));
-      //pubsub.publish(publish_topic,c45.toJSON()); no pubsub to make it stateless for prediction
-      GFS.writeFile(MODEL_FILE_PATH, c45.toJSON(),function(err){
-        if(err) throw err;
-      GFS.readFile(MODEL_FILE_PATH, function(err2, data){
-          if (err2) throw err2;
-          console.log("successfully wrote model" + data.toString());
+function decisionTreeTrain(msg) {
+  var start = Date.now();
+
+  var data = JSON.parse(msg);
+  var savedDataList = data.content;
+  var ids = data.ids;
+
+  var features = MODEL_TRAIN_INPUT;
+  var target = TRAIN_RESULT_HEADER;
+  var featureTypes = MODEL_TRAIN_INPUT_TYPE;
+
+  var processedData = processData(savedDataList, features, target);
+  var c45 = C45();
+
+  c45.train({
+    data: processedData,
+    target: target,
+    features: features,
+    featureTypes: featureTypes
+  }, function(err, model) {
+    if (err) {
+      console.log('An error occured with training: ' + err);
+      return false;
+    }
+    if (gfsFlag) {
+      GFS.writeFile(MODEL_FILE_PATH, c45.toJSON(), function(err) {
+        if (err) {
+          console.log('Error writing model to file: ' + err);
+        } else {
+          console.log('Wrote model to: ' + MODEL_FILE_PATH);
+          var end = Date.now();
+          var elapsed = end - start; 
+          pubsub.publish(processingTopic , { ids: ids, component: 'decisiontreetrain', time: elapsed });
+        }
       });
-    });
-
-    });
-
-} 
-
-
-function processdata(saveddatalist,features,target){
-var resultdata =[];
-
-saveddatalist.forEach(function(element){
-  var newdatalist = [];
-  features.forEach(function(key){
-   newdatalist.push(element[key]);
-  })
-  newdatalist.push(element[target]);
-  resultdata.push(newdatalist);
-});
-
-resultdata.forEach(function(array){
-  console.log(array);
-});
-return resultdata;
+    } else {
+        try {
+          fs.writeFileSync(MODEL_FILE_PATH  , c45.toJSON());
+        } catch(e) {
+          console.log('Error writing model to file: ' + e);
+        }
+        console.log('Wrote model to: ' + MODEL_FILE_PATH  );
+        var end = Date.now();
+        var elapsed = end - start;
+        pubsub.publish(processingTopic , { ids: ids, component: 'decisiontreetrain', time: elapsed });
+      }
+  });
 }
 
+function processData(savedDataList, features, targets) {
+  var resultData = [];
 
+  savedDataList.forEach(function(element) {
+    var newDataList = [];
+    features.forEach(function(key) {
+      newDataList.push(element[key]);
+    });
+    newDataList.push(element[targets]);
+    resultData.push(newDataList);
+  });
+  return resultData;
+}
 
-
-pubsub.on('ready', function(){
+pubsub.on('ready', function() {
   setup();
 });

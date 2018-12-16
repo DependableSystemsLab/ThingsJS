@@ -60,7 +60,7 @@ function analyze(data) {
 
 	if (comp in endComponents) {
 		ids.forEach(function(tag) {
-			console.log('RTT', tag, timestamps[tag]);
+			console.log('TOTAL', tag, timestamps[tag]);
 			timestamps[tag] -= time;
 		});
 	}

@@ -8,7 +8,7 @@ var mongoUrl = 'mongodb://localhost:27017/things-js-fs';
 var GFS = require('things-js').GFS(mongoUrl);
 
 /* configurable variables */
-var gfsFlag =  false;
+var gfsFlag =  true;
 var pubsubUrl = 'mqtt://test.mosquitto.org';
 var processingTopic = 'iotbench/processing';
 var subscribeTopic = processingTopic + '/rangefilter';

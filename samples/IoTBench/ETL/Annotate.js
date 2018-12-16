@@ -1,149 +1,168 @@
+/* Annotate file adapted from RIoTBench
+ * modified for processing rate measurements
+ */
 var things = require('things-js');
 var fs = require('fs');
-var readline = require('readline');
 var mongoUrl = 'mongodb://localhost:27017/things-js-fs';
-var GFS = require('things-js').addons.gfs(mongoUrl);
+var GFS = require('things-js').GFS(mongoUrl);
+var readline = require('readline');
 
-var pubsub_url = 'mqtt://localhost';
-var pubsub_topic = 'thingsjs/IoTBench/ETL/Interpolation';
-var publish_topic = 'thingsjs/IoTBench/ETL/Annotate';
-var measurement_topic = 'iotbench/processing';
-
-var pubsub = new things.Pubsub(pubsub_url);
+/* configurable variables */
+var gfsFlag = true;
+var pubsubUrl = 'mqtt://test.mosquitto.org';
+var processingTopic = 'iotbench/processing';
+var subscribeTopic = processingTopic + '/interpolate';
+var publishTopic = processingTopic + '/annotate';
+var propertiesPath = './TAXI_properties.json';
 
 /* annotation properties */
 var useMsgField, filePath, schemaTypes;
 var annotationMap = {};
 
-function setup() {
-    var args = process.argv.slice(2);
-    var properties;
-    var schemaPath;
-    var x, y;
+var pubsub = new things.Pubsub(pubsubUrl);
 
-    // default to TAXI property set if no specific property file is given
+function beginComponent(properties) {
+	useMsgField = properties['ANNOTATE.ANNOTATE_MSG_USE_FIELD'] || 0;
+	filePath = properties['ANNOTATE.ANNOTATE_FILE_PATH'];
+	var schemaPath = properties['ANNOTATE.ANNOTATE_SCHEMA'];
 
-    if (!args.length) {
-        args = ['./TAXI_properties.json'];
-    }
-    GFS.readFile(args[0], function(err2, data) {
-        if (err2) {
-            console.log('\x1b[44m%s\x1b[0m', 'Couldn\'t fetch properties: ' + err2);
-            process.exit();
-        }
-        properties = JSON.parse(data);
-        useMsgField = properties['ANNOTATE.ANNOTATE_MSG_USE_FIELD'] || 0;
-        filePath = properties['ANNOTATE.ANNOTATE_FILE_PATH'];
-        schemaPath = properties['ANNOTATE.ANNOTATE_SCHEMA'];
+	var x = new Promise(function(resolve) {
+		readSchemaTypes(schemaPath).then(function(data) {
+			schemaTypes = data;
+			resolve();
+		});
+	});
+	var y = createAnnotationMap(filePath);
 
-        GFS.readFile(schemaPath, function(err3, data1) {
-        	// console.log("lalala"+data1);
-            schemaTypes = data1.toString();
-            GFS.readFile(filePath, function(err4, data2) {
-            	// console.log("bababa"+data2);
-                var premap = data2.toString().split('\n');
-
-                premap.forEach(function(line) {
-                    var token = line.split(':');
-                    annotationMap[token[0]] = token[1];
-                });
-                console.log('Beginning annotation'+annotationMap.toString());
-                pubsub.subscribe(pubsub_topic, annotate);
-            });
-        });
-    });
+	Promise.all([x, y]).then(function() {
+		console.log('Beginning annotation');
+		pubsub.subscribe(subscribeTopic, annotate);
+	});
 }
-// var x = new Promise(function(resolve){
-// 	readSchemaTypes(schemaPath).then(function(data){
-// 		schemaTypes = data;
-// 		resolve();
-// 	});
-// });
-// var y = createAnnotationMap(filePath);
 
-// return Promise.all([x,y]);
+function setup() {
+	var properties;
+	if (gfsFlag) {
+		GFS.readFile(propertiesPath, function(err, data) {
+			if (err) {
+				console.log('Could not fetch properties: ' + err);
+				process.exit();
+			}
+			properties = JSON.parse(data);
+			beginComponent(properties);
+		});
+	} else {
+		try {
+			properties = JSON.parse(fs.readFileSync(propertiesPath, 'utf-8'));
+		} catch(e) {
+			console.log('Couldn\'t fetch properties: ' + e);
+			process.exit();
+		}
+		beginComponent(properties);		
+	}
+}
 
+function readSchemaTypes(file) {
+	return new Promise(function(resolve, reject) {
+		if (gfsFlag) {
+			GFS.readFile(file, function(err, data) {
+				if (err) {
+					console.log('Problem reading schema: ' + e);
+					process.exit();
+				}
+				var lines = data.split('\n');
+				resolve(lines[0]);
+			});
+		} else {
+			var lineReader;
+			try {
+				lineReader = readline.createInterface({
+					input: fs.createReadStream(file)
+				});
+			} catch(e) {
+				console.log('Problem reading schema: ' + e);
+				process.exit();
+			}
+			lineReader.on('line', function(line) {
+				resolve(line);
+			});		
+		}
+	});
+}
 
-// function readSchemaTypes(file){
-// 	var lineReader;
-// 	return new Promise(function(resolve, reject){
-// 		try{
-// 			lineReader = readline.createInterface({
-// 				input: fs.createReadStream(file)
-// 			});
-// 		}
-// 		catch(e){
-// 			console.log('Problem reading schema: ' + e);
-// 			process.exit();
-// 		}
-// 		lineReader.on('line', function(line){
-// 			resolve(line);
-// 		});
-// 	});
-// }
+function createAnnotationMap(file) {
+	return new Promise(function(resolve, reject) {
+		if (gfsFlag) {
+			GFS.readFile(file, function(err, data) {
+				if (err) {
+					console.log('Could not create annotation map: ' + err);
+					process.exit();
+				}
+				var lines = data.split('\n');
+				for(var i = 0; i < lines.length; i++) {
+					var token = lines[i].split(':');
+					if ( token[0] && token[1]) {
+						annotationMap[token[0]] = token[1];
+					}
+				}
+				resolve();
+			});
+		} else {
+			var lineReader;
+			try {
+				lineReader = readline.createInterface({
+					input: fs.createReadStream(file)
+				});
+			} catch(e) {
+				console.log('Could not create annotation map: ' + e);
+				process.exit();
+			}
+			lineReader.on('line', function(line){
+				var token = line.split(':');
+				if (token[0] && token[1]) {
+					annotationMap[token[0]] = token[1];
+				}
+			});
+			lineReader.on('close', function() {
+				console.log('Completed annotation map from file');
+				resolve();
+			});
+		}
+	});
+}
 
-// function createAnnotationMap(file){
-// 	var lineReader;
+function annotate(msg) {
+	var start = Date.now();
+	var data = JSON.parse(msg);
+	var id = data.id;
+	var content = data.content;
 
-// 	return new Promise(function(resolve, reject){
-// 		try{
-// 			lineReader = readline.createInterface({
-// 				input: fs.createReadStream(file)
-// 			});
-// 		}
-// 		catch(e){
-// 			console.log('Could not create annotation map: ' + e);
-// 			process.exit();
-// 		}
-// 		lineReader.on('line', function(line){
-// 			var token = line.split(':');
-// 			if(token[0] && token[1]){
-// 				annotationMap[token[0]] = token[1];
-// 			}
-// 		});
-// 		lineReader.on('close', function(){
-// 			console.log('Completed annotation map from file');
-// 			resolve();
-// 		});
-// 	});
-// }
+	// get the annotation key
+	var keys = Object.keys(content);
+	var field = keys[useMsgField];
+	var fieldValue = content[field];
+	var annotateValue = annotationMap[fieldValue];
 
-function annotate(data) {
-    // get the annotation key
-    var date = new Date(); var timestamp = date.getTime();
-    data = JSON.parse(data);
-    console.log(timestamp+" : "+data["line_id"]+"FOR ANNOTATE");
-    var content = data["content"];
-    var keys = Object.keys(content);
+	if (annotateValue) {
+		parsedFields = annotateValue.split(',');
+		// get the missing field names
+		var schemaArr = schemaTypes.split(',');
+		schemaArr = schemaArr.slice(keys.length + 1, schemaArr.length);
 
-    var field = keys[useMsgField];
-    var fieldValue = content[field];
-    var annotateValue = annotationMap[fieldValue];
+		for (var i = 0; i < parsedFields.length; i++) {
+			var fieldName = schemaArr[i];
+			content[fieldName] = parsedFields[i];
+		}
+		console.log('Made annotations to data', schemaArr, parsedFields);
+	}
+	var end = Date.now();
+	var elapsed = end - start;
 
-    if (annotateValue) {
-        parsedFields = annotateValue.split(',');
-        // get the missing field names
-        var schemaArr = schemaTypes.split(',');
-        schemaArr = schemaArr.slice(keys.length + 1, schemaArr.length);
-
-        for (var i = 0; i < parsedFields.length; i++) {
-            var fieldName = schemaArr[i];
-            content[fieldName] = parsedFields[i];
-        }
-        console.log('Made annotations to data');
-        console.log(schemaArr, parsedFields);
-        console.log('\n');
-    }
-    console.log('Publishing annotate');
-    var object = {"line_id":data["line_id"],"content":content};
-    pubsub.publish(publish_topic, JSON.stringify(object));
-    var timeobj = {"id":data["line_id"],"component":"annotate","time":timestamp};
-    pubsub.publish(measurement_topic,JSON.stringify(timeobj));
-
-
-    // 
+	pubsub.publish({ id: id, component: 'annotate', time: elapsed });
+	pubsub.publish(publishTopic, JSON.stringify({ id: id, content: content }));
 }
 
 pubsub.on('ready', function() {
-    setup();
+	setup();
 });
+

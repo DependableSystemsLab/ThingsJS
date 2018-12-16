@@ -1,134 +1,158 @@
+/* CsvToSenML adapted from RIotBench
+ * modified for measuring processing rate
+ */
 var things = require('things-js');
 var fs = require('fs');
-var readline = require('readline');
 var mongoUrl = 'mongodb://localhost:27017/things-js-fs';
-var GFS = require('things-js').addons.gfs(mongoUrl);
+var GFS = require('things-js').GFS(mongoUrl);
+var readline = require('readline');
 
-var pubsub_url = 'mqtt://localhost';
-var pubsub_topic = 'thingsjs/IoTBench/ETL/Annotate';
-var publish_topic = 'thingsjs/IoTBench/ETL/CsvToSenML';
-var measurement_topic = 'iotbench/processing';
+/* configurable variables */
+var gfsFlag = true;
+var pubsubUrl = 'mqtt://test.mosquitto.org';
+var processingTopic = 'iotbench/processing';
+var subscribeTopic = processingTopic + '/annotate';
+var publishTopic = processingTopic + '/csvtosenml';
+var propertiesPath = './TAXI_properties.json';
 
-var pubsub = new things.Pubsub(pubsub_url);
+var pubsub = new things.Pubsub(pubsubUrl);
 
 /* csv to senml properties */
 var schemaFields = {};
 var schemaTypes = [];
 var schemaValues = [];
 
-function setup() {
-    var args = process.argv.slice(2);
-    var properties;
-    var schemaFile;
-
-    // default to TAXI property set if no specific property file is given
-    if (!args.length) {
-        args = ['./TAXI_properties.json'];
-    }
-
-    GFS.readFile(args[0], function(err2, data) {
-        if (err2) {
-            console.log('\x1b[44m%s\x1b[0m', 'Couldn\'t fetch properties: ' + err2);
-            process.exit();
-        }
-        properties = JSON.parse(data);
-        schemaFile = properties['PARSE.CSV_SCHEMA_WITH_ANNOTATEDFIELDS_FILEPATH'];
-        if (!schemaFile) {
-            console.log('Schema file does not exist');
-            process.exit();
-        }
-        GFS.readFile(schemaFile, function(err3, data2) {
-            // console.log("bababa"+data2);
-            var premap = data2.toString().split('\n');
-            // line1
-            var fields = premap[0].split(',');
-            var i = 0;
-            fields.forEach(function(field) {
-                schemaFields[field] = i;
-                i++;
-            });
-            // line2
-            schemaTypes = premap[1].split(',');
-
-            // line3
-            schemaValues = premap[2].split(',');
-            console.log('Beginning conversion to SenML format');
-            pubsub.subscribe(pubsub_topic, convertToSenML);
-        });
-        // return parseEntireSchema(schemaFile);
-        // parseEntireSchema(schemaFile).then(function(){
-
-        // }
-    });
+function beginComponent(properties) {
+	var schemaFile = properties['PARSE.CSV_SCHEMA_WITH_ANNOTATEDFIELDS_FILEPATH'];
+	if (!schemaFile) {
+		console.log('Schema file does not exist');
+		process.exit();
+	}
+	parseEntireSchema(schemaFile).then(function() {
+		console.log('Beginning conversion to SenML format');
+		pubsub.subscribe(subscribeTopic, convertToSenML);	
+	});
 }
 
-// function parseEntireSchema(file){
-// 	var lineNumber = 0;
-// 	var lineReader;
+function setup() {
+	var properties;
+	if (gfsFlag) {
+		GFS.readFile(propertiesPath, function(err, data) {
+			if (err) {
+				console.log('Could not fetch properties: ' + err);
+				process.exit();
+			}
+			properties = JSON.parse(data);
+			beginComponent(properties);
+		});
+	} else {
+		try {
+			properties = JSON.parse(fs.readFileSync(propertiesPath, 'utf-8'));
+		} catch(e) {
+			console.log('Problem with reading properties file: ' + e);
+			process.exit();
+		}
+		beginComponent(properties);
+	}
+}
 
-// 	return new Promise(function(resolve, reject){
-// 		try{
-// 			lineReader = readline.createInterface({
-// 				input: fs.createReadStream(file)
-// 			});
-// 		}
-// 		catch(e){
-// 			console.log('Problem reading schema: ' + e);
-// 			process.exit();
-// 		}
-// 		lineReader.on('line', function(line){
-// 			switch(lineNumber){
-// 				case 0: 
-// 					var fields = line.split(',');
-// 					var i = 0;
-// 					fields.forEach(function(field){
-// 						schemaFields[field] = i;
-// 						i++;
-// 					});
-// 					break;
-// 				case 1:
-// 					schemaTypes = line.split(',');
-// 					break;
-// 				case 2:
-// 					schemaValues = line.split(',');
-// 					break;
-// 			}
-// 			lineNumber++;
-// 		});
-// 		lineReader.on('close', function(){
-// 			resolve();
-// 		});
-// 	});
-// }
+function parseEntireSchema(file) {
+	var lineNumber = 0;
+	var lineReader;
+	return new Promise(function(resolve, reject) {
+		if (gfsFlag) {
+			GFS.readFile(file, function(err, data) {
+				if (err) {
+					console.log('Problem reading schema: ' + err);
+					process.exit();
+				}
+				var lines = data.split('\n');
+				for(var i = 0; i < lines.length; i++) {
+					switch (i) {
+						case 0:
+							var fields = line.split(',');
+							var i = 0;
+							fields.forEach(function(field) {
+								schemaFields[field] = i; 
+								i++;
+							});
+							break;
+						case 1:
+							schemaTypes = line.split(',');
+							break;
+						case 2:
+							schemaValues = line.split(',');
+							break;
+					}
+				}
+				resolve();
+			});
+		} else {
+			try {
+				lineReader = readline.createInterface({
+					input: fs.createReadStream(file)
+				});
+			} catch(e) {
+				console.log('Problem reading schema: ' + e);
+				process.exit();
+			}
+			lineReader.on('line', function(line) {
+				switch (lineNumber) {
+					case 0: 
+						var fields = line.split(',');
+						var i = 0;
+						fields.forEach(function(field) {
+							schemaFields[field] = i;
+							i++;
+						});
+						break;
+					case 1:
+						schemaTypes = line.split(',');
+						break;
+					case 2:
+						schemaValues = line.split(',');
+						break;
+				}
+				lineNumber++;
+			});
 
-function convertToSenML(data) {
-    var date = new Date(); var timestamp = date.getTime();
-    data = JSON.parse(data)
-    console.log(timestamp+" : "+data["line_id"] + "FOR convertToSenML");
-    var arr = [];
-    var content = data["content"];
-    var keys = Object.keys(content);
+			lineReader.on('close', resolve);	
+			}
+	});
+}
 
-    keys.forEach(function(field) {
-        var senml = {};
-        senml["n"] = field;
-        var index = schemaFields[field];
-        var type = schemaTypes[index];
-        var val = schemaValues[index];
+function convertToSenML(msg) {
+	var start = Date.now();
 
-        senml["u"] = type;
-        senml[val] = content[field];
+	var data = JSON.parse(msg);
+	content = data.content;
+	id = data.id; 
 
-        arr.push(senml);
-    });
-    console.log(JSON.stringify(arr));
-    var object = {"line_id":data["line_id"],"content":JSON.stringify({ "e": arr })};
-    pubsub.publish(publish_topic, JSON.stringify(object));
+	var arr = [];
+	var keys = Object.keys(content);
 
-    var timeobj = {"id":data["line_id"],"component":"csvtosenml","time":timestamp};
-    pubsub.publish(measurement_topic,JSON.stringify(timeobj));
+	keys.forEach(function(field) {
+		var senml = {};
+		senml['n'] = field;
+		var index = schemaFields[field];
+		var type = schemaTypes[index];
+		var val = schemaValues[index];
+
+		senml['u'] = type;
+		senml[val] = content[field];
+
+		arr.push(senml);
+	});
+
+	var end = Date.now();
+	var elapsed = end - start;
+	pubsub.publish(processingTopic, { id: id, component: 'csvtosenml', time: elapsed });
+	pubsub.publish(publishTopic, JSON.stringify({ id: id, content: { 'e': arr } }));
+
+	console.log(JSON.stringify(arr));
 }
 
 pubsub.on('ready', function() {
-    setup();
+	setup();
 });
+
