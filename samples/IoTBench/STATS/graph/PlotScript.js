@@ -4,32 +4,31 @@ window.onload = function(){
 	var fields = {};
 
 	var ctx = document.getElementById('chart');
-	setInterval(function(){
+	setInterval(function() {
 		getPoints();
 
-		function makePoints(obj, field){
+		function makePoints(obj, field) {
 			var keys = Object.keys(obj);
-			var xVal, yVal
+			var xVal, yVal;
 
 			return { x: obj['ts'], y: obj[field] };
 		}
 
-		dataset.forEach(function(data){
+		dataset.forEach(function(data) {
 			var keys = Object.keys(data);
 			var fieldIndex = keys[0] == 'ts' ? 1 : 0;
 			var field = Object.keys(data)[fieldIndex];
 
 			var pt = makePoints(data, field);
-			if(field in fields){
+			if(field in fields) {
 				fields[field].push(pt);
-			}
-			else{
+			} else {
 				fields[field] = [pt];
 			}
 		});
 
-		for(field in fields){
-			if(!document.getElementById(field)){
+		for (field in fields) {
+			if (!document.getElementById(field)) {
 				var canvas = document.createElement('canvas');
 				canvas.id = field;
 				canvas.style.width = '200px';
@@ -56,11 +55,11 @@ window.onload = function(){
 
 }
 
-function getPoints(){
+function getPoints() {
 	var req = new XMLHttpRequest();
-	req.open('GET', 'http://localhost:5000/points');
-	req.onreadystatechange = function(){
-		if(req.readyState === 4 && req.status === 200){
+	req.open('GET', 'http://localhost:5050/points');
+	req.onreadystatechange = function() {
+		if (req.readyState === 4 && req.status === 200) {
 			dataset = JSON.parse(req.responseText);
 		}
 	}
