@@ -555,29 +555,101 @@
                                 <section class="normal markdown-section">
                                 
                                 <h1 id="benchmark-apps">BENCHMARK Apps</h1>
-<p>This benchmark app is originated/referenced from <a href="https://github.com/dream-lab/riot-bench" target="_blank">dreamlab RIOT benchmark</a> which intend to test ThingsJs different function as IoT middleware project like scheduling job.</p>
-<h1 id="detail">Detail</h1>
-<p>This benchmark app consists of four phases: ETL(Extraction, Transform and Load dataflow), STATS(Statistical Summarization dataflow), TRAIN(Model Training dataflow) and PRED(Predictive Analytics dataflow). We are using taxidata as example. In each phase, we will generate ETLSTATS_date.csv with the heap used, cpu used information for monitoring the effect. </p>
-<p>ETL: 
-First parse the data from csv to key value data type and publish them line by line and then hash the data by different key value and join the data together. 
- <img src="https://raw.githubusercontent.com/anshuiisc/FIG/master/ETL-1.png" alt="FCAST"></p>
-<p>STAT: 
-Calculated the summary statistics for the data and fitted a simple linear regression model and then plotted the fitted model. For plotting, user had to put the graph folder in workers space, open the plot.html inside
-the folder will generate the plot dynamically. 
-<img src="https://raw.githubusercontent.com/anshuiisc/FIG/master/stats-1.png" alt="FCAST"></p>
-<p>TRAIN: 
-Use data to train the regression tree and multi-variate model and save it on global file system. For modeling, we currently use &#x2018;c4.5&#x2019; package for J48decisiontree model and &#x2018;ml-regression-multivariate-linear&#x2019; package for training. 
- <img src="https://raw.githubusercontent.com/anshuiisc/FIG/master/Train-1.png" alt="FCAST"></p>
-<p>PRED:
-Fetch the training model saved from file system in the TRAIN phase and predict the taxi fee by provided data and publish residual errors to mqtt. 
-<img src="https://raw.githubusercontent.com/anshuiisc/FIG/master/pred-1.png" alt="FCAST"></p>
-<p>For message and data communication between components, we will use things-js pubsub channel. For measurements, we will generate csv for device stats like memory used, cpu etc and save in file system </p>
-<h1 id="application-to-scheduler">Application to scheduler</h1>
-<p>Instead of running components in each phase in order one by one, we plan to use our scheduler to schedule the running sequence of components on different engine workers according to its required memory, CPU, bandwidth, etc. so as to make the whole system more efficient. </p>
-<h1 id="guide-for-user">Guide for user</h1>
-<p>Currently user has to set up the dependency for the benchmark on their worker folder by creating a empty package.json with <code>vi package.json</code> and <code>npm link things-js</code> to load all necessary node-modules. 
-All necessary data and properties files are stored in global file systems, which also act as a communication
-channel for writing and reading models during the training and predicting phase. User can also use GFS api to change the taxi data for their own training. There is an automation script benchmark.js in samples folder which can automatically trigger scheduling the components by command <code>node benchamrk.js ETL/STAT/TRAIN/PRED</code>.</p>
+<p>These benchmark applications are adapted from <a href="https://github.com/dream-lab/riot-bench" target="_blank">dreamlab RIOT benchmark</a>, and are intended to be used to test the different functionalities of the <code>ThingsJS</code> platform such as task scheduling. Everything can be found in <code>samples/IoTBench/.</code></p>
+<h1 id="details">Details</h1>
+<p>There are four benchmark applications: <code>ETL</code> (extract, transform, and load dataflow), <code>STATS</code> (statistical summarization dataflow), <code>TRAIN</code> (model training dataflow), and <code>PRED</code> (predictive analytics dataflow). The data comes from a .csv file containing 1000 lines of taxi data. For our implementation, each component along the dataflow communicates through <code>MQTT</code>. </p>
+<h2 id="directory-structure">Directory structure</h2>
+<pre><code>IotBench
+&#x2502;   Spout.js - needed for all benchmarks
+&#x2502;   Parse.js - needed for all benchmarks
+&#x2502;
+&#x2514;&#x2500;&#x2500;&#x2500;/ETL 
+&#x2502;      |...all files for ETL benchmark
+&#x2514;&#x2500;&#x2500;&#x2500;/PRED
+&#x2502;      |...all files for PRED benchmark
+&#x2514;&#x2500;&#x2500;&#x2500;/TRAIN
+&#x2502;      |...all files for TRAIN benchmark
+&#x2514;&#x2500;&#x2500;&#x2500;/STATS
+&#x2502;      |...all files for STATS benchmark
+&#x2514;&#x2500;&#x2500;&#x2500;/scripts - for benchmark measurements etc.
+&#x2502;
+&#x2514;&#x2500;&#x2500;&#x2500;/Data - all data files needed for benchmarks
+|      | TAXI_properties.json -
+|           a properties file for all the 
+|           benchmarks. Please ensure 
+|           paths pointed by this file exist 
+|           locally (if you aren&apos;t using GFS) or
+|           globally (if you are using GFS)
+&#x2502;
+&#x2514;&#x2500;&#x2500;&#x2500;/Models - all models needed for benchmarks
+</code></pre><h3 id="etl">ETL:</h3>
+<p>Filters and transforms sensor data before returning the data into SenML format once again.</p>
+<p>Notes: </p>
+<blockquote>
+<ul>
+<li>The interpolation component does no transformation for the taxi dataset (see <a href="https://arxiv.org/pdf/1701.08530.pdf#page=32" target="_blank">here</a>  for more information)</li>
+<li>The external npm package <code>bloomfilter</code> is used in the bloom filter component</li>
+<li>The Join component has been omitted</li>
+<li>All components in the ported dataflow already communicate through MQTT, and therefore the MQTT Publish component is omitted due to redundancy</li>
+</ul>
+</blockquote>
+<p> <img src="https://raw.githubusercontent.com/anshuiisc/FIG/master/ETL-1.png" alt="FCAST"></p>
+<h3 id="stats">STATS:</h3>
+<p>Performs numerous statistical summaries for a dataset and fits a simple linear regression model. </p>
+<p>Notes:</p>
+<blockquote>
+<ul>
+<li>The adapted GroupVIZ block creates a static webpage that displays a dynamic plot of the accumulated statistics</li>
+</ul>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/anshuiisc/FIG/master/stats-1.png" alt="FCAST"></p>
+<h3 id="train">TRAIN:</h3>
+<p>Trains a regression tree and multi-variate model, with the option of saving these models to the global filesystem.</p>
+<p>Notes:</p>
+<blockquote>
+<ul>
+<li>The external <code>C4.5</code> npm package is used in place of Java&apos;s <code>J48</code> implementation of the C4.5 decision tree </li>
+<li>The npm package <code>ml-regression-multivariate-linear</code> is used for training</li>
+</ul>
+</blockquote>
+<p> <img src="https://raw.githubusercontent.com/anshuiisc/FIG/master/Train-1.png" alt="FCAST"></p>
+<h3 id="pred">PRED:</h3>
+<p>Fetches trained models saved in a filesystem (either locally or globally), and does predictions on the incoming data before calculating the residual error.</p>
+<p>Notes:</p>
+<blockquote>
+<ul>
+<li>On the taxi dataset, the prediction is on the taxi fee</li>
+</ul>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/anshuiisc/FIG/master/pred-1.png" alt="FCAST"></p>
+<h1 id="scheduling-benchmarks">Scheduling Benchmarks</h1>
+<p>Instead of individually scheduling every component for each benchmark, we plan to use the <code>ThingsJS Scheduler</code> to dispatch these components automatically. The distribution of these tasks on workers can be based on each component&apos;s required memory, CPU, bandwidth, etc., decided by the scheduling algorithm used.</p>
+<h1 id="user-guide">User Guide</h1>
+<p>To run these benchmarks on a <code>ThingsJS worker</code>, users must have the appropriate dependencies. </p>
+<ul>
+<li>In the directory the worker is to run in, make sure it has been linked to <code>ThingsJS</code> using the command <code>npm link things-js</code>. Also ensure there is a <code>package.json</code> folder in the directory (this may just be an empty file)</li>
+<li>If using the global filesystem, ensure that all datasets have been saved on the filesystem. Otherwise, make sure all datasets are saved in the worker directory</li>
+</ul>
+<p>A script is provided to automatically trigger the scheduling of a benchmark (provided there exists at least one running worker and a scheduler present). The command is:
+<code>node benchmark.js &lt;ETL/STAT/TRAIN/PRED&gt;</code></p>
+<h1 id="gathering-measurements">Gathering Measurements</h1>
+<p>There are two scripts that currently gather data for these benchmarks, one for <strong>resource usage</strong>, and the other for <strong>line processing rate</strong>. These scripts can be found under <code>samples/IoTBench/scripts</code>.</p>
+<h3 id="resource-usage">Resource Usage</h3>
+<p>To gather information about the resource usage for each  component in the dataflow of a benchmark, run the command: 
+<code>node resource_measurement.js &lt;cpu|memory|total&gt;</code>
+Try to run this script as close as possible to when the benchmark is launched to avoid capturing irrelevant data.</p>
+<ul>
+<li>The data will be saved locally to a .csv file</li>
+<li>You can either choose to capture CPU, memory, or both CPU and memory usage for the benchmark components </li>
+</ul>
+<h3 id="line-processing">Line Processing</h3>
+<p>To gather information about how fast each line of data is being processed in the dataflow for any of the benchmarks, run the command: <code>node time_measurement.js</code> before launching a benchmark. This script will capture and accumulate the time measurements for how fast each component is processing a single line from the original source data.</p>
+<p>To save this information locally, run the command
+<code>node time_measurement.js &gt; filepath</code></p>
+<p>The data captured by this script is in the following format:
+<code>&lt;line number(s)&gt; &lt;component name&gt; &lt;processing time in ms&gt;</code> 
+and also
+<code>Total &lt;line number&gt; &lt;total time in ms&gt;</code> to indicate how long the line took to process through the entire dataflow.</p>
 <p>All figures referenced from <a href="https://github.com/dream-lab/riot-bench" target="_blank">dreamlab RIOT benchmark</a></p>
 
                                 
@@ -622,7 +694,7 @@ channel for writing and reading models during the training and predicting phase.
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Sample Benchmarks","level":"1.2.5","depth":2,"next":{"title":"Tutorials","level":"1.3","depth":1,"path":"tutorials/README.md","ref":"tutorials/README.md","articles":[{"title":"Writing your First App","level":"1.3.1","depth":2,"path":"tutorials/FirstApplication.md","ref":"tutorials/FirstApplication.md","articles":[]},{"title":"Live-Migration","level":"1.3.2","depth":2,"path":"tutorials/Migration.md","ref":"tutorials/Migration.md","articles":[]},{"title":"Using the Dashboard","level":"1.3.3","depth":2,"path":"tutorials/dashboard/Dashboard.md","ref":"tutorials/dashboard/Dashboard.md","articles":[]}]},"previous":{"title":"Sample Components","level":"1.2.4","depth":2,"path":"samples/README.md","ref":"samples/README.md","articles":[]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"samples/RIoTBenchmarks.md","mtime":"2018-10-20T00:01:24.735Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-11-30T04:59:13.472Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Sample Benchmarks","level":"1.2.5","depth":2,"next":{"title":"Tutorials","level":"1.3","depth":1,"path":"tutorials/README.md","ref":"tutorials/README.md","articles":[{"title":"Writing your First App","level":"1.3.1","depth":2,"path":"tutorials/FirstApplication.md","ref":"tutorials/FirstApplication.md","articles":[]},{"title":"Live-Migration","level":"1.3.2","depth":2,"path":"tutorials/Migration.md","ref":"tutorials/Migration.md","articles":[]},{"title":"Using the Dashboard","level":"1.3.3","depth":2,"path":"tutorials/dashboard/Dashboard.md","ref":"tutorials/dashboard/Dashboard.md","articles":[]}]},"previous":{"title":"Sample Components","level":"1.2.4","depth":2,"path":"samples/README.md","ref":"samples/README.md","articles":[]},"dir":"ltr"},"config":{"plugins":["jsdoc"],"root":"./guide","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"jsdoc":{"options":"{}"},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"samples/RIoTBenchmarks.md","mtime":"2018-12-17T22:40:34.189Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-12-17T22:40:41.284Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
