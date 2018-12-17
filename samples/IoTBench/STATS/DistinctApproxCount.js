@@ -2,86 +2,78 @@ var things = require('things-js');
 var fs = require('fs');
 var crypto = require('crypto');
 var mongoUrl = 'mongodb://localhost:27017/things-js-fs';
-var GFS = require('things-js').addons.gfs(mongoUrl);
+var GFS = require('things-js').GFS(mongoUrl);
 
-var pubsub_url = 'mqtt://localhost';
-var pubsub_topic = 'thingsjs/IoTBench/SenMLParse';
-var publish_topic = 'thingsjs/IoTBench/STATS/DistinctApproxCount';
+/* configurable variables */
+var gfsFlag = true;
+var pubsubUrl = 'mqtt://test.mosquitto.org';
+var processingTopic = 'iotbench/processing';
+var subscribeTopic = processingTopic + '/parse';
+var publishTopic = processingTopic + '/dac';
+var propertiesPath = './TAXI_properties.json';
 
-var pubsub = new things.Pubsub(pubsub_url);
+var pubsub = new things.Pubsub(pubsubUrl);
 
 /* DAC properties */
-var BUCKET_SIZE, USE_MSG_FIELD, USE_MSG_FIELDLIST;
+var BUCKET_SIZE, USE_MSG_FIELD, USE_MSG_FIELD_LIST;
 var maxZeroes = [];
 var numBuckets;
 
-function setup(){
-	var args = process.argv.slice(2);
-	var properties;
-
-	// default to TAXI property set if no specific property file is given
-	if(!args.length){
-		args = ['./TAXI_properties.json'];
-	}
-
-	GFS.readFile(args[0], function(err2, data) {
-        if (err2) {
-            console.log('\x1b[44m%s\x1b[0m', 'Couldn\'t fetch properties: ' + err2);
-            process.exit();
-        }
-    properties = JSON.parse(data);		
+function beginComponent(properties) {
 	BUCKET_SIZE = properties['AGGREGATE.DISTINCT_APPROX_COUNT.BUCKETS'] || 10;
-	if(BUCKET_SIZE > 31){
+	if (BUCKET_SIZE > 31) {
 		console.log('Bucket size is too large. Must be less than or equal to 31');
 		process.exit();
 	}
 	numBuckets = 1 << BUCKET_SIZE;
 
 	USE_MSG_FIELD = properties['AGGREGATE.DISTINCT_APPROX_COUNT.USE_MSG_FIELD'] || 0;
-	USE_MSG_FIELDLIST = properties['AGGREGATE.DISTINCT_APPROX_COUNT.USE_MSG_FIELD_LIST'];
+	USE_MSG_FIELD_LIST = properties['AGGREGATE.DISTINCT_APPROX_COUNT.USE_MSG_FIELD_LIST'];
 
-	for(var i = 0; i < numBuckets; i++){
+	for (var i = 0; i < numBuckets; i++) {
 		maxZeroes[i] = 0;
 	}
-
 	console.log('Beginning Distinct Approx. Count');
-	pubsub.subscribe(pubsub_topic, doUniqueCount);
-});
-
+	pubsub.subscribe(subscribeTopic, doUniqueCount);
 }
 
-function doUniqueCount(data){
+function doUniqueCount(msg) {
+	var start = Date.now();
+	var data = JSON.parse(msg);
+	var content = data.content;
+	var id = data.id;
 	var field;
 
-	if(USE_MSG_FIELD > 0){
-		field = USE_MSG_FIEDLIST[USE_MSG_FIELD-1];
-	}
-	else if(USE_MSG_FIELD == 0){
-		field = USE_MSG_FIELDLIST;
-		console.log(field);
-	}
-	else{
-		var keys = Object.keys(data);
-		var ranIndex = Math.ceil( Math.random() * keys.length );
+	if (USE_MSG_FIELD > 0) {
+		field = USE_MSG_FIELD_LIST[USE_MSG_FIELD - 1];
+	} else if (USE_MSG_FIELD == 0) {
+		field = USE_MSG_FIELD_LIST;
+	} else {
+		var keys = Object.keys(content);
+		var ranIndex = Math.ceil(Math.random() * keys.length);
 		field = keys[ranIndex];
 	}
-	var count = countUniqueItems(data[field]);
-	var uniqueCountJSON = {};
-	uniqueCountJSON[field + '_distinctCount'] = count;
+	var count = countUniqueItems(content[field]);
+	var uniqueCount = {};
+	uniqueCount[field + '_distinctCount'] = count;
+
+	var end = Date.now();
+	var elapsed = end - start;
+	pubsub.publish(processingTopic, { id: id, component: 'dac', time: elapsed });
 
 	console.log('Approx ' + count + ' unique items in ' + field);
-	pubsub.publish(publish_topic, uniqueCountJSON);
-
+	pubsub.publish(publishTopic, JSON.stringify({ id: id, content: uniqueCount }));
 
 }
 
-function countUniqueItems(item){
+function countUniqueItems(item) {
 
-	function sha1(str){
+	function sha1(str) {
 		var sha = crypto.createHash('sha1');
 		var hex = sha.update(str).digest('hex');
 		return hex;
 	}
+
 	var magicNum = 0.79402;
 	var hashValue = parseInt(sha1(item), 16);
 	var bucketId = hashValue & (numBuckets - 1);
@@ -90,27 +82,25 @@ function countUniqueItems(item){
 	maxZeroes[bucketId] = Math.max(currMax, countTrailZeroes(hashValue >> BUCKET_SIZE));
 
 	var sumMaxZeroes = 0;
-	for(var i = 0; i < numBuckets; i++){
+	for (var i = 0; i < numBuckets; i++) {
 		sumMaxZeroes += maxZeroes[i];
 	}
-
 	var E = (magicNum * numBuckets * Math.pow(2, sumMaxZeroes / numBuckets));
 	return E;
 }
 
-function countTrailZeroes(val){
-	if(val === 0){
+function countTrailZeroes(val) {
+	if (val === 0) {
 		return 31;
-	}
-	else{
+	} else {
 		var p = 0;
-		while( ((val >> p) & 1) === 0){
+		while (((val >> p) & 1) === 0) {
 			p++;
 		}
 		return p;
 	}
 }
 
-pubsub.on('ready', function(){
+pubsub.on('ready', function() {
 	setup();
 });
