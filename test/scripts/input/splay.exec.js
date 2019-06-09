@@ -248,7 +248,7 @@ function BM_Start() {
 		if (i < BM_Iterations){
       if (i === BM_Iterations / 2 + 1){
         (function report(){
-          pidusage.stat(process.pid, function(err, stat) {
+          pidusage(process.pid, function(err, stat) {
             process.send({
               timestamp: Date.now(),
               memory: process.memoryUsage(),

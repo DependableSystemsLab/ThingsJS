@@ -1,5 +1,5 @@
-require('things-js').bootstrap(module, function(Σ){
-    Σ.setExtractor(function() {
+require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
+    Σ.setExtractor(function () {
         return this.capture({}, {
             kSplayTreeSize: kSplayTreeSize,
             kSplayTreeModifications: kSplayTreeModifications,
@@ -23,9 +23,8 @@ require('things-js').bootstrap(module, function(Σ){
     var kSplayTreePayloadDepth = 3;
     var splayTree = null;
     var splaySampleTimeStart = 0;
-
     function GeneratePayloadTree(depth, tag) {
-        var Σ_GeneratePayloadTree = new Σ.Scope(this, Σ, GeneratePayloadTree, function() {
+        var Σ_GeneratePayloadTree = new Σ.Scope(this, Σ, GeneratePayloadTree, function () {
             return this.capture({
                 depth: depth,
                 tag: tag
@@ -54,39 +53,25 @@ require('things-js').bootstrap(module, function(Σ){
             };
         }
     }
-
     function GenerateKey() {
-        var Σ_GenerateKey = new Σ.Scope(this, Σ, GenerateKey, function() {
-            return this.capture({}, {});
-        });
         return Math.random();
     }
     var splaySamples = 0;
     var splaySumOfSquaredPauses = 0;
-
     function SplayRMS() {
-        var Σ_SplayRMS = new Σ.Scope(this, Σ, SplayRMS, function() {
-            return this.capture({}, {});
-        });
         return Math.round(Math.sqrt(splaySumOfSquaredPauses / splaySamples) * 10000);
     }
-
     function SplayUpdateStats(time) {
-        var Σ_SplayUpdateStats = new Σ.Scope(this, Σ, SplayUpdateStats, function() {
-            return this.capture({
-                time: time
-            }, {
-                pause: pause
-            });
+        var Σ_SplayUpdateStats = new Σ.Scope(this, Σ, SplayUpdateStats, function () {
+            return this.capture({ time: time }, { pause: pause });
         });
         var pause = time - splaySampleTimeStart;
         splaySampleTimeStart = time;
         splaySamples++;
         splaySumOfSquaredPauses += pause * pause;
     }
-
     function InsertNewNode() {
-        var Σ_InsertNewNode = new Σ.Scope(this, Σ, InsertNewNode, function() {
+        var Σ_InsertNewNode = new Σ.Scope(this, Σ, InsertNewNode, function () {
             return this.capture({}, {
                 key: key,
                 payload: payload
@@ -100,9 +85,8 @@ require('things-js').bootstrap(module, function(Σ){
         splayTree.insert(key, payload);
         return key;
     }
-
     function SplaySetup() {
-        var Σ_SplaySetup = new Σ.Scope(this, Σ, SplaySetup, function() {
+        var Σ_SplaySetup = new Σ.Scope(this, Σ, SplaySetup, function () {
             return this.capture({}, {});
         });
         if (!performance.now) {
@@ -117,9 +101,8 @@ require('things-js').bootstrap(module, function(Σ){
             }
         }
     }
-
     function SplayTearDown() {
-        var Σ_SplayTearDown = new Σ.Scope(this, Σ, SplayTearDown, function() {
+        var Σ_SplayTearDown = new Σ.Scope(this, Σ, SplayTearDown, function () {
             return this.capture({}, {
                 keys: keys,
                 length: length
@@ -139,9 +122,8 @@ require('things-js').bootstrap(module, function(Σ){
             }
         }
     }
-
     function SplayRun() {
-        var Σ_SplayRun = new Σ.Scope(this, Σ, SplayRun, function() {
+        var Σ_SplayRun = new Σ.Scope(this, Σ, SplayRun, function () {
             return this.capture({}, {});
         });
         for (var i = 0; i < kSplayTreeModifications; i++) {
@@ -151,26 +133,24 @@ require('things-js').bootstrap(module, function(Σ){
                 splayTree.remove(key);
             } else {
                 splayTree.remove(greatest.key);
-            };
+            }
+            ;
         }
         SplayUpdateStats(performance.now());
     }
-
     function SplayTree() {
-        var Σ_SplayTree = new Σ.Scope(this, Σ, SplayTree, function() {
-            return this.capture({}, {});
-        });
-    };
+    }
+    ;
     SplayTree.prototype.root_ = null;
-    SplayTree.prototype.isEmpty = Σ.addFunction(function αes9I() {
-        var Σ_αes9I = new Σ.Scope(this, Σ, αes9I, function() {
-            return this.capture({}, {});
-        });
+    SplayTree.prototype.isEmpty = Σ.addFunction(function αSmBS() {
         return !this.root_;
     }, Σ);
-    SplayTree.prototype.insert = Σ.addFunction(function αXtOS(key, value) {
-        var Σ_αXtOS = new Σ.Scope(this, Σ, αXtOS, function() {
-            return this.capture({}, {});
+    SplayTree.prototype.insert = Σ.addFunction(function αWXSY(key, value) {
+        var Σ_αWXSY = new Σ.Scope(this, Σ, αWXSY, function () {
+            return this.capture({
+                key: key,
+                value: value
+            }, { node: node });
         });
         if (this.isEmpty()) {
             this.root_ = new SplayTree.Node(key, value);
@@ -192,9 +172,9 @@ require('things-js').bootstrap(module, function(Σ){
         }
         this.root_ = node;
     }, Σ);
-    SplayTree.prototype.remove = Σ.addFunction(function αJjSH(key) {
-        var Σ_αJjSH = new Σ.Scope(this, Σ, αJjSH, function() {
-            return this.capture({}, {});
+    SplayTree.prototype.remove = Σ.addFunction(function α6kzZ(key) {
+        var Σ_α6kzZ = new Σ.Scope(this, Σ, α6kzZ, function () {
+            return this.capture({ key: key }, { removed: removed });
         });
         if (this.isEmpty()) {
             throw Error('Key not found: ' + key);
@@ -214,9 +194,9 @@ require('things-js').bootstrap(module, function(Σ){
         }
         return removed;
     }, Σ);
-    SplayTree.prototype.find = Σ.addFunction(function αrYzW(key) {
-        var Σ_αrYzW = new Σ.Scope(this, Σ, αrYzW, function() {
-            return this.capture({}, {});
+    SplayTree.prototype.find = Σ.addFunction(function αV2zN(key) {
+        var Σ_αV2zN = new Σ.Scope(this, Σ, αV2zN, function () {
+            return this.capture({ key: key }, {});
         });
         if (this.isEmpty()) {
             return null;
@@ -224,9 +204,9 @@ require('things-js').bootstrap(module, function(Σ){
         this.splay_(key);
         return this.root_.key == key ? this.root_ : null;
     }, Σ);
-    SplayTree.prototype.findMax = Σ.addFunction(function αsn6a(opt_startNode) {
-        var Σ_αsn6a = new Σ.Scope(this, Σ, αsn6a, function() {
-            return this.capture({}, {});
+    SplayTree.prototype.findMax = Σ.addFunction(function αg0Xg(opt_startNode) {
+        var Σ_αg0Xg = new Σ.Scope(this, Σ, αg0Xg, function () {
+            return this.capture({ opt_startNode: opt_startNode }, { current: current });
         });
         if (this.isEmpty()) {
             return null;
@@ -237,9 +217,9 @@ require('things-js').bootstrap(module, function(Σ){
         }
         return current;
     }, Σ);
-    SplayTree.prototype.findGreatestLessThan = Σ.addFunction(function α0Sem(key) {
-        var Σ_α0Sem = new Σ.Scope(this, Σ, α0Sem, function() {
-            return this.capture({}, {});
+    SplayTree.prototype.findGreatestLessThan = Σ.addFunction(function αYYRH(key) {
+        var Σ_αYYRH = new Σ.Scope(this, Σ, αYYRH, function () {
+            return this.capture({ key: key }, {});
         });
         if (this.isEmpty()) {
             return null;
@@ -253,24 +233,29 @@ require('things-js').bootstrap(module, function(Σ){
             return null;
         }
     }, Σ);
-    SplayTree.prototype.exportKeys = Σ.addFunction(function α0H3h() {
-        var Σ_α0H3h = new Σ.Scope(this, Σ, α0H3h, function() {
-            return this.capture({}, {});
+    SplayTree.prototype.exportKeys = Σ.addFunction(function αEQ6D() {
+        var Σ_αEQ6D = new Σ.Scope(this, Σ, αEQ6D, function () {
+            return this.capture({}, { result: result });
         });
         var result = [];
         if (!this.isEmpty()) {
-            this.root_.traverse_(Σ_α0H3h.addFunction(function αeDfN(node) {
-                var Σ_α0H3h_αeDfN = new Σ.Scope(this, Σ_α0H3h, αeDfN, function() {
-                    return this.capture({}, {});
+            this.root_.traverse_(Σ_αEQ6D.addFunction(function α5it6(node) {
+                var Σ_αEQ6D_α5it6 = new Σ.Scope(this, Σ_αEQ6D, α5it6, function () {
+                    return this.capture({ node: node }, {});
                 });
                 result.push(node.key);
-            }, Σ_α0H3h));
+            }, Σ_αEQ6D));
         }
         return result;
     }, Σ);
-    SplayTree.prototype.splay_ = Σ.addFunction(function αSxEX(key) {
-        var Σ_αSxEX = new Σ.Scope(this, Σ, αSxEX, function() {
-            return this.capture({}, {});
+    SplayTree.prototype.splay_ = Σ.addFunction(function αzunu(key) {
+        var Σ_αzunu = new Σ.Scope(this, Σ, αzunu, function () {
+            return this.capture({ key: key }, {
+                dummy: dummy,
+                left: left,
+                right: right,
+                current: current
+            });
         });
         if (this.isEmpty()) {
             return;
@@ -321,18 +306,21 @@ require('things-js').bootstrap(module, function(Σ){
         current.right = dummy.left;
         this.root_ = current;
     }, Σ);
-    SplayTree.Node = Σ.addFunction(function αDcss(key, value) {
-        var Σ_αDcss = new Σ.Scope(this, Σ, αDcss, function() {
-            return this.capture({}, {});
+    SplayTree.Node = Σ.addFunction(function αq6aR(key, value) {
+        var Σ_αq6aR = new Σ.Scope(this, Σ, αq6aR, function () {
+            return this.capture({
+                key: key,
+                value: value
+            }, {});
         });
         this.key = key;
         this.value = value;
     }, Σ);
     SplayTree.Node.prototype.left = null;
     SplayTree.Node.prototype.right = null;
-    SplayTree.Node.prototype.traverse_ = Σ.addFunction(function αw1Hm(f) {
-        var Σ_αw1Hm = new Σ.Scope(this, Σ, αw1Hm, function() {
-            return this.capture({}, {});
+    SplayTree.Node.prototype.traverse_ = Σ.addFunction(function αNXmP(f) {
+        var Σ_αNXmP = new Σ.Scope(this, Σ, αNXmP, function () {
+            return this.capture({ f: f }, { current: current });
         });
         var current = this;
         while (current) {
@@ -345,10 +333,7 @@ require('things-js').bootstrap(module, function(Σ){
         }
     }, Σ);
     var performance = {};
-    performance.now = Σ.addFunction(function αf0a1() {
-        var Σ_αf0a1 = new Σ.Scope(this, Σ, αf0a1, function() {
-            return this.capture({}, {});
-        });
+    performance.now = Σ.addFunction(function αulkG() {
         return Date.now();
     }, Σ);
     var BM_RunFunc = SplayRun;
@@ -358,9 +343,8 @@ require('things-js').bootstrap(module, function(Σ){
     var BM_Iterations = 300;
     var BM_Min_Iterations = 16;
     var BM_Results = [];
-
     function BM_Start() {
-        var Σ_BM_Start = new Σ.Scope(this, Σ, BM_Start, function() {
+        var Σ_BM_Start = new Σ.Scope(this, Σ, BM_Start, function () {
             return this.capture({}, {
                 data: data,
                 elapsed: elapsed,
@@ -377,26 +361,25 @@ require('things-js').bootstrap(module, function(Σ){
         var start = Date.now();
         var end = null;
         var i = 0;
-
         function doRun() {
-            var Σ_BM_Start_doRun = new Σ.Scope(this, Σ_BM_Start, doRun, function() {
+            var Σ_BM_Start_doRun = new Σ.Scope(this, Σ_BM_Start, doRun, function () {
                 return this.capture({}, {});
             });
             BM_SetupFunc();
             Σ.console.log('Iteration : ' + i);
-            if (i === BM_Iterations / 2){
-                Σ.pauseTimers();
-                var started = Date.now();
-                var safe = Σ.snapshot();
-                var elapsed = Date.now() - started;
-                process.send({ time_taken: elapsed, snapshot: safe });
-            }
             BM_RunFunc();
             elapsed = Date.now() - start;
             BM_TearDownFunc();
             i++;
             if (i < BM_Iterations) {
-                Σ.setImmediate(doRun);
+                if (i === BM_Iterations / 2){
+                    Σ.pauseTimers();
+                    var started = Date.now();
+                    var safe = Σ.snapshot();
+                    var elapsed = Date.now() - started;
+                    process.send({ time_taken: elapsed, snapshot: safe });
+                }
+                else Σ.setImmediate(doRun);
             } else {
                 if (data != null) {
                     data.runs += i;
@@ -417,4 +400,4 @@ require('things-js').bootstrap(module, function(Σ){
         Σ.setImmediate(doRun);
     }
     BM_Start();
-}, 'mqtt://localhost', 'splay.js', {})
+}, 'mqtt://localhost', 'splay.js', {});

@@ -89,7 +89,7 @@ Constraint.prototype.destroyConstraint = function () {
   if (this.isSatisfied()) planner.incrementalRemove(this);
   else this.removeFromGraph();
 }
-t.prototype.isInput = function () {
+Constraint.prototype.isInput = function () {
   return false;
 }
 function UnaryConstraint(v, strength) {

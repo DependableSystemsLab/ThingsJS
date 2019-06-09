@@ -377,7 +377,7 @@ function BM_Start() {
 		console.log("Iteration : "+i);
 		if (i === BM_Iterations / 2){
 			(function report(){
-				pidusage.stat(process.pid, function(err, stat) {
+				pidusage(process.pid, function(err, stat) {
 					process.send({
 						timestamp: Date.now(),
 						memory: process.memoryUsage(),

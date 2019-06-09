@@ -21,7 +21,7 @@ var factorial = function(){
 	if (count < target){
 		if (count === target/2 + 1){
 			(function report(){
-                pidusage.stat(process.pid, function(err, stat) {
+                pidusage(process.pid, function(err, stat) {
                     process.send({
                         timestamp: Date.now(),
                         memory: process.memoryUsage(),

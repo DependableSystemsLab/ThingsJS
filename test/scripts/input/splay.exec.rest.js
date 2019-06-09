@@ -1,27 +1,6 @@
 var pidusage = require('pidusage');
-(function(Σ) {
-    Σ.setExtractor(function() {
-        return this.capture({}, {
-            kSplayTreeSize: kSplayTreeSize,
-            kSplayTreeModifications: kSplayTreeModifications,
-            kSplayTreePayloadDepth: kSplayTreePayloadDepth,
-            splayTree: splayTree,
-            splaySampleTimeStart: splaySampleTimeStart,
-            splaySamples: splaySamples,
-            splaySumOfSquaredPauses: splaySumOfSquaredPauses,
-            performance: performance,
-            BM_RunFunc: BM_RunFunc,
-            BM_SetupFunc: BM_SetupFunc,
-            BM_TearDownFunc: BM_TearDownFunc,
-            BM_RMS: BM_RMS,
-            BM_Iterations: BM_Iterations,
-            BM_Min_Iterations: BM_Min_Iterations,
-            BM_Results: BM_Results
-        })
-    }).hoist(GeneratePayloadTree, Σ).hoist(GenerateKey, Σ).hoist(SplayRMS, Σ).hoist(SplayUpdateStats, Σ).hoist(InsertNewNode, Σ).hoist(SplaySetup, Σ).hoist(SplayTearDown, Σ).hoist(SplayRun, Σ).hoist(SplayTree, Σ).hoist(BM_Start, Σ);
-
-    function GeneratePayloadTree(depth, tag) {
-        var Σ_GeneratePayloadTree = new Σ.Scope(this, Σ, GeneratePayloadTree, function() {
+require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtractor(function(){ return this.capture({}, {kSplayTreeSize:kSplayTreeSize,kSplayTreeModifications:kSplayTreeModifications,kSplayTreePayloadDepth:kSplayTreePayloadDepth,splayTree:splayTree,splaySampleTimeStart:splaySampleTimeStart,splaySamples:splaySamples,splaySumOfSquaredPauses:splaySumOfSquaredPauses,performance:performance,BM_RunFunc:BM_RunFunc,BM_SetupFunc:BM_SetupFunc,BM_TearDownFunc:BM_TearDownFunc,BM_RMS:BM_RMS,BM_Iterations:BM_Iterations,BM_Min_Iterations:BM_Min_Iterations,BM_Results:BM_Results}) }).hoist(GeneratePayloadTree, Σ).hoist(GenerateKey, Σ).hoist(SplayRMS, Σ).hoist(SplayUpdateStats, Σ).hoist(InsertNewNode, Σ).hoist(SplaySetup, Σ).hoist(SplayTearDown, Σ).hoist(SplayRun, Σ).hoist(SplayTree, Σ).hoist(BM_Start, Σ);function GeneratePayloadTree(depth, tag) {
+        var Σ_GeneratePayloadTree = new Σ.Scope(this, Σ, GeneratePayloadTree, function () {
             return this.capture({
                 depth: depth,
                 tag: tag
@@ -49,38 +28,20 @@ var pidusage = require('pidusage');
                 right: GeneratePayloadTree(depth - 1, tag)
             };
         }
-    };
-
-    function GenerateKey() {
-        var Σ_GenerateKey = new Σ.Scope(this, Σ, GenerateKey, function() {
-            return this.capture({}, {});
-        });
+    };function GenerateKey() {
         return Math.random();
-    };
-
-    function SplayRMS() {
-        var Σ_SplayRMS = new Σ.Scope(this, Σ, SplayRMS, function() {
-            return this.capture({}, {});
-        });
+    };function SplayRMS() {
         return Math.round(Math.sqrt(splaySumOfSquaredPauses / splaySamples) * 10000);
-    };
-
-    function SplayUpdateStats(time) {
-        var Σ_SplayUpdateStats = new Σ.Scope(this, Σ, SplayUpdateStats, function() {
-            return this.capture({
-                time: time
-            }, {
-                pause: pause
-            });
+    };function SplayUpdateStats(time) {
+        var Σ_SplayUpdateStats = new Σ.Scope(this, Σ, SplayUpdateStats, function () {
+            return this.capture({ time: time }, { pause: pause });
         });
         var pause = time - splaySampleTimeStart;
         splaySampleTimeStart = time;
         splaySamples++;
         splaySumOfSquaredPauses += pause * pause;
-    };
-
-    function InsertNewNode() {
-        var Σ_InsertNewNode = new Σ.Scope(this, Σ, InsertNewNode, function() {
+    };function InsertNewNode() {
+        var Σ_InsertNewNode = new Σ.Scope(this, Σ, InsertNewNode, function () {
             return this.capture({}, {
                 key: key,
                 payload: payload
@@ -93,10 +54,8 @@ var pidusage = require('pidusage');
         var payload = GeneratePayloadTree(kSplayTreePayloadDepth, String(key));
         splayTree.insert(key, payload);
         return key;
-    };
-
-    function SplaySetup() {
-        var Σ_SplaySetup = new Σ.Scope(this, Σ, SplaySetup, function() {
+    };function SplaySetup() {
+        var Σ_SplaySetup = new Σ.Scope(this, Σ, SplaySetup, function () {
             return this.capture({}, {});
         });
         if (!performance.now) {
@@ -110,10 +69,8 @@ var pidusage = require('pidusage');
                 SplayUpdateStats(performance.now());
             }
         }
-    };
-
-    function SplayTearDown() {
-        var Σ_SplayTearDown = new Σ.Scope(this, Σ, SplayTearDown, function() {
+    };function SplayTearDown() {
+        var Σ_SplayTearDown = new Σ.Scope(this, Σ, SplayTearDown, function () {
             return this.capture({}, {
                 keys: keys,
                 length: length
@@ -132,10 +89,8 @@ var pidusage = require('pidusage');
                 throw new Error('Splay tree not sorted');
             }
         }
-    };
-
-    function SplayRun() {
-        var Σ_SplayRun = new Σ.Scope(this, Σ, SplayRun, function() {
+    };function SplayRun() {
+        var Σ_SplayRun = new Σ.Scope(this, Σ, SplayRun, function () {
             return this.capture({}, {});
         });
         for (var i = 0; i < kSplayTreeModifications; i++) {
@@ -145,19 +100,13 @@ var pidusage = require('pidusage');
                 splayTree.remove(key);
             } else {
                 splayTree.remove(greatest.key);
-            };
+            }
+            ;
         }
         SplayUpdateStats(performance.now());
-    };
-
-    function SplayTree() {
-        var Σ_SplayTree = new Σ.Scope(this, Σ, SplayTree, function() {
-            return this.capture({}, {});
-        });
-    };
-
-    function BM_Start() {
-        var Σ_BM_Start = new Σ.Scope(this, Σ, BM_Start, function() {
+    };function SplayTree() {
+    };function BM_Start() {
+        var Σ_BM_Start = new Σ.Scope(this, Σ, BM_Start, function () {
             return this.capture({}, {
                 data: data,
                 elapsed: elapsed,
@@ -174,9 +123,8 @@ var pidusage = require('pidusage');
         var start = Date.now();
         var end = null;
         var i = 0;
-
         function doRun() {
-            var Σ_BM_Start_doRun = new Σ.Scope(this, Σ_BM_Start, doRun, function() {
+            var Σ_BM_Start_doRun = new Σ.Scope(this, Σ_BM_Start, doRun, function () {
                 return this.capture({}, {});
             });
             BM_SetupFunc();
@@ -188,7 +136,7 @@ var pidusage = require('pidusage');
             if (i < BM_Iterations) {
                 if (i === BM_Iterations / 2 + 1) {
                     (function report(){
-                        pidusage.stat(process.pid, function(err, stat) {
+                        pidusage(process.pid, function(err, stat) {
                             process.send({
                                 timestamp: Date.now(),
                                 memory: process.memoryUsage(),
@@ -217,16 +165,14 @@ var pidusage = require('pidusage');
             }
         }
         Σ.setImmediate(doRun);
-    };
-    Σ.addFunction(function αes9I() {
-        var Σ_αes9I = new Σ.Scope(this, Σ, αes9I, function() {
-            return this.capture({}, {});
-        });
+    };Σ.addFunction(function αSmBS() {
         return !this.root_;
-    }, Σ, "αes9I-zeHWxufy");
-    Σ.addFunction(function αXtOS(key, value) {
-        var Σ_αXtOS = new Σ.Scope(this, Σ, αXtOS, function() {
-            return this.capture({}, {});
+    }, Σ, "αSmBS-yUbL642o");Σ.addFunction(function αWXSY(key, value) {
+        var Σ_αWXSY = new Σ.Scope(this, Σ, αWXSY, function () {
+            return this.capture({
+                key: key,
+                value: value
+            }, { node: node });
         });
         if (this.isEmpty()) {
             this.root_ = new SplayTree.Node(key, value);
@@ -247,10 +193,9 @@ var pidusage = require('pidusage');
             this.root_.left = null;
         }
         this.root_ = node;
-    }, Σ, "αXtOS-4ciSZKoM");
-    Σ.addFunction(function αJjSH(key) {
-        var Σ_αJjSH = new Σ.Scope(this, Σ, αJjSH, function() {
-            return this.capture({}, {});
+    }, Σ, "αWXSY-zDHxodtZ");Σ.addFunction(function α6kzZ(key) {
+        var Σ_α6kzZ = new Σ.Scope(this, Σ, α6kzZ, function () {
+            return this.capture({ key: key }, { removed: removed });
         });
         if (this.isEmpty()) {
             throw Error('Key not found: ' + key);
@@ -269,20 +214,18 @@ var pidusage = require('pidusage');
             this.root_.right = right;
         }
         return removed;
-    }, Σ, "αJjSH-tMNeR00t");
-    Σ.addFunction(function αrYzW(key) {
-        var Σ_αrYzW = new Σ.Scope(this, Σ, αrYzW, function() {
-            return this.capture({}, {});
+    }, Σ, "α6kzZ-lErPeWEc");Σ.addFunction(function αV2zN(key) {
+        var Σ_αV2zN = new Σ.Scope(this, Σ, αV2zN, function () {
+            return this.capture({ key: key }, {});
         });
         if (this.isEmpty()) {
             return null;
         }
         this.splay_(key);
         return this.root_.key == key ? this.root_ : null;
-    }, Σ, "αrYzW-vgvqaYPJ");
-    Σ.addFunction(function αsn6a(opt_startNode) {
-        var Σ_αsn6a = new Σ.Scope(this, Σ, αsn6a, function() {
-            return this.capture({}, {});
+    }, Σ, "αV2zN-Deu8YqTy");Σ.addFunction(function αg0Xg(opt_startNode) {
+        var Σ_αg0Xg = new Σ.Scope(this, Σ, αg0Xg, function () {
+            return this.capture({ opt_startNode: opt_startNode }, { current: current });
         });
         if (this.isEmpty()) {
             return null;
@@ -292,10 +235,9 @@ var pidusage = require('pidusage');
             current = current.right;
         }
         return current;
-    }, Σ, "αsn6a-R9ekxOwC");
-    Σ.addFunction(function α0Sem(key) {
-        var Σ_α0Sem = new Σ.Scope(this, Σ, α0Sem, function() {
-            return this.capture({}, {});
+    }, Σ, "αg0Xg-VLj8nNRz");Σ.addFunction(function αYYRH(key) {
+        var Σ_αYYRH = new Σ.Scope(this, Σ, αYYRH, function () {
+            return this.capture({ key: key }, {});
         });
         if (this.isEmpty()) {
             return null;
@@ -308,25 +250,28 @@ var pidusage = require('pidusage');
         } else {
             return null;
         }
-    }, Σ, "α0Sem-OdtugS6s");
-    Σ.addFunction(function α0H3h() {
-        var Σ_α0H3h = new Σ.Scope(this, Σ, α0H3h, function() {
-            return this.capture({}, {});
+    }, Σ, "αYYRH-BTxgF3XS");Σ.addFunction(function αEQ6D() {
+        var Σ_αEQ6D = new Σ.Scope(this, Σ, αEQ6D, function () {
+            return this.capture({}, { result: result });
         });
         var result = [];
         if (!this.isEmpty()) {
-            this.root_.traverse_(Σ_α0H3h.addFunction(function αeDfN(node) {
-                var Σ_α0H3h_αeDfN = new Σ.Scope(this, Σ_α0H3h, αeDfN, function() {
-                    return this.capture({}, {});
+            this.root_.traverse_(Σ_αEQ6D.addFunction(function α5it6(node) {
+                var Σ_αEQ6D_α5it6 = new Σ.Scope(this, Σ_αEQ6D, α5it6, function () {
+                    return this.capture({ node: node }, {});
                 });
                 result.push(node.key);
-            }, Σ_α0H3h));
+            }, Σ_αEQ6D));
         }
         return result;
-    }, Σ, "α0H3h-mR0sOgVj");
-    Σ.addFunction(function αSxEX(key) {
-        var Σ_αSxEX = new Σ.Scope(this, Σ, αSxEX, function() {
-            return this.capture({}, {});
+    }, Σ, "αEQ6D-2BLENrK9");Σ.addFunction(function αzunu(key) {
+        var Σ_αzunu = new Σ.Scope(this, Σ, αzunu, function () {
+            return this.capture({ key: key }, {
+                dummy: dummy,
+                left: left,
+                right: right,
+                current: current
+            });
         });
         if (this.isEmpty()) {
             return;
@@ -376,17 +321,18 @@ var pidusage = require('pidusage');
         current.left = dummy.right;
         current.right = dummy.left;
         this.root_ = current;
-    }, Σ, "αSxEX-cNSHGsgP");
-    Σ.addFunction(function αDcss(key, value) {
-        var Σ_αDcss = new Σ.Scope(this, Σ, αDcss, function() {
-            return this.capture({}, {});
+    }, Σ, "αzunu-o5b8TCIj");Σ.addFunction(function αq6aR(key, value) {
+        var Σ_αq6aR = new Σ.Scope(this, Σ, αq6aR, function () {
+            return this.capture({
+                key: key,
+                value: value
+            }, {});
         });
         this.key = key;
         this.value = value;
-    }, Σ, "αDcss-5XuUIyd9");
-    Σ.addFunction(function αw1Hm(f) {
-        var Σ_αw1Hm = new Σ.Scope(this, Σ, αw1Hm, function() {
-            return this.capture({}, {});
+    }, Σ, "αq6aR-uaqytMJ1");Σ.addFunction(function αNXmP(f) {
+        var Σ_αNXmP = new Σ.Scope(this, Σ, αNXmP, function () {
+            return this.capture({ f: f }, { current: current });
         });
         var current = this;
         while (current) {
@@ -397,26 +343,10 @@ var pidusage = require('pidusage');
             f(current);
             current = current.right;
         }
-    }, Σ, "αw1Hm-NEuMVzrv");
-    Σ.addFunction(function αf0a1() {
-        var Σ_αf0a1 = new Σ.Scope(this, Σ, αf0a1, function() {
-            return this.capture({}, {});
-        });
+    }, Σ, "αNXmP-p9xmcbga");Σ.addFunction(function αulkG() {
         return Date.now();
-    }, Σ, "αf0a1-KMc91BJk");
-    (function BM_Start() {
-        var Σ_BM_Start = new Σ.Scope(this, Σ, BM_Start, function() {
-            return this.capture({}, {
-                data: data,
-                elapsed: elapsed,
-                start: start,
-                end: end,
-                i: i
-            })
-        }, "BM_Start-CHnVehWp").restore(Σ).hoist(doRun, Σ_BM_Start);
-
-        function doRun() {
-            var Σ_BM_Start_doRun = new Σ.Scope(this, Σ_BM_Start, doRun, function() {
+    }, Σ, "αulkG-NxK6M6nQ");(function BM_Start(){var Σ_BM_Start = new Σ.Scope(this, Σ, BM_Start, function(){ return this.capture({}, {data:data,elapsed:elapsed,start:start,end:end,i:i}) }, "BM_Start-uxBgmjNa").restore(Σ).hoist(doRun, Σ_BM_Start);function doRun() {
+            var Σ_BM_Start_doRun = new Σ.Scope(this, Σ_BM_Start, doRun, function () {
                 return this.capture({}, {});
             });
             BM_SetupFunc();
@@ -428,7 +358,7 @@ var pidusage = require('pidusage');
             if (i < BM_Iterations) {
                 if (i === BM_Iterations / 2 + 1) {
                     (function report(){
-                        pidusage.stat(process.pid, function(err, stat) {
+                        pidusage(process.pid, function(err, stat) {
                             process.send({
                                 timestamp: Date.now(),
                                 memory: process.memoryUsage(),
@@ -455,45 +385,4 @@ var pidusage = require('pidusage');
                 });
                 process.exit();
             }
-        };
-        var data = {
-            runs: 0,
-            elapsed: 0
-        };
-        var elapsed = 0;
-        var start = 1527285855006;
-        var end = null;
-        var i = 150;
-    }());
-    Σ.funcs["SplayTree"].prototype.root_ = null;
-    Σ.funcs["SplayTree"].prototype.isEmpty = Σ.getFunction("Σ.αes9I-zeHWxufy");
-    Σ.funcs["SplayTree"].prototype.insert = Σ.getFunction("Σ.αXtOS-4ciSZKoM");
-    Σ.funcs["SplayTree"].prototype.remove = Σ.getFunction("Σ.αJjSH-tMNeR00t");
-    Σ.funcs["SplayTree"].prototype.find = Σ.getFunction("Σ.αrYzW-vgvqaYPJ");
-    Σ.funcs["SplayTree"].prototype.findMax = Σ.getFunction("Σ.αsn6a-R9ekxOwC");
-    Σ.funcs["SplayTree"].prototype.findGreatestLessThan = Σ.getFunction("Σ.α0Sem-OdtugS6s");
-    Σ.funcs["SplayTree"].prototype.exportKeys = Σ.getFunction("Σ.α0H3h-mR0sOgVj");
-    Σ.funcs["SplayTree"].prototype.splay_ = Σ.getFunction("Σ.αSxEX-cNSHGsgP");
-    Σ.funcs["SplayTree"].Node = Σ.getFunction("Σ.αDcss-5XuUIyd9");
-    Σ.funcs["αDcss-5XuUIyd9"].prototype.left = null;
-    Σ.funcs["αDcss-5XuUIyd9"].prototype.right = null;
-    Σ.funcs["αDcss-5XuUIyd9"].prototype.traverse_ = Σ.getFunction("Σ.αw1Hm-NEuMVzrv");
-    var kSplayTreeSize = 1000;
-    var kSplayTreeModifications = 10;
-    var kSplayTreePayloadDepth = 3;
-    var splayTree = null;
-    var splaySampleTimeStart = 1527285857664;
-    var splaySamples = 0;
-    var splaySumOfSquaredPauses = 0;
-    var performance = {
-        now: Σ.getFunction("Σ.αf0a1-KMc91BJk")
-    };
-    var BM_RunFunc = Σ.getFunction("Σ.SplayRun");
-    var BM_SetupFunc = Σ.getFunction("Σ.SplaySetup");
-    var BM_TearDownFunc = Σ.getFunction("Σ.SplayTearDown");
-    var BM_RMS = Σ.getFunction("Σ.SplayRMS");
-    var BM_Iterations = 300;
-    var BM_Min_Iterations = 16;
-    var BM_Results = [];
-    Σ.setImmediate(Σ.getFunction("Σ/BM_Start-CHnVehWp.doRun"), "lY14tnmm");
-})(require('things-js').bootstrap('mqtt://localhost', 'splay.js/sVUEAmWQ'));
+        };var data = {runs : 0,elapsed : 0};var elapsed = 0;var start = 1560111051116;var end = null;var i = 150;}());Σ.funcs["SplayTree"].prototype.root_ = null;Σ.funcs["SplayTree"].prototype.isEmpty = Σ.getFunction("Σ.αSmBS-yUbL642o");Σ.funcs["SplayTree"].prototype.insert = Σ.getFunction("Σ.αWXSY-zDHxodtZ");Σ.funcs["SplayTree"].prototype.remove = Σ.getFunction("Σ.α6kzZ-lErPeWEc");Σ.funcs["SplayTree"].prototype.find = Σ.getFunction("Σ.αV2zN-Deu8YqTy");Σ.funcs["SplayTree"].prototype.findMax = Σ.getFunction("Σ.αg0Xg-VLj8nNRz");Σ.funcs["SplayTree"].prototype.findGreatestLessThan = Σ.getFunction("Σ.αYYRH-BTxgF3XS");Σ.funcs["SplayTree"].prototype.exportKeys = Σ.getFunction("Σ.αEQ6D-2BLENrK9");Σ.funcs["SplayTree"].prototype.splay_ = Σ.getFunction("Σ.αzunu-o5b8TCIj");Σ.funcs["SplayTree"].Node = Σ.getFunction("Σ.αq6aR-uaqytMJ1");Σ.funcs["αq6aR-uaqytMJ1"].prototype.left = null;Σ.funcs["αq6aR-uaqytMJ1"].prototype.right = null;Σ.funcs["αq6aR-uaqytMJ1"].prototype.traverse_ = Σ.getFunction("Σ.αNXmP-p9xmcbga");var kSplayTreeSize = 1000;var kSplayTreeModifications = 10;var kSplayTreePayloadDepth = 3;var splayTree = null;var splaySampleTimeStart = 1560111054278;var splaySamples = 0;var splaySumOfSquaredPauses = 0;var performance = {now : Σ.getFunction("Σ.αulkG-NxK6M6nQ")};var BM_RunFunc = Σ.getFunction("Σ.SplayRun");var BM_SetupFunc = Σ.getFunction("Σ.SplaySetup");var BM_TearDownFunc = Σ.getFunction("Σ.SplayTearDown");var BM_RMS = Σ.getFunction("Σ.SplayRMS");var BM_Iterations = 300;var BM_Min_Iterations = 16;var BM_Results = [];Σ.setImmediate(Σ.getFunction("Σ/BM_Start-uxBgmjNa.doRun"), "d98fit8Y"); }, 'mqtt://localhost', 'splay.js/92TqKYP1', {});

@@ -1,7 +1,7 @@
 var fs = require('fs');
 var path = require('path');
 var child_process = require('child_process');
-var jsBeautify = require('js-beautify').js_beautify;
+// var jsBeautify = require('js-beautify').js_beautify;
 var chalk = require('chalk');
 var things = require('../../lib/things.js');
 var helpers = require('../../lib/helpers.js');
@@ -33,18 +33,20 @@ function serialExecute(code_name, count){
 			spawned.on('message', function(message){
 				// console.log(message);
 				if (message.snapshot){
-					spawned.kill()
+					spawned.kill();
 					if (count === NUM_RUNS){
 						var snapshot = JSON.stringify(message.snapshot);
 						result[code_name].size = Buffer.from(snapshot).length;
+						console.log('Snapshot size: '+result[code_name].size);
 
 						var snap_path = path.join(BASE_DIR, code_name+'.snap.json');
-						fs.writeFile(snap_path, jsBeautify(snapshot), function(err){
+						// fs.writeFile(snap_path, jsBeautify(snapshot), function(err){
+						fs.writeFile(snap_path, snapshot, function(err){
 							if (err) reject(false);
 							else {
 								resolve([ message.time_taken ]);
 							}
-						})
+						});
 					}
 					else {
 						resolve([ message.time_taken ]);
@@ -56,7 +58,7 @@ function serialExecute(code_name, count){
 			console.log(chalk.red('Exited ')+exit_code+' | signal = '+signal);
 		})
 	}).then(function(result){
-		// console.log(chalk.yellow('Time : ')+result[0].mean)
+		console.log(chalk.yellow('Time : ')+result[0])
 		return serialExecute(code_name, count - 1 )
 				.then(function(next_result){
 					return result.concat(next_result);
@@ -110,4 +112,7 @@ runTest(CODES)
 		if (err) throw err;
 		console.log(chalk.green('--- DONE ---'));
 	})
+})
+.catch(function(err){
+	console.log(err);
 })

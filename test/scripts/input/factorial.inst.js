@@ -1,5 +1,5 @@
-require('things-js').bootstrap(module, function(Σ){
-    Σ.setExtractor(function() {
+require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
+    Σ.setExtractor(function () {
         return this.capture({}, {
             startTime: startTime,
             endTime: endTime,
@@ -11,15 +11,17 @@ require('things-js').bootstrap(module, function(Σ){
             printInterval: printInterval
         });
     });
-    var startTime = null,
-        endTime = null;
-    var target = 30000;
+    var startTime = null, endTime = null;
+    var target = 20000;
     var timer;
     var count = 0;
     var digits = [1];
-    var factorial = Σ.addFunction(function α22vH() {
-        var Σ_α22vH = new Σ.Scope(this, Σ, α22vH, function() {
-            return this.capture({}, {});
+    var factorial = Σ.addFunction(function αUO2e() {
+        var Σ_αUO2e = new Σ.Scope(this, Σ, αUO2e, function () {
+            return this.capture({}, {
+                carry: carry,
+                product: product
+            });
         });
         count++;
         var carry = 0;
@@ -42,7 +44,7 @@ require('things-js').bootstrap(module, function(Σ){
                 var elapsed = Date.now() - started;
                 process.send({ time_taken: elapsed, snapshot: safe });
             }
-            Σ.setImmediate(factorial);
+            else Σ.setImmediate(factorial);
         } else {
             digits.reverse();
             var value = digits.join('');
@@ -56,11 +58,8 @@ require('things-js').bootstrap(module, function(Σ){
     }, Σ);
     startTime = Date.now();
     Σ.setImmediate(factorial);
-    var printInterval = Σ.addFunction(function αNkJz() {
-        var Σ_αNkJz = new Σ.Scope(this, Σ, αNkJz, function() {
-            return this.capture({}, {});
-        });
+    var printInterval = Σ.addFunction(function αWTB6() {
         Σ.console.log('Currently computing n = ' + count + ', number of digits = ' + digits.length);
     }, Σ);
     timer = Σ.setInterval(printInterval, 500);
-}, 'mqtt://localhost', 'factorial.js', {})
+}, 'mqtt://localhost', 'factorial.js', {});

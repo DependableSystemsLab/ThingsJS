@@ -1,6 +1,6 @@
 var pidusage = require('pidusage');
-(function(Σ) {
-    Σ.setExtractor(function() {
+require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
+    Σ.setExtractor(function () {
         return this.capture({}, {
             startTime: startTime,
             endTime: endTime,
@@ -12,15 +12,17 @@ var pidusage = require('pidusage');
             printInterval: printInterval
         });
     });
-    var startTime = null,
-        endTime = null;
+    var startTime = null, endTime = null;
     var target = 20000;
     var timer;
     var count = 0;
     var digits = [1];
-    var factorial = Σ.addFunction(function αQWUs() {
-        var Σ_αQWUs = new Σ.Scope(this, Σ, αQWUs, function() {
-            return this.capture({}, {});
+    var factorial = Σ.addFunction(function αaheT() {
+        var Σ_αaheT = new Σ.Scope(this, Σ, αaheT, function () {
+            return this.capture({}, {
+                carry: carry,
+                product: product
+            });
         });
         count++;
         var carry = 0;
@@ -38,7 +40,7 @@ var pidusage = require('pidusage');
         if (count < target) {
             if (count === target / 2 + 1){
                 (function report(){
-                    pidusage.stat(process.pid, function(err, stat) {
+                    pidusage(process.pid, function(err, stat) {
                         process.send({
                             timestamp: Date.now(),
                             memory: process.memoryUsage(),
@@ -62,11 +64,8 @@ var pidusage = require('pidusage');
     }, Σ);
     startTime = Date.now();
     Σ.setImmediate(factorial);
-    var printInterval = Σ.addFunction(function α4qtt() {
-        var Σ_α4qtt = new Σ.Scope(this, Σ, α4qtt, function() {
-            return this.capture({}, {});
-        });
+    var printInterval = Σ.addFunction(function αz3eP() {
         Σ.console.log('Currently computing n = ' + count + ', number of digits = ' + digits.length);
     }, Σ);
     timer = Σ.setInterval(printInterval, 500);
-}(require('things-js').bootstrap('mqtt://localhost', 'factorial.js')));
+}, 'mqtt://localhost', 'factorial.js', {});

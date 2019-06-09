@@ -31,7 +31,7 @@ CODES.forEach(function(code_name){
 		stdev: null,
 		confidence: null
 	}
-	var raw = fs.readFileSync(path.join(BASE_DIR, code_name+'.things.js')).toString();
+	var raw = fs.readFileSync(path.join(BASE_DIR, code_name+'.inst.js')).toString();
 	var snapshot = JSON.parse( fs.readFileSync(path.join(BASE_DIR, code_name+'.snap.json')).toString() );
 
 	// Measure
@@ -44,6 +44,9 @@ CODES.forEach(function(code_name){
 
 	var size_before = Buffer.from(raw).length;
 	var size_after = Buffer.from(measured.result.source).length;
+
+	// Save restored program
+	fs.writeFileSync(path.join(BASE_DIR, code_name+'.rest.js'), measured.result.source);
 
 	// Store result
 	var stats = helpers.analyzeArray(result[code_name].times, 95);

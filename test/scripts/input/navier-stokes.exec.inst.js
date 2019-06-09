@@ -1,6 +1,6 @@
 var pidusage = require('pidusage');
-(function(Σ) {
-    Σ.setExtractor(function() {
+require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
+    Σ.setExtractor(function () {
         return this.capture({}, {
             solver: solver,
             nsFrameCounter: nsFrameCounter,
@@ -17,23 +17,16 @@ var pidusage = require('pidusage');
     }).hoist(runNavierStokes, Σ).hoist(checkResult, Σ).hoist(voidFunc, Σ).hoist(setupNavierStokes, Σ).hoist(tearDownNavierStokes, Σ).hoist(addPoints, Σ).hoist(prepareFrame, Σ).hoist(FluidField, Σ).hoist(BM_Start, Σ);
     var solver = null;
     var nsFrameCounter = 0;
-
     function runNavierStokes() {
-        var Σ_runNavierStokes = new Σ.Scope(this, Σ, runNavierStokes, function() {
-            return this.capture({}, {});
-        });
         solver.update();
         nsFrameCounter++;
         if (nsFrameCounter == 15) {
             checkResult(solver.getDens());
         }
     }
-
     function checkResult(dens) {
-        var Σ_checkResult = new Σ.Scope(this, Σ, checkResult, function() {
-            return this.capture({
-                dens: dens
-            }, {});
+        var Σ_checkResult = new Σ.Scope(this, Σ, checkResult, function () {
+            return this.capture({ dens: dens }, {});
         });
         this.result = 0;
         for (var i = 7000; i < 7100; i++) {
@@ -43,17 +36,9 @@ var pidusage = require('pidusage');
             throw new Error('checksum failed');
         }
     }
-
     function voidFunc() {
-        var Σ_voidFunc = new Σ.Scope(this, Σ, voidFunc, function() {
-            return this.capture({}, {});
-        });
     }
-
     function setupNavierStokes() {
-        var Σ_setupNavierStokes = new Σ.Scope(this, Σ, setupNavierStokes, function() {
-            return this.capture({}, {});
-        });
         solver = new FluidField(null);
         solver.setResolution(128, 128);
         solver.setIterations(20);
@@ -61,21 +46,12 @@ var pidusage = require('pidusage');
         solver.setUICallback(prepareFrame);
         solver.reset();
     }
-
     function tearDownNavierStokes() {
-        var Σ_tearDownNavierStokes = new Σ.Scope(this, Σ, tearDownNavierStokes, function() {
-            return this.capture({}, {});
-        });
         solver = null;
     }
-
     function addPoints(field) {
-        var Σ_addPoints = new Σ.Scope(this, Σ, addPoints, function() {
-            return this.capture({
-                field: field
-            }, {
-                n: n
-            });
+        var Σ_addPoints = new Σ.Scope(this, Σ, addPoints, function () {
+            return this.capture({ field: field }, { n: n });
         });
         var n = 64;
         for (var i = 1; i <= n; i++) {
@@ -89,12 +65,9 @@ var pidusage = require('pidusage');
     }
     var framesTillAddingPoints = 0;
     var framesBetweenAddingPoints = 5;
-
     function prepareFrame(field) {
-        var Σ_prepareFrame = new Σ.Scope(this, Σ, prepareFrame, function() {
-            return this.capture({
-                field: field
-            }, {});
+        var Σ_prepareFrame = new Σ.Scope(this, Σ, prepareFrame, function () {
+            return this.capture({ field: field }, {});
         });
         if (framesTillAddingPoints == 0) {
             addPoints(field);
@@ -104,12 +77,9 @@ var pidusage = require('pidusage');
             framesTillAddingPoints--;
         }
     }
-
     function FluidField(canvas) {
-        var Σ_FluidField = new Σ.Scope(this, Σ, FluidField, function() {
-            return this.capture({
-                canvas: canvas
-            }, {
+        var Σ_FluidField = new Σ.Scope(this, Σ, FluidField, function () {
+            return this.capture({ canvas: canvas }, {
                 iterations: iterations,
                 visc: visc,
                 dt: dt,
@@ -141,9 +111,8 @@ var pidusage = require('pidusage');
         var rowSize;
         var size;
         var displayFunc;
-
         function addFields(x, s, dt) {
-            var Σ_FluidField_addFields = new Σ.Scope(this, Σ_FluidField, addFields, function() {
+            var Σ_FluidField_addFields = new Σ.Scope(this, Σ_FluidField, addFields, function () {
                 return this.capture({
                     x: x,
                     s: s,
@@ -154,15 +123,12 @@ var pidusage = require('pidusage');
                 x[i] += dt * s[i];
             }
         }
-
         function set_bnd(b, x) {
-            var Σ_FluidField_set_bnd = new Σ.Scope(this, Σ_FluidField, set_bnd, function() {
+            var Σ_FluidField_set_bnd = new Σ.Scope(this, Σ_FluidField, set_bnd, function () {
                 return this.capture({
                     b: b,
                     x: x
-                }, {
-                    maxEdge: maxEdge
-                });
+                }, { maxEdge: maxEdge });
             });
             if (b === 1) {
                 for (var i = 1; i <= width; i++) {
@@ -198,9 +164,8 @@ var pidusage = require('pidusage');
             x[width + 1] = 0.5 * (x[width] + x[width + 1 + rowSize]);
             x[width + 1 + maxEdge] = 0.5 * (x[width + maxEdge] + x[width + 1 + height * rowSize]);
         }
-
         function lin_solve(b, x, x0, a, c) {
-            var Σ_FluidField_lin_solve = new Σ.Scope(this, Σ_FluidField, lin_solve, function() {
+            var Σ_FluidField_lin_solve = new Σ.Scope(this, Σ_FluidField, lin_solve, function () {
                 return this.capture({
                     b: b,
                     x: x,
@@ -236,24 +201,20 @@ var pidusage = require('pidusage');
                 }
             }
         }
-
         function diffuse(b, x, x0, dt) {
-            var Σ_FluidField_diffuse = new Σ.Scope(this, Σ_FluidField, diffuse, function() {
+            var Σ_FluidField_diffuse = new Σ.Scope(this, Σ_FluidField, diffuse, function () {
                 return this.capture({
                     b: b,
                     x: x,
                     x0: x0,
                     dt: dt
-                }, {
-                    a: a
-                });
+                }, { a: a });
             });
             var a = 0;
             lin_solve(b, x, x0, a, 1 + 4 * a);
         }
-
         function lin_solve2(x, x0, y, y0, a, c) {
-            var Σ_FluidField_lin_solve2 = new Σ.Scope(this, Σ_FluidField, lin_solve2, function() {
+            var Σ_FluidField_lin_solve2 = new Σ.Scope(this, Σ_FluidField, lin_solve2, function () {
                 return this.capture({
                     x: x,
                     x0: x0,
@@ -295,25 +256,21 @@ var pidusage = require('pidusage');
                 }
             }
         }
-
         function diffuse2(x, x0, y, y0, dt) {
-            var Σ_FluidField_diffuse2 = new Σ.Scope(this, Σ_FluidField, diffuse2, function() {
+            var Σ_FluidField_diffuse2 = new Σ.Scope(this, Σ_FluidField, diffuse2, function () {
                 return this.capture({
                     x: x,
                     x0: x0,
                     y: y,
                     y0: y0,
                     dt: dt
-                }, {
-                    a: a
-                });
+                }, { a: a });
             });
             var a = 0;
             lin_solve2(x, x0, y, y0, a, 1 + 4 * a);
         }
-
         function advect(b, d, d0, u, v, dt) {
-            var Σ_FluidField_advect = new Σ.Scope(this, Σ_FluidField, advect, function() {
+            var Σ_FluidField_advect = new Σ.Scope(this, Σ_FluidField, advect, function () {
                 return this.capture({
                     b: b,
                     d: d,
@@ -362,9 +319,8 @@ var pidusage = require('pidusage');
             }
             set_bnd(b, d);
         }
-
         function project(u, v, p, div) {
-            var Σ_FluidField_project = new Σ.Scope(this, Σ_FluidField, project, function() {
+            var Σ_FluidField_project = new Σ.Scope(this, Σ_FluidField, project, function () {
                 return this.capture({
                     u: u,
                     v: v,
@@ -409,9 +365,8 @@ var pidusage = require('pidusage');
             set_bnd(1, u);
             set_bnd(2, v);
         }
-
         function dens_step(x, x0, u, v, dt) {
-            var Σ_FluidField_dens_step = new Σ.Scope(this, Σ_FluidField, dens_step, function() {
+            var Σ_FluidField_dens_step = new Σ.Scope(this, Σ_FluidField, dens_step, function () {
                 return this.capture({
                     x: x,
                     x0: x0,
@@ -424,18 +379,15 @@ var pidusage = require('pidusage');
             diffuse(0, x0, x, dt);
             advect(0, x, x0, u, v, dt);
         }
-
         function vel_step(u, v, u0, v0, dt) {
-            var Σ_FluidField_vel_step = new Σ.Scope(this, Σ_FluidField, vel_step, function() {
+            var Σ_FluidField_vel_step = new Σ.Scope(this, Σ_FluidField, vel_step, function () {
                 return this.capture({
                     u: u,
                     v: v,
                     u0: u0,
                     v0: v0,
                     dt: dt
-                }, {
-                    temp: temp
-                });
+                }, { temp: temp });
             });
             addFields(u, u0, dt);
             addFields(v, v0, dt);
@@ -457,67 +409,81 @@ var pidusage = require('pidusage');
             advect(2, v, v0, u0, v0, dt);
             project(u, v, u0, v0);
         }
-        var uiCallback = Σ_FluidField.addFunction(function αMS32(d, u, v) {
-            var Σ_FluidField_αMS32 = new Σ.Scope(this, Σ_FluidField, αMS32, function() {
-                return this.capture({}, {});
+        var uiCallback = Σ_FluidField.addFunction(function αESBc(d, u, v) {
+            var Σ_FluidField_αESBc = new Σ.Scope(this, Σ_FluidField, αESBc, function () {
+                return this.capture({
+                    d: d,
+                    u: u,
+                    v: v
+                }, {});
             });
         }, Σ_FluidField);
-
         function Field(dens, u, v) {
-            var Σ_FluidField_Field = new Σ.Scope(this, Σ_FluidField, Field, function() {
+            var Σ_FluidField_Field = new Σ.Scope(this, Σ_FluidField, Field, function () {
                 return this.capture({
                     dens: dens,
                     u: u,
                     v: v
                 }, {});
             });
-            this.setDensity = Σ_FluidField_Field.addFunction(function αa0yo(x, y, d) {
-                var Σ_FluidField_Field_αa0yo = new Σ.Scope(this, Σ_FluidField_Field, αa0yo, function() {
-                    return this.capture({}, {});
+            this.setDensity = Σ_FluidField_Field.addFunction(function αSG54(x, y, d) {
+                var Σ_FluidField_Field_αSG54 = new Σ.Scope(this, Σ_FluidField_Field, αSG54, function () {
+                    return this.capture({
+                        x: x,
+                        y: y,
+                        d: d
+                    }, {});
                 });
                 dens[x + 1 + (y + 1) * rowSize] = d;
             }, Σ_FluidField_Field);
-            this.getDensity = Σ_FluidField_Field.addFunction(function α3bhd(x, y) {
-                var Σ_FluidField_Field_α3bhd = new Σ.Scope(this, Σ_FluidField_Field, α3bhd, function() {
-                    return this.capture({}, {});
+            this.getDensity = Σ_FluidField_Field.addFunction(function αutSC(x, y) {
+                var Σ_FluidField_Field_αutSC = new Σ.Scope(this, Σ_FluidField_Field, αutSC, function () {
+                    return this.capture({
+                        x: x,
+                        y: y
+                    }, {});
                 });
                 return dens[x + 1 + (y + 1) * rowSize];
             }, Σ_FluidField_Field);
-            this.setVelocity = Σ_FluidField_Field.addFunction(function αgXDE(x, y, xv, yv) {
-                var Σ_FluidField_Field_αgXDE = new Σ.Scope(this, Σ_FluidField_Field, αgXDE, function() {
-                    return this.capture({}, {});
+            this.setVelocity = Σ_FluidField_Field.addFunction(function αInKU(x, y, xv, yv) {
+                var Σ_FluidField_Field_αInKU = new Σ.Scope(this, Σ_FluidField_Field, αInKU, function () {
+                    return this.capture({
+                        x: x,
+                        y: y,
+                        xv: xv,
+                        yv: yv
+                    }, {});
                 });
                 u[x + 1 + (y + 1) * rowSize] = xv;
                 v[x + 1 + (y + 1) * rowSize] = yv;
             }, Σ_FluidField_Field);
-            this.getXVelocity = Σ_FluidField_Field.addFunction(function αvEVv(x, y) {
-                var Σ_FluidField_Field_αvEVv = new Σ.Scope(this, Σ_FluidField_Field, αvEVv, function() {
-                    return this.capture({}, {});
+            this.getXVelocity = Σ_FluidField_Field.addFunction(function αigVO(x, y) {
+                var Σ_FluidField_Field_αigVO = new Σ.Scope(this, Σ_FluidField_Field, αigVO, function () {
+                    return this.capture({
+                        x: x,
+                        y: y
+                    }, {});
                 });
                 return u[x + 1 + (y + 1) * rowSize];
             }, Σ_FluidField_Field);
-            this.getYVelocity = Σ_FluidField_Field.addFunction(function αu5el(x, y) {
-                var Σ_FluidField_Field_αu5el = new Σ.Scope(this, Σ_FluidField_Field, αu5el, function() {
-                    return this.capture({}, {});
+            this.getYVelocity = Σ_FluidField_Field.addFunction(function αFCiF(x, y) {
+                var Σ_FluidField_Field_αFCiF = new Σ.Scope(this, Σ_FluidField_Field, αFCiF, function () {
+                    return this.capture({
+                        x: x,
+                        y: y
+                    }, {});
                 });
                 return v[x + 1 + (y + 1) * rowSize];
             }, Σ_FluidField_Field);
-            this.width = Σ_FluidField_Field.addFunction(function αUPjP() {
-                var Σ_FluidField_Field_αUPjP = new Σ.Scope(this, Σ_FluidField_Field, αUPjP, function() {
-                    return this.capture({}, {});
-                });
+            this.width = Σ_FluidField_Field.addFunction(function αDNNu() {
                 return width;
             }, Σ_FluidField_Field);
-            this.height = Σ_FluidField_Field.addFunction(function αWpL1() {
-                var Σ_FluidField_Field_αWpL1 = new Σ.Scope(this, Σ_FluidField_Field, αWpL1, function() {
-                    return this.capture({}, {});
-                });
+            this.height = Σ_FluidField_Field.addFunction(function αePBB() {
                 return height;
             }, Σ_FluidField_Field);
         }
-
         function queryUI(d, u, v) {
-            var Σ_FluidField_queryUI = new Σ.Scope(this, Σ_FluidField, queryUI, function() {
+            var Σ_FluidField_queryUI = new Σ.Scope(this, Σ_FluidField, queryUI, function () {
                 return this.capture({
                     d: d,
                     u: u,
@@ -529,9 +495,8 @@ var pidusage = require('pidusage');
             }
             uiCallback(new Field(d, u, v));
         }
-
         function reset() {
-            var Σ_FluidField_reset = new Σ.Scope(this, Σ_FluidField, reset, function() {
+            var Σ_FluidField_reset = new Σ.Scope(this, Σ_FluidField, reset, function () {
                 return this.capture({}, {});
             });
             rowSize = width + 2;
@@ -547,15 +512,15 @@ var pidusage = require('pidusage');
             }
         }
         this.reset = reset;
-        this.getDens = Σ_FluidField.addFunction(function αY3H6() {
-            var Σ_FluidField_αY3H6 = new Σ.Scope(this, Σ_FluidField, αY3H6, function() {
-                return this.capture({}, {});
-            });
+        this.getDens = Σ_FluidField.addFunction(function α2co6() {
             return dens;
         }, Σ_FluidField);
-        this.setResolution = Σ_FluidField.addFunction(function α8DKF(hRes, wRes) {
-            var Σ_FluidField_α8DKF = new Σ.Scope(this, Σ_FluidField, α8DKF, function() {
-                return this.capture({}, {});
+        this.setResolution = Σ_FluidField.addFunction(function αVHL8(hRes, wRes) {
+            var Σ_FluidField_αVHL8 = new Σ.Scope(this, Σ_FluidField, αVHL8, function () {
+                return this.capture({
+                    hRes: hRes,
+                    wRes: wRes
+                }, { res: res });
             });
             var res = wRes * hRes;
             if (res > 0 && res < 1000000 && (wRes != width || hRes != height)) {
@@ -567,47 +532,38 @@ var pidusage = require('pidusage');
             return false;
         }, Σ_FluidField);
         this.setResolution(64, 64);
-        this.update = Σ_FluidField.addFunction(function αhEyN() {
-            var Σ_FluidField_αhEyN = new Σ.Scope(this, Σ_FluidField, αhEyN, function() {
-                return this.capture({}, {});
-            });
+        this.update = Σ_FluidField.addFunction(function αOlAP() {
             queryUI(dens_prev, u_prev, v_prev);
             vel_step(u, v, u_prev, v_prev, dt);
             dens_step(dens, dens_prev, u, v, dt);
             displayFunc(new Field(dens, u, v));
         }, Σ_FluidField);
-        this.setDisplayFunction = Σ_FluidField.addFunction(function αxT2M(func) {
-            var Σ_FluidField_αxT2M = new Σ.Scope(this, Σ_FluidField, αxT2M, function() {
-                return this.capture({}, {});
+        this.setDisplayFunction = Σ_FluidField.addFunction(function αMrNg(func) {
+            var Σ_FluidField_αMrNg = new Σ.Scope(this, Σ_FluidField, αMrNg, function () {
+                return this.capture({ func: func }, {});
             });
             displayFunc = func;
         }, Σ_FluidField);
-        this.iterations = Σ_FluidField.addFunction(function αPLJA() {
-            var Σ_FluidField_αPLJA = new Σ.Scope(this, Σ_FluidField, αPLJA, function() {
-                return this.capture({}, {});
-            });
+        this.iterations = Σ_FluidField.addFunction(function αSCyS() {
             return iterations;
         }, Σ_FluidField);
-        this.setIterations = Σ_FluidField.addFunction(function αeTdX(iters) {
-            var Σ_FluidField_αeTdX = new Σ.Scope(this, Σ_FluidField, αeTdX, function() {
-                return this.capture({}, {});
+        this.setIterations = Σ_FluidField.addFunction(function αUo8r(iters) {
+            var Σ_FluidField_αUo8r = new Σ.Scope(this, Σ_FluidField, αUo8r, function () {
+                return this.capture({ iters: iters }, {});
             });
             if (iters > 0 && iters <= 100) {
                 iterations = iters;
             }
         }, Σ_FluidField);
-        this.setUICallback = Σ_FluidField.addFunction(function αgRr6(callback) {
-            var Σ_FluidField_αgRr6 = new Σ.Scope(this, Σ_FluidField, αgRr6, function() {
-                return this.capture({}, {});
+        this.setUICallback = Σ_FluidField.addFunction(function αvbn3(callback) {
+            var Σ_FluidField_αvbn3 = new Σ.Scope(this, Σ_FluidField, αvbn3, function () {
+                return this.capture({ callback: callback }, {});
             });
             uiCallback = callback;
         }, Σ_FluidField);
     }
     var performance = {};
-    performance.now = Σ.addFunction(function αYIKM() {
-        var Σ_αYIKM = new Σ.Scope(this, Σ, αYIKM, function() {
-            return this.capture({}, {});
-        });
+    performance.now = Σ.addFunction(function αj77J() {
         return Date.now();
     }, Σ);
     var BM_RunFunc = runNavierStokes;
@@ -616,9 +572,8 @@ var pidusage = require('pidusage');
     var BM_Iterations = 3000;
     var BM_Min_Iterations = 16;
     var BM_Results = [];
-
     function BM_Start() {
-        var Σ_BM_Start = new Σ.Scope(this, Σ, BM_Start, function() {
+        var Σ_BM_Start = new Σ.Scope(this, Σ, BM_Start, function () {
             return this.capture({}, {
                 data: data,
                 elapsed: elapsed,
@@ -636,15 +591,14 @@ var pidusage = require('pidusage');
         var start = Date.now();
         var end = null;
         var i = 0;
-
         function doRun() {
-            var Σ_BM_Start_doRun = new Σ.Scope(this, Σ_BM_Start, doRun, function() {
+            var Σ_BM_Start_doRun = new Σ.Scope(this, Σ_BM_Start, doRun, function () {
                 return this.capture({}, {});
             });
             Σ.console.log('Iteration : ' + i);
             if (i === BM_Iterations / 2){
                 (function report(){
-                    pidusage.stat(process.pid, function(err, stat) {
+                    pidusage(process.pid, function(err, stat) {
                         process.send({
                             timestamp: Date.now(),
                             memory: process.memoryUsage(),
@@ -679,4 +633,4 @@ var pidusage = require('pidusage');
         Σ.setImmediate(doRun);
     }
     BM_Start();
-}(require('things-js').bootstrap('mqtt://localhost', 'navier-stokes.js')));
+}, 'mqtt://localhost', 'navier-stokes.js', {});
