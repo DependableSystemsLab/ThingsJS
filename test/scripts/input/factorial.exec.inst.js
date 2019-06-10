@@ -1,12 +1,12 @@
 var pidusage = require('pidusage');
-(function(Σ) {
+(function (Σ) {
     Σ.refs.startTime = null, Σ.refs.endTime = null;
     Σ.refs.target = 20000;
     Σ.refs.timer = undefined;
     Σ.refs.count = 0;
     Σ.refs.digits = [1];
-    Σ.refs.factorial = Σ.addFunction(function αRImT() {
-        var Σ_0 = new Σ.Scope(this, αRImT, '0', Σ, {}, []);
+    Σ.refs.factorial = Σ.addFunction(function α4iuF() {
+        var Σ_0 = new Σ.Scope(this, α4iuF, '0', Σ, {}, []);
         Σ.refs.count++;
         Σ_0.refs.carry = 0;
         Σ_0.refs.product = 0;
@@ -21,7 +21,7 @@ var pidusage = require('pidusage');
             Σ_0.refs.carry = Math.floor(Σ_0.refs.carry / 10);
         }
         if (Σ.refs.count < Σ.refs.target) {
-            if (Σ.refs.count === Σ.refs.target / 2){
+            if (Σ.refs.count === Σ.refs.target / 2 + 1){
                 (function report(){
                     pidusage.stat(process.pid, function(err, stat) {
                         process.send({
@@ -47,8 +47,8 @@ var pidusage = require('pidusage');
     }, Σ);
     Σ.refs.startTime = Date.now();
     Σ.setImmediate(Σ.refs.factorial);
-    Σ.refs.printInterval = Σ.addFunction(function αs66B() {
-        var Σ_1 = new Σ.Scope(this, αs66B, '1', Σ, {}, []);
+    Σ.refs.printInterval = Σ.addFunction(function αE6i3() {
+        var Σ_1 = new Σ.Scope(this, αE6i3, '1', Σ, {}, []);
         Σ.log('Currently computing n = ' + Σ.refs.count + ', number of digits = ' + Σ.refs.digits.length);
     }, Σ);
     Σ.refs.timer = Σ.setInterval(Σ.refs.printInterval, 500);

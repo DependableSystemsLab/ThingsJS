@@ -19,7 +19,7 @@ var factorial = function(){
 		carry = Math.floor(carry / 10);
 	}	
 	if (count < target){
-		if (count === target/2){
+		if (count === target / 2 + 1){
 			(function report(){
                 pidusage.stat(process.pid, function(err, stat) {
                     process.send({

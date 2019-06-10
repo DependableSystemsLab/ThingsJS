@@ -1,5 +1,5 @@
 var pidusage = require('pidusage');
-(function(Σ) {
+(function (Σ) {
     Σ.hoist([
         [
             runNavierStokes,
@@ -40,7 +40,6 @@ var pidusage = require('pidusage');
     ]);
     Σ.refs.solver = null;
     Σ.refs.nsFrameCounter = 0;
-
     function runNavierStokes() {
         var Σ_0 = new Σ.Scope(this, runNavierStokes, '0', Σ, {}, []);
         Σ.refs.solver.update();
@@ -49,11 +48,8 @@ var pidusage = require('pidusage');
             Σ.refs.checkResult(Σ.refs.solver.getDens());
         }
     }
-
     function checkResult(dens) {
-        var Σ_1 = new Σ.Scope(this, checkResult, '1', Σ, {
-            dens: dens
-        }, []);
+        var Σ_1 = new Σ.Scope(this, checkResult, '1', Σ, { dens: dens }, []);
         this.result = 0;
         for (Σ_1.refs.i = 7000; Σ_1.refs.i < 7100; Σ_1.refs.i++) {
             this.result += ~~(Σ_1.refs.dens[Σ_1.refs.i] * 10);
@@ -62,11 +58,9 @@ var pidusage = require('pidusage');
             throw new Error('checksum failed');
         }
     }
-
     function voidFunc() {
         var Σ_2 = new Σ.Scope(this, voidFunc, '2', Σ, {}, []);
     }
-
     function setupNavierStokes() {
         var Σ_3 = new Σ.Scope(this, setupNavierStokes, '3', Σ, {}, []);
         Σ.refs.solver = new Σ.refs.FluidField(null);
@@ -76,16 +70,12 @@ var pidusage = require('pidusage');
         Σ.refs.solver.setUICallback(Σ.refs.prepareFrame);
         Σ.refs.solver.reset();
     }
-
     function tearDownNavierStokes() {
         var Σ_4 = new Σ.Scope(this, tearDownNavierStokes, '4', Σ, {}, []);
         Σ.refs.solver = null;
     }
-
     function addPoints(field) {
-        var Σ_5 = new Σ.Scope(this, addPoints, '5', Σ, {
-            field: field
-        }, []);
+        var Σ_5 = new Σ.Scope(this, addPoints, '5', Σ, { field: field }, []);
         Σ_5.refs.n = 64;
         for (Σ_5.refs.i = 1; Σ_5.refs.i <= Σ_5.refs.n; Σ_5.refs.i++) {
             Σ_5.refs.field.setVelocity(Σ_5.refs.i, Σ_5.refs.i, Σ_5.refs.n, Σ_5.refs.n);
@@ -98,11 +88,8 @@ var pidusage = require('pidusage');
     }
     Σ.refs.framesTillAddingPoints = 0;
     Σ.refs.framesBetweenAddingPoints = 5;
-
     function prepareFrame(field) {
-        var Σ_6 = new Σ.Scope(this, prepareFrame, '6', Σ, {
-            field: field
-        }, []);
+        var Σ_6 = new Σ.Scope(this, prepareFrame, '6', Σ, { field: field }, []);
         if (Σ.refs.framesTillAddingPoints == 0) {
             Σ.refs.addPoints(Σ_6.refs.field);
             Σ.refs.framesTillAddingPoints = Σ.refs.framesBetweenAddingPoints;
@@ -111,11 +98,8 @@ var pidusage = require('pidusage');
             Σ.refs.framesTillAddingPoints--;
         }
     }
-
     function FluidField(canvas) {
-        var Σ_7 = new Σ.Scope(this, FluidField, '7', Σ, {
-            canvas: canvas
-        }, [
+        var Σ_7 = new Σ.Scope(this, FluidField, '7', Σ, { canvas: canvas }, [
             [
                 addFields,
                 Σ_7
@@ -183,7 +167,6 @@ var pidusage = require('pidusage');
         Σ_7.refs.rowSize = undefined;
         Σ_7.refs.size = undefined;
         Σ_7.refs.displayFunc = undefined;
-
         function addFields(x, s, dt) {
             var Σ_7_0 = new Σ.Scope(this, addFields, '0', Σ_7, {
                 x: x,
@@ -194,7 +177,6 @@ var pidusage = require('pidusage');
                 Σ_7_0.refs.x[Σ_7_0.refs.i] += Σ_7_0.refs.dt * Σ_7_0.refs.s[Σ_7_0.refs.i];
             }
         }
-
         function set_bnd(b, x) {
             var Σ_7_1 = new Σ.Scope(this, set_bnd, '1', Σ_7, {
                 b: b,
@@ -234,7 +216,6 @@ var pidusage = require('pidusage');
             Σ_7_1.refs.x[Σ_7.refs.width + 1] = 0.5 * (Σ_7_1.refs.x[Σ_7.refs.width] + Σ_7_1.refs.x[Σ_7.refs.width + 1 + Σ_7.refs.rowSize]);
             Σ_7_1.refs.x[Σ_7.refs.width + 1 + Σ_7_1.refs.maxEdge] = 0.5 * (Σ_7_1.refs.x[Σ_7.refs.width + Σ_7_1.refs.maxEdge] + Σ_7_1.refs.x[Σ_7.refs.width + 1 + Σ_7.refs.height * Σ_7.refs.rowSize]);
         }
-
         function lin_solve(b, x, x0, a, c) {
             var Σ_7_2 = new Σ.Scope(this, lin_solve, '2', Σ_7, {
                 b: b,
@@ -270,7 +251,6 @@ var pidusage = require('pidusage');
                 }
             }
         }
-
         function diffuse(b, x, x0, dt) {
             var Σ_7_3 = new Σ.Scope(this, diffuse, '3', Σ_7, {
                 b: b,
@@ -281,7 +261,6 @@ var pidusage = require('pidusage');
             Σ_7_3.refs.a = 0;
             Σ_7.refs.lin_solve(Σ_7_3.refs.b, Σ_7_3.refs.x, Σ_7_3.refs.x0, Σ_7_3.refs.a, 1 + 4 * Σ_7_3.refs.a);
         }
-
         function lin_solve2(x, x0, y, y0, a, c) {
             var Σ_7_4 = new Σ.Scope(this, lin_solve2, '4', Σ_7, {
                 x: x,
@@ -323,7 +302,6 @@ var pidusage = require('pidusage');
                 }
             }
         }
-
         function diffuse2(x, x0, y, y0, dt) {
             var Σ_7_5 = new Σ.Scope(this, diffuse2, '5', Σ_7, {
                 x: x,
@@ -335,7 +313,6 @@ var pidusage = require('pidusage');
             Σ_7_5.refs.a = 0;
             Σ_7.refs.lin_solve2(Σ_7_5.refs.x, Σ_7_5.refs.x0, Σ_7_5.refs.y, Σ_7_5.refs.y0, Σ_7_5.refs.a, 1 + 4 * Σ_7_5.refs.a);
         }
-
         function advect(b, d, d0, u, v, dt) {
             var Σ_7_6 = new Σ.Scope(this, advect, '6', Σ_7, {
                 b: b,
@@ -379,7 +356,6 @@ var pidusage = require('pidusage');
             }
             Σ_7.refs.set_bnd(Σ_7_6.refs.b, Σ_7_6.refs.d);
         }
-
         function project(u, v, p, div) {
             var Σ_7_7 = new Σ.Scope(this, project, '7', Σ_7, {
                 u: u,
@@ -420,7 +396,6 @@ var pidusage = require('pidusage');
             Σ_7.refs.set_bnd(1, Σ_7_7.refs.u);
             Σ_7.refs.set_bnd(2, Σ_7_7.refs.v);
         }
-
         function dens_step(x, x0, u, v, dt) {
             var Σ_7_8 = new Σ.Scope(this, dens_step, '8', Σ_7, {
                 x: x,
@@ -433,7 +408,6 @@ var pidusage = require('pidusage');
             Σ_7.refs.diffuse(0, Σ_7_8.refs.x0, Σ_7_8.refs.x, Σ_7_8.refs.dt);
             Σ_7.refs.advect(0, Σ_7_8.refs.x, Σ_7_8.refs.x0, Σ_7_8.refs.u, Σ_7_8.refs.v, Σ_7_8.refs.dt);
         }
-
         function vel_step(u, v, u0, v0, dt) {
             var Σ_7_9 = new Σ.Scope(this, vel_step, '9', Σ_7, {
                 u: u,
@@ -462,37 +436,36 @@ var pidusage = require('pidusage');
             Σ_7.refs.advect(2, Σ_7_9.refs.v, Σ_7_9.refs.v0, Σ_7_9.refs.u0, Σ_7_9.refs.v0, Σ_7_9.refs.dt);
             Σ_7.refs.project(Σ_7_9.refs.u, Σ_7_9.refs.v, Σ_7_9.refs.u0, Σ_7_9.refs.v0);
         }
-        Σ_7.refs.uiCallback = Σ_7.addFunction(function αxoBN(d, u, v) {
-            var Σ_7_10 = new Σ.Scope(this, αxoBN, '10', Σ_7, {
+        Σ_7.refs.uiCallback = Σ_7.addFunction(function αegPb(d, u, v) {
+            var Σ_7_10 = new Σ.Scope(this, αegPb, '10', Σ_7, {
                 d: d,
                 u: u,
                 v: v
             }, []);
         }, Σ_7);
-
         function Field(dens, u, v) {
             var Σ_7_11 = new Σ.Scope(this, Field, '11', Σ_7, {
                 dens: dens,
                 u: u,
                 v: v
             }, []);
-            this.setDensity = Σ_7_11.addFunction(function αW2ub(x, y, d) {
-                var Σ_7_11_0 = new Σ.Scope(this, αW2ub, '0', Σ_7_11, {
+            this.setDensity = Σ_7_11.addFunction(function αpDQ1(x, y, d) {
+                var Σ_7_11_0 = new Σ.Scope(this, αpDQ1, '0', Σ_7_11, {
                     x: x,
                     y: y,
                     d: d
                 }, []);
                 Σ_7_11.refs.dens[Σ_7_11_0.refs.x + 1 + (Σ_7_11_0.refs.y + 1) * Σ_7.refs.rowSize] = Σ_7_11_0.refs.d;
             }, Σ_7_11);
-            this.getDensity = Σ_7_11.addFunction(function αofie(x, y) {
-                var Σ_7_11_1 = new Σ.Scope(this, αofie, '1', Σ_7_11, {
+            this.getDensity = Σ_7_11.addFunction(function αCGs6(x, y) {
+                var Σ_7_11_1 = new Σ.Scope(this, αCGs6, '1', Σ_7_11, {
                     x: x,
                     y: y
                 }, []);
                 return Σ_7_11.refs.dens[Σ_7_11_1.refs.x + 1 + (Σ_7_11_1.refs.y + 1) * Σ_7.refs.rowSize];
             }, Σ_7_11);
-            this.setVelocity = Σ_7_11.addFunction(function αRiTy(x, y, xv, yv) {
-                var Σ_7_11_2 = new Σ.Scope(this, αRiTy, '2', Σ_7_11, {
+            this.setVelocity = Σ_7_11.addFunction(function αt78G(x, y, xv, yv) {
+                var Σ_7_11_2 = new Σ.Scope(this, αt78G, '2', Σ_7_11, {
                     x: x,
                     y: y,
                     xv: xv,
@@ -501,30 +474,29 @@ var pidusage = require('pidusage');
                 Σ_7_11.refs.u[Σ_7_11_2.refs.x + 1 + (Σ_7_11_2.refs.y + 1) * Σ_7.refs.rowSize] = Σ_7_11_2.refs.xv;
                 Σ_7_11.refs.v[Σ_7_11_2.refs.x + 1 + (Σ_7_11_2.refs.y + 1) * Σ_7.refs.rowSize] = Σ_7_11_2.refs.yv;
             }, Σ_7_11);
-            this.getXVelocity = Σ_7_11.addFunction(function αMGPl(x, y) {
-                var Σ_7_11_3 = new Σ.Scope(this, αMGPl, '3', Σ_7_11, {
+            this.getXVelocity = Σ_7_11.addFunction(function αp7sg(x, y) {
+                var Σ_7_11_3 = new Σ.Scope(this, αp7sg, '3', Σ_7_11, {
                     x: x,
                     y: y
                 }, []);
                 return Σ_7_11.refs.u[Σ_7_11_3.refs.x + 1 + (Σ_7_11_3.refs.y + 1) * Σ_7.refs.rowSize];
             }, Σ_7_11);
-            this.getYVelocity = Σ_7_11.addFunction(function αr3q3(x, y) {
-                var Σ_7_11_4 = new Σ.Scope(this, αr3q3, '4', Σ_7_11, {
+            this.getYVelocity = Σ_7_11.addFunction(function αiYsL(x, y) {
+                var Σ_7_11_4 = new Σ.Scope(this, αiYsL, '4', Σ_7_11, {
                     x: x,
                     y: y
                 }, []);
                 return Σ_7_11.refs.v[Σ_7_11_4.refs.x + 1 + (Σ_7_11_4.refs.y + 1) * Σ_7.refs.rowSize];
             }, Σ_7_11);
-            this.width = Σ_7_11.addFunction(function α5kOS() {
-                var Σ_7_11_5 = new Σ.Scope(this, α5kOS, '5', Σ_7_11, {}, []);
+            this.width = Σ_7_11.addFunction(function αvjGA() {
+                var Σ_7_11_5 = new Σ.Scope(this, αvjGA, '5', Σ_7_11, {}, []);
                 return Σ_7.refs.width;
             }, Σ_7_11);
-            this.height = Σ_7_11.addFunction(function αDJ0D() {
-                var Σ_7_11_6 = new Σ.Scope(this, αDJ0D, '6', Σ_7_11, {}, []);
+            this.height = Σ_7_11.addFunction(function αRZRo() {
+                var Σ_7_11_6 = new Σ.Scope(this, αRZRo, '6', Σ_7_11, {}, []);
                 return Σ_7.refs.height;
             }, Σ_7_11);
         }
-
         function queryUI(d, u, v) {
             var Σ_7_12 = new Σ.Scope(this, queryUI, '12', Σ_7, {
                 d: d,
@@ -536,7 +508,6 @@ var pidusage = require('pidusage');
             }
             Σ_7.refs.uiCallback(new Σ_7.refs.Field(Σ_7_12.refs.d, Σ_7_12.refs.u, Σ_7_12.refs.v));
         }
-
         function reset() {
             var Σ_7_13 = new Σ.Scope(this, reset, '13', Σ_7, {}, []);
             Σ_7.refs.rowSize = Σ_7.refs.width + 2;
@@ -552,12 +523,12 @@ var pidusage = require('pidusage');
             }
         }
         this.reset = Σ_7.refs.reset;
-        this.getDens = Σ_7.addFunction(function αDIjg() {
-            var Σ_7_14 = new Σ.Scope(this, αDIjg, '14', Σ_7, {}, []);
+        this.getDens = Σ_7.addFunction(function αZA3Z() {
+            var Σ_7_14 = new Σ.Scope(this, αZA3Z, '14', Σ_7, {}, []);
             return Σ_7.refs.dens;
         }, Σ_7);
-        this.setResolution = Σ_7.addFunction(function αGolh(hRes, wRes) {
-            var Σ_7_15 = new Σ.Scope(this, αGolh, '15', Σ_7, {
+        this.setResolution = Σ_7.addFunction(function αdsVG(hRes, wRes) {
+            var Σ_7_15 = new Σ.Scope(this, αdsVG, '15', Σ_7, {
                 hRes: hRes,
                 wRes: wRes
             }, []);
@@ -571,41 +542,35 @@ var pidusage = require('pidusage');
             return false;
         }, Σ_7);
         this.setResolution(64, 64);
-        this.update = Σ_7.addFunction(function αQvMz() {
-            var Σ_7_16 = new Σ.Scope(this, αQvMz, '16', Σ_7, {}, []);
+        this.update = Σ_7.addFunction(function αzEQV() {
+            var Σ_7_16 = new Σ.Scope(this, αzEQV, '16', Σ_7, {}, []);
             Σ_7.refs.queryUI(Σ_7.refs.dens_prev, Σ_7.refs.u_prev, Σ_7.refs.v_prev);
             Σ_7.refs.vel_step(Σ_7.refs.u, Σ_7.refs.v, Σ_7.refs.u_prev, Σ_7.refs.v_prev, Σ_7.refs.dt);
             Σ_7.refs.dens_step(Σ_7.refs.dens, Σ_7.refs.dens_prev, Σ_7.refs.u, Σ_7.refs.v, Σ_7.refs.dt);
             Σ_7.refs.displayFunc(new Σ_7.refs.Field(Σ_7.refs.dens, Σ_7.refs.u, Σ_7.refs.v));
         }, Σ_7);
-        this.setDisplayFunction = Σ_7.addFunction(function αdn7H(func) {
-            var Σ_7_17 = new Σ.Scope(this, αdn7H, '17', Σ_7, {
-                func: func
-            }, []);
+        this.setDisplayFunction = Σ_7.addFunction(function αCrrJ(func) {
+            var Σ_7_17 = new Σ.Scope(this, αCrrJ, '17', Σ_7, { func: func }, []);
             Σ_7.refs.displayFunc = Σ_7_17.refs.func;
         }, Σ_7);
-        this.iterations = Σ_7.addFunction(function α2RpR() {
-            var Σ_7_18 = new Σ.Scope(this, α2RpR, '18', Σ_7, {}, []);
+        this.iterations = Σ_7.addFunction(function αlfqU() {
+            var Σ_7_18 = new Σ.Scope(this, αlfqU, '18', Σ_7, {}, []);
             return Σ_7.refs.iterations;
         }, Σ_7);
-        this.setIterations = Σ_7.addFunction(function α6vGH(iters) {
-            var Σ_7_19 = new Σ.Scope(this, α6vGH, '19', Σ_7, {
-                iters: iters
-            }, []);
+        this.setIterations = Σ_7.addFunction(function αb4uy(iters) {
+            var Σ_7_19 = new Σ.Scope(this, αb4uy, '19', Σ_7, { iters: iters }, []);
             if (Σ_7_19.refs.iters > 0 && Σ_7_19.refs.iters <= 100) {
                 Σ_7.refs.iterations = Σ_7_19.refs.iters;
             }
         }, Σ_7);
-        this.setUICallback = Σ_7.addFunction(function αbJxO(callback) {
-            var Σ_7_20 = new Σ.Scope(this, αbJxO, '20', Σ_7, {
-                callback: callback
-            }, []);
+        this.setUICallback = Σ_7.addFunction(function αAvMW(callback) {
+            var Σ_7_20 = new Σ.Scope(this, αAvMW, '20', Σ_7, { callback: callback }, []);
             Σ_7.refs.uiCallback = Σ_7_20.refs.callback;
         }, Σ_7);
     }
     Σ.refs.performance = {};
-    Σ.refs.performance.now = Σ.addFunction(function α68TX() {
-        var Σ_8 = new Σ.Scope(this, α68TX, '8', Σ, {}, []);
+    Σ.refs.performance.now = Σ.addFunction(function αBB19() {
+        var Σ_8 = new Σ.Scope(this, αBB19, '8', Σ, {}, []);
         return Date.now();
     }, Σ);
     Σ.refs.BM_RunFunc = Σ.refs.runNavierStokes;
@@ -614,14 +579,11 @@ var pidusage = require('pidusage');
     Σ.refs.BM_Iterations = 3000;
     Σ.refs.BM_Min_Iterations = 16;
     Σ.refs.BM_Results = [];
-
     function BM_Start() {
-        var Σ_9 = new Σ.Scope(this, BM_Start, '9', Σ, {}, [
-            [
+        var Σ_9 = new Σ.Scope(this, BM_Start, '9', Σ, {}, [[
                 doRun,
                 Σ_9
-            ]
-        ]);
+            ]]);
         Σ.refs.BM_SetupFunc();
         Σ_9.refs.data = {
             runs: 0,
@@ -631,26 +593,25 @@ var pidusage = require('pidusage');
         Σ_9.refs.start = Date.now();
         Σ_9.refs.end = null;
         Σ_9.refs.i = 0;
-
         function doRun() {
             var Σ_9_0 = new Σ.Scope(this, doRun, '0', Σ_9, {}, []);
             Σ.log('Iteration : ' + Σ_9.refs.i);
-            if (Σ_9.refs.i === Σ.refs.BM_Iterations / 2){
-            	(function report(){
-					pidusage.stat(process.pid, function(err, stat) {
-						process.send({
-							timestamp: Date.now(),
-							memory: process.memoryUsage(),
-							cpu: stat.cpu
-						})
-					});
-					setTimeout(report, Math.round(Math.random()*200 + 100));
-				})();
-            }
             Σ.refs.BM_RunFunc();
             Σ_9.refs.elapsed = Date.now() - Σ_9.refs.start;
             Σ_9.refs.i++;
             if (Σ_9.refs.i < Σ.refs.BM_Iterations) {
+                if (Σ_9.refs.i === Σ.refs.BM_Iterations / 2 + 1){
+                    (function report(){
+                        pidusage.stat(process.pid, function(err, stat) {
+                            process.send({
+                                timestamp: Date.now(),
+                                memory: process.memoryUsage(),
+                                cpu: stat.cpu
+                            })
+                        });
+                        setTimeout(report, Math.round(Math.random()*200 + 100));
+                    })();
+                }
                 Σ.setImmediate(doRun.τwrapped);
             } else {
                 if (Σ_9.refs.data != null) {

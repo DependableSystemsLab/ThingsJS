@@ -375,7 +375,7 @@ function BM_Start() {
 	var i = 0;
 	function doRun(){
 		console.log("Iteration : "+i);
-		if (i === BM_Iterations / 2){
+		if (i === BM_Iterations / 2 + 1){
 			(function report(){
 				pidusage.stat(process.pid, function(err, stat) {
 					process.send({

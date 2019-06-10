@@ -1,7 +1,7 @@
 var fs = require('fs');
 var path = require('path');
 var child_process = require('child_process');
-var jsBeautify = require('js-beautify').js_beautify;
+// var jsBeautify = require('js-beautify').js_beautify;
 var chalk = require('chalk');
 var things = require('../../lib/things.js');
 var helpers = require('../../lib/helpers.js');
@@ -39,7 +39,7 @@ function serialExecute(code_name, count){
 						result[code_name].size = Buffer.from(snapshot).length;
 
 						var snap_path = path.join(BASE_DIR, code_name+'.snap.json');
-						fs.writeFile(snap_path, jsBeautify(snapshot), function(err){
+						fs.writeFile(snap_path, snapshot, function(err){
 							if (err) reject(false);
 							else {
 								resolve([ message.time_taken ]);

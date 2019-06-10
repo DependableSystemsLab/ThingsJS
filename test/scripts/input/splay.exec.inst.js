@@ -1,5 +1,5 @@
 var pidusage = require('pidusage');
-(function(Σ) {
+(function (Σ) {
     Σ.hoist([
         [
             GeneratePayloadTree,
@@ -47,7 +47,6 @@ var pidusage = require('pidusage');
     Σ.refs.kSplayTreePayloadDepth = 3;
     Σ.refs.splayTree = null;
     Σ.refs.splaySampleTimeStart = 0;
-
     function GeneratePayloadTree(depth, tag) {
         var Σ_0 = new Σ.Scope(this, GeneratePayloadTree, '0', Σ, {
             depth: depth,
@@ -76,29 +75,23 @@ var pidusage = require('pidusage');
             };
         }
     }
-
     function GenerateKey() {
         var Σ_1 = new Σ.Scope(this, GenerateKey, '1', Σ, {}, []);
         return Math.random();
     }
     Σ.refs.splaySamples = 0;
     Σ.refs.splaySumOfSquaredPauses = 0;
-
     function SplayRMS() {
         var Σ_2 = new Σ.Scope(this, SplayRMS, '2', Σ, {}, []);
         return Math.round(Math.sqrt(Σ.refs.splaySumOfSquaredPauses / Σ.refs.splaySamples) * 10000);
     }
-
     function SplayUpdateStats(time) {
-        var Σ_3 = new Σ.Scope(this, SplayUpdateStats, '3', Σ, {
-            time: time
-        }, []);
+        var Σ_3 = new Σ.Scope(this, SplayUpdateStats, '3', Σ, { time: time }, []);
         Σ_3.refs.pause = Σ_3.refs.time - Σ.refs.splaySampleTimeStart;
         Σ.refs.splaySampleTimeStart = Σ_3.refs.time;
         Σ.refs.splaySamples++;
         Σ.refs.splaySumOfSquaredPauses += Σ_3.refs.pause * Σ_3.refs.pause;
     }
-
     function InsertNewNode() {
         var Σ_4 = new Σ.Scope(this, InsertNewNode, '4', Σ, {}, []);
         Σ_4.refs.key = undefined;
@@ -109,7 +102,6 @@ var pidusage = require('pidusage');
         Σ.refs.splayTree.insert(Σ_4.refs.key, Σ_4.refs.payload);
         return Σ_4.refs.key;
     }
-
     function SplaySetup() {
         var Σ_5 = new Σ.Scope(this, SplaySetup, '5', Σ, {}, []);
         if (!Σ.refs.performance.now) {
@@ -124,7 +116,6 @@ var pidusage = require('pidusage');
             }
         }
     }
-
     function SplayTearDown() {
         var Σ_6 = new Σ.Scope(this, SplayTearDown, '6', Σ, {}, []);
         Σ_6.refs.keys = Σ.refs.splayTree.exportKeys();
@@ -141,7 +132,6 @@ var pidusage = require('pidusage');
             }
         }
     }
-
     function SplayRun() {
         var Σ_7 = new Σ.Scope(this, SplayRun, '7', Σ, {}, []);
         for (Σ_7.refs.i = 0; Σ_7.refs.i < Σ.refs.kSplayTreeModifications; Σ_7.refs.i++) {
@@ -151,21 +141,22 @@ var pidusage = require('pidusage');
                 Σ.refs.splayTree.remove(Σ_7.refs.key);
             } else {
                 Σ.refs.splayTree.remove(Σ_7.refs.greatest.key);
-            };
+            }
+            ;
         }
         Σ.refs.SplayUpdateStats(Σ.refs.performance.now());
     }
-
     function SplayTree() {
         var Σ_8 = new Σ.Scope(this, SplayTree, '8', Σ, {}, []);
-    };
+    }
+    ;
     Σ.refs.SplayTree.prototype.root_ = null;
-    Σ.refs.SplayTree.prototype.isEmpty = Σ.addFunction(function αxkSw() {
-        var Σ_9 = new Σ.Scope(this, αxkSw, '9', Σ, {}, []);
+    Σ.refs.SplayTree.prototype.isEmpty = Σ.addFunction(function αmpI5() {
+        var Σ_9 = new Σ.Scope(this, αmpI5, '9', Σ, {}, []);
         return !this.root_;
     }, Σ);
-    Σ.refs.SplayTree.prototype.insert = Σ.addFunction(function αiFLm(key, value) {
-        var Σ_10 = new Σ.Scope(this, αiFLm, '10', Σ, {
+    Σ.refs.SplayTree.prototype.insert = Σ.addFunction(function αsdpK(key, value) {
+        var Σ_10 = new Σ.Scope(this, αsdpK, '10', Σ, {
             key: key,
             value: value
         }, []);
@@ -189,10 +180,8 @@ var pidusage = require('pidusage');
         }
         this.root_ = Σ_10.refs.node;
     }, Σ);
-    Σ.refs.SplayTree.prototype.remove = Σ.addFunction(function αLspp(key) {
-        var Σ_11 = new Σ.Scope(this, αLspp, '11', Σ, {
-            key: key
-        }, []);
+    Σ.refs.SplayTree.prototype.remove = Σ.addFunction(function αTvqS(key) {
+        var Σ_11 = new Σ.Scope(this, αTvqS, '11', Σ, { key: key }, []);
         if (this.isEmpty()) {
             throw Error('Key not found: ' + Σ_11.refs.key);
         }
@@ -211,20 +200,16 @@ var pidusage = require('pidusage');
         }
         return Σ_11.refs.removed;
     }, Σ);
-    Σ.refs.SplayTree.prototype.find = Σ.addFunction(function αQ82c(key) {
-        var Σ_12 = new Σ.Scope(this, αQ82c, '12', Σ, {
-            key: key
-        }, []);
+    Σ.refs.SplayTree.prototype.find = Σ.addFunction(function αBhF5(key) {
+        var Σ_12 = new Σ.Scope(this, αBhF5, '12', Σ, { key: key }, []);
         if (this.isEmpty()) {
             return null;
         }
         this.splay_(Σ_12.refs.key);
         return this.root_.key == Σ_12.refs.key ? this.root_ : null;
     }, Σ);
-    Σ.refs.SplayTree.prototype.findMax = Σ.addFunction(function αnX6I(opt_startNode) {
-        var Σ_13 = new Σ.Scope(this, αnX6I, '13', Σ, {
-            opt_startNode: opt_startNode
-        }, []);
+    Σ.refs.SplayTree.prototype.findMax = Σ.addFunction(function αvc6o(opt_startNode) {
+        var Σ_13 = new Σ.Scope(this, αvc6o, '13', Σ, { opt_startNode: opt_startNode }, []);
         if (this.isEmpty()) {
             return null;
         }
@@ -234,10 +219,8 @@ var pidusage = require('pidusage');
         }
         return Σ_13.refs.current;
     }, Σ);
-    Σ.refs.SplayTree.prototype.findGreatestLessThan = Σ.addFunction(function α0xQF(key) {
-        var Σ_14 = new Σ.Scope(this, α0xQF, '14', Σ, {
-            key: key
-        }, []);
+    Σ.refs.SplayTree.prototype.findGreatestLessThan = Σ.addFunction(function αoowx(key) {
+        var Σ_14 = new Σ.Scope(this, αoowx, '14', Σ, { key: key }, []);
         if (this.isEmpty()) {
             return null;
         }
@@ -250,23 +233,19 @@ var pidusage = require('pidusage');
             return null;
         }
     }, Σ);
-    Σ.refs.SplayTree.prototype.exportKeys = Σ.addFunction(function αTTPS() {
-        var Σ_15 = new Σ.Scope(this, αTTPS, '15', Σ, {}, []);
+    Σ.refs.SplayTree.prototype.exportKeys = Σ.addFunction(function αhODT() {
+        var Σ_15 = new Σ.Scope(this, αhODT, '15', Σ, {}, []);
         Σ_15.refs.result = [];
         if (!this.isEmpty()) {
-            this.root_.traverse_(Σ_15.addFunction(function αlXpK(node) {
-                var Σ_15_0 = new Σ.Scope(this, αlXpK, '0', Σ_15, {
-                    node: node
-                }, []);
+            this.root_.traverse_(Σ_15.addFunction(function αDBGW(node) {
+                var Σ_15_0 = new Σ.Scope(this, αDBGW, '0', Σ_15, { node: node }, []);
                 Σ_15.refs.result.push(Σ_15_0.refs.node.key);
             }, Σ_15));
         }
         return Σ_15.refs.result;
     }, Σ);
-    Σ.refs.SplayTree.prototype.splay_ = Σ.addFunction(function α4pEW(key) {
-        var Σ_16 = new Σ.Scope(this, α4pEW, '16', Σ, {
-            key: key
-        }, []);
+    Σ.refs.SplayTree.prototype.splay_ = Σ.addFunction(function αHBzy(key) {
+        var Σ_16 = new Σ.Scope(this, αHBzy, '16', Σ, { key: key }, []);
         if (this.isEmpty()) {
             return;
         }
@@ -316,8 +295,8 @@ var pidusage = require('pidusage');
         Σ_16.refs.current.right = Σ_16.refs.dummy.left;
         this.root_ = Σ_16.refs.current;
     }, Σ);
-    Σ.refs.SplayTree.Node = Σ.addFunction(function αSDyB(key, value) {
-        var Σ_17 = new Σ.Scope(this, αSDyB, '17', Σ, {
+    Σ.refs.SplayTree.Node = Σ.addFunction(function α3p7f(key, value) {
+        var Σ_17 = new Σ.Scope(this, α3p7f, '17', Σ, {
             key: key,
             value: value
         }, []);
@@ -326,10 +305,8 @@ var pidusage = require('pidusage');
     }, Σ);
     Σ.refs.SplayTree.Node.prototype.left = null;
     Σ.refs.SplayTree.Node.prototype.right = null;
-    Σ.refs.SplayTree.Node.prototype.traverse_ = Σ.addFunction(function α5QBS(f) {
-        var Σ_18 = new Σ.Scope(this, α5QBS, '18', Σ, {
-            f: f
-        }, []);
+    Σ.refs.SplayTree.Node.prototype.traverse_ = Σ.addFunction(function α6N22(f) {
+        var Σ_18 = new Σ.Scope(this, α6N22, '18', Σ, { f: f }, []);
         Σ_18.refs.current = this;
         while (Σ_18.refs.current) {
             Σ_18.refs.left = Σ_18.refs.current.left;
@@ -341,25 +318,22 @@ var pidusage = require('pidusage');
         }
     }, Σ);
     Σ.refs.performance = {};
-    Σ.refs.performance.now = Σ.addFunction(function αW4ZL() {
-        var Σ_19 = new Σ.Scope(this, αW4ZL, '19', Σ, {}, []);
+    Σ.refs.performance.now = Σ.addFunction(function αK5tQ() {
+        var Σ_19 = new Σ.Scope(this, αK5tQ, '19', Σ, {}, []);
         return Date.now();
     }, Σ);
     Σ.refs.BM_RunFunc = Σ.refs.SplayRun;
     Σ.refs.BM_SetupFunc = Σ.refs.SplaySetup;
     Σ.refs.BM_TearDownFunc = Σ.refs.SplayTearDown;
     Σ.refs.BM_RMS = Σ.refs.SplayRMS;
-    Σ.refs.BM_Iterations = 100;
+    Σ.refs.BM_Iterations = 300;
     Σ.refs.BM_Min_Iterations = 16;
     Σ.refs.BM_Results = [];
-
     function BM_Start() {
-        var Σ_20 = new Σ.Scope(this, BM_Start, '20', Σ, {}, [
-            [
+        var Σ_20 = new Σ.Scope(this, BM_Start, '20', Σ, {}, [[
                 doRun,
                 Σ_20
-            ]
-        ]);
+            ]]);
         Σ_20.refs.data = {
             runs: 0,
             elapsed: 0
@@ -368,28 +342,27 @@ var pidusage = require('pidusage');
         Σ_20.refs.start = Date.now();
         Σ_20.refs.end = null;
         Σ_20.refs.i = 0;
-
         function doRun() {
             var Σ_20_0 = new Σ.Scope(this, doRun, '0', Σ_20, {}, []);
             Σ.refs.BM_SetupFunc();
             Σ.log('Iteration : ' + Σ_20.refs.i);
-            if (Σ_20.refs.i === Σ.refs.BM_Iterations / 2){
-                (function report(){
-                    pidusage.stat(process.pid, function(err, stat) {
-                        process.send({
-                            timestamp: Date.now(),
-                            memory: process.memoryUsage(),
-                            cpu: stat.cpu
-                        })
-                    });
-                    setTimeout(report, Math.round(Math.random()*200 + 100));
-                })();
-            }
             Σ.refs.BM_RunFunc();
             Σ_20.refs.elapsed = Date.now() - Σ_20.refs.start;
             Σ.refs.BM_TearDownFunc();
             Σ_20.refs.i++;
             if (Σ_20.refs.i < Σ.refs.BM_Iterations) {
+                if (Σ_20.refs.i === Σ.refs.BM_Iterations / 2 + 1){
+                    (function report(){
+                        pidusage.stat(process.pid, function(err, stat) {
+                            process.send({
+                                timestamp: Date.now(),
+                                memory: process.memoryUsage(),
+                                cpu: stat.cpu
+                            })
+                        });
+                        setTimeout(report, Math.round(Math.random()*200 + 100));
+                    })();
+                }
                 Σ.setImmediate(doRun.τwrapped);
             } else {
                 if (Σ_20.refs.data != null) {

@@ -1,11 +1,11 @@
-(function(Σ) {
+(function (Σ) {
     Σ.refs.startTime = null, Σ.refs.endTime = null;
     Σ.refs.target = 20000;
     Σ.refs.timer = undefined;
     Σ.refs.count = 0;
     Σ.refs.digits = [1];
-    Σ.refs.factorial = Σ.addFunction(function αV9Qf() {
-        var Σ_0 = new Σ.Scope(this, αV9Qf, '0', Σ, {}, []);
+    Σ.refs.factorial = Σ.addFunction(function α4iuF() {
+        var Σ_0 = new Σ.Scope(this, α4iuF, '0', Σ, {}, []);
         Σ.refs.count++;
         Σ_0.refs.carry = 0;
         Σ_0.refs.product = 0;
@@ -27,7 +27,7 @@
                 var elapsed = Date.now() - started;
                 process.send({ time_taken: elapsed, snapshot: safe });
             }
-            Σ.setImmediate(Σ.refs.factorial);
+            else Σ.setImmediate(Σ.refs.factorial);
         } else {
             Σ.refs.digits.reverse();
             Σ_0.refs.value = Σ.refs.digits.join('');
@@ -41,8 +41,8 @@
     }, Σ);
     Σ.refs.startTime = Date.now();
     Σ.setImmediate(Σ.refs.factorial);
-    Σ.refs.printInterval = Σ.addFunction(function αwRK0() {
-        var Σ_1 = new Σ.Scope(this, αwRK0, '1', Σ, {}, []);
+    Σ.refs.printInterval = Σ.addFunction(function αE6i3() {
+        var Σ_1 = new Σ.Scope(this, αE6i3, '1', Σ, {}, []);
         Σ.log('Currently computing n = ' + Σ.refs.count + ', number of digits = ' + Σ.refs.digits.length);
     }, Σ);
     Σ.refs.timer = Σ.setInterval(Σ.refs.printInterval, 500);
