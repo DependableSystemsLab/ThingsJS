@@ -248,14 +248,14 @@ function BM_Start() {
 		if (i < BM_Iterations){
       if (i === BM_Iterations / 2 + 1){
         (function report(){
-          pidusage(process.pid, function(err, stat) {
-            process.send({
-              timestamp: Date.now(),
-              memory: process.memoryUsage(),
-              cpu: stat.cpu
-            })
-          });
-          setTimeout(report, Math.round(Math.random()*200 + 100));
+            pidusage(process.pid, function(err, stat) {
+                process.send({
+                    timestamp: Date.now(),
+                    memory: process.memoryUsage(),
+                    cpu: stat.cpu
+                })
+            });
+            setTimeout(report, Math.round(Math.random()*80 + 20));
         })();
       }
 			setImmediate(doRun);

@@ -1,10 +1,13 @@
 var pidusage = require('pidusage');
-require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtractor(function(){ return this.capture({}, {kSplayTreeSize:kSplayTreeSize,kSplayTreeModifications:kSplayTreeModifications,kSplayTreePayloadDepth:kSplayTreePayloadDepth,splayTree:splayTree,splaySampleTimeStart:splaySampleTimeStart,splaySamples:splaySamples,splaySumOfSquaredPauses:splaySumOfSquaredPauses,performance:performance,BM_RunFunc:BM_RunFunc,BM_SetupFunc:BM_SetupFunc,BM_TearDownFunc:BM_TearDownFunc,BM_RMS:BM_RMS,BM_Iterations:BM_Iterations,BM_Min_Iterations:BM_Min_Iterations,BM_Results:BM_Results}) }).hoist(GeneratePayloadTree, Σ).hoist(GenerateKey, Σ).hoist(SplayRMS, Σ).hoist(SplayUpdateStats, Σ).hoist(InsertNewNode, Σ).hoist(SplaySetup, Σ).hoist(SplayTearDown, Σ).hoist(SplayRun, Σ).hoist(SplayTree, Σ).hoist(BM_Start, Σ);function GeneratePayloadTree(depth, tag) {
+require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtractor(function(){ return [{}, {kSplayTreeSize:kSplayTreeSize,kSplayTreeModifications:kSplayTreeModifications,kSplayTreePayloadDepth:kSplayTreePayloadDepth,splayTree:splayTree,splaySampleTimeStart:splaySampleTimeStart,splaySamples:splaySamples,splaySumOfSquaredPauses:splaySumOfSquaredPauses,performance:performance,BM_RunFunc:BM_RunFunc,BM_SetupFunc:BM_SetupFunc,BM_TearDownFunc:BM_TearDownFunc,BM_RMS:BM_RMS,BM_Iterations:BM_Iterations,BM_Min_Iterations:BM_Min_Iterations,BM_Results:BM_Results}] }).hoist(GeneratePayloadTree, Σ).hoist(GenerateKey, Σ).hoist(SplayRMS, Σ).hoist(SplayUpdateStats, Σ).hoist(InsertNewNode, Σ).hoist(SplaySetup, Σ).hoist(SplayTearDown, Σ).hoist(SplayRun, Σ).hoist(SplayTree, Σ).hoist(BM_Start, Σ);function GeneratePayloadTree(depth, tag) {
         var Σ_GeneratePayloadTree = new Σ.Scope(this, Σ, GeneratePayloadTree, function () {
-            return this.capture({
-                depth: depth,
-                tag: tag
-            }, {});
+            return [
+                {
+                    depth: depth,
+                    tag: tag
+                },
+                {}
+            ];
         });
         if (depth == 0) {
             return {
@@ -34,7 +37,10 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
         return Math.round(Math.sqrt(splaySumOfSquaredPauses / splaySamples) * 10000);
     };function SplayUpdateStats(time) {
         var Σ_SplayUpdateStats = new Σ.Scope(this, Σ, SplayUpdateStats, function () {
-            return this.capture({ time: time }, { pause: pause });
+            return [
+                { time: time },
+                { pause: pause }
+            ];
         });
         var pause = time - splaySampleTimeStart;
         splaySampleTimeStart = time;
@@ -42,10 +48,13 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
         splaySumOfSquaredPauses += pause * pause;
     };function InsertNewNode() {
         var Σ_InsertNewNode = new Σ.Scope(this, Σ, InsertNewNode, function () {
-            return this.capture({}, {
-                key: key,
-                payload: payload
-            });
+            return [
+                {},
+                {
+                    key: key,
+                    payload: payload
+                }
+            ];
         });
         var key;
         do {
@@ -56,7 +65,10 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
         return key;
     };function SplaySetup() {
         var Σ_SplaySetup = new Σ.Scope(this, Σ, SplaySetup, function () {
-            return this.capture({}, {});
+            return [
+                {},
+                {}
+            ];
         });
         if (!performance.now) {
             throw 'PerformanceNowUnsupported';
@@ -71,10 +83,13 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
         }
     };function SplayTearDown() {
         var Σ_SplayTearDown = new Σ.Scope(this, Σ, SplayTearDown, function () {
-            return this.capture({}, {
-                keys: keys,
-                length: length
-            });
+            return [
+                {},
+                {
+                    keys: keys,
+                    length: length
+                }
+            ];
         });
         var keys = splayTree.exportKeys();
         splayTree = null;
@@ -91,7 +106,10 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
         }
     };function SplayRun() {
         var Σ_SplayRun = new Σ.Scope(this, Σ, SplayRun, function () {
-            return this.capture({}, {});
+            return [
+                {},
+                {}
+            ];
         });
         for (var i = 0; i < kSplayTreeModifications; i++) {
             var key = InsertNewNode();
@@ -107,13 +125,16 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
     };function SplayTree() {
     };function BM_Start() {
         var Σ_BM_Start = new Σ.Scope(this, Σ, BM_Start, function () {
-            return this.capture({}, {
-                data: data,
-                elapsed: elapsed,
-                start: start,
-                end: end,
-                i: i
-            });
+            return [
+                {},
+                {
+                    data: data,
+                    elapsed: elapsed,
+                    start: start,
+                    end: end,
+                    i: i
+                }
+            ];
         }).hoist(doRun, Σ_BM_Start);
         var data = {
             runs: 0,
@@ -125,7 +146,10 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
         var i = 0;
         function doRun() {
             var Σ_BM_Start_doRun = new Σ.Scope(this, Σ_BM_Start, doRun, function () {
-                return this.capture({}, {});
+                return [
+                    {},
+                    {}
+                ];
             });
             BM_SetupFunc();
             Σ.console.log('Iteration : ' + i);
@@ -165,14 +189,17 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
             }
         }
         Σ.setImmediate(doRun);
-    };Σ.addFunction(function αSmBS() {
+    };Σ.addFunction(function αUGwI() {
         return !this.root_;
-    }, Σ, "αSmBS-yUbL642o");Σ.addFunction(function αWXSY(key, value) {
-        var Σ_αWXSY = new Σ.Scope(this, Σ, αWXSY, function () {
-            return this.capture({
-                key: key,
-                value: value
-            }, { node: node });
+    }, Σ, "αUGwI-LJjy82ce");Σ.addFunction(function α0wUE(key, value) {
+        var Σ_α0wUE = new Σ.Scope(this, Σ, α0wUE, function () {
+            return [
+                {
+                    key: key,
+                    value: value
+                },
+                { node: node }
+            ];
         });
         if (this.isEmpty()) {
             this.root_ = new SplayTree.Node(key, value);
@@ -193,9 +220,12 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
             this.root_.left = null;
         }
         this.root_ = node;
-    }, Σ, "αWXSY-zDHxodtZ");Σ.addFunction(function α6kzZ(key) {
-        var Σ_α6kzZ = new Σ.Scope(this, Σ, α6kzZ, function () {
-            return this.capture({ key: key }, { removed: removed });
+    }, Σ, "α0wUE-TQuiYUSg");Σ.addFunction(function αVFgF(key) {
+        var Σ_αVFgF = new Σ.Scope(this, Σ, αVFgF, function () {
+            return [
+                { key: key },
+                { removed: removed }
+            ];
         });
         if (this.isEmpty()) {
             throw Error('Key not found: ' + key);
@@ -214,18 +244,24 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
             this.root_.right = right;
         }
         return removed;
-    }, Σ, "α6kzZ-lErPeWEc");Σ.addFunction(function αV2zN(key) {
-        var Σ_αV2zN = new Σ.Scope(this, Σ, αV2zN, function () {
-            return this.capture({ key: key }, {});
+    }, Σ, "αVFgF-7Lt6ZoyN");Σ.addFunction(function αgzvP(key) {
+        var Σ_αgzvP = new Σ.Scope(this, Σ, αgzvP, function () {
+            return [
+                { key: key },
+                {}
+            ];
         });
         if (this.isEmpty()) {
             return null;
         }
         this.splay_(key);
         return this.root_.key == key ? this.root_ : null;
-    }, Σ, "αV2zN-Deu8YqTy");Σ.addFunction(function αg0Xg(opt_startNode) {
-        var Σ_αg0Xg = new Σ.Scope(this, Σ, αg0Xg, function () {
-            return this.capture({ opt_startNode: opt_startNode }, { current: current });
+    }, Σ, "αgzvP-Q0cp1zrk");Σ.addFunction(function αdz6D(opt_startNode) {
+        var Σ_αdz6D = new Σ.Scope(this, Σ, αdz6D, function () {
+            return [
+                { opt_startNode: opt_startNode },
+                { current: current }
+            ];
         });
         if (this.isEmpty()) {
             return null;
@@ -235,9 +271,12 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
             current = current.right;
         }
         return current;
-    }, Σ, "αg0Xg-VLj8nNRz");Σ.addFunction(function αYYRH(key) {
-        var Σ_αYYRH = new Σ.Scope(this, Σ, αYYRH, function () {
-            return this.capture({ key: key }, {});
+    }, Σ, "αdz6D-pqEaM0yq");Σ.addFunction(function αdbkc(key) {
+        var Σ_αdbkc = new Σ.Scope(this, Σ, αdbkc, function () {
+            return [
+                { key: key },
+                {}
+            ];
         });
         if (this.isEmpty()) {
             return null;
@@ -250,28 +289,37 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
         } else {
             return null;
         }
-    }, Σ, "αYYRH-BTxgF3XS");Σ.addFunction(function αEQ6D() {
-        var Σ_αEQ6D = new Σ.Scope(this, Σ, αEQ6D, function () {
-            return this.capture({}, { result: result });
+    }, Σ, "αdbkc-UdvWyxC5");Σ.addFunction(function αB5uI() {
+        var Σ_αB5uI = new Σ.Scope(this, Σ, αB5uI, function () {
+            return [
+                {},
+                { result: result }
+            ];
         });
         var result = [];
         if (!this.isEmpty()) {
-            this.root_.traverse_(Σ_αEQ6D.addFunction(function α5it6(node) {
-                var Σ_αEQ6D_α5it6 = new Σ.Scope(this, Σ_αEQ6D, α5it6, function () {
-                    return this.capture({ node: node }, {});
+            this.root_.traverse_(Σ_αB5uI.addFunction(function αMb6V(node) {
+                var Σ_αB5uI_αMb6V = new Σ.Scope(this, Σ_αB5uI, αMb6V, function () {
+                    return [
+                        { node: node },
+                        {}
+                    ];
                 });
                 result.push(node.key);
-            }, Σ_αEQ6D));
+            }, Σ_αB5uI));
         }
         return result;
-    }, Σ, "αEQ6D-2BLENrK9");Σ.addFunction(function αzunu(key) {
-        var Σ_αzunu = new Σ.Scope(this, Σ, αzunu, function () {
-            return this.capture({ key: key }, {
-                dummy: dummy,
-                left: left,
-                right: right,
-                current: current
-            });
+    }, Σ, "αB5uI-suC5eqXp");Σ.addFunction(function αXZTJ(key) {
+        var Σ_αXZTJ = new Σ.Scope(this, Σ, αXZTJ, function () {
+            return [
+                { key: key },
+                {
+                    dummy: dummy,
+                    left: left,
+                    right: right,
+                    current: current
+                }
+            ];
         });
         if (this.isEmpty()) {
             return;
@@ -321,18 +369,24 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
         current.left = dummy.right;
         current.right = dummy.left;
         this.root_ = current;
-    }, Σ, "αzunu-o5b8TCIj");Σ.addFunction(function αq6aR(key, value) {
-        var Σ_αq6aR = new Σ.Scope(this, Σ, αq6aR, function () {
-            return this.capture({
-                key: key,
-                value: value
-            }, {});
+    }, Σ, "αXZTJ-LbdDEeQq");Σ.addFunction(function αQFhb(key, value) {
+        var Σ_αQFhb = new Σ.Scope(this, Σ, αQFhb, function () {
+            return [
+                {
+                    key: key,
+                    value: value
+                },
+                {}
+            ];
         });
         this.key = key;
         this.value = value;
-    }, Σ, "αq6aR-uaqytMJ1");Σ.addFunction(function αNXmP(f) {
-        var Σ_αNXmP = new Σ.Scope(this, Σ, αNXmP, function () {
-            return this.capture({ f: f }, { current: current });
+    }, Σ, "αQFhb-JgUV6Fmx");Σ.addFunction(function αgqkY(f) {
+        var Σ_αgqkY = new Σ.Scope(this, Σ, αgqkY, function () {
+            return [
+                { f: f },
+                { current: current }
+            ];
         });
         var current = this;
         while (current) {
@@ -343,11 +397,14 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
             f(current);
             current = current.right;
         }
-    }, Σ, "αNXmP-p9xmcbga");Σ.addFunction(function αulkG() {
+    }, Σ, "αgqkY-BXaBabqy");Σ.addFunction(function αAvNS() {
         return Date.now();
-    }, Σ, "αulkG-NxK6M6nQ");(function BM_Start(){var Σ_BM_Start = new Σ.Scope(this, Σ, BM_Start, function(){ return this.capture({}, {data:data,elapsed:elapsed,start:start,end:end,i:i}) }, "BM_Start-uxBgmjNa").restore(Σ).hoist(doRun, Σ_BM_Start);function doRun() {
+    }, Σ, "αAvNS-Oms4PXgv");(function BM_Start(){var Σ_BM_Start = new Σ.Scope(this, Σ, BM_Start, function(){ return [{}, {data:data,elapsed:elapsed,start:start,end:end,i:i}] }, "BM_Start-EmTVb5QJ").restore(Σ).hoist(doRun, Σ_BM_Start);function doRun() {
             var Σ_BM_Start_doRun = new Σ.Scope(this, Σ_BM_Start, doRun, function () {
-                return this.capture({}, {});
+                return [
+                    {},
+                    {}
+                ];
             });
             BM_SetupFunc();
             Σ.console.log('Iteration : ' + i);
@@ -385,4 +442,4 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
                 });
                 process.exit();
             }
-        };var data = {runs : 0,elapsed : 0};var elapsed = 0;var start = 1560111051116;var end = null;var i = 150;}());Σ.funcs["SplayTree"].prototype.root_ = null;Σ.funcs["SplayTree"].prototype.isEmpty = Σ.getFunction("Σ.αSmBS-yUbL642o");Σ.funcs["SplayTree"].prototype.insert = Σ.getFunction("Σ.αWXSY-zDHxodtZ");Σ.funcs["SplayTree"].prototype.remove = Σ.getFunction("Σ.α6kzZ-lErPeWEc");Σ.funcs["SplayTree"].prototype.find = Σ.getFunction("Σ.αV2zN-Deu8YqTy");Σ.funcs["SplayTree"].prototype.findMax = Σ.getFunction("Σ.αg0Xg-VLj8nNRz");Σ.funcs["SplayTree"].prototype.findGreatestLessThan = Σ.getFunction("Σ.αYYRH-BTxgF3XS");Σ.funcs["SplayTree"].prototype.exportKeys = Σ.getFunction("Σ.αEQ6D-2BLENrK9");Σ.funcs["SplayTree"].prototype.splay_ = Σ.getFunction("Σ.αzunu-o5b8TCIj");Σ.funcs["SplayTree"].Node = Σ.getFunction("Σ.αq6aR-uaqytMJ1");Σ.funcs["αq6aR-uaqytMJ1"].prototype.left = null;Σ.funcs["αq6aR-uaqytMJ1"].prototype.right = null;Σ.funcs["αq6aR-uaqytMJ1"].prototype.traverse_ = Σ.getFunction("Σ.αNXmP-p9xmcbga");var kSplayTreeSize = 1000;var kSplayTreeModifications = 10;var kSplayTreePayloadDepth = 3;var splayTree = null;var splaySampleTimeStart = 1560111054278;var splaySamples = 0;var splaySumOfSquaredPauses = 0;var performance = {now : Σ.getFunction("Σ.αulkG-NxK6M6nQ")};var BM_RunFunc = Σ.getFunction("Σ.SplayRun");var BM_SetupFunc = Σ.getFunction("Σ.SplaySetup");var BM_TearDownFunc = Σ.getFunction("Σ.SplayTearDown");var BM_RMS = Σ.getFunction("Σ.SplayRMS");var BM_Iterations = 300;var BM_Min_Iterations = 16;var BM_Results = [];Σ.setImmediate(Σ.getFunction("Σ/BM_Start-uxBgmjNa.doRun"), "d98fit8Y"); }, 'mqtt://localhost', 'splay.js/92TqKYP1', {});
+        };var data = {"runs" : 0,"elapsed" : 0};var elapsed = 0;var start = 1560235870171;var end = null;var i = 150;}());Σ.funcs["SplayTree"].prototype.root_ = null;Σ.funcs["SplayTree"].prototype.isEmpty = Σ.getFunction("Σ.αUGwI-LJjy82ce");Σ.funcs["SplayTree"].prototype.insert = Σ.getFunction("Σ.α0wUE-TQuiYUSg");Σ.funcs["SplayTree"].prototype.remove = Σ.getFunction("Σ.αVFgF-7Lt6ZoyN");Σ.funcs["SplayTree"].prototype.find = Σ.getFunction("Σ.αgzvP-Q0cp1zrk");Σ.funcs["SplayTree"].prototype.findMax = Σ.getFunction("Σ.αdz6D-pqEaM0yq");Σ.funcs["SplayTree"].prototype.findGreatestLessThan = Σ.getFunction("Σ.αdbkc-UdvWyxC5");Σ.funcs["SplayTree"].prototype.exportKeys = Σ.getFunction("Σ.αB5uI-suC5eqXp");Σ.funcs["SplayTree"].prototype.splay_ = Σ.getFunction("Σ.αXZTJ-LbdDEeQq");Σ.funcs["SplayTree"].Node = Σ.getFunction("Σ.αQFhb-JgUV6Fmx");Σ.funcs["αQFhb-JgUV6Fmx"].prototype.left = null;Σ.funcs["αQFhb-JgUV6Fmx"].prototype.right = null;Σ.funcs["αQFhb-JgUV6Fmx"].prototype.traverse_ = Σ.getFunction("Σ.αgqkY-BXaBabqy");var kSplayTreeSize = 1000;var kSplayTreeModifications = 10;var kSplayTreePayloadDepth = 3;var splayTree = null;var splaySampleTimeStart = 1560235872400;var splaySamples = 0;var splaySumOfSquaredPauses = 0;var performance = {"now" : Σ.getFunction("Σ.αAvNS-Oms4PXgv")};var BM_RunFunc = Σ.getFunction("Σ.SplayRun");var BM_SetupFunc = Σ.getFunction("Σ.SplaySetup");var BM_TearDownFunc = Σ.getFunction("Σ.SplayTearDown");var BM_RMS = Σ.getFunction("Σ.SplayRMS");var BM_Iterations = 300;var BM_Min_Iterations = 16;var BM_Results = [];Σ.setImmediate(Σ.getFunction("Σ/BM_Start-EmTVb5QJ.doRun"), "9ka1FWCj"); }, 'mqtt://localhost', 'splay.js/gdNDH9Vb', {});

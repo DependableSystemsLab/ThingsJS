@@ -1,28 +1,34 @@
 var pidusage = require('pidusage');
 require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
     Σ.setExtractor(function () {
-        return this.capture({}, {
-            startTime: startTime,
-            endTime: endTime,
-            target: target,
-            timer: timer,
-            count: count,
-            digits: digits,
-            factorial: factorial,
-            printInterval: printInterval
-        });
+        return [
+            {},
+            {
+                startTime: startTime,
+                endTime: endTime,
+                target: target,
+                timer: timer,
+                count: count,
+                digits: digits,
+                factorial: factorial,
+                printInterval: printInterval
+            }
+        ];
     });
     var startTime = null, endTime = null;
     var target = 20000;
     var timer;
     var count = 0;
     var digits = [1];
-    var factorial = Σ.addFunction(function αaheT() {
-        var Σ_αaheT = new Σ.Scope(this, Σ, αaheT, function () {
-            return this.capture({}, {
-                carry: carry,
-                product: product
-            });
+    var factorial = Σ.addFunction(function αbXq5() {
+        var Σ_αbXq5 = new Σ.Scope(this, Σ, αbXq5, function () {
+            return [
+                {},
+                {
+                    carry: carry,
+                    product: product
+                }
+            ];
         });
         count++;
         var carry = 0;
@@ -64,7 +70,7 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
     }, Σ);
     startTime = Date.now();
     Σ.setImmediate(factorial);
-    var printInterval = Σ.addFunction(function αz3eP() {
+    var printInterval = Σ.addFunction(function αC1rT() {
         Σ.console.log('Currently computing n = ' + count + ', number of digits = ' + digits.length);
     }, Σ);
     timer = Σ.setInterval(printInterval, 500);
