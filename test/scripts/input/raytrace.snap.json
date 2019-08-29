@@ -1,0 +1,1156 @@
+{
+    "meta": {
+        "pubsub": "mqtt://localhost",
+        "code_name": "raytrace.js",
+        "instance_id": "saX7F8h5",
+        "timestamp": 1561661465175,
+        "extra": {}
+    },
+    "timers": {
+        "8I8m39IC": {
+            "id": "8I8m39IC",
+            "callback": "Σ/BM_Start-bD6LUZQj.doRun",
+            "timedelta": 0,
+            "called_at": 1561661465129,
+            "stopped_at": 1561661465175,
+            "type": "Immediate"
+        }
+    },
+    "tree": {
+        "name": "Σ",
+        "uri": "Σ",
+        "hoisted": ["renderScene", "BM_Start"],
+        "funcs": {
+            "renderScene": {
+                "type": "Function",
+                "value": "function renderScene() {\n        var Σ_renderScene = new Σ.Scope(this, Σ, renderScene, function() {\n            return [{},\n                {\n                    scene: scene,\n                    sphere: sphere,\n                    sphere1: sphere1,\n                    plane: plane,\n                    light: light,\n                    light1: light1,\n                    imageWidth: imageWidth,\n                    imageHeight: imageHeight,\n                    pixelSize: pixelSize,\n                    renderDiffuse: renderDiffuse,\n                    renderShadows: renderShadows,\n                    renderHighlights: renderHighlights,\n                    renderReflections: renderReflections,\n                    rayDepth: rayDepth,\n                    raytracer: raytracer\n                }\n            ];\n        });\n        var scene = new Flog.RayTracer.Scene();\n        scene.camera = new Flog.RayTracer.Camera(new Flog.RayTracer.Vector(0, 0, -15), new Flog.RayTracer.Vector(-0.2, 0, 5), new Flog.RayTracer.Vector(0, 1, 0));\n        scene.background = new Flog.RayTracer.Background(new Flog.RayTracer.Color(0.5, 0.5, 0.5), 0.4);\n        var sphere = new Flog.RayTracer.Shape.Sphere(new Flog.RayTracer.Vector(-1.5, 1.5, 2), 1.5, new Flog.RayTracer.Material.Solid(new Flog.RayTracer.Color(0, 0.5, 0.5), 0.3, 0, 0, 2));\n        var sphere1 = new Flog.RayTracer.Shape.Sphere(new Flog.RayTracer.Vector(1, 0.25, 1), 0.5, new Flog.RayTracer.Material.Solid(new Flog.RayTracer.Color(0.9, 0.9, 0.9), 0.1, 0, 0, 1.5));\n        var plane = new Flog.RayTracer.Shape.Plane(new Flog.RayTracer.Vector(0.1, 0.9, -0.5).normalize(), 1.2, new Flog.RayTracer.Material.Chessboard(new Flog.RayTracer.Color(1, 1, 1), new Flog.RayTracer.Color(0, 0, 0), 0.2, 0, 1, 0.7));\n        scene.shapes.push(plane);\n        scene.shapes.push(sphere);\n        scene.shapes.push(sphere1);\n        var light = new Flog.RayTracer.Light(new Flog.RayTracer.Vector(5, 10, -1), new Flog.RayTracer.Color(0.8, 0.8, 0.8));\n        var light1 = new Flog.RayTracer.Light(new Flog.RayTracer.Vector(-3, 5, -15), new Flog.RayTracer.Color(0.8, 0.8, 0.8), 100);\n        scene.lights.push(light);\n        scene.lights.push(light1);\n        var imageWidth = 100;\n        var imageHeight = 100;\n        var pixelSize = '5,5'.split(',');\n        var renderDiffuse = true;\n        var renderShadows = true;\n        var renderHighlights = true;\n        var renderReflections = true;\n        var rayDepth = 2;\n        var raytracer = new Flog.RayTracer.Engine({\n            canvasWidth: imageWidth,\n            canvasHeight: imageHeight,\n            pixelWidth: pixelSize[0],\n            pixelHeight: pixelSize[1],\n            'renderDiffuse': renderDiffuse,\n            'renderHighlights': renderHighlights,\n            'renderShadows': renderShadows,\n            'renderReflections': renderReflections,\n            'rayDepth': rayDepth\n        });\n        raytracer.renderScene(scene, null, 0);\n    }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "BM_Start": {
+                "type": "Function",
+                "value": "function BM_Start() {\n        var Σ_BM_Start = new Σ.Scope(this, Σ, BM_Start, function() {\n            return [{},\n                {\n                    data: data,\n                    elapsed: elapsed,\n                    start: start,\n                    end: end,\n                    i: i\n                }\n            ];\n        }).hoist(doRun, Σ_BM_Start);\n        var data = {\n            runs: 0,\n            elapsed: 0\n        };\n        var elapsed = 0;\n        var start = Date.now();\n        var end = null;\n        var i = 0;\n\n        function doRun() {\n            var Σ_BM_Start_doRun = new Σ.Scope(this, Σ_BM_Start, doRun, function() {\n                return [{},\n                    {\n                        usec: usec,\n                        rms: rms\n                    }\n                ];\n            });\n            BM_SetupFunc();\n            Σ.console.log('Iteration : ' + i);\n            BM_RunFunc();\n            elapsed = Date.now() - start;\n            BM_TearDownFunc();\n            i++;\n            if (i < BM_Iterations) {\n                if (i === BM_Iterations / 2){\n                    Σ.pauseTimers();\n                    var started = Date.now();\n                    var safe = Σ.snapshot();\n                    var elapsed = Date.now() - started;\n                    process.send({ time_taken: elapsed, snapshot: safe });\n                }\n                else Σ.setImmediate(doRun);\n            } else {\n                if (data != null) {\n                    data.runs += i;\n                    data.elapsed += elapsed;\n                }\n                Σ.console.log('Runs: ' + data.runs + '\\t|\\tElapsed: ' + data.elapsed);\n                end = Date.now();\n                Σ.console.log('Total time : ' + (end - start) + ' ms');\n                var usec = data.elapsed * 1000 / data.runs;\n                var rms = BM_RMS ? BM_RMS() : 0;\n                BM_Results.push({\n                    time: usec,\n                    latency: rms\n                });\n                process.exit();\n            }\n        }\n        Σ.setImmediate(doRun);\n    }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αQGho-V4FmWjaV": {
+                "type": "Function",
+                "value": "function αQGho() {\n            var Σ_αQGho = new Σ.Scope(this, Σ, αQGho, function() {\n                return [{},\n                    {}\n                ];\n            });\n            return Σ_αQGho.addFunction(function αn8tS() {\n                this.initialize.apply(this, arguments);\n            }, Σ_αQGho);\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αFlax-lh8HERzZ": {
+                "type": "Function",
+                "value": "function αFlax(destination, source) {\n        var Σ_αFlax = new Σ.Scope(this, Σ, αFlax, function() {\n            return [{\n                    destination: destination,\n                    source: source\n                },\n                {\n                    property: property\n                }\n            ];\n        });\n        for (var property in source) {\n            destination[property] = source[property];\n        }\n        return destination;\n    }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αRF6n-ZdJlkxVI": {
+                "type": "Function",
+                "value": "function αRF6n(r, g, b) {\n            var Σ_αRF6n = new Σ.Scope(this, Σ, αRF6n, function() {\n                return [{\n                        r: r,\n                        g: g,\n                        b: b\n                    },\n                    {}\n                ];\n            });\n            if (!r) {\n                r = 0;\n            }\n            if (!g) {\n                g = 0;\n            }\n            if (!b) {\n                b = 0;\n            }\n            this.red = r;\n            this.green = g;\n            this.blue = b;\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αnT6m-SaZUVplt": {
+                "type": "Function",
+                "value": "function αnT6m(c1, c2) {\n            var Σ_αnT6m = new Σ.Scope(this, Σ, αnT6m, function() {\n                return [{\n                        c1: c1,\n                        c2: c2\n                    },\n                    {\n                        result: result\n                    }\n                ];\n            });\n            var result = new Flog.RayTracer.Color(0, 0, 0);\n            result.red = c1.red + c2.red;\n            result.green = c1.green + c2.green;\n            result.blue = c1.blue + c2.blue;\n            return result;\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αb2PC-e8OEYWGT": {
+                "type": "Function",
+                "value": "function αb2PC(c1, s) {\n            var Σ_αb2PC = new Σ.Scope(this, Σ, αb2PC, function() {\n                return [{\n                        c1: c1,\n                        s: s\n                    },\n                    {\n                        result: result\n                    }\n                ];\n            });\n            var result = new Flog.RayTracer.Color(0, 0, 0);\n            result.red = c1.red + s;\n            result.green = c1.green + s;\n            result.blue = c1.blue + s;\n            result.limit();\n            return result;\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "α0Z5T-TW0WxyYo": {
+                "type": "Function",
+                "value": "function α0Z5T(c1, c2) {\n            var Σ_α0Z5T = new Σ.Scope(this, Σ, α0Z5T, function() {\n                return [{\n                        c1: c1,\n                        c2: c2\n                    },\n                    {\n                        result: result\n                    }\n                ];\n            });\n            var result = new Flog.RayTracer.Color(0, 0, 0);\n            result.red = c1.red - c2.red;\n            result.green = c1.green - c2.green;\n            result.blue = c1.blue - c2.blue;\n            return result;\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αundy-V0zT2VJL": {
+                "type": "Function",
+                "value": "function αundy(c1, c2) {\n            var Σ_αundy = new Σ.Scope(this, Σ, αundy, function() {\n                return [{\n                        c1: c1,\n                        c2: c2\n                    },\n                    {\n                        result: result\n                    }\n                ];\n            });\n            var result = new Flog.RayTracer.Color(0, 0, 0);\n            result.red = c1.red * c2.red;\n            result.green = c1.green * c2.green;\n            result.blue = c1.blue * c2.blue;\n            return result;\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αvwEO-vh3EpTGs": {
+                "type": "Function",
+                "value": "function αvwEO(c1, f) {\n            var Σ_αvwEO = new Σ.Scope(this, Σ, αvwEO, function() {\n                return [{\n                        c1: c1,\n                        f: f\n                    },\n                    {\n                        result: result\n                    }\n                ];\n            });\n            var result = new Flog.RayTracer.Color(0, 0, 0);\n            result.red = c1.red * f;\n            result.green = c1.green * f;\n            result.blue = c1.blue * f;\n            return result;\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αQEtz-itirq8Fj": {
+                "type": "Function",
+                "value": "function αQEtz(c1, f) {\n            var Σ_αQEtz = new Σ.Scope(this, Σ, αQEtz, function() {\n                return [{\n                        c1: c1,\n                        f: f\n                    },\n                    {\n                        result: result\n                    }\n                ];\n            });\n            var result = new Flog.RayTracer.Color(0, 0, 0);\n            result.red = c1.red / f;\n            result.green = c1.green / f;\n            result.blue = c1.blue / f;\n            return result;\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αYo1X-M9HTZHwU": {
+                "type": "Function",
+                "value": "function αYo1X() {\n            this.red = this.red > 0 ? this.red > 1 ? 1 : this.red : 0;\n            this.green = this.green > 0 ? this.green > 1 ? 1 : this.green : 0;\n            this.blue = this.blue > 0 ? this.blue > 1 ? 1 : this.blue : 0;\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "α2zfk-sa3Tpx5v": {
+                "type": "Function",
+                "value": "function α2zfk(color) {\n            var Σ_α2zfk = new Σ.Scope(this, Σ, α2zfk, function() {\n                return [{\n                        color: color\n                    },\n                    {\n                        d: d\n                    }\n                ];\n            });\n            var d = Math.abs(this.red - color.red) + Math.abs(this.green - color.green) + Math.abs(this.blue - color.blue);\n            return d;\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αcO1n-8g74xCmr": {
+                "type": "Function",
+                "value": "function αcO1n(c1, c2, w) {\n            var Σ_αcO1n = new Σ.Scope(this, Σ, αcO1n, function() {\n                return [{\n                        c1: c1,\n                        c2: c2,\n                        w: w\n                    },\n                    {\n                        result: result\n                    }\n                ];\n            });\n            var result = new Flog.RayTracer.Color(0, 0, 0);\n            result = Flog.RayTracer.Color.prototype.add(Flog.RayTracer.Color.prototype.multiplyScalar(c1, 1 - w), Flog.RayTracer.Color.prototype.multiplyScalar(c2, w));\n            return result;\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αRyF5-f9FNrSB6": {
+                "type": "Function",
+                "value": "function αRyF5() {\n            var Σ_αRyF5 = new Σ.Scope(this, Σ, αRyF5, function() {\n                return [{},\n                    {\n                        r: r,\n                        g: g,\n                        b: b\n                    }\n                ];\n            });\n            var r = Math.floor(this.red * 255);\n            var g = Math.floor(this.green * 255);\n            var b = Math.floor(this.blue * 255);\n            return r * 77 + g * 150 + b * 29 >> 8;\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "α6mgv-B40RVBN6": {
+                "type": "Function",
+                "value": "function α6mgv() {\n            var Σ_α6mgv = new Σ.Scope(this, Σ, α6mgv, function() {\n                return [{},\n                    {\n                        r: r,\n                        g: g,\n                        b: b\n                    }\n                ];\n            });\n            var r = Math.floor(this.red * 255);\n            var g = Math.floor(this.green * 255);\n            var b = Math.floor(this.blue * 255);\n            return 'rgb(' + r + ',' + g + ',' + b + ')';\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αKksT-EV0YEC7n": {
+                "type": "Function",
+                "value": "function αKksT(pos, color, intensity) {\n            var Σ_αKksT = new Σ.Scope(this, Σ, αKksT, function() {\n                return [{\n                        pos: pos,\n                        color: color,\n                        intensity: intensity\n                    },\n                    {}\n                ];\n            });\n            this.position = pos;\n            this.color = color;\n            this.intensity = intensity ? intensity : 10;\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αhz57-C4FWuieU": {
+                "type": "Function",
+                "value": "function αhz57() {\n            return 'Light [' + this.position.x + ',' + this.position.y + ',' + this.position.z + ']';\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αzyef-pof799iU": {
+                "type": "Function",
+                "value": "function αzyef(x, y, z) {\n            var Σ_αzyef = new Σ.Scope(this, Σ, αzyef, function() {\n                return [{\n                        x: x,\n                        y: y,\n                        z: z\n                    },\n                    {}\n                ];\n            });\n            this.x = x ? x : 0;\n            this.y = y ? y : 0;\n            this.z = z ? z : 0;\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αZeAP-iryxPQq9": {
+                "type": "Function",
+                "value": "function αZeAP(vector) {\n            var Σ_αZeAP = new Σ.Scope(this, Σ, αZeAP, function() {\n                return [{\n                        vector: vector\n                    },\n                    {}\n                ];\n            });\n            this.x = vector.x;\n            this.y = vector.y;\n            this.z = vector.z;\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αuYsp-6K3xLuxx": {
+                "type": "Function",
+                "value": "function αuYsp() {\n            var Σ_αuYsp = new Σ.Scope(this, Σ, αuYsp, function() {\n                return [{},\n                    {\n                        m: m\n                    }\n                ];\n            });\n            var m = this.magnitude();\n            return new Flog.RayTracer.Vector(this.x / m, this.y / m, this.z / m);\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "α31FI-iIxjbzPJ": {
+                "type": "Function",
+                "value": "function α31FI() {\n            return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αv9J9-kq9fT4LF": {
+                "type": "Function",
+                "value": "function αv9J9(w) {\n            var Σ_αv9J9 = new Σ.Scope(this, Σ, αv9J9, function() {\n                return [{\n                        w: w\n                    },\n                    {}\n                ];\n            });\n            return new Flog.RayTracer.Vector(-this.z * w.y + this.y * w.z, this.z * w.x - this.x * w.z, -this.y * w.x + this.x * w.y);\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "α4C3t-ySxVNweb": {
+                "type": "Function",
+                "value": "function α4C3t(w) {\n            var Σ_α4C3t = new Σ.Scope(this, Σ, α4C3t, function() {\n                return [{\n                        w: w\n                    },\n                    {}\n                ];\n            });\n            return this.x * w.x + this.y * w.y + this.z * w.z;\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αJVhZ-Kqtpozyt": {
+                "type": "Function",
+                "value": "function αJVhZ(v, w) {\n            var Σ_αJVhZ = new Σ.Scope(this, Σ, αJVhZ, function() {\n                return [{\n                        v: v,\n                        w: w\n                    },\n                    {}\n                ];\n            });\n            return new Flog.RayTracer.Vector(w.x + v.x, w.y + v.y, w.z + v.z);\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αQsoR-86QKgu5l": {
+                "type": "Function",
+                "value": "function αQsoR(v, w) {\n            var Σ_αQsoR = new Σ.Scope(this, Σ, αQsoR, function() {\n                return [{\n                        v: v,\n                        w: w\n                    },\n                    {}\n                ];\n            });\n            if (!w || !v) {\n                throw 'Vectors must be defined [' + v + ',' + w + ']';\n            }\n            return new Flog.RayTracer.Vector(v.x - w.x, v.y - w.y, v.z - w.z);\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αXId0-KyVVW8y8": {
+                "type": "Function",
+                "value": "function αXId0(v, w) {\n            var Σ_αXId0 = new Σ.Scope(this, Σ, αXId0, function() {\n                return [{\n                        v: v,\n                        w: w\n                    },\n                    {}\n                ];\n            });\n            return new Flog.RayTracer.Vector(v.x * w.x, v.y * w.y, v.z * w.z);\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αRtKb-oFcLdau7": {
+                "type": "Function",
+                "value": "function αRtKb(v, w) {\n            var Σ_αRtKb = new Σ.Scope(this, Σ, αRtKb, function() {\n                return [{\n                        v: v,\n                        w: w\n                    },\n                    {}\n                ];\n            });\n            return new Flog.RayTracer.Vector(v.x * w, v.y * w, v.z * w);\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αkBFp-UWY9lJM0": {
+                "type": "Function",
+                "value": "function αkBFp() {\n            return 'Vector [' + this.x + ',' + this.y + ',' + this.z + ']';\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αPkl1-dPbOL1XA": {
+                "type": "Function",
+                "value": "function αPkl1(pos, dir) {\n            var Σ_αPkl1 = new Σ.Scope(this, Σ, αPkl1, function() {\n                return [{\n                        pos: pos,\n                        dir: dir\n                    },\n                    {}\n                ];\n            });\n            this.position = pos;\n            this.direction = dir;\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αjLq5-GDAPO5hE": {
+                "type": "Function",
+                "value": "function αjLq5() {\n            return 'Ray [' + this.position + ',' + this.direction + ']';\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αgNVf-ozVCW7pR": {
+                "type": "Function",
+                "value": "function αgNVf() {\n            this.camera = new Flog.RayTracer.Camera(new Flog.RayTracer.Vector(0, 0, -5), new Flog.RayTracer.Vector(0, 0, 1), new Flog.RayTracer.Vector(0, 1, 0));\n            this.shapes = new Array();\n            this.lights = new Array();\n            this.background = new Flog.RayTracer.Background(new Flog.RayTracer.Color(0, 0, 0.5), 0.2);\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "α1hUv-28DtREok": {
+                "type": "Function",
+                "value": "function α1hUv() {}",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "α3y48-JtwsiHMy": {
+                "type": "Function",
+                "value": "function α3y48(u, v) {\n            var Σ_α3y48 = new Σ.Scope(this, Σ, α3y48, function() {\n                return [{\n                        u: u,\n                        v: v\n                    },\n                    {}\n                ];\n            });\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αMykA-PbV0rB8U": {
+                "type": "Function",
+                "value": "function αMykA(t) {\n            var Σ_αMykA = new Σ.Scope(this, Σ, αMykA, function() {\n                return [{\n                        t: t\n                    },\n                    {}\n                ];\n            });\n            t = t % 2;\n            if (t < -1) {\n                t += 2;\n            }\n            if (t >= 1) {\n                t -= 2;\n            }\n            return t;\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αePQi-1C0maXls": {
+                "type": "Function",
+                "value": "function αePQi() {\n            return 'Material [gloss=' + this.gloss + ', transparency=' + this.transparency + ', hasTexture=' + this.hasTexture + ']';\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αitOw-VtvJZDoX": {
+                "type": "Function",
+                "value": "function αitOw(color, reflection, refraction, transparency, gloss) {\n            var Σ_αitOw = new Σ.Scope(this, Σ, αitOw, function() {\n                return [{\n                        color: color,\n                        reflection: reflection,\n                        refraction: refraction,\n                        transparency: transparency,\n                        gloss: gloss\n                    },\n                    {}\n                ];\n            });\n            this.color = color;\n            this.reflection = reflection;\n            this.transparency = transparency;\n            this.gloss = gloss;\n            this.hasTexture = false;\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αJLpy-MQthMhAD": {
+                "type": "Function",
+                "value": "function αJLpy(u, v) {\n            var Σ_αJLpy = new Σ.Scope(this, Σ, αJLpy, function() {\n                return [{\n                        u: u,\n                        v: v\n                    },\n                    {}\n                ];\n            });\n            return this.color;\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αSWDg-AgFpvSo6": {
+                "type": "Function",
+                "value": "function αSWDg() {\n            return 'SolidMaterial [gloss=' + this.gloss + ', transparency=' + this.transparency + ', hasTexture=' + this.hasTexture + ']';\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αjjJG-oCJNFpLN": {
+                "type": "Function",
+                "value": "function αjjJG(colorEven, colorOdd, reflection, transparency, gloss, density) {\n            var Σ_αjjJG = new Σ.Scope(this, Σ, αjjJG, function() {\n                return [{\n                        colorEven: colorEven,\n                        colorOdd: colorOdd,\n                        reflection: reflection,\n                        transparency: transparency,\n                        gloss: gloss,\n                        density: density\n                    },\n                    {}\n                ];\n            });\n            this.colorEven = colorEven;\n            this.colorOdd = colorOdd;\n            this.reflection = reflection;\n            this.transparency = transparency;\n            this.gloss = gloss;\n            this.density = density;\n            this.hasTexture = true;\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "α5nNj-gXYpIJfm": {
+                "type": "Function",
+                "value": "function α5nNj(u, v) {\n            var Σ_α5nNj = new Σ.Scope(this, Σ, α5nNj, function() {\n                return [{\n                        u: u,\n                        v: v\n                    },\n                    {\n                        t: t\n                    }\n                ];\n            });\n            var t = this.wrapUp(u * this.density) * this.wrapUp(v * this.density);\n            if (t < 0) {\n                return this.colorEven;\n            } else {\n                return this.colorOdd;\n            }\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αxgtl-K7q1dOuL": {
+                "type": "Function",
+                "value": "function αxgtl() {\n            return 'ChessMaterial [gloss=' + this.gloss + ', transparency=' + this.transparency + ', hasTexture=' + this.hasTexture + ']';\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "α4JpS-zTgThdtj": {
+                "type": "Function",
+                "value": "function α4JpS(pos, radius, material) {\n            var Σ_α4JpS = new Σ.Scope(this, Σ, α4JpS, function() {\n                return [{\n                        pos: pos,\n                        radius: radius,\n                        material: material\n                    },\n                    {}\n                ];\n            });\n            this.radius = radius;\n            this.position = pos;\n            this.material = material;\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αEv5w-vod8i5h4": {
+                "type": "Function",
+                "value": "function αEv5w(ray) {\n            var Σ_αEv5w = new Σ.Scope(this, Σ, αEv5w, function() {\n                return [{\n                        ray: ray\n                    },\n                    {\n                        info: info,\n                        dst: dst,\n                        B: B,\n                        C: C,\n                        D: D\n                    }\n                ];\n            });\n            var info = new Flog.RayTracer.IntersectionInfo();\n            info.shape = this;\n            var dst = Flog.RayTracer.Vector.prototype.subtract(ray.position, this.position);\n            var B = dst.dot(ray.direction);\n            var C = dst.dot(dst) - this.radius * this.radius;\n            var D = B * B - C;\n            if (D > 0) {\n                info.isHit = true;\n                info.distance = -B - Math.sqrt(D);\n                info.position = Flog.RayTracer.Vector.prototype.add(ray.position, Flog.RayTracer.Vector.prototype.multiplyScalar(ray.direction, info.distance));\n                info.normal = Flog.RayTracer.Vector.prototype.subtract(info.position, this.position).normalize();\n                info.color = this.material.getColor(0, 0);\n            } else {\n                info.isHit = false;\n            }\n            return info;\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αdScP-C0AZ2jax": {
+                "type": "Function",
+                "value": "function αdScP() {\n            return 'Sphere [position=' + this.position + ', radius=' + this.radius + ']';\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αPu4o-lHRcDUTA": {
+                "type": "Function",
+                "value": "function αPu4o(pos, d, material) {\n            var Σ_αPu4o = new Σ.Scope(this, Σ, αPu4o, function() {\n                return [{\n                        pos: pos,\n                        d: d,\n                        material: material\n                    },\n                    {}\n                ];\n            });\n            this.position = pos;\n            this.d = d;\n            this.material = material;\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "α1fms-Np0iGv7l": {
+                "type": "Function",
+                "value": "function α1fms(ray) {\n            var Σ_α1fms = new Σ.Scope(this, Σ, α1fms, function() {\n                return [{\n                        ray: ray\n                    },\n                    {\n                        info: info,\n                        Vd: Vd,\n                        t: t,\n                        vU: vU,\n                        vV: vV,\n                        u: u,\n                        v: v\n                    }\n                ];\n            });\n            var info = new Flog.RayTracer.IntersectionInfo();\n            var Vd = this.position.dot(ray.direction);\n            if (Vd == 0) {\n                return info;\n            }\n            var t = -(this.position.dot(ray.position) + this.d) / Vd;\n            if (t <= 0) {\n                return info;\n            }\n            info.shape = this;\n            info.isHit = true;\n            info.position = Flog.RayTracer.Vector.prototype.add(ray.position, Flog.RayTracer.Vector.prototype.multiplyScalar(ray.direction, t));\n            info.normal = this.position;\n            info.distance = t;\n            if (this.material.hasTexture) {\n                var vU = new Flog.RayTracer.Vector(this.position.y, this.position.z, -this.position.x);\n                var vV = vU.cross(this.position);\n                var u = info.position.dot(vU);\n                var v = info.position.dot(vV);\n                info.color = this.material.getColor(u, v);\n            } else {\n                info.color = this.material.getColor(0, 0);\n            }\n            return info;\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αqSZV-1o5l3R7c": {
+                "type": "Function",
+                "value": "function αqSZV() {\n            return 'Plane [' + this.position + ', d=' + this.d + ']';\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αUGoU-V0j7pzAM": {
+                "type": "Function",
+                "value": "function αUGoU() {\n            this.color = new Flog.RayTracer.Color(0, 0, 0);\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αpGEM-KQw1mkoz": {
+                "type": "Function",
+                "value": "function αpGEM() {\n            return 'Intersection [' + this.position + ']';\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αeYuw-Oz9Qh5ck": {
+                "type": "Function",
+                "value": "function αeYuw(pos, lookAt, up) {\n            var Σ_αeYuw = new Σ.Scope(this, Σ, αeYuw, function() {\n                return [{\n                        pos: pos,\n                        lookAt: lookAt,\n                        up: up\n                    },\n                    {}\n                ];\n            });\n            this.position = pos;\n            this.lookAt = lookAt;\n            this.up = up;\n            this.equator = lookAt.normalize().cross(this.up);\n            this.screen = Flog.RayTracer.Vector.prototype.add(this.position, this.lookAt);\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αmpbf-HZPhh3YD": {
+                "type": "Function",
+                "value": "function αmpbf(vx, vy) {\n            var Σ_αmpbf = new Σ.Scope(this, Σ, αmpbf, function() {\n                return [{\n                        vx: vx,\n                        vy: vy\n                    },\n                    {\n                        pos: pos,\n                        dir: dir,\n                        ray: ray\n                    }\n                ];\n            });\n            var pos = Flog.RayTracer.Vector.prototype.subtract(this.screen, Flog.RayTracer.Vector.prototype.subtract(Flog.RayTracer.Vector.prototype.multiplyScalar(this.equator, vx), Flog.RayTracer.Vector.prototype.multiplyScalar(this.up, vy)));\n            pos.y = pos.y * -1;\n            var dir = Flog.RayTracer.Vector.prototype.subtract(pos, this.position);\n            var ray = new Flog.RayTracer.Ray(pos, dir.normalize());\n            return ray;\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αQkP4-MeVAwLJK": {
+                "type": "Function",
+                "value": "function αQkP4() {\n            return 'Ray []';\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αrxLC-cdF7V2K6": {
+                "type": "Function",
+                "value": "function αrxLC(color, ambience) {\n            var Σ_αrxLC = new Σ.Scope(this, Σ, αrxLC, function() {\n                return [{\n                        color: color,\n                        ambience: ambience\n                    },\n                    {}\n                ];\n            });\n            this.color = color;\n            this.ambience = ambience;\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αUrRD-3OM7Fagn": {
+                "type": "Function",
+                "value": "function αUrRD(options) {\n            var Σ_αUrRD = new Σ.Scope(this, Σ, αUrRD, function() {\n                return [{\n                        options: options\n                    },\n                    {}\n                ];\n            });\n            this.options = Object.extend({\n                canvasHeight: 100,\n                canvasWidth: 100,\n                pixelWidth: 2,\n                pixelHeight: 2,\n                renderDiffuse: false,\n                renderShadows: false,\n                renderHighlights: false,\n                renderReflections: false,\n                rayDepth: 2\n            }, options || {});\n            this.options.canvasHeight /= this.options.pixelHeight;\n            this.options.canvasWidth /= this.options.pixelWidth;\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "α92mP-EQ4QtSiD": {
+                "type": "Function",
+                "value": "function α92mP(x, y, color) {\n            var Σ_α92mP = new Σ.Scope(this, Σ, α92mP, function() {\n                return [{\n                        x: x,\n                        y: y,\n                        color: color\n                    },\n                    {\n                        pxW: pxW,\n                        pxH: pxH\n                    }\n                ];\n            });\n            var pxW, pxH;\n            pxW = this.options.pixelWidth;\n            pxH = this.options.pixelHeight;\n            if (this.canvas) {\n                this.canvas.fillStyle = color.toString();\n                this.canvas.fillRect(x * pxW, y * pxH, pxW, pxH);\n            } else {\n                if (x === y) {\n                    checkNumber += color.brightness();\n                }\n            }\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αxcib-jokwXk8Y": {
+                "type": "Function",
+                "value": "function αxcib(scene, canvas) {\n            var Σ_αxcib = new Σ.Scope(this, Σ, αxcib, function() {\n                return [{\n                        scene: scene,\n                        canvas: canvas\n                    },\n                    {\n                        canvasHeight: canvasHeight,\n                        canvasWidth: canvasWidth,\n                        y: y,\n                        x: x,\n                        yp: yp,\n                        xp: xp,\n                        ray: ray,\n                        color: color\n                    }\n                ];\n            });\n            checkNumber = 0;\n            if (canvas) {\n                this.canvas = canvas.getContext('2d');\n            } else {\n                this.canvas = null;\n            }\n            var canvasHeight = this.options.canvasHeight;\n            var canvasWidth = this.options.canvasWidth;\n            for (var y = 0; y < canvasHeight; y++) {\n                for (var x = 0; x < canvasWidth; x++) {\n                    var yp = y * 1 / canvasHeight * 2 - 1;\n                    var xp = x * 1 / canvasWidth * 2 - 1;\n                    var ray = scene.camera.getRay(xp, yp);\n                    var color = this.getPixelColor(ray, scene);\n                    this.setPixel(x, y, color);\n                }\n            }\n            if (checkNumber !== 2321) {\n                throw new Error('Scene rendered incorrectly');\n            }\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αyZh6-pSzraFNi": {
+                "type": "Function",
+                "value": "function αyZh6(ray, scene) {\n            var Σ_αyZh6 = new Σ.Scope(this, Σ, αyZh6, function() {\n                return [{\n                        ray: ray,\n                        scene: scene\n                    },\n                    {\n                        info: info,\n                        color: color\n                    }\n                ];\n            });\n            var info = this.testIntersection(ray, scene, null);\n            if (info.isHit) {\n                var color = this.rayTrace(info, ray, scene, 0);\n                return color;\n            }\n            return scene.background.color;\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αeGSo-pE85COJm": {
+                "type": "Function",
+                "value": "function αeGSo(ray, scene, exclude) {\n            var Σ_αeGSo = new Σ.Scope(this, Σ, αeGSo, function() {\n                return [{\n                        ray: ray,\n                        scene: scene,\n                        exclude: exclude\n                    },\n                    {\n                        hits: hits,\n                        best: best,\n                        i: i,\n                        shape: shape,\n                        info: info\n                    }\n                ];\n            });\n            var hits = 0;\n            var best = new Flog.RayTracer.IntersectionInfo();\n            best.distance = 2000;\n            for (var i = 0; i < scene.shapes.length; i++) {\n                var shape = scene.shapes[i];\n                if (shape != exclude) {\n                    var info = shape.intersect(ray);\n                    if (info.isHit && info.distance >= 0 && info.distance < best.distance) {\n                        best = info;\n                        hits++;\n                    }\n                }\n            }\n            best.hitCount = hits;\n            return best;\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "α5gev-ibiFsNGA": {
+                "type": "Function",
+                "value": "function α5gev(P, N, V) {\n            var Σ_α5gev = new Σ.Scope(this, Σ, α5gev, function() {\n                return [{\n                        P: P,\n                        N: N,\n                        V: V\n                    },\n                    {\n                        c1: c1,\n                        R1: R1\n                    }\n                ];\n            });\n            var c1 = -N.dot(V);\n            var R1 = Flog.RayTracer.Vector.prototype.add(Flog.RayTracer.Vector.prototype.multiplyScalar(N, 2 * c1), V);\n            return new Flog.RayTracer.Ray(P, R1);\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αqvIv-YQlJ1zzf": {
+                "type": "Function",
+                "value": "function αqvIv(info, ray, scene, depth) {\n            var Σ_αqvIv = new Σ.Scope(this, Σ, αqvIv, function() {\n                return [{\n                        info: info,\n                        ray: ray,\n                        scene: scene,\n                        depth: depth\n                    },\n                    {\n                        color: color,\n                        oldColor: oldColor,\n                        shininess: shininess,\n                        i: i,\n                        light: light,\n                        v: v,\n                        L: L,\n                        reflectionRay: reflectionRay,\n                        refl: refl,\n                        shadowInfo: shadowInfo,\n                        shadowRay: shadowRay,\n                        vA: vA,\n                        dB: dB,\n                        Lv: Lv,\n                        E: E,\n                        H: H,\n                        glossWeight: glossWeight\n                    }\n                ];\n            });\n            var color = Flog.RayTracer.Color.prototype.multiplyScalar(info.color, scene.background.ambience);\n            var oldColor = color;\n            var shininess = Math.pow(10, info.shape.material.gloss + 1);\n            for (var i = 0; i < scene.lights.length; i++) {\n                var light = scene.lights[i];\n                var v = Flog.RayTracer.Vector.prototype.subtract(light.position, info.position).normalize();\n                if (this.options.renderDiffuse) {\n                    var L = v.dot(info.normal);\n                    if (L > 0) {\n                        color = Flog.RayTracer.Color.prototype.add(color, Flog.RayTracer.Color.prototype.multiply(info.color, Flog.RayTracer.Color.prototype.multiplyScalar(light.color, L)));\n                    }\n                }\n                if (depth <= this.options.rayDepth) {\n                    if (this.options.renderReflections && info.shape.material.reflection > 0) {\n                        var reflectionRay = this.getReflectionRay(info.position, info.normal, ray.direction);\n                        var refl = this.testIntersection(reflectionRay, scene, info.shape);\n                        if (refl.isHit && refl.distance > 0) {\n                            refl.color = this.rayTrace(refl, reflectionRay, scene, depth + 1);\n                        } else {\n                            refl.color = scene.background.color;\n                        }\n                        color = Flog.RayTracer.Color.prototype.blend(color, refl.color, info.shape.material.reflection);\n                    }\n                }\n                var shadowInfo = new Flog.RayTracer.IntersectionInfo();\n                if (this.options.renderShadows) {\n                    var shadowRay = new Flog.RayTracer.Ray(info.position, v);\n                    shadowInfo = this.testIntersection(shadowRay, scene, info.shape);\n                    if (shadowInfo.isHit && shadowInfo.shape != info.shape) {\n                        var vA = Flog.RayTracer.Color.prototype.multiplyScalar(color, 0.5);\n                        var dB = 0.5 * Math.pow(shadowInfo.shape.material.transparency, 0.5);\n                        color = Flog.RayTracer.Color.prototype.addScalar(vA, dB);\n                    }\n                }\n                if (this.options.renderHighlights && !shadowInfo.isHit && info.shape.material.gloss > 0) {\n                    var Lv = Flog.RayTracer.Vector.prototype.subtract(info.shape.position, light.position).normalize();\n                    var E = Flog.RayTracer.Vector.prototype.subtract(scene.camera.position, info.shape.position).normalize();\n                    var H = Flog.RayTracer.Vector.prototype.subtract(E, Lv).normalize();\n                    var glossWeight = Math.pow(Math.max(info.normal.dot(H), 0), shininess);\n                    color = Flog.RayTracer.Color.prototype.add(Flog.RayTracer.Color.prototype.multiplyScalar(light.color, glossWeight), color);\n                }\n            }\n            color.limit();\n            return color;\n        }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αrs5x-erhkirU2": {
+                "type": "Function",
+                "value": "function αrs5x() {\n        return Date.now();\n    }",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αyu0k-jMBgyK7e": {
+                "type": "Function",
+                "value": "function αyu0k() {}",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            },
+            "αzHUf-uBkbIARG": {
+                "type": "Function",
+                "value": "function αzHUf() {}",
+                "context": "Σ",
+                "proto": {},
+                "properties": {}
+            }
+        },
+        "params": {},
+        "refs": {
+            "checkNumber": 2321,
+            "Class": {
+                "type": "Object",
+                "value": {
+                    "create": {
+                        "type": "Function",
+                        "value": "Σ.αQGho-V4FmWjaV"
+                    }
+                }
+            },
+            "performance": {
+                "type": "Object",
+                "value": {
+                    "now": {
+                        "type": "Function",
+                        "value": "Σ.αrs5x-erhkirU2"
+                    }
+                }
+            },
+            "BM_RunFunc": {
+                "type": "Function",
+                "value": "Σ.renderScene"
+            },
+            "BM_SetupFunc": {
+                "type": "Function",
+                "value": "Σ.αyu0k-jMBgyK7e"
+            },
+            "BM_TearDownFunc": {
+                "type": "Function",
+                "value": "Σ.αzHUf-uBkbIARG"
+            },
+            "BM_RMS": {
+                "type": "undefined"
+            },
+            "BM_Iterations": 500,
+            "BM_Min_Iterations": 16,
+            "BM_Results": [],
+            "Flog": {
+                "type": "Object",
+                "value": {
+                    "RayTracer": {
+                        "type": "Object",
+                        "value": {
+                            "Color": {
+                                "type": "Function",
+                                "value": "Σ/αQGho-ydTU5RVA.αn8tS-4bEfEm2V"
+                            },
+                            "Light": {
+                                "type": "Function",
+                                "value": "Σ/αQGho-JSEiYxca.αn8tS-usVeANqx"
+                            },
+                            "Vector": {
+                                "type": "Function",
+                                "value": "Σ/αQGho-Nck2X9Qy.αn8tS-GMB7sAH9"
+                            },
+                            "Ray": {
+                                "type": "Function",
+                                "value": "Σ/αQGho-waq8hN9K.αn8tS-iOdzlO03"
+                            },
+                            "Scene": {
+                                "type": "Function",
+                                "value": "Σ/αQGho-YMPm5jmu.αn8tS-YdmZjLpj"
+                            },
+                            "Material": {
+                                "type": "Object",
+                                "value": {
+                                    "BaseMaterial": {
+                                        "type": "Function",
+                                        "value": "Σ/αQGho-55DAAkQM.αn8tS-OLMzbk54"
+                                    },
+                                    "Solid": {
+                                        "type": "Function",
+                                        "value": "Σ/αQGho-R94lzNsJ.αn8tS-oxBkpltD"
+                                    },
+                                    "Chessboard": {
+                                        "type": "Function",
+                                        "value": "Σ/αQGho-HSZUQyyq.αn8tS-UKHzCpSI"
+                                    }
+                                }
+                            },
+                            "Shape": {
+                                "type": "Object",
+                                "value": {
+                                    "Sphere": {
+                                        "type": "Function",
+                                        "value": "Σ/αQGho-OYuQG4sp.αn8tS-STUtNW2j"
+                                    },
+                                    "Plane": {
+                                        "type": "Function",
+                                        "value": "Σ/αQGho-cUecBNkR.αn8tS-cnrix64n"
+                                    }
+                                }
+                            },
+                            "IntersectionInfo": {
+                                "type": "Function",
+                                "value": "Σ/αQGho-VQDhoTd7.αn8tS-qx6GCTNC"
+                            },
+                            "Camera": {
+                                "type": "Function",
+                                "value": "Σ/αQGho-jxoXy5fh.αn8tS-uq0D7ura"
+                            },
+                            "Background": {
+                                "type": "Function",
+                                "value": "Σ/αQGho-FCbdLpPH.αn8tS-fPIvLHiI"
+                            },
+                            "Engine": {
+                                "type": "Function",
+                                "value": "Σ/αQGho-dozszsE1.αn8tS-wwnrmcLs"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "children": {
+            "αQGho-ydTU5RVA": {
+                "name": "αQGho",
+                "uri": "Σ/αQGho-ydTU5RVA",
+                "hoisted": [],
+                "funcs": {
+                    "αn8tS-4bEfEm2V": {
+                        "type": "Function",
+                        "value": "function αn8tS() {\n                this.initialize.apply(this, arguments);\n            }",
+                        "context": "Σ_αQGho",
+                        "proto": {
+                            "red": 0,
+                            "green": 0,
+                            "blue": 0,
+                            "initialize": {
+                                "type": "Function",
+                                "value": "Σ.αRF6n-ZdJlkxVI"
+                            },
+                            "add": {
+                                "type": "Function",
+                                "value": "Σ.αnT6m-SaZUVplt"
+                            },
+                            "addScalar": {
+                                "type": "Function",
+                                "value": "Σ.αb2PC-e8OEYWGT"
+                            },
+                            "subtract": {
+                                "type": "Function",
+                                "value": "Σ.α0Z5T-TW0WxyYo"
+                            },
+                            "multiply": {
+                                "type": "Function",
+                                "value": "Σ.αundy-V0zT2VJL"
+                            },
+                            "multiplyScalar": {
+                                "type": "Function",
+                                "value": "Σ.αvwEO-vh3EpTGs"
+                            },
+                            "divideFactor": {
+                                "type": "Function",
+                                "value": "Σ.αQEtz-itirq8Fj"
+                            },
+                            "limit": {
+                                "type": "Function",
+                                "value": "Σ.αYo1X-M9HTZHwU"
+                            },
+                            "distance": {
+                                "type": "Function",
+                                "value": "Σ.α2zfk-sa3Tpx5v"
+                            },
+                            "blend": {
+                                "type": "Function",
+                                "value": "Σ.αcO1n-8g74xCmr"
+                            },
+                            "brightness": {
+                                "type": "Function",
+                                "value": "Σ.αRyF5-f9FNrSB6"
+                            },
+                            "toString": {
+                                "type": "Function",
+                                "value": "Σ.α6mgv-B40RVBN6"
+                            }
+                        },
+                        "properties": {}
+                    }
+                },
+                "params": {},
+                "refs": {},
+                "children": {},
+                "depth": 1
+            },
+            "αQGho-JSEiYxca": {
+                "name": "αQGho",
+                "uri": "Σ/αQGho-JSEiYxca",
+                "hoisted": [],
+                "funcs": {
+                    "αn8tS-usVeANqx": {
+                        "type": "Function",
+                        "value": "function αn8tS() {\n                this.initialize.apply(this, arguments);\n            }",
+                        "context": "Σ_αQGho",
+                        "proto": {
+                            "position": null,
+                            "color": null,
+                            "intensity": 10,
+                            "initialize": {
+                                "type": "Function",
+                                "value": "Σ.αKksT-EV0YEC7n"
+                            },
+                            "toString": {
+                                "type": "Function",
+                                "value": "Σ.αhz57-C4FWuieU"
+                            }
+                        },
+                        "properties": {}
+                    }
+                },
+                "params": {},
+                "refs": {},
+                "children": {},
+                "depth": 1
+            },
+            "αQGho-Nck2X9Qy": {
+                "name": "αQGho",
+                "uri": "Σ/αQGho-Nck2X9Qy",
+                "hoisted": [],
+                "funcs": {
+                    "αn8tS-GMB7sAH9": {
+                        "type": "Function",
+                        "value": "function αn8tS() {\n                this.initialize.apply(this, arguments);\n            }",
+                        "context": "Σ_αQGho",
+                        "proto": {
+                            "x": 0,
+                            "y": 0,
+                            "z": 0,
+                            "initialize": {
+                                "type": "Function",
+                                "value": "Σ.αzyef-pof799iU"
+                            },
+                            "copy": {
+                                "type": "Function",
+                                "value": "Σ.αZeAP-iryxPQq9"
+                            },
+                            "normalize": {
+                                "type": "Function",
+                                "value": "Σ.αuYsp-6K3xLuxx"
+                            },
+                            "magnitude": {
+                                "type": "Function",
+                                "value": "Σ.α31FI-iIxjbzPJ"
+                            },
+                            "cross": {
+                                "type": "Function",
+                                "value": "Σ.αv9J9-kq9fT4LF"
+                            },
+                            "dot": {
+                                "type": "Function",
+                                "value": "Σ.α4C3t-ySxVNweb"
+                            },
+                            "add": {
+                                "type": "Function",
+                                "value": "Σ.αJVhZ-Kqtpozyt"
+                            },
+                            "subtract": {
+                                "type": "Function",
+                                "value": "Σ.αQsoR-86QKgu5l"
+                            },
+                            "multiplyVector": {
+                                "type": "Function",
+                                "value": "Σ.αXId0-KyVVW8y8"
+                            },
+                            "multiplyScalar": {
+                                "type": "Function",
+                                "value": "Σ.αRtKb-oFcLdau7"
+                            },
+                            "toString": {
+                                "type": "Function",
+                                "value": "Σ.αkBFp-UWY9lJM0"
+                            }
+                        },
+                        "properties": {}
+                    }
+                },
+                "params": {},
+                "refs": {},
+                "children": {},
+                "depth": 1
+            },
+            "αQGho-waq8hN9K": {
+                "name": "αQGho",
+                "uri": "Σ/αQGho-waq8hN9K",
+                "hoisted": [],
+                "funcs": {
+                    "αn8tS-iOdzlO03": {
+                        "type": "Function",
+                        "value": "function αn8tS() {\n                this.initialize.apply(this, arguments);\n            }",
+                        "context": "Σ_αQGho",
+                        "proto": {
+                            "position": null,
+                            "direction": null,
+                            "initialize": {
+                                "type": "Function",
+                                "value": "Σ.αPkl1-dPbOL1XA"
+                            },
+                            "toString": {
+                                "type": "Function",
+                                "value": "Σ.αjLq5-GDAPO5hE"
+                            }
+                        },
+                        "properties": {}
+                    }
+                },
+                "params": {},
+                "refs": {},
+                "children": {},
+                "depth": 1
+            },
+            "αQGho-YMPm5jmu": {
+                "name": "αQGho",
+                "uri": "Σ/αQGho-YMPm5jmu",
+                "hoisted": [],
+                "funcs": {
+                    "αn8tS-YdmZjLpj": {
+                        "type": "Function",
+                        "value": "function αn8tS() {\n                this.initialize.apply(this, arguments);\n            }",
+                        "context": "Σ_αQGho",
+                        "proto": {
+                            "camera": null,
+                            "shapes": [],
+                            "lights": [],
+                            "background": null,
+                            "initialize": {
+                                "type": "Function",
+                                "value": "Σ.αgNVf-ozVCW7pR"
+                            }
+                        },
+                        "properties": {}
+                    }
+                },
+                "params": {},
+                "refs": {},
+                "children": {},
+                "depth": 1
+            },
+            "αQGho-55DAAkQM": {
+                "name": "αQGho",
+                "uri": "Σ/αQGho-55DAAkQM",
+                "hoisted": [],
+                "funcs": {
+                    "αn8tS-OLMzbk54": {
+                        "type": "Function",
+                        "value": "function αn8tS() {\n                this.initialize.apply(this, arguments);\n            }",
+                        "context": "Σ_αQGho",
+                        "proto": {
+                            "gloss": 2,
+                            "transparency": 0,
+                            "reflection": 0,
+                            "refraction": 0.5,
+                            "hasTexture": false,
+                            "initialize": {
+                                "type": "Function",
+                                "value": "Σ.α1hUv-28DtREok"
+                            },
+                            "getColor": {
+                                "type": "Function",
+                                "value": "Σ.α3y48-JtwsiHMy"
+                            },
+                            "wrapUp": {
+                                "type": "Function",
+                                "value": "Σ.αMykA-PbV0rB8U"
+                            },
+                            "toString": {
+                                "type": "Function",
+                                "value": "Σ.αePQi-1C0maXls"
+                            }
+                        },
+                        "properties": {}
+                    }
+                },
+                "params": {},
+                "refs": {},
+                "children": {},
+                "depth": 1
+            },
+            "αQGho-R94lzNsJ": {
+                "name": "αQGho",
+                "uri": "Σ/αQGho-R94lzNsJ",
+                "hoisted": [],
+                "funcs": {
+                    "αn8tS-oxBkpltD": {
+                        "type": "Function",
+                        "value": "function αn8tS() {\n                this.initialize.apply(this, arguments);\n            }",
+                        "context": "Σ_αQGho",
+                        "proto": {
+                            "initialize": {
+                                "type": "Function",
+                                "value": "Σ.αitOw-VtvJZDoX"
+                            },
+                            "getColor": {
+                                "type": "Function",
+                                "value": "Σ.αJLpy-MQthMhAD"
+                            },
+                            "toString": {
+                                "type": "Function",
+                                "value": "Σ.αSWDg-AgFpvSo6"
+                            }
+                        },
+                        "properties": {}
+                    }
+                },
+                "params": {},
+                "refs": {},
+                "children": {},
+                "depth": 1
+            },
+            "αQGho-HSZUQyyq": {
+                "name": "αQGho",
+                "uri": "Σ/αQGho-HSZUQyyq",
+                "hoisted": [],
+                "funcs": {
+                    "αn8tS-UKHzCpSI": {
+                        "type": "Function",
+                        "value": "function αn8tS() {\n                this.initialize.apply(this, arguments);\n            }",
+                        "context": "Σ_αQGho",
+                        "proto": {
+                            "colorEven": null,
+                            "colorOdd": null,
+                            "density": 0.5,
+                            "initialize": {
+                                "type": "Function",
+                                "value": "Σ.αjjJG-oCJNFpLN"
+                            },
+                            "getColor": {
+                                "type": "Function",
+                                "value": "Σ.α5nNj-gXYpIJfm"
+                            },
+                            "toString": {
+                                "type": "Function",
+                                "value": "Σ.αxgtl-K7q1dOuL"
+                            }
+                        },
+                        "properties": {}
+                    }
+                },
+                "params": {},
+                "refs": {},
+                "children": {},
+                "depth": 1
+            },
+            "αQGho-OYuQG4sp": {
+                "name": "αQGho",
+                "uri": "Σ/αQGho-OYuQG4sp",
+                "hoisted": [],
+                "funcs": {
+                    "αn8tS-STUtNW2j": {
+                        "type": "Function",
+                        "value": "function αn8tS() {\n                this.initialize.apply(this, arguments);\n            }",
+                        "context": "Σ_αQGho",
+                        "proto": {
+                            "initialize": {
+                                "type": "Function",
+                                "value": "Σ.α4JpS-zTgThdtj"
+                            },
+                            "intersect": {
+                                "type": "Function",
+                                "value": "Σ.αEv5w-vod8i5h4"
+                            },
+                            "toString": {
+                                "type": "Function",
+                                "value": "Σ.αdScP-C0AZ2jax"
+                            }
+                        },
+                        "properties": {}
+                    }
+                },
+                "params": {},
+                "refs": {},
+                "children": {},
+                "depth": 1
+            },
+            "αQGho-cUecBNkR": {
+                "name": "αQGho",
+                "uri": "Σ/αQGho-cUecBNkR",
+                "hoisted": [],
+                "funcs": {
+                    "αn8tS-cnrix64n": {
+                        "type": "Function",
+                        "value": "function αn8tS() {\n                this.initialize.apply(this, arguments);\n            }",
+                        "context": "Σ_αQGho",
+                        "proto": {
+                            "d": 0,
+                            "initialize": {
+                                "type": "Function",
+                                "value": "Σ.αPu4o-lHRcDUTA"
+                            },
+                            "intersect": {
+                                "type": "Function",
+                                "value": "Σ.α1fms-Np0iGv7l"
+                            },
+                            "toString": {
+                                "type": "Function",
+                                "value": "Σ.αqSZV-1o5l3R7c"
+                            }
+                        },
+                        "properties": {}
+                    }
+                },
+                "params": {},
+                "refs": {},
+                "children": {},
+                "depth": 1
+            },
+            "αQGho-VQDhoTd7": {
+                "name": "αQGho",
+                "uri": "Σ/αQGho-VQDhoTd7",
+                "hoisted": [],
+                "funcs": {
+                    "αn8tS-qx6GCTNC": {
+                        "type": "Function",
+                        "value": "function αn8tS() {\n                this.initialize.apply(this, arguments);\n            }",
+                        "context": "Σ_αQGho",
+                        "proto": {
+                            "isHit": false,
+                            "hitCount": 0,
+                            "shape": null,
+                            "position": null,
+                            "normal": null,
+                            "color": null,
+                            "distance": null,
+                            "initialize": {
+                                "type": "Function",
+                                "value": "Σ.αUGoU-V0j7pzAM"
+                            },
+                            "toString": {
+                                "type": "Function",
+                                "value": "Σ.αpGEM-KQw1mkoz"
+                            }
+                        },
+                        "properties": {}
+                    }
+                },
+                "params": {},
+                "refs": {},
+                "children": {},
+                "depth": 1
+            },
+            "αQGho-jxoXy5fh": {
+                "name": "αQGho",
+                "uri": "Σ/αQGho-jxoXy5fh",
+                "hoisted": [],
+                "funcs": {
+                    "αn8tS-uq0D7ura": {
+                        "type": "Function",
+                        "value": "function αn8tS() {\n                this.initialize.apply(this, arguments);\n            }",
+                        "context": "Σ_αQGho",
+                        "proto": {
+                            "position": null,
+                            "lookAt": null,
+                            "equator": null,
+                            "up": null,
+                            "screen": null,
+                            "initialize": {
+                                "type": "Function",
+                                "value": "Σ.αeYuw-Oz9Qh5ck"
+                            },
+                            "getRay": {
+                                "type": "Function",
+                                "value": "Σ.αmpbf-HZPhh3YD"
+                            },
+                            "toString": {
+                                "type": "Function",
+                                "value": "Σ.αQkP4-MeVAwLJK"
+                            }
+                        },
+                        "properties": {}
+                    }
+                },
+                "params": {},
+                "refs": {},
+                "children": {},
+                "depth": 1
+            },
+            "αQGho-FCbdLpPH": {
+                "name": "αQGho",
+                "uri": "Σ/αQGho-FCbdLpPH",
+                "hoisted": [],
+                "funcs": {
+                    "αn8tS-fPIvLHiI": {
+                        "type": "Function",
+                        "value": "function αn8tS() {\n                this.initialize.apply(this, arguments);\n            }",
+                        "context": "Σ_αQGho",
+                        "proto": {
+                            "color": null,
+                            "ambience": 0,
+                            "initialize": {
+                                "type": "Function",
+                                "value": "Σ.αrxLC-cdF7V2K6"
+                            }
+                        },
+                        "properties": {}
+                    }
+                },
+                "params": {},
+                "refs": {},
+                "children": {},
+                "depth": 1
+            },
+            "αQGho-dozszsE1": {
+                "name": "αQGho",
+                "uri": "Σ/αQGho-dozszsE1",
+                "hoisted": [],
+                "funcs": {
+                    "αn8tS-wwnrmcLs": {
+                        "type": "Function",
+                        "value": "function αn8tS() {\n                this.initialize.apply(this, arguments);\n            }",
+                        "context": "Σ_αQGho",
+                        "proto": {
+                            "canvas": null,
+                            "initialize": {
+                                "type": "Function",
+                                "value": "Σ.αUrRD-3OM7Fagn"
+                            },
+                            "setPixel": {
+                                "type": "Function",
+                                "value": "Σ.α92mP-EQ4QtSiD"
+                            },
+                            "renderScene": {
+                                "type": "Function",
+                                "value": "Σ.αxcib-jokwXk8Y"
+                            },
+                            "getPixelColor": {
+                                "type": "Function",
+                                "value": "Σ.αyZh6-pSzraFNi"
+                            },
+                            "testIntersection": {
+                                "type": "Function",
+                                "value": "Σ.αeGSo-pE85COJm"
+                            },
+                            "getReflectionRay": {
+                                "type": "Function",
+                                "value": "Σ.α5gev-ibiFsNGA"
+                            },
+                            "rayTrace": {
+                                "type": "Function",
+                                "value": "Σ.αqvIv-YQlJ1zzf"
+                            }
+                        },
+                        "properties": {}
+                    }
+                },
+                "params": {},
+                "refs": {},
+                "children": {},
+                "depth": 1
+            },
+            "BM_Start-bD6LUZQj": {
+                "name": "BM_Start",
+                "uri": "Σ/BM_Start-bD6LUZQj",
+                "hoisted": ["doRun"],
+                "funcs": {
+                    "doRun": {
+                        "type": "Function",
+                        "value": "function doRun() {\n            var Σ_BM_Start_doRun = new Σ.Scope(this, Σ_BM_Start, doRun, function() {\n                return [{},\n                    {\n                        usec: usec,\n                        rms: rms\n                    }\n                ];\n            });\n            BM_SetupFunc();\n            Σ.console.log('Iteration : ' + i);\n            BM_RunFunc();\n            elapsed = Date.now() - start;\n            BM_TearDownFunc();\n            i++;\n            if (i < BM_Iterations) {\n                if (i === BM_Iterations / 2){\n                    Σ.pauseTimers();\n                    var started = Date.now();\n                    var safe = Σ.snapshot();\n                    var elapsed = Date.now() - started;\n                    process.send({ time_taken: elapsed, snapshot: safe });\n                }\n                else Σ.setImmediate(doRun);\n            } else {\n                if (data != null) {\n                    data.runs += i;\n                    data.elapsed += elapsed;\n                }\n                Σ.console.log('Runs: ' + data.runs + '\\t|\\tElapsed: ' + data.elapsed);\n                end = Date.now();\n                Σ.console.log('Total time : ' + (end - start) + ' ms');\n                var usec = data.elapsed * 1000 / data.runs;\n                var rms = BM_RMS ? BM_RMS() : 0;\n                BM_Results.push({\n                    time: usec,\n                    latency: rms\n                });\n                process.exit();\n            }\n        }",
+                        "context": "Σ_BM_Start",
+                        "proto": {},
+                        "properties": {}
+                    }
+                },
+                "params": {},
+                "refs": {
+                    "data": {
+                        "type": "Object",
+                        "value": {
+                            "runs": 0,
+                            "elapsed": 0
+                        }
+                    },
+                    "elapsed": 0,
+                    "start": 1561661453808,
+                    "end": null,
+                    "i": 250
+                },
+                "children": {},
+                "depth": 1
+            }
+        },
+        "depth": 2
+    }
+}

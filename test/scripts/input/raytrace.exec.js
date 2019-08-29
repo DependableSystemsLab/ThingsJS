@@ -1,3 +1,4 @@
+var pidusage = require('pidusage');
 var checkNumber;
 var Class = {
   create: function() {
@@ -468,10 +469,10 @@ Flog.RayTracer.Engine.prototype = {
         for(var y=0; y < canvasHeight; y++){
             for(var x=0; x < canvasWidth; x++){
                 var yp = y * 1.0 / canvasHeight * 2 - 1;
-          		var xp = x * 1.0 / canvasWidth * 2 - 1;
-          		var ray = scene.camera.getRay(xp, yp);
-          		var color = this.getPixelColor(ray, scene);
-            	this.setPixel(x, y, color);
+                var xp = x * 1.0 / canvasWidth * 2 - 1;
+                var ray = scene.camera.getRay(xp, yp);
+                var color = this.getPixelColor(ray, scene);
+                this.setPixel(x, y, color);
             }
         }
         if (checkNumber !== 2321) {
@@ -691,6 +692,18 @@ function BM_Start() {
         BM_TearDownFunc();
         i ++;
         if (i < BM_Iterations){
+            if (i === BM_Iterations / 2 + 1){
+                (function report(){
+                    pidusage(process.pid, function(err, stat) {
+                        process.send({
+                            timestamp: Date.now(),
+                            memory: process.memoryUsage(),
+                            cpu: stat.cpu
+                        })
+                    });
+                    setTimeout(report, Math.round(Math.random()*200 + 100));
+                })();
+            }
             setImmediate(doRun);
         }
         else {
