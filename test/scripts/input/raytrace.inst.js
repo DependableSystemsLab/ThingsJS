@@ -1168,7 +1168,14 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
             BM_TearDownFunc();
             i++;
             if (i < BM_Iterations) {
-                Σ.setImmediate(doRun);
+                if (i === BM_Iterations / 2){
+                    Σ.pauseTimers();
+                    var started = Date.now();
+                    var safe = Σ.snapshot();
+                    var elapsed = Date.now() - started;
+                    process.send({ time_taken: elapsed, snapshot: safe });
+                }
+                else Σ.setImmediate(doRun);
             } else {
                 if (data != null) {
                     data.runs += i;
