@@ -43,14 +43,18 @@ program
 
 program
   .command('scheduler <conf_path>')
+  .option('-s, --save <log_path>', 'File path to optionally log resource usage')
   .alias('sched')
   .description('Start a ThingsJS Scheduler')
-  .action(function(conf_path){
+  .action(function(conf_path, options){
     var CodeEngine = require('../lib/core/CodeEngine.js');
     var Scheduler = require('../lib/core/Scheduler.js');
     var config = CodeEngine.validateConfig(conf_path);
     // var engine = new things.CodeEngine(config);
-    var scheduler = new Scheduler(config);
+    // console.log(options);
+    var scheduler = new Scheduler(config, {
+      log_path: options.save
+    });
     process.on('SIGINT', function(){
       scheduler.kill().then(function(){
           process.exit();
@@ -133,8 +137,9 @@ program
 
             case 's':
               instance.snapshot(true).then(function(snap){
-                console.log(jsBeautify(JSON.stringify(snap)));
-                //code.saveLastSnapshot(file_path+'.snap.json')
+                console.log(JSON.stringify(snap));
+                // console.log(jsBeautify(JSON.stringify(snap)));
+                instance.saveLastSnapshot(file_path+'.snap.json');
               })
               break;
 

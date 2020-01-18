@@ -48,6 +48,16 @@ dropped.then(()=>{
 		})
 	}).then(()=>{
 		return new Promise((resolve, reject)=>{
+			gfs.mkdir('/codes/data', function(err){
+				if (err) reject(err);
+				else {
+					console.log('Created directory /codes/data');
+					resolve();
+				}
+			});
+		})
+	}).then(()=>{
+		return new Promise((resolve, reject)=>{
 	 		fs.readFile(path.resolve(__dirname, '../../samples/factorial.js'), function(rErr, data){
 	 			gfs.writeFile('/codes/factorial.js', data.toString(), function(wErr){
 					console.log('Created file /codes/factorial.js');
@@ -69,6 +79,15 @@ dropped.then(()=>{
 		 	fs.readFile(path.resolve(__dirname, '../../samples/motion_detector.js'), function(rErr, data){
 		 		gfs.writeFile('/codes/motion_detector.js', data.toString(), function(wErr){
 					console.log('Created file /codes/motion_detector.js');
+					resolve();
+		 		})
+		 	});
+		})
+	}).then(()=>{
+		return new Promise((resolve, reject)=>{
+		 	fs.readFile(path.resolve(__dirname, '../../samples/IoTBench/Data/TAXI_properties.json'), function(rErr, data){
+		 		gfs.writeFile('/codes/data/TAXI_properties.json', data.toString(), function(wErr){
+					console.log('Created file /codes/data/TAXI_properties.json');
 					resolve();
 		 		})
 		 	});
