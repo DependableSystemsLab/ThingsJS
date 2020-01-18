@@ -1,0 +1,21 @@
+version: '3'
+services:
+  pubsub:
+    image: "ubcece/things-js:20.01.0"
+    ports:
+    - 1883:1883
+    - 27018:27017
+    - 3000:3000
+    command: bash -c "cd run && ./run-manager.sh"
+
+  thing-1:
+    image: "ubcece/things-js:20.01.0"
+    command: bash -c "sleep 1s && cd run && things-js worker worker-0.conf"
+
+  thing-2:
+    image: "ubcece/things-js:20.01.0"
+    command: bash -c "sleep 1s && cd run && things-js worker worker-1.conf"
+
+  thing-3:
+    image: "ubcece/things-js:20.01.0"
+    command: bash -c "sleep 1s && cd run && things-js worker worker-1.conf"
