@@ -39,7 +39,7 @@
     "js-yaml": "^3.12.0",
     "jsonschema": "^1.2.0",
     "mongodb": "^2.2.33",
-    "mongoose": "^5.3.3",
+    "mongoose": "^5.8.9",
     "mosca": "^2.8.1",
     "mqtt": "^2.14.0",
     "onoff": "^3.2.2",
