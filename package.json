@@ -4,14 +4,15 @@
   "description": "Framework for building distribute IoT applications",
   "main": "index.js",
   "scripts": {
-    "install": "ln -s ../ node_modules/things-js && ln -rs bin/things-js $HOME/bin/things-js",
     "test": "mocha test/run-all.js --exit",
     "test-script": "node test/scripts/run-script.js",
     "docs": "gitbook build && cp -TR _book/ docs/",
-    "reset-db": "node bin/scripts/resetMongoDB.js"
+    "reset-db": "node bin/scripts/resetMongoDB.js",
+    "compile": "require-self",
+    "prepare": "npm run compile"
   },
   "bin": {
-    "things-js": "./bin/things-js"
+    "things-js": "bin/things-js"
   },
   "repository": {
     "type": "git",
@@ -56,6 +57,7 @@
     "gulp-mocha": "^6.0.0",
     "jsdoc": "^3.5.5",
     "mocha": "^5.1.1",
+    "require-self": "^0.2.1",
     "sinon": "^6.3.5"
   }
 }
