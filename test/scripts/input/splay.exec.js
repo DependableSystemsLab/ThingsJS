@@ -1,7 +1,7 @@
 var pidusage = require('pidusage');
 var kSplayTreeSize = 1000;
-var kSplayTreeModifications = 10;
-var kSplayTreePayloadDepth = 3;
+var kSplayTreeModifications = 20;
+var kSplayTreePayloadDepth = 4;
 var splayTree = null;
 var splaySampleTimeStart = 0.0;
 function GeneratePayloadTree(depth, tag) {
@@ -229,7 +229,7 @@ var BM_RunFunc = SplayRun;
 var BM_SetupFunc = SplaySetup;
 var BM_TearDownFunc = SplayTearDown;
 var BM_RMS = SplayRMS;
-var BM_Iterations = 300;
+var BM_Iterations = 3000;
 var BM_Min_Iterations = 16;
 var BM_Results = [];
 function BM_Start() {

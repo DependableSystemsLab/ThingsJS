@@ -16,11 +16,11 @@ var SESSION = process.argv[3];
 var BASE_DIR = path.resolve(__dirname, './input');
 var RESULT_DIR = path.resolve(__dirname, './output');
 var CODES = [
-	// 'navier-stokes',
-	// 'splay',
-	// 'factorial',
+	'navier-stokes',
+	'splay',
+	'factorial',
 	'richards',
-	// 'raytrace'
+	'raytrace'
 	// 'empty'
 ]
 
@@ -38,7 +38,7 @@ function serialExecute(code_path, count){
 				// console.log(message);
 				if (message.timestamp && message.cpu && message.memory){
 					if (!started) started = Date.now();
-					stats.push(message);	
+					stats.push(message);
 				}
 			});
 		spawned.on('exit', function(exit_code, signal){

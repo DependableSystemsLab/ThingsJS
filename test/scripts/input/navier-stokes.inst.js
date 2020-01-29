@@ -27,12 +27,6 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
         }
     }
     function checkResult(dens) {
-        var Σ_checkResult = new Σ.Scope(this, Σ, checkResult, function () {
-            return [
-                { dens: dens },
-                {}
-            ];
-        });
         this.result = 0;
         for (var i = 7000; i < 7100; i++) {
             this.result += ~~(dens[i] * 10);
@@ -74,12 +68,6 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
     var framesTillAddingPoints = 0;
     var framesBetweenAddingPoints = 5;
     function prepareFrame(field) {
-        var Σ_prepareFrame = new Σ.Scope(this, Σ, prepareFrame, function () {
-            return [
-                { field: field },
-                {}
-            ];
-        });
         if (framesTillAddingPoints == 0) {
             addPoints(field);
             framesTillAddingPoints = framesBetweenAddingPoints;
@@ -126,16 +114,6 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
         var size;
         var displayFunc;
         function addFields(x, s, dt) {
-            var Σ_FluidField_addFields = new Σ.Scope(this, Σ_FluidField, addFields, function () {
-                return [
-                    {
-                        x: x,
-                        s: s,
-                        dt: dt
-                    },
-                    {}
-                ];
-            });
             for (var i = 0; i < size; i++) {
                 x[i] += dt * s[i];
             }
@@ -185,18 +163,6 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
             x[width + 1 + maxEdge] = 0.5 * (x[width + maxEdge] + x[width + 1 + height * rowSize]);
         }
         function lin_solve(b, x, x0, a, c) {
-            var Σ_FluidField_lin_solve = new Σ.Scope(this, Σ_FluidField, lin_solve, function () {
-                return [
-                    {
-                        b: b,
-                        x: x,
-                        x0: x0,
-                        a: a,
-                        c: c
-                    },
-                    {}
-                ];
-            });
             if (a === 0 && c === 1) {
                 for (var j = 1; j <= height; j++) {
                     var currentRow = j * rowSize;
@@ -240,19 +206,6 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
             lin_solve(b, x, x0, a, 1 + 4 * a);
         }
         function lin_solve2(x, x0, y, y0, a, c) {
-            var Σ_FluidField_lin_solve2 = new Σ.Scope(this, Σ_FluidField, lin_solve2, function () {
-                return [
-                    {
-                        x: x,
-                        x0: x0,
-                        y: y,
-                        y0: y0,
-                        a: a,
-                        c: c
-                    },
-                    {}
-                ];
-            });
             if (a === 0 && c === 1) {
                 for (var j = 1; j <= height; j++) {
                     var currentRow = j * rowSize;
@@ -404,18 +357,6 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
             set_bnd(2, v);
         }
         function dens_step(x, x0, u, v, dt) {
-            var Σ_FluidField_dens_step = new Σ.Scope(this, Σ_FluidField, dens_step, function () {
-                return [
-                    {
-                        x: x,
-                        x0: x0,
-                        u: u,
-                        v: v,
-                        dt: dt
-                    },
-                    {}
-                ];
-            });
             addFields(x, x0, dt);
             diffuse(0, x0, x, dt);
             advect(0, x, x0, u, v, dt);
@@ -453,123 +394,39 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
             advect(2, v, v0, u0, v0, dt);
             project(u, v, u0, v0);
         }
-        var uiCallback = Σ_FluidField.addFunction(function αq7uB(d, u, v) {
-            var Σ_FluidField_αq7uB = new Σ.Scope(this, Σ_FluidField, αq7uB, function () {
-                return [
-                    {
-                        d: d,
-                        u: u,
-                        v: v
-                    },
-                    {}
-                ];
-            });
+        var uiCallback = Σ_FluidField.addFunction(function α0(d, u, v) {
         }, Σ_FluidField);
         function Field(dens, u, v) {
-            var Σ_FluidField_Field = new Σ.Scope(this, Σ_FluidField, Field, function () {
-                return [
-                    {
-                        dens: dens,
-                        u: u,
-                        v: v
-                    },
-                    {}
-                ];
-            });
-            this.setDensity = Σ_FluidField_Field.addFunction(function α9oMy(x, y, d) {
-                var Σ_FluidField_Field_α9oMy = new Σ.Scope(this, Σ_FluidField_Field, α9oMy, function () {
-                    return [
-                        {
-                            x: x,
-                            y: y,
-                            d: d
-                        },
-                        {}
-                    ];
-                });
+            this.setDensity = function α1(x, y, d) {
                 dens[x + 1 + (y + 1) * rowSize] = d;
-            }, Σ_FluidField_Field);
-            this.getDensity = Σ_FluidField_Field.addFunction(function αrjWt(x, y) {
-                var Σ_FluidField_Field_αrjWt = new Σ.Scope(this, Σ_FluidField_Field, αrjWt, function () {
-                    return [
-                        {
-                            x: x,
-                            y: y
-                        },
-                        {}
-                    ];
-                });
+            };
+            this.getDensity = function α2(x, y) {
                 return dens[x + 1 + (y + 1) * rowSize];
-            }, Σ_FluidField_Field);
-            this.setVelocity = Σ_FluidField_Field.addFunction(function αFfRv(x, y, xv, yv) {
-                var Σ_FluidField_Field_αFfRv = new Σ.Scope(this, Σ_FluidField_Field, αFfRv, function () {
-                    return [
-                        {
-                            x: x,
-                            y: y,
-                            xv: xv,
-                            yv: yv
-                        },
-                        {}
-                    ];
-                });
+            };
+            this.setVelocity = function α3(x, y, xv, yv) {
                 u[x + 1 + (y + 1) * rowSize] = xv;
                 v[x + 1 + (y + 1) * rowSize] = yv;
-            }, Σ_FluidField_Field);
-            this.getXVelocity = Σ_FluidField_Field.addFunction(function αGbLx(x, y) {
-                var Σ_FluidField_Field_αGbLx = new Σ.Scope(this, Σ_FluidField_Field, αGbLx, function () {
-                    return [
-                        {
-                            x: x,
-                            y: y
-                        },
-                        {}
-                    ];
-                });
+            };
+            this.getXVelocity = function α4(x, y) {
                 return u[x + 1 + (y + 1) * rowSize];
-            }, Σ_FluidField_Field);
-            this.getYVelocity = Σ_FluidField_Field.addFunction(function αrgCA(x, y) {
-                var Σ_FluidField_Field_αrgCA = new Σ.Scope(this, Σ_FluidField_Field, αrgCA, function () {
-                    return [
-                        {
-                            x: x,
-                            y: y
-                        },
-                        {}
-                    ];
-                });
+            };
+            this.getYVelocity = function α5(x, y) {
                 return v[x + 1 + (y + 1) * rowSize];
-            }, Σ_FluidField_Field);
-            this.width = Σ_FluidField_Field.addFunction(function αacPH() {
+            };
+            this.width = function α6() {
                 return width;
-            }, Σ_FluidField_Field);
-            this.height = Σ_FluidField_Field.addFunction(function αUCeI() {
+            };
+            this.height = function α7() {
                 return height;
-            }, Σ_FluidField_Field);
+            };
         }
         function queryUI(d, u, v) {
-            var Σ_FluidField_queryUI = new Σ.Scope(this, Σ_FluidField, queryUI, function () {
-                return [
-                    {
-                        d: d,
-                        u: u,
-                        v: v
-                    },
-                    {}
-                ];
-            });
             for (var i = 0; i < size; i++) {
                 u[i] = v[i] = d[i] = 0;
             }
             uiCallback(new Field(d, u, v));
         }
         function reset() {
-            var Σ_FluidField_reset = new Σ.Scope(this, Σ_FluidField, reset, function () {
-                return [
-                    {},
-                    {}
-                ];
-            });
             rowSize = width + 2;
             size = (width + 2) * (height + 2);
             dens = new Array(size);
@@ -583,11 +440,11 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
             }
         }
         this.reset = reset;
-        this.getDens = Σ_FluidField.addFunction(function αFLOc() {
+        this.getDens = Σ_FluidField.addFunction(function α8() {
             return dens;
         }, Σ_FluidField);
-        this.setResolution = Σ_FluidField.addFunction(function α61hH(hRes, wRes) {
-            var Σ_FluidField_α61hH = new Σ.Scope(this, Σ_FluidField, α61hH, function () {
+        this.setResolution = Σ_FluidField.addFunction(function α9(hRes, wRes) {
+            var Σ_FluidField_α9 = new Σ.Scope(this, Σ_FluidField, α9, function () {
                 return [
                     {
                         hRes: hRes,
@@ -606,47 +463,29 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
             return false;
         }, Σ_FluidField);
         this.setResolution(64, 64);
-        this.update = Σ_FluidField.addFunction(function αGBfR() {
+        this.update = Σ_FluidField.addFunction(function α10() {
             queryUI(dens_prev, u_prev, v_prev);
             vel_step(u, v, u_prev, v_prev, dt);
             dens_step(dens, dens_prev, u, v, dt);
             displayFunc(new Field(dens, u, v));
         }, Σ_FluidField);
-        this.setDisplayFunction = Σ_FluidField.addFunction(function αChvq(func) {
-            var Σ_FluidField_αChvq = new Σ.Scope(this, Σ_FluidField, αChvq, function () {
-                return [
-                    { func: func },
-                    {}
-                ];
-            });
+        this.setDisplayFunction = Σ_FluidField.addFunction(function α11(func) {
             displayFunc = func;
         }, Σ_FluidField);
-        this.iterations = Σ_FluidField.addFunction(function α3eGt() {
+        this.iterations = Σ_FluidField.addFunction(function α12() {
             return iterations;
         }, Σ_FluidField);
-        this.setIterations = Σ_FluidField.addFunction(function αNwV6(iters) {
-            var Σ_FluidField_αNwV6 = new Σ.Scope(this, Σ_FluidField, αNwV6, function () {
-                return [
-                    { iters: iters },
-                    {}
-                ];
-            });
+        this.setIterations = Σ_FluidField.addFunction(function α13(iters) {
             if (iters > 0 && iters <= 100) {
                 iterations = iters;
             }
         }, Σ_FluidField);
-        this.setUICallback = Σ_FluidField.addFunction(function αVs8m(callback) {
-            var Σ_FluidField_αVs8m = new Σ.Scope(this, Σ_FluidField, αVs8m, function () {
-                return [
-                    { callback: callback },
-                    {}
-                ];
-            });
+        this.setUICallback = Σ_FluidField.addFunction(function α14(callback) {
             uiCallback = callback;
         }, Σ_FluidField);
     }
     var performance = {};
-    performance.now = Σ.addFunction(function αFP9L() {
+    performance.now = Σ.addFunction(function α15() {
         return Date.now();
     }, Σ);
     var BM_RunFunc = runNavierStokes;
@@ -678,12 +517,6 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
         var end = null;
         var i = 0;
         function doRun() {
-            var Σ_BM_Start_doRun = new Σ.Scope(this, Σ_BM_Start, doRun, function () {
-                return [
-                    {},
-                    {}
-                ];
-            });
             Σ.console.log('Iteration : ' + i);
             BM_RunFunc();
             elapsed = Date.now() - start;

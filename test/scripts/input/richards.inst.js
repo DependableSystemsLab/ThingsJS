@@ -84,91 +84,28 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
     var NUMBER_OF_IDS = 6;
     var KIND_DEVICE = 0;
     var KIND_WORK = 1;
-    Scheduler.prototype.addIdleTask = Σ.addFunction(function α9up5(id, priority, queue, count) {
-        var Σ_α9up5 = new Σ.Scope(this, Σ, α9up5, function () {
-            return [
-                {
-                    id: id,
-                    priority: priority,
-                    queue: queue,
-                    count: count
-                },
-                {}
-            ];
-        });
+    Scheduler.prototype.addIdleTask = Σ.addFunction(function α0(id, priority, queue, count) {
         this.addRunningTask(id, priority, queue, new IdleTask(this, 1, count));
     }, Σ);
-    Scheduler.prototype.addWorkerTask = Σ.addFunction(function αgPAQ(id, priority, queue) {
-        var Σ_αgPAQ = new Σ.Scope(this, Σ, αgPAQ, function () {
-            return [
-                {
-                    id: id,
-                    priority: priority,
-                    queue: queue
-                },
-                {}
-            ];
-        });
+    Scheduler.prototype.addWorkerTask = Σ.addFunction(function α1(id, priority, queue) {
         this.addTask(id, priority, queue, new WorkerTask(this, ID_HANDLER_A, 0));
     }, Σ);
-    Scheduler.prototype.addHandlerTask = Σ.addFunction(function αPYFu(id, priority, queue) {
-        var Σ_αPYFu = new Σ.Scope(this, Σ, αPYFu, function () {
-            return [
-                {
-                    id: id,
-                    priority: priority,
-                    queue: queue
-                },
-                {}
-            ];
-        });
+    Scheduler.prototype.addHandlerTask = Σ.addFunction(function α2(id, priority, queue) {
         this.addTask(id, priority, queue, new HandlerTask(this));
     }, Σ);
-    Scheduler.prototype.addDeviceTask = Σ.addFunction(function α5SJn(id, priority, queue) {
-        var Σ_α5SJn = new Σ.Scope(this, Σ, α5SJn, function () {
-            return [
-                {
-                    id: id,
-                    priority: priority,
-                    queue: queue
-                },
-                {}
-            ];
-        });
+    Scheduler.prototype.addDeviceTask = Σ.addFunction(function α3(id, priority, queue) {
         this.addTask(id, priority, queue, new DeviceTask(this));
     }, Σ);
-    Scheduler.prototype.addRunningTask = Σ.addFunction(function αEmM7(id, priority, queue, task) {
-        var Σ_αEmM7 = new Σ.Scope(this, Σ, αEmM7, function () {
-            return [
-                {
-                    id: id,
-                    priority: priority,
-                    queue: queue,
-                    task: task
-                },
-                {}
-            ];
-        });
+    Scheduler.prototype.addRunningTask = Σ.addFunction(function α4(id, priority, queue, task) {
         this.addTask(id, priority, queue, task);
         this.currentTcb.setRunning();
     }, Σ);
-    Scheduler.prototype.addTask = Σ.addFunction(function αBJCS(id, priority, queue, task) {
-        var Σ_αBJCS = new Σ.Scope(this, Σ, αBJCS, function () {
-            return [
-                {
-                    id: id,
-                    priority: priority,
-                    queue: queue,
-                    task: task
-                },
-                {}
-            ];
-        });
+    Scheduler.prototype.addTask = Σ.addFunction(function α5(id, priority, queue, task) {
         this.currentTcb = new TaskControlBlock(this.list, id, priority, queue, task);
         this.list = this.currentTcb;
         this.blocks[id] = this.currentTcb;
     }, Σ);
-    Scheduler.prototype.schedule = Σ.addFunction(function αIwcN() {
+    Scheduler.prototype.schedule = Σ.addFunction(function α6() {
         this.currentTcb = this.list;
         while (this.currentTcb != null) {
             if (this.currentTcb.isHeldOrSuspended()) {
@@ -179,8 +116,8 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
             }
         }
     }, Σ);
-    Scheduler.prototype.release = Σ.addFunction(function αq3Dc(id) {
-        var Σ_αq3Dc = new Σ.Scope(this, Σ, αq3Dc, function () {
+    Scheduler.prototype.release = Σ.addFunction(function α7(id) {
+        var Σ_α7 = new Σ.Scope(this, Σ, α7, function () {
             return [
                 { id: id },
                 { tcb: tcb }
@@ -197,17 +134,17 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
             return this.currentTcb;
         }
     }, Σ);
-    Scheduler.prototype.holdCurrent = Σ.addFunction(function αp3KH() {
+    Scheduler.prototype.holdCurrent = Σ.addFunction(function α8() {
         this.holdCount++;
         this.currentTcb.markAsHeld();
         return this.currentTcb.link;
     }, Σ);
-    Scheduler.prototype.suspendCurrent = Σ.addFunction(function α633I() {
+    Scheduler.prototype.suspendCurrent = Σ.addFunction(function α9() {
         this.currentTcb.markAsSuspended();
         return this.currentTcb;
     }, Σ);
-    Scheduler.prototype.queue = Σ.addFunction(function αJyHp(packet) {
-        var Σ_αJyHp = new Σ.Scope(this, Σ, αJyHp, function () {
+    Scheduler.prototype.queue = Σ.addFunction(function α10(packet) {
+        var Σ_α10 = new Σ.Scope(this, Σ, α10, function () {
             return [
                 { packet: packet },
                 { t: t }
@@ -223,18 +160,6 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
         return t.checkPriorityAdd(this.currentTcb, packet);
     }, Σ);
     function TaskControlBlock(link, id, priority, queue, task) {
-        var Σ_TaskControlBlock = new Σ.Scope(this, Σ, TaskControlBlock, function () {
-            return [
-                {
-                    link: link,
-                    id: id,
-                    priority: priority,
-                    queue: queue,
-                    task: task
-                },
-                {}
-            ];
-        });
         this.link = link;
         this.id = id;
         this.priority = priority;
@@ -252,26 +177,26 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
     var STATE_HELD = 4;
     var STATE_SUSPENDED_RUNNABLE = STATE_SUSPENDED | STATE_RUNNABLE;
     var STATE_NOT_HELD = ~STATE_HELD;
-    TaskControlBlock.prototype.setRunning = Σ.addFunction(function αFqpR() {
+    TaskControlBlock.prototype.setRunning = Σ.addFunction(function α11() {
         this.state = STATE_RUNNING;
     }, Σ);
-    TaskControlBlock.prototype.markAsNotHeld = Σ.addFunction(function αRnlv() {
+    TaskControlBlock.prototype.markAsNotHeld = Σ.addFunction(function α12() {
         this.state = this.state & STATE_NOT_HELD;
     }, Σ);
-    TaskControlBlock.prototype.markAsHeld = Σ.addFunction(function αjSwN() {
+    TaskControlBlock.prototype.markAsHeld = Σ.addFunction(function α13() {
         this.state = this.state | STATE_HELD;
     }, Σ);
-    TaskControlBlock.prototype.isHeldOrSuspended = Σ.addFunction(function αbOFW() {
+    TaskControlBlock.prototype.isHeldOrSuspended = Σ.addFunction(function α14() {
         return (this.state & STATE_HELD) != 0 || this.state == STATE_SUSPENDED;
     }, Σ);
-    TaskControlBlock.prototype.markAsSuspended = Σ.addFunction(function αuJOh() {
+    TaskControlBlock.prototype.markAsSuspended = Σ.addFunction(function α15() {
         this.state = this.state | STATE_SUSPENDED;
     }, Σ);
-    TaskControlBlock.prototype.markAsRunnable = Σ.addFunction(function α1U3z() {
+    TaskControlBlock.prototype.markAsRunnable = Σ.addFunction(function α16() {
         this.state = this.state | STATE_RUNNABLE;
     }, Σ);
-    TaskControlBlock.prototype.run = Σ.addFunction(function αXvUu() {
-        var Σ_αXvUu = new Σ.Scope(this, Σ, αXvUu, function () {
+    TaskControlBlock.prototype.run = Σ.addFunction(function α17() {
+        var Σ_α17 = new Σ.Scope(this, Σ, α17, function () {
             return [
                 {},
                 { packet: packet }
@@ -291,16 +216,7 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
         }
         return this.task.run(packet);
     }, Σ);
-    TaskControlBlock.prototype.checkPriorityAdd = Σ.addFunction(function α0syV(task, packet) {
-        var Σ_α0syV = new Σ.Scope(this, Σ, α0syV, function () {
-            return [
-                {
-                    task: task,
-                    packet: packet
-                },
-                {}
-            ];
-        });
+    TaskControlBlock.prototype.checkPriorityAdd = Σ.addFunction(function α18(task, packet) {
         if (this.queue == null) {
             this.queue = packet;
             this.markAsRunnable();
@@ -312,31 +228,15 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
         }
         return task;
     }, Σ);
-    TaskControlBlock.prototype.toString = Σ.addFunction(function αCl9a() {
+    TaskControlBlock.prototype.toString = Σ.addFunction(function α19() {
         return 'tcb { ' + this.task + '@' + this.state + ' }';
     }, Σ);
     function IdleTask(scheduler, v1, count) {
-        var Σ_IdleTask = new Σ.Scope(this, Σ, IdleTask, function () {
-            return [
-                {
-                    scheduler: scheduler,
-                    v1: v1,
-                    count: count
-                },
-                {}
-            ];
-        });
         this.scheduler = scheduler;
         this.v1 = v1;
         this.count = count;
     }
-    IdleTask.prototype.run = Σ.addFunction(function αUbuh(packet) {
-        var Σ_αUbuh = new Σ.Scope(this, Σ, αUbuh, function () {
-            return [
-                { packet: packet },
-                {}
-            ];
-        });
+    IdleTask.prototype.run = Σ.addFunction(function α20(packet) {
         this.count--;
         if (this.count == 0) {
             return this.scheduler.holdCurrent();
@@ -349,26 +249,14 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
             return this.scheduler.release(ID_DEVICE_B);
         }
     }, Σ);
-    IdleTask.prototype.toString = Σ.addFunction(function αwZld() {
+    IdleTask.prototype.toString = Σ.addFunction(function α21() {
         return 'IdleTask';
     }, Σ);
     function DeviceTask(scheduler) {
-        var Σ_DeviceTask = new Σ.Scope(this, Σ, DeviceTask, function () {
-            return [
-                { scheduler: scheduler },
-                {}
-            ];
-        });
         this.scheduler = scheduler;
         this.v1 = null;
     }
-    DeviceTask.prototype.run = Σ.addFunction(function α4RIU(packet) {
-        var Σ_α4RIU = new Σ.Scope(this, Σ, α4RIU, function () {
-            return [
-                { packet: packet },
-                {}
-            ];
-        });
+    DeviceTask.prototype.run = Σ.addFunction(function α22(packet) {
         if (packet == null) {
             if (this.v1 == null) {
                 return this.scheduler.suspendCurrent();
@@ -381,31 +269,15 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
             return this.scheduler.holdCurrent();
         }
     }, Σ);
-    DeviceTask.prototype.toString = Σ.addFunction(function αUE3M() {
+    DeviceTask.prototype.toString = Σ.addFunction(function α23() {
         return 'DeviceTask';
     }, Σ);
     function WorkerTask(scheduler, v1, v2) {
-        var Σ_WorkerTask = new Σ.Scope(this, Σ, WorkerTask, function () {
-            return [
-                {
-                    scheduler: scheduler,
-                    v1: v1,
-                    v2: v2
-                },
-                {}
-            ];
-        });
         this.scheduler = scheduler;
         this.v1 = v1;
         this.v2 = v2;
     }
-    WorkerTask.prototype.run = Σ.addFunction(function αLULd(packet) {
-        var Σ_αLULd = new Σ.Scope(this, Σ, αLULd, function () {
-            return [
-                { packet: packet },
-                {}
-            ];
-        });
+    WorkerTask.prototype.run = Σ.addFunction(function α24(packet) {
         if (packet == null) {
             return this.scheduler.suspendCurrent();
         } else {
@@ -426,27 +298,15 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
             return this.scheduler.queue(packet);
         }
     }, Σ);
-    WorkerTask.prototype.toString = Σ.addFunction(function αUVYE() {
+    WorkerTask.prototype.toString = Σ.addFunction(function α25() {
         return 'WorkerTask';
     }, Σ);
     function HandlerTask(scheduler) {
-        var Σ_HandlerTask = new Σ.Scope(this, Σ, HandlerTask, function () {
-            return [
-                { scheduler: scheduler },
-                {}
-            ];
-        });
         this.scheduler = scheduler;
         this.v1 = null;
         this.v2 = null;
     }
-    HandlerTask.prototype.run = Σ.addFunction(function αfB6d(packet) {
-        var Σ_αfB6d = new Σ.Scope(this, Σ, αfB6d, function () {
-            return [
-                { packet: packet },
-                {}
-            ];
-        });
+    HandlerTask.prototype.run = Σ.addFunction(function α26(packet) {
         if (packet != null) {
             if (packet.kind == KIND_WORK) {
                 this.v1 = packet.addTo(this.v1);
@@ -473,29 +333,19 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
         }
         return this.scheduler.suspendCurrent();
     }, Σ);
-    HandlerTask.prototype.toString = Σ.addFunction(function αxj05() {
+    HandlerTask.prototype.toString = Σ.addFunction(function α27() {
         return 'HandlerTask';
     }, Σ);
     var DATA_SIZE = 4;
     function Packet(link, id, kind) {
-        var Σ_Packet = new Σ.Scope(this, Σ, Packet, function () {
-            return [
-                {
-                    link: link,
-                    id: id,
-                    kind: kind
-                },
-                {}
-            ];
-        });
         this.link = link;
         this.id = id;
         this.kind = kind;
         this.a1 = 0;
         this.a2 = new Array(DATA_SIZE);
     }
-    Packet.prototype.addTo = Σ.addFunction(function αj22n(queue) {
-        var Σ_αj22n = new Σ.Scope(this, Σ, αj22n, function () {
+    Packet.prototype.addTo = Σ.addFunction(function α28(queue) {
+        var Σ_α28 = new Σ.Scope(this, Σ, α28, function () {
             return [
                 { queue: queue },
                 {
@@ -515,17 +365,17 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
         next.link = this;
         return queue;
     }, Σ);
-    Packet.prototype.toString = Σ.addFunction(function αx4JH() {
+    Packet.prototype.toString = Σ.addFunction(function α29() {
         return 'Packet';
     }, Σ);
     var performance = {};
-    performance.now = Σ.addFunction(function αKAJ4() {
+    performance.now = Σ.addFunction(function α30() {
         return Date.now();
     }, Σ);
     var BM_RunFunc = runRichards;
-    var BM_SetupFunc = Σ.addFunction(function αO5FE() {
+    var BM_SetupFunc = Σ.addFunction(function α31() {
     }, Σ);
-    var BM_TearDownFunc = Σ.addFunction(function αyyDO() {
+    var BM_TearDownFunc = Σ.addFunction(function α32() {
     }, Σ);
     var BM_RMS = undefined;
     var BM_Iterations = 3000;
@@ -553,12 +403,6 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
         var end = null;
         var i = 0;
         function doRun() {
-            var Σ_BM_Start_doRun = new Σ.Scope(this, Σ_BM_Start, doRun, function () {
-                return [
-                    {},
-                    {}
-                ];
-            });
             BM_SetupFunc();
             Σ.console.log('Iteration : ' + i);
             BM_RunFunc();

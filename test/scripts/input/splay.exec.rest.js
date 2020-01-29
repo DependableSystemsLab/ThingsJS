@@ -1,14 +1,5 @@
 var pidusage = require('pidusage');
 require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtractor(function(){ return [{}, {kSplayTreeSize:kSplayTreeSize,kSplayTreeModifications:kSplayTreeModifications,kSplayTreePayloadDepth:kSplayTreePayloadDepth,splayTree:splayTree,splaySampleTimeStart:splaySampleTimeStart,splaySamples:splaySamples,splaySumOfSquaredPauses:splaySumOfSquaredPauses,performance:performance,BM_RunFunc:BM_RunFunc,BM_SetupFunc:BM_SetupFunc,BM_TearDownFunc:BM_TearDownFunc,BM_RMS:BM_RMS,BM_Iterations:BM_Iterations,BM_Min_Iterations:BM_Min_Iterations,BM_Results:BM_Results}] }).hoist(GeneratePayloadTree, Σ).hoist(GenerateKey, Σ).hoist(SplayRMS, Σ).hoist(SplayUpdateStats, Σ).hoist(InsertNewNode, Σ).hoist(SplaySetup, Σ).hoist(SplayTearDown, Σ).hoist(SplayRun, Σ).hoist(SplayTree, Σ).hoist(BM_Start, Σ);function GeneratePayloadTree(depth, tag) {
-        var Σ_GeneratePayloadTree = new Σ.Scope(this, Σ, GeneratePayloadTree, function () {
-            return [
-                {
-                    depth: depth,
-                    tag: tag
-                },
-                {}
-            ];
-        });
         if (depth == 0) {
             return {
                 array: [
@@ -64,12 +55,6 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
         splayTree.insert(key, payload);
         return key;
     };function SplaySetup() {
-        var Σ_SplaySetup = new Σ.Scope(this, Σ, SplaySetup, function () {
-            return [
-                {},
-                {}
-            ];
-        });
         if (!performance.now) {
             throw 'PerformanceNowUnsupported';
         }
@@ -105,12 +90,6 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
             }
         }
     };function SplayRun() {
-        var Σ_SplayRun = new Σ.Scope(this, Σ, SplayRun, function () {
-            return [
-                {},
-                {}
-            ];
-        });
         for (var i = 0; i < kSplayTreeModifications; i++) {
             var key = InsertNewNode();
             var greatest = splayTree.findGreatestLessThan(key);
@@ -145,12 +124,6 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
         var end = null;
         var i = 0;
         function doRun() {
-            var Σ_BM_Start_doRun = new Σ.Scope(this, Σ_BM_Start, doRun, function () {
-                return [
-                    {},
-                    {}
-                ];
-            });
             BM_SetupFunc();
             Σ.console.log('Iteration : ' + i);
             BM_RunFunc();
@@ -189,10 +162,10 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
             }
         }
         Σ.setImmediate(doRun);
-    };Σ.addFunction(function αUGwI() {
+    };Σ.addFunction(function α0() {
         return !this.root_;
-    }, Σ, "αUGwI-LJjy82ce");Σ.addFunction(function α0wUE(key, value) {
-        var Σ_α0wUE = new Σ.Scope(this, Σ, α0wUE, function () {
+    }, Σ, "α0-0");Σ.addFunction(function α1(key, value) {
+        var Σ_α1 = new Σ.Scope(this, Σ, α1, function () {
             return [
                 {
                     key: key,
@@ -220,8 +193,8 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
             this.root_.left = null;
         }
         this.root_ = node;
-    }, Σ, "α0wUE-TQuiYUSg");Σ.addFunction(function αVFgF(key) {
-        var Σ_αVFgF = new Σ.Scope(this, Σ, αVFgF, function () {
+    }, Σ, "α1-1");Σ.addFunction(function α2(key) {
+        var Σ_α2 = new Σ.Scope(this, Σ, α2, function () {
             return [
                 { key: key },
                 { removed: removed }
@@ -244,20 +217,14 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
             this.root_.right = right;
         }
         return removed;
-    }, Σ, "αVFgF-7Lt6ZoyN");Σ.addFunction(function αgzvP(key) {
-        var Σ_αgzvP = new Σ.Scope(this, Σ, αgzvP, function () {
-            return [
-                { key: key },
-                {}
-            ];
-        });
+    }, Σ, "α2-2");Σ.addFunction(function α3(key) {
         if (this.isEmpty()) {
             return null;
         }
         this.splay_(key);
         return this.root_.key == key ? this.root_ : null;
-    }, Σ, "αgzvP-Q0cp1zrk");Σ.addFunction(function αdz6D(opt_startNode) {
-        var Σ_αdz6D = new Σ.Scope(this, Σ, αdz6D, function () {
+    }, Σ, "α3-3");Σ.addFunction(function α4(opt_startNode) {
+        var Σ_α4 = new Σ.Scope(this, Σ, α4, function () {
             return [
                 { opt_startNode: opt_startNode },
                 { current: current }
@@ -271,13 +238,7 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
             current = current.right;
         }
         return current;
-    }, Σ, "αdz6D-pqEaM0yq");Σ.addFunction(function αdbkc(key) {
-        var Σ_αdbkc = new Σ.Scope(this, Σ, αdbkc, function () {
-            return [
-                { key: key },
-                {}
-            ];
-        });
+    }, Σ, "α4-4");Σ.addFunction(function α5(key) {
         if (this.isEmpty()) {
             return null;
         }
@@ -289,8 +250,8 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
         } else {
             return null;
         }
-    }, Σ, "αdbkc-UdvWyxC5");Σ.addFunction(function αB5uI() {
-        var Σ_αB5uI = new Σ.Scope(this, Σ, αB5uI, function () {
+    }, Σ, "α5-5");Σ.addFunction(function α6() {
+        var Σ_α6 = new Σ.Scope(this, Σ, α6, function () {
             return [
                 {},
                 { result: result }
@@ -298,19 +259,13 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
         });
         var result = [];
         if (!this.isEmpty()) {
-            this.root_.traverse_(Σ_αB5uI.addFunction(function αMb6V(node) {
-                var Σ_αB5uI_αMb6V = new Σ.Scope(this, Σ_αB5uI, αMb6V, function () {
-                    return [
-                        { node: node },
-                        {}
-                    ];
-                });
+            this.root_.traverse_(Σ_α6.addFunction(function α7(node) {
                 result.push(node.key);
-            }, Σ_αB5uI));
+            }, Σ_α6));
         }
         return result;
-    }, Σ, "αB5uI-suC5eqXp");Σ.addFunction(function αXZTJ(key) {
-        var Σ_αXZTJ = new Σ.Scope(this, Σ, αXZTJ, function () {
+    }, Σ, "α6-6");Σ.addFunction(function α8(key) {
+        var Σ_α8 = new Σ.Scope(this, Σ, α8, function () {
             return [
                 { key: key },
                 {
@@ -369,20 +324,11 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
         current.left = dummy.right;
         current.right = dummy.left;
         this.root_ = current;
-    }, Σ, "αXZTJ-LbdDEeQq");Σ.addFunction(function αQFhb(key, value) {
-        var Σ_αQFhb = new Σ.Scope(this, Σ, αQFhb, function () {
-            return [
-                {
-                    key: key,
-                    value: value
-                },
-                {}
-            ];
-        });
+    }, Σ, "α8-7");Σ.addFunction(function α9(key, value) {
         this.key = key;
         this.value = value;
-    }, Σ, "αQFhb-JgUV6Fmx");Σ.addFunction(function αgqkY(f) {
-        var Σ_αgqkY = new Σ.Scope(this, Σ, αgqkY, function () {
+    }, Σ, "α9-8");Σ.addFunction(function α10(f) {
+        var Σ_α10 = new Σ.Scope(this, Σ, α10, function () {
             return [
                 { f: f },
                 { current: current }
@@ -397,15 +343,9 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
             f(current);
             current = current.right;
         }
-    }, Σ, "αgqkY-BXaBabqy");Σ.addFunction(function αAvNS() {
+    }, Σ, "α10-9");Σ.addFunction(function α11() {
         return Date.now();
-    }, Σ, "αAvNS-Oms4PXgv");(function BM_Start(){var Σ_BM_Start = new Σ.Scope(this, Σ, BM_Start, function(){ return [{}, {data:data,elapsed:elapsed,start:start,end:end,i:i}] }, "BM_Start-EmTVb5QJ").restore(Σ).hoist(doRun, Σ_BM_Start);function doRun() {
-            var Σ_BM_Start_doRun = new Σ.Scope(this, Σ_BM_Start, doRun, function () {
-                return [
-                    {},
-                    {}
-                ];
-            });
+    }, Σ, "α11-10");(function BM_Start(){var Σ_BM_Start = new Σ.Scope(this, Σ, BM_Start, function(){ return [{}, {data:data,elapsed:elapsed,start:start,end:end,i:i}] }, "BM_Start-0").restore(Σ).hoist(doRun, Σ_BM_Start);function doRun() {
             BM_SetupFunc();
             Σ.console.log('Iteration : ' + i);
             BM_RunFunc();
@@ -442,4 +382,4 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
                 });
                 process.exit();
             }
-        };var data = {"runs" : 0,"elapsed" : 0};var elapsed = 0;var start = 1560235870171;var end = null;var i = 150;}());Σ.funcs["SplayTree"].prototype.root_ = null;Σ.funcs["SplayTree"].prototype.isEmpty = Σ.getFunction("Σ.αUGwI-LJjy82ce");Σ.funcs["SplayTree"].prototype.insert = Σ.getFunction("Σ.α0wUE-TQuiYUSg");Σ.funcs["SplayTree"].prototype.remove = Σ.getFunction("Σ.αVFgF-7Lt6ZoyN");Σ.funcs["SplayTree"].prototype.find = Σ.getFunction("Σ.αgzvP-Q0cp1zrk");Σ.funcs["SplayTree"].prototype.findMax = Σ.getFunction("Σ.αdz6D-pqEaM0yq");Σ.funcs["SplayTree"].prototype.findGreatestLessThan = Σ.getFunction("Σ.αdbkc-UdvWyxC5");Σ.funcs["SplayTree"].prototype.exportKeys = Σ.getFunction("Σ.αB5uI-suC5eqXp");Σ.funcs["SplayTree"].prototype.splay_ = Σ.getFunction("Σ.αXZTJ-LbdDEeQq");Σ.funcs["SplayTree"].Node = Σ.getFunction("Σ.αQFhb-JgUV6Fmx");Σ.funcs["αQFhb-JgUV6Fmx"].prototype.left = null;Σ.funcs["αQFhb-JgUV6Fmx"].prototype.right = null;Σ.funcs["αQFhb-JgUV6Fmx"].prototype.traverse_ = Σ.getFunction("Σ.αgqkY-BXaBabqy");var kSplayTreeSize = 1000;var kSplayTreeModifications = 10;var kSplayTreePayloadDepth = 3;var splayTree = null;var splaySampleTimeStart = 1560235872400;var splaySamples = 0;var splaySumOfSquaredPauses = 0;var performance = {"now" : Σ.getFunction("Σ.αAvNS-Oms4PXgv")};var BM_RunFunc = Σ.getFunction("Σ.SplayRun");var BM_SetupFunc = Σ.getFunction("Σ.SplaySetup");var BM_TearDownFunc = Σ.getFunction("Σ.SplayTearDown");var BM_RMS = Σ.getFunction("Σ.SplayRMS");var BM_Iterations = 300;var BM_Min_Iterations = 16;var BM_Results = [];Σ.setImmediate(Σ.getFunction("Σ/BM_Start-EmTVb5QJ.doRun"), "9ka1FWCj"); }, 'mqtt://localhost', 'splay.js/gdNDH9Vb', {});
+        };var data = Σ.addObject({ "runs" : 0,"elapsed" : 0}, "Σ/BM_Start-0.o2");var elapsed = 0;var start = 1580250806387;var end = null;var i = 1500;}());Σ.funcs["SplayTree"].prototype.root_ = null;Σ.funcs["SplayTree"].prototype.isEmpty = Σ.getFunction("Σ.α0-0");Σ.funcs["SplayTree"].prototype.insert = Σ.getFunction("Σ.α1-1");Σ.funcs["SplayTree"].prototype.remove = Σ.getFunction("Σ.α2-2");Σ.funcs["SplayTree"].prototype.find = Σ.getFunction("Σ.α3-3");Σ.funcs["SplayTree"].prototype.findMax = Σ.getFunction("Σ.α4-4");Σ.funcs["SplayTree"].prototype.findGreatestLessThan = Σ.getFunction("Σ.α5-5");Σ.funcs["SplayTree"].prototype.exportKeys = Σ.getFunction("Σ.α6-6");Σ.funcs["SplayTree"].prototype.splay_ = Σ.getFunction("Σ.α8-7");Σ.funcs["SplayTree"].Node = Σ.getFunction("Σ.α9-8");Σ.funcs["α9-8"].prototype.left = null;Σ.funcs["α9-8"].prototype.right = null;Σ.funcs["α9-8"].prototype.traverse_ = Σ.getFunction("Σ.α10-9");var kSplayTreeSize = 1000;var kSplayTreeModifications = 20;var kSplayTreePayloadDepth = 4;var splayTree = null;var splaySampleTimeStart = 1580250812557;var splaySamples = 0;var splaySumOfSquaredPauses = 0;var performance = Σ.addObject({ "now" : Σ.getFunction("Σ.α11-10")}, "Σ.o0");var BM_RunFunc = Σ.getFunction("Σ.SplayRun");var BM_SetupFunc = Σ.getFunction("Σ.SplaySetup");var BM_TearDownFunc = Σ.getFunction("Σ.SplayTearDown");var BM_RMS = Σ.getFunction("Σ.SplayRMS");var BM_Iterations = 3000;var BM_Min_Iterations = 16;var BM_Results = [];Σ.setImmediate(Σ.getFunction("Σ/BM_Start-0.doRun"), "s2vXnLk41499"); }, 'mqtt://localhost', 'splay.js/splay.js.0', {});

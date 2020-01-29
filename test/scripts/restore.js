@@ -15,11 +15,11 @@ var SESSION = process.argv[3];
 var BASE_DIR = path.resolve(__dirname, './input');
 var RESULT_DIR = path.resolve(__dirname, './output');
 var CODES = [
-	// 'navier-stokes',
-	// 'splay',
-	// 'factorial',
+	'navier-stokes',
+	'splay',
+	'factorial',
 	'richards',
-	// 'raytrace'
+	'raytrace'
 ]
 
 var result = {};

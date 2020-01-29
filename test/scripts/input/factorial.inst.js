@@ -19,8 +19,8 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
     var timer;
     var count = 0;
     var digits = [1];
-    var factorial = Σ.addFunction(function αbXq5() {
-        var Σ_αbXq5 = new Σ.Scope(this, Σ, αbXq5, function () {
+    var factorial = Σ.addFunction(function α0() {
+        var Σ_α0 = new Σ.Scope(this, Σ, α0, function () {
             return [
                 {},
                 {
@@ -64,7 +64,7 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
     }, Σ);
     startTime = Date.now();
     Σ.setImmediate(factorial);
-    var printInterval = Σ.addFunction(function αC1rT() {
+    var printInterval = Σ.addFunction(function α1() {
         Σ.console.log('Currently computing n = ' + count + ', number of digits = ' + digits.length);
     }, Σ);
     timer = Σ.setInterval(printInterval, 500);

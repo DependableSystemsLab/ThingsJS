@@ -37,18 +37,6 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
         this.currentTcb = null;
         this.currentId = null;
     };function TaskControlBlock(link, id, priority, queue, task) {
-        var Σ_TaskControlBlock = new Σ.Scope(this, Σ, TaskControlBlock, function () {
-            return [
-                {
-                    link: link,
-                    id: id,
-                    priority: priority,
-                    queue: queue,
-                    task: task
-                },
-                {}
-            ];
-        });
         this.link = link;
         this.id = id;
         this.priority = priority;
@@ -60,63 +48,21 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
             this.state = STATE_SUSPENDED_RUNNABLE;
         }
     };function IdleTask(scheduler, v1, count) {
-        var Σ_IdleTask = new Σ.Scope(this, Σ, IdleTask, function () {
-            return [
-                {
-                    scheduler: scheduler,
-                    v1: v1,
-                    count: count
-                },
-                {}
-            ];
-        });
         this.scheduler = scheduler;
         this.v1 = v1;
         this.count = count;
     };function DeviceTask(scheduler) {
-        var Σ_DeviceTask = new Σ.Scope(this, Σ, DeviceTask, function () {
-            return [
-                { scheduler: scheduler },
-                {}
-            ];
-        });
         this.scheduler = scheduler;
         this.v1 = null;
     };function WorkerTask(scheduler, v1, v2) {
-        var Σ_WorkerTask = new Σ.Scope(this, Σ, WorkerTask, function () {
-            return [
-                {
-                    scheduler: scheduler,
-                    v1: v1,
-                    v2: v2
-                },
-                {}
-            ];
-        });
         this.scheduler = scheduler;
         this.v1 = v1;
         this.v2 = v2;
     };function HandlerTask(scheduler) {
-        var Σ_HandlerTask = new Σ.Scope(this, Σ, HandlerTask, function () {
-            return [
-                { scheduler: scheduler },
-                {}
-            ];
-        });
         this.scheduler = scheduler;
         this.v1 = null;
         this.v2 = null;
     };function Packet(link, id, kind) {
-        var Σ_Packet = new Σ.Scope(this, Σ, Packet, function () {
-            return [
-                {
-                    link: link,
-                    id: id,
-                    kind: kind
-                },
-                {}
-            ];
-        });
         this.link = link;
         this.id = id;
         this.kind = kind;
@@ -144,12 +90,6 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
         var end = null;
         var i = 0;
         function doRun() {
-            var Σ_BM_Start_doRun = new Σ.Scope(this, Σ_BM_Start, doRun, function () {
-                return [
-                    {},
-                    {}
-                ];
-            });
             BM_SetupFunc();
             Σ.console.log('Iteration : ' + i);
             BM_RunFunc();
@@ -188,85 +128,22 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
             }
         }
         Σ.setImmediate(doRun);
-    };Σ.addFunction(function α9up5(id, priority, queue, count) {
-        var Σ_α9up5 = new Σ.Scope(this, Σ, α9up5, function () {
-            return [
-                {
-                    id: id,
-                    priority: priority,
-                    queue: queue,
-                    count: count
-                },
-                {}
-            ];
-        });
+    };Σ.addFunction(function α0(id, priority, queue, count) {
         this.addRunningTask(id, priority, queue, new IdleTask(this, 1, count));
-    }, Σ, "α9up5-WGQ7mr0I");Σ.addFunction(function αgPAQ(id, priority, queue) {
-        var Σ_αgPAQ = new Σ.Scope(this, Σ, αgPAQ, function () {
-            return [
-                {
-                    id: id,
-                    priority: priority,
-                    queue: queue
-                },
-                {}
-            ];
-        });
+    }, Σ, "α0-0");Σ.addFunction(function α1(id, priority, queue) {
         this.addTask(id, priority, queue, new WorkerTask(this, ID_HANDLER_A, 0));
-    }, Σ, "αgPAQ-tnP3jKzi");Σ.addFunction(function αPYFu(id, priority, queue) {
-        var Σ_αPYFu = new Σ.Scope(this, Σ, αPYFu, function () {
-            return [
-                {
-                    id: id,
-                    priority: priority,
-                    queue: queue
-                },
-                {}
-            ];
-        });
+    }, Σ, "α1-1");Σ.addFunction(function α2(id, priority, queue) {
         this.addTask(id, priority, queue, new HandlerTask(this));
-    }, Σ, "αPYFu-ZmT7igqY");Σ.addFunction(function α5SJn(id, priority, queue) {
-        var Σ_α5SJn = new Σ.Scope(this, Σ, α5SJn, function () {
-            return [
-                {
-                    id: id,
-                    priority: priority,
-                    queue: queue
-                },
-                {}
-            ];
-        });
+    }, Σ, "α2-2");Σ.addFunction(function α3(id, priority, queue) {
         this.addTask(id, priority, queue, new DeviceTask(this));
-    }, Σ, "α5SJn-fBhc2VbI");Σ.addFunction(function αEmM7(id, priority, queue, task) {
-        var Σ_αEmM7 = new Σ.Scope(this, Σ, αEmM7, function () {
-            return [
-                {
-                    id: id,
-                    priority: priority,
-                    queue: queue,
-                    task: task
-                },
-                {}
-            ];
-        });
+    }, Σ, "α3-3");Σ.addFunction(function α4(id, priority, queue, task) {
         this.addTask(id, priority, queue, task);
         this.currentTcb.setRunning();
-    }, Σ, "αEmM7-S3Hn5tLQ");Σ.addFunction(function αBJCS(id, priority, queue, task) {
-        var Σ_αBJCS = new Σ.Scope(this, Σ, αBJCS, function () {
-            return [
-                {
-                    id: id,
-                    priority: priority,
-                    queue: queue,
-                    task: task
-                },
-                {}
-            ];
-        });
+    }, Σ, "α4-4");Σ.addFunction(function α5(id, priority, queue, task) {
         this.currentTcb = new TaskControlBlock(this.list, id, priority, queue, task);
         this.list = this.currentTcb;
         this.blocks[id] = this.currentTcb;
-    }, Σ, "αBJCS-ziRn1Rdv");Σ.addFunction(function αIwcN() {
+    }, Σ, "α5-5");Σ.addFunction(function α6() {
         this.currentTcb = this.list;
         while (this.currentTcb != null) {
             if (this.currentTcb.isHeldOrSuspended()) {
@@ -276,8 +153,8 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
                 this.currentTcb = this.currentTcb.run();
             }
         }
-    }, Σ, "αIwcN-ESUkqO9w");Σ.addFunction(function αq3Dc(id) {
-        var Σ_αq3Dc = new Σ.Scope(this, Σ, αq3Dc, function () {
+    }, Σ, "α6-6");Σ.addFunction(function α7(id) {
+        var Σ_α7 = new Σ.Scope(this, Σ, α7, function () {
             return [
                 { id: id },
                 { tcb: tcb }
@@ -293,15 +170,15 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
         } else {
             return this.currentTcb;
         }
-    }, Σ, "αq3Dc-NSEPcrTk");Σ.addFunction(function αp3KH() {
+    }, Σ, "α7-7");Σ.addFunction(function α8() {
         this.holdCount++;
         this.currentTcb.markAsHeld();
         return this.currentTcb.link;
-    }, Σ, "αp3KH-WCbknrFH");Σ.addFunction(function α633I() {
+    }, Σ, "α8-8");Σ.addFunction(function α9() {
         this.currentTcb.markAsSuspended();
         return this.currentTcb;
-    }, Σ, "α633I-rMA6XwoQ");Σ.addFunction(function αJyHp(packet) {
-        var Σ_αJyHp = new Σ.Scope(this, Σ, αJyHp, function () {
+    }, Σ, "α9-9");Σ.addFunction(function α10(packet) {
+        var Σ_α10 = new Σ.Scope(this, Σ, α10, function () {
             return [
                 { packet: packet },
                 { t: t }
@@ -315,20 +192,20 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
         packet.link = null;
         packet.id = this.currentId;
         return t.checkPriorityAdd(this.currentTcb, packet);
-    }, Σ, "αJyHp-7hAfUlcz");Σ.addFunction(function αFqpR() {
+    }, Σ, "α10-10");Σ.addFunction(function α11() {
         this.state = STATE_RUNNING;
-    }, Σ, "αFqpR-WYiP0CL2");Σ.addFunction(function αRnlv() {
+    }, Σ, "α11-11");Σ.addFunction(function α12() {
         this.state = this.state & STATE_NOT_HELD;
-    }, Σ, "αRnlv-HKSd0qPp");Σ.addFunction(function αjSwN() {
+    }, Σ, "α12-12");Σ.addFunction(function α13() {
         this.state = this.state | STATE_HELD;
-    }, Σ, "αjSwN-fSGbg8n6");Σ.addFunction(function αbOFW() {
+    }, Σ, "α13-13");Σ.addFunction(function α14() {
         return (this.state & STATE_HELD) != 0 || this.state == STATE_SUSPENDED;
-    }, Σ, "αbOFW-2kkLJzqQ");Σ.addFunction(function αuJOh() {
+    }, Σ, "α14-14");Σ.addFunction(function α15() {
         this.state = this.state | STATE_SUSPENDED;
-    }, Σ, "αuJOh-TAxXoCJL");Σ.addFunction(function α1U3z() {
+    }, Σ, "α15-15");Σ.addFunction(function α16() {
         this.state = this.state | STATE_RUNNABLE;
-    }, Σ, "α1U3z-Gjw7eaOX");Σ.addFunction(function αXvUu() {
-        var Σ_αXvUu = new Σ.Scope(this, Σ, αXvUu, function () {
+    }, Σ, "α16-16");Σ.addFunction(function α17() {
+        var Σ_α17 = new Σ.Scope(this, Σ, α17, function () {
             return [
                 {},
                 { packet: packet }
@@ -347,16 +224,7 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
             packet = null;
         }
         return this.task.run(packet);
-    }, Σ, "αXvUu-zgqGVEJZ");Σ.addFunction(function α0syV(task, packet) {
-        var Σ_α0syV = new Σ.Scope(this, Σ, α0syV, function () {
-            return [
-                {
-                    task: task,
-                    packet: packet
-                },
-                {}
-            ];
-        });
+    }, Σ, "α17-17");Σ.addFunction(function α18(task, packet) {
         if (this.queue == null) {
             this.queue = packet;
             this.markAsRunnable();
@@ -367,15 +235,9 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
             this.queue = packet.addTo(this.queue);
         }
         return task;
-    }, Σ, "α0syV-HQpuzPSA");Σ.addFunction(function αCl9a() {
+    }, Σ, "α18-18");Σ.addFunction(function α19() {
         return 'tcb { ' + this.task + '@' + this.state + ' }';
-    }, Σ, "αCl9a-96uuWXk6");Σ.addFunction(function αUbuh(packet) {
-        var Σ_αUbuh = new Σ.Scope(this, Σ, αUbuh, function () {
-            return [
-                { packet: packet },
-                {}
-            ];
-        });
+    }, Σ, "α19-19");Σ.addFunction(function α20(packet) {
         this.count--;
         if (this.count == 0) {
             return this.scheduler.holdCurrent();
@@ -387,15 +249,9 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
             this.v1 = this.v1 >> 1 ^ 53256;
             return this.scheduler.release(ID_DEVICE_B);
         }
-    }, Σ, "αUbuh-IVX3ZyCV");Σ.addFunction(function αwZld() {
+    }, Σ, "α20-20");Σ.addFunction(function α21() {
         return 'IdleTask';
-    }, Σ, "αwZld-LObDjo9i");Σ.addFunction(function α4RIU(packet) {
-        var Σ_α4RIU = new Σ.Scope(this, Σ, α4RIU, function () {
-            return [
-                { packet: packet },
-                {}
-            ];
-        });
+    }, Σ, "α21-21");Σ.addFunction(function α22(packet) {
         if (packet == null) {
             if (this.v1 == null) {
                 return this.scheduler.suspendCurrent();
@@ -407,15 +263,9 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
             this.v1 = packet;
             return this.scheduler.holdCurrent();
         }
-    }, Σ, "α4RIU-jbyzZwrU");Σ.addFunction(function αUE3M() {
+    }, Σ, "α22-22");Σ.addFunction(function α23() {
         return 'DeviceTask';
-    }, Σ, "αUE3M-1E1LtSpD");Σ.addFunction(function αLULd(packet) {
-        var Σ_αLULd = new Σ.Scope(this, Σ, αLULd, function () {
-            return [
-                { packet: packet },
-                {}
-            ];
-        });
+    }, Σ, "α23-23");Σ.addFunction(function α24(packet) {
         if (packet == null) {
             return this.scheduler.suspendCurrent();
         } else {
@@ -435,15 +285,9 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
             }
             return this.scheduler.queue(packet);
         }
-    }, Σ, "αLULd-tHsg0Hqn");Σ.addFunction(function αUVYE() {
+    }, Σ, "α24-24");Σ.addFunction(function α25() {
         return 'WorkerTask';
-    }, Σ, "αUVYE-6uwM7hec");Σ.addFunction(function αfB6d(packet) {
-        var Σ_αfB6d = new Σ.Scope(this, Σ, αfB6d, function () {
-            return [
-                { packet: packet },
-                {}
-            ];
-        });
+    }, Σ, "α25-25");Σ.addFunction(function α26(packet) {
         if (packet != null) {
             if (packet.kind == KIND_WORK) {
                 this.v1 = packet.addTo(this.v1);
@@ -469,10 +313,10 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
             }
         }
         return this.scheduler.suspendCurrent();
-    }, Σ, "αfB6d-9sqvmajG");Σ.addFunction(function αxj05() {
+    }, Σ, "α26-26");Σ.addFunction(function α27() {
         return 'HandlerTask';
-    }, Σ, "αxj05-iqEmIH6I");Σ.addFunction(function αj22n(queue) {
-        var Σ_αj22n = new Σ.Scope(this, Σ, αj22n, function () {
+    }, Σ, "α27-27");Σ.addFunction(function α28(queue) {
+        var Σ_α28 = new Σ.Scope(this, Σ, α28, function () {
             return [
                 { queue: queue },
                 {
@@ -491,19 +335,13 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
         }
         next.link = this;
         return queue;
-    }, Σ, "αj22n-RLEGqRfI");Σ.addFunction(function αx4JH() {
+    }, Σ, "α28-28");Σ.addFunction(function α29() {
         return 'Packet';
-    }, Σ, "αx4JH-fh229fkt");Σ.addFunction(function αKAJ4() {
+    }, Σ, "α29-29");Σ.addFunction(function α30() {
         return Date.now();
-    }, Σ, "αKAJ4-pJXNbZQ1");Σ.addFunction(function αO5FE() {
-    }, Σ, "αO5FE-uf8Ay9Lp");Σ.addFunction(function αyyDO() {
-    }, Σ, "αyyDO-1Pe6mr1z");(function BM_Start(){var Σ_BM_Start = new Σ.Scope(this, Σ, BM_Start, function(){ return [{}, {data:data,elapsed:elapsed,start:start,end:end,i:i}] }, "BM_Start-fvvYhqot").restore(Σ).hoist(doRun, Σ_BM_Start);function doRun() {
-            var Σ_BM_Start_doRun = new Σ.Scope(this, Σ_BM_Start, doRun, function () {
-                return [
-                    {},
-                    {}
-                ];
-            });
+    }, Σ, "α30-30");Σ.addFunction(function α31() {
+    }, Σ, "α31-31");Σ.addFunction(function α32() {
+    }, Σ, "α32-32");(function BM_Start(){var Σ_BM_Start = new Σ.Scope(this, Σ, BM_Start, function(){ return [{}, {data:data,elapsed:elapsed,start:start,end:end,i:i}] }, "BM_Start-0").restore(Σ).hoist(doRun, Σ_BM_Start);function doRun() {
             BM_SetupFunc();
             Σ.console.log('Iteration : ' + i);
             BM_RunFunc();
@@ -540,4 +378,4 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
                 });
                 process.exit();
             }
-        };var data = {"runs" : 0,"elapsed" : 0};var elapsed = 0;var start = 1561592537632;var end = null;var i = 1500;}());Σ.funcs["Scheduler"].prototype.addIdleTask = Σ.getFunction("Σ.α9up5-WGQ7mr0I");Σ.funcs["Scheduler"].prototype.addWorkerTask = Σ.getFunction("Σ.αgPAQ-tnP3jKzi");Σ.funcs["Scheduler"].prototype.addHandlerTask = Σ.getFunction("Σ.αPYFu-ZmT7igqY");Σ.funcs["Scheduler"].prototype.addDeviceTask = Σ.getFunction("Σ.α5SJn-fBhc2VbI");Σ.funcs["Scheduler"].prototype.addRunningTask = Σ.getFunction("Σ.αEmM7-S3Hn5tLQ");Σ.funcs["Scheduler"].prototype.addTask = Σ.getFunction("Σ.αBJCS-ziRn1Rdv");Σ.funcs["Scheduler"].prototype.schedule = Σ.getFunction("Σ.αIwcN-ESUkqO9w");Σ.funcs["Scheduler"].prototype.release = Σ.getFunction("Σ.αq3Dc-NSEPcrTk");Σ.funcs["Scheduler"].prototype.holdCurrent = Σ.getFunction("Σ.αp3KH-WCbknrFH");Σ.funcs["Scheduler"].prototype.suspendCurrent = Σ.getFunction("Σ.α633I-rMA6XwoQ");Σ.funcs["Scheduler"].prototype.queue = Σ.getFunction("Σ.αJyHp-7hAfUlcz");Σ.funcs["TaskControlBlock"].prototype.setRunning = Σ.getFunction("Σ.αFqpR-WYiP0CL2");Σ.funcs["TaskControlBlock"].prototype.markAsNotHeld = Σ.getFunction("Σ.αRnlv-HKSd0qPp");Σ.funcs["TaskControlBlock"].prototype.markAsHeld = Σ.getFunction("Σ.αjSwN-fSGbg8n6");Σ.funcs["TaskControlBlock"].prototype.isHeldOrSuspended = Σ.getFunction("Σ.αbOFW-2kkLJzqQ");Σ.funcs["TaskControlBlock"].prototype.markAsSuspended = Σ.getFunction("Σ.αuJOh-TAxXoCJL");Σ.funcs["TaskControlBlock"].prototype.markAsRunnable = Σ.getFunction("Σ.α1U3z-Gjw7eaOX");Σ.funcs["TaskControlBlock"].prototype.run = Σ.getFunction("Σ.αXvUu-zgqGVEJZ");Σ.funcs["TaskControlBlock"].prototype.checkPriorityAdd = Σ.getFunction("Σ.α0syV-HQpuzPSA");Σ.funcs["TaskControlBlock"].prototype.toString = Σ.getFunction("Σ.αCl9a-96uuWXk6");Σ.funcs["IdleTask"].prototype.run = Σ.getFunction("Σ.αUbuh-IVX3ZyCV");Σ.funcs["IdleTask"].prototype.toString = Σ.getFunction("Σ.αwZld-LObDjo9i");Σ.funcs["DeviceTask"].prototype.run = Σ.getFunction("Σ.α4RIU-jbyzZwrU");Σ.funcs["DeviceTask"].prototype.toString = Σ.getFunction("Σ.αUE3M-1E1LtSpD");Σ.funcs["WorkerTask"].prototype.run = Σ.getFunction("Σ.αLULd-tHsg0Hqn");Σ.funcs["WorkerTask"].prototype.toString = Σ.getFunction("Σ.αUVYE-6uwM7hec");Σ.funcs["HandlerTask"].prototype.run = Σ.getFunction("Σ.αfB6d-9sqvmajG");Σ.funcs["HandlerTask"].prototype.toString = Σ.getFunction("Σ.αxj05-iqEmIH6I");Σ.funcs["Packet"].prototype.addTo = Σ.getFunction("Σ.αj22n-RLEGqRfI");Σ.funcs["Packet"].prototype.toString = Σ.getFunction("Σ.αx4JH-fh229fkt");var COUNT = 1000;var EXPECTED_QUEUE_COUNT = 2322;var EXPECTED_HOLD_COUNT = 928;var ID_IDLE = 0;var ID_WORKER = 1;var ID_HANDLER_A = 2;var ID_HANDLER_B = 3;var ID_DEVICE_A = 4;var ID_DEVICE_B = 5;var NUMBER_OF_IDS = 6;var KIND_DEVICE = 0;var KIND_WORK = 1;var STATE_RUNNING = 0;var STATE_RUNNABLE = 1;var STATE_SUSPENDED = 2;var STATE_HELD = 4;var STATE_SUSPENDED_RUNNABLE = 3;var STATE_NOT_HELD = -5;var DATA_SIZE = 4;var performance = {"now" : Σ.getFunction("Σ.αKAJ4-pJXNbZQ1")};var BM_RunFunc = Σ.getFunction("Σ.runRichards");var BM_SetupFunc = Σ.getFunction("Σ.αO5FE-uf8Ay9Lp");var BM_TearDownFunc = Σ.getFunction("Σ.αyyDO-1Pe6mr1z");var BM_RMS = undefined;var BM_Iterations = 3000;var BM_Min_Iterations = 16;var BM_Results = [];Σ.setImmediate(Σ.getFunction("Σ/BM_Start-fvvYhqot.doRun"), "ydHvb08r"); }, 'mqtt://localhost', 'richards.js/4l9N9AbX', {});
+        };var data = Σ.addObject({ "runs" : 0,"elapsed" : 0}, "Σ/BM_Start-0.o2");var elapsed = 0;var start = 1580250822419;var end = null;var i = 1500;}());Σ.funcs["Scheduler"].prototype.addIdleTask = Σ.getFunction("Σ.α0-0");Σ.funcs["Scheduler"].prototype.addWorkerTask = Σ.getFunction("Σ.α1-1");Σ.funcs["Scheduler"].prototype.addHandlerTask = Σ.getFunction("Σ.α2-2");Σ.funcs["Scheduler"].prototype.addDeviceTask = Σ.getFunction("Σ.α3-3");Σ.funcs["Scheduler"].prototype.addRunningTask = Σ.getFunction("Σ.α4-4");Σ.funcs["Scheduler"].prototype.addTask = Σ.getFunction("Σ.α5-5");Σ.funcs["Scheduler"].prototype.schedule = Σ.getFunction("Σ.α6-6");Σ.funcs["Scheduler"].prototype.release = Σ.getFunction("Σ.α7-7");Σ.funcs["Scheduler"].prototype.holdCurrent = Σ.getFunction("Σ.α8-8");Σ.funcs["Scheduler"].prototype.suspendCurrent = Σ.getFunction("Σ.α9-9");Σ.funcs["Scheduler"].prototype.queue = Σ.getFunction("Σ.α10-10");Σ.funcs["TaskControlBlock"].prototype.setRunning = Σ.getFunction("Σ.α11-11");Σ.funcs["TaskControlBlock"].prototype.markAsNotHeld = Σ.getFunction("Σ.α12-12");Σ.funcs["TaskControlBlock"].prototype.markAsHeld = Σ.getFunction("Σ.α13-13");Σ.funcs["TaskControlBlock"].prototype.isHeldOrSuspended = Σ.getFunction("Σ.α14-14");Σ.funcs["TaskControlBlock"].prototype.markAsSuspended = Σ.getFunction("Σ.α15-15");Σ.funcs["TaskControlBlock"].prototype.markAsRunnable = Σ.getFunction("Σ.α16-16");Σ.funcs["TaskControlBlock"].prototype.run = Σ.getFunction("Σ.α17-17");Σ.funcs["TaskControlBlock"].prototype.checkPriorityAdd = Σ.getFunction("Σ.α18-18");Σ.funcs["TaskControlBlock"].prototype.toString = Σ.getFunction("Σ.α19-19");Σ.funcs["IdleTask"].prototype.run = Σ.getFunction("Σ.α20-20");Σ.funcs["IdleTask"].prototype.toString = Σ.getFunction("Σ.α21-21");Σ.funcs["DeviceTask"].prototype.run = Σ.getFunction("Σ.α22-22");Σ.funcs["DeviceTask"].prototype.toString = Σ.getFunction("Σ.α23-23");Σ.funcs["WorkerTask"].prototype.run = Σ.getFunction("Σ.α24-24");Σ.funcs["WorkerTask"].prototype.toString = Σ.getFunction("Σ.α25-25");Σ.funcs["HandlerTask"].prototype.run = Σ.getFunction("Σ.α26-26");Σ.funcs["HandlerTask"].prototype.toString = Σ.getFunction("Σ.α27-27");Σ.funcs["Packet"].prototype.addTo = Σ.getFunction("Σ.α28-28");Σ.funcs["Packet"].prototype.toString = Σ.getFunction("Σ.α29-29");var COUNT = 1000;var EXPECTED_QUEUE_COUNT = 2322;var EXPECTED_HOLD_COUNT = 928;var ID_IDLE = 0;var ID_WORKER = 1;var ID_HANDLER_A = 2;var ID_HANDLER_B = 3;var ID_DEVICE_A = 4;var ID_DEVICE_B = 5;var NUMBER_OF_IDS = 6;var KIND_DEVICE = 0;var KIND_WORK = 1;var STATE_RUNNING = 0;var STATE_RUNNABLE = 1;var STATE_SUSPENDED = 2;var STATE_HELD = 4;var STATE_SUSPENDED_RUNNABLE = 3;var STATE_NOT_HELD = -5;var DATA_SIZE = 4;var performance = Σ.addObject({ "now" : Σ.getFunction("Σ.α30-30")}, "Σ.o0");var BM_RunFunc = Σ.getFunction("Σ.runRichards");var BM_SetupFunc = Σ.getFunction("Σ.α31-31");var BM_TearDownFunc = Σ.getFunction("Σ.α32-32");var BM_RMS = undefined;var BM_Iterations = 3000;var BM_Min_Iterations = 16;var BM_Results = [];Σ.setImmediate(Σ.getFunction("Σ/BM_Start-0.doRun"), "pque4EDP1499"); }, 'mqtt://localhost', 'richards.js/richards.js.0', {});

@@ -1,12 +1,18 @@
+/* This Benchmark was modified to handle the edge-case of
+   not migrating native objects that have been augmented.
+   e.g. Object.extend = function(){}    the extend function is not migrated.
+   and was changed to extendObject = function(){}
+ */
 var checkNumber;
 var Class = {
   create: function() {
-    return function() {
+    function init() {
       this.initialize.apply(this, arguments);
     }
+    return init;
   }
 };
-Object.extend = function(destination, source) {
+function extendObject(destination, source) {
   for (var property in source) {
     destination[property] = source[property];
   }
@@ -226,7 +232,7 @@ Flog.RayTracer.Material.BaseMaterial.prototype = {
 // if(typeof(Flog) == 'undefined') var Flog = {};
 // if(typeof(Flog.RayTracer) == 'undefined') Flog.RayTracer = {};
 Flog.RayTracer.Material.Solid = Class.create();
-Flog.RayTracer.Material.Solid.prototype = Object.extend(
+Flog.RayTracer.Material.Solid.prototype = extendObject(
     new Flog.RayTracer.Material.BaseMaterial(), {
         initialize : function(color, reflection, refraction, transparency, gloss) {
             this.color = color;
@@ -246,7 +252,7 @@ Flog.RayTracer.Material.Solid.prototype = Object.extend(
 // if(typeof(Flog) == 'undefined') var Flog = {};
 // if(typeof(Flog.RayTracer) == 'undefined') Flog.RayTracer = {};
 Flog.RayTracer.Material.Chessboard = Class.create();
-Flog.RayTracer.Material.Chessboard.prototype = Object.extend(
+Flog.RayTracer.Material.Chessboard.prototype = extendObject(
     new Flog.RayTracer.Material.BaseMaterial(), {
         colorEven: null,
         colorOdd: null,
@@ -427,7 +433,7 @@ Flog.RayTracer.Engine = Class.create();
 Flog.RayTracer.Engine.prototype = {
     canvas: null, 
     initialize: function(options){
-        this.options = Object.extend({
+        this.options = extendObject({
                 canvasHeight: 100,
                 canvasWidth: 100,
                 pixelWidth: 2,

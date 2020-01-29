@@ -6,6 +6,7 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
             {
                 checkNumber: checkNumber,
                 Class: Class,
+                Flog: Flog,
                 performance: performance,
                 BM_RunFunc: BM_RunFunc,
                 BM_SetupFunc: BM_SetupFunc,
@@ -13,62 +14,40 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
                 BM_RMS: BM_RMS,
                 BM_Iterations: BM_Iterations,
                 BM_Min_Iterations: BM_Min_Iterations,
-                BM_Results: BM_Results,
-                Flog: Flog
+                BM_Results: BM_Results
             }
         ];
-    }).hoist(renderScene, Σ).hoist(BM_Start, Σ);
+    }).hoist(extendObject, Σ).hoist(renderScene, Σ).hoist(BM_Start, Σ);
     var checkNumber;
     var Class = {
-        create: Σ.addFunction(function α9sel() {
-            var Σ_α9sel = new Σ.Scope(this, Σ, α9sel, function () {
+        create: Σ.addFunction(function α0() {
+            var Σ_α0 = new Σ.Scope(this, Σ, α0, function () {
                 return [
                     {},
                     {}
                 ];
-            });
-            return Σ_α9sel.addFunction(function αKvfs() {
+            }).hoist(init, Σ_α0);
+            function init() {
                 this.initialize.apply(this, arguments);
-            }, Σ_α9sel);
+            }
+            return init;
         }, Σ)
     };
-    Object.extend = Σ.addFunction(function αxDjx(destination, source) {
-        var Σ_αxDjx = new Σ.Scope(this, Σ, αxDjx, function () {
-            return [
-                {
-                    destination: destination,
-                    source: source
-                },
-                { property: property }
-            ];
-        });
+    function extendObject(destination, source) {
         for (var property in source) {
             destination[property] = source[property];
         }
         return destination;
-    }, Σ);
-    if (typeof Flog == 'undefined') {
-        var Flog = {};
     }
-    if (typeof Flog.RayTracer == 'undefined') {
-        Flog.RayTracer = {};
-    }
+    ;
+    var Flog = {};
+    Flog.RayTracer = {};
     Flog.RayTracer.Color = Class.create();
     Flog.RayTracer.Color.prototype = {
         red: 0,
         green: 0,
         blue: 0,
-        initialize: Σ.addFunction(function α7KtG(r, g, b) {
-            var Σ_α7KtG = new Σ.Scope(this, Σ, α7KtG, function () {
-                return [
-                    {
-                        r: r,
-                        g: g,
-                        b: b
-                    },
-                    {}
-                ];
-            });
+        initialize: Σ.addFunction(function α1(r, g, b) {
             if (!r) {
                 r = 0;
             }
@@ -82,8 +61,8 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
             this.green = g;
             this.blue = b;
         }, Σ),
-        add: Σ.addFunction(function αfVaX(c1, c2) {
-            var Σ_αfVaX = new Σ.Scope(this, Σ, αfVaX, function () {
+        add: Σ.addFunction(function α2(c1, c2) {
+            var Σ_α2 = new Σ.Scope(this, Σ, α2, function () {
                 return [
                     {
                         c1: c1,
@@ -98,8 +77,8 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
             result.blue = c1.blue + c2.blue;
             return result;
         }, Σ),
-        addScalar: Σ.addFunction(function αtZr5(c1, s) {
-            var Σ_αtZr5 = new Σ.Scope(this, Σ, αtZr5, function () {
+        addScalar: Σ.addFunction(function α3(c1, s) {
+            var Σ_α3 = new Σ.Scope(this, Σ, α3, function () {
                 return [
                     {
                         c1: c1,
@@ -115,8 +94,8 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
             result.limit();
             return result;
         }, Σ),
-        subtract: Σ.addFunction(function αFZB8(c1, c2) {
-            var Σ_αFZB8 = new Σ.Scope(this, Σ, αFZB8, function () {
+        subtract: Σ.addFunction(function α4(c1, c2) {
+            var Σ_α4 = new Σ.Scope(this, Σ, α4, function () {
                 return [
                     {
                         c1: c1,
@@ -131,8 +110,8 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
             result.blue = c1.blue - c2.blue;
             return result;
         }, Σ),
-        multiply: Σ.addFunction(function αyUM0(c1, c2) {
-            var Σ_αyUM0 = new Σ.Scope(this, Σ, αyUM0, function () {
+        multiply: Σ.addFunction(function α5(c1, c2) {
+            var Σ_α5 = new Σ.Scope(this, Σ, α5, function () {
                 return [
                     {
                         c1: c1,
@@ -147,8 +126,8 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
             result.blue = c1.blue * c2.blue;
             return result;
         }, Σ),
-        multiplyScalar: Σ.addFunction(function αKRWX(c1, f) {
-            var Σ_αKRWX = new Σ.Scope(this, Σ, αKRWX, function () {
+        multiplyScalar: Σ.addFunction(function α6(c1, f) {
+            var Σ_α6 = new Σ.Scope(this, Σ, α6, function () {
                 return [
                     {
                         c1: c1,
@@ -163,8 +142,8 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
             result.blue = c1.blue * f;
             return result;
         }, Σ),
-        divideFactor: Σ.addFunction(function α3aWZ(c1, f) {
-            var Σ_α3aWZ = new Σ.Scope(this, Σ, α3aWZ, function () {
+        divideFactor: Σ.addFunction(function α7(c1, f) {
+            var Σ_α7 = new Σ.Scope(this, Σ, α7, function () {
                 return [
                     {
                         c1: c1,
@@ -179,13 +158,13 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
             result.blue = c1.blue / f;
             return result;
         }, Σ),
-        limit: Σ.addFunction(function αmaVe() {
+        limit: Σ.addFunction(function α8() {
             this.red = this.red > 0 ? this.red > 1 ? 1 : this.red : 0;
             this.green = this.green > 0 ? this.green > 1 ? 1 : this.green : 0;
             this.blue = this.blue > 0 ? this.blue > 1 ? 1 : this.blue : 0;
         }, Σ),
-        distance: Σ.addFunction(function αXN7z(color) {
-            var Σ_αXN7z = new Σ.Scope(this, Σ, αXN7z, function () {
+        distance: Σ.addFunction(function α9(color) {
+            var Σ_α9 = new Σ.Scope(this, Σ, α9, function () {
                 return [
                     { color: color },
                     { d: d }
@@ -194,8 +173,8 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
             var d = Math.abs(this.red - color.red) + Math.abs(this.green - color.green) + Math.abs(this.blue - color.blue);
             return d;
         }, Σ),
-        blend: Σ.addFunction(function αMnhP(c1, c2, w) {
-            var Σ_αMnhP = new Σ.Scope(this, Σ, αMnhP, function () {
+        blend: Σ.addFunction(function α10(c1, c2, w) {
+            var Σ_α10 = new Σ.Scope(this, Σ, α10, function () {
                 return [
                     {
                         c1: c1,
@@ -209,8 +188,8 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
             result = Flog.RayTracer.Color.prototype.add(Flog.RayTracer.Color.prototype.multiplyScalar(c1, 1 - w), Flog.RayTracer.Color.prototype.multiplyScalar(c2, w));
             return result;
         }, Σ),
-        brightness: Σ.addFunction(function α6aTB() {
-            var Σ_α6aTB = new Σ.Scope(this, Σ, α6aTB, function () {
+        brightness: Σ.addFunction(function α11() {
+            var Σ_α11 = new Σ.Scope(this, Σ, α11, function () {
                 return [
                     {},
                     {
@@ -225,8 +204,8 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
             var b = Math.floor(this.blue * 255);
             return r * 77 + g * 150 + b * 29 >> 8;
         }, Σ),
-        toString: Σ.addFunction(function αmZH5() {
-            var Σ_αmZH5 = new Σ.Scope(this, Σ, αmZH5, function () {
+        toString: Σ.addFunction(function α12() {
+            var Σ_α12 = new Σ.Scope(this, Σ, α12, function () {
                 return [
                     {},
                     {
@@ -242,75 +221,37 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
             return 'rgb(' + r + ',' + g + ',' + b + ')';
         }, Σ)
     };
-    if (typeof Flog == 'undefined') {
-        var Flog = {};
-    }
-    if (typeof Flog.RayTracer == 'undefined') {
-        Flog.RayTracer = {};
-    }
     Flog.RayTracer.Light = Class.create();
     Flog.RayTracer.Light.prototype = {
         position: null,
         color: null,
         intensity: 10,
-        initialize: Σ.addFunction(function αS0TF(pos, color, intensity) {
-            var Σ_αS0TF = new Σ.Scope(this, Σ, αS0TF, function () {
-                return [
-                    {
-                        pos: pos,
-                        color: color,
-                        intensity: intensity
-                    },
-                    {}
-                ];
-            });
+        initialize: Σ.addFunction(function α13(pos, color, intensity) {
             this.position = pos;
             this.color = color;
             this.intensity = intensity ? intensity : 10;
         }, Σ),
-        toString: Σ.addFunction(function αl33E() {
+        toString: Σ.addFunction(function α14() {
             return 'Light [' + this.position.x + ',' + this.position.y + ',' + this.position.z + ']';
         }, Σ)
     };
-    if (typeof Flog == 'undefined') {
-        var Flog = {};
-    }
-    if (typeof Flog.RayTracer == 'undefined') {
-        Flog.RayTracer = {};
-    }
     Flog.RayTracer.Vector = Class.create();
     Flog.RayTracer.Vector.prototype = {
         x: 0,
         y: 0,
         z: 0,
-        initialize: Σ.addFunction(function αGbPW(x, y, z) {
-            var Σ_αGbPW = new Σ.Scope(this, Σ, αGbPW, function () {
-                return [
-                    {
-                        x: x,
-                        y: y,
-                        z: z
-                    },
-                    {}
-                ];
-            });
+        initialize: Σ.addFunction(function α15(x, y, z) {
             this.x = x ? x : 0;
             this.y = y ? y : 0;
             this.z = z ? z : 0;
         }, Σ),
-        copy: Σ.addFunction(function α7S7c(vector) {
-            var Σ_α7S7c = new Σ.Scope(this, Σ, α7S7c, function () {
-                return [
-                    { vector: vector },
-                    {}
-                ];
-            });
+        copy: Σ.addFunction(function α16(vector) {
             this.x = vector.x;
             this.y = vector.y;
             this.z = vector.z;
         }, Σ),
-        normalize: Σ.addFunction(function αgaIa() {
-            var Σ_αgaIa = new Σ.Scope(this, Σ, αgaIa, function () {
+        normalize: Σ.addFunction(function α17() {
+            var Σ_α17 = new Σ.Scope(this, Σ, α17, function () {
                 return [
                     {},
                     { m: m }
@@ -319,137 +260,60 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
             var m = this.magnitude();
             return new Flog.RayTracer.Vector(this.x / m, this.y / m, this.z / m);
         }, Σ),
-        magnitude: Σ.addFunction(function αGOlW() {
+        magnitude: Σ.addFunction(function α18() {
             return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
         }, Σ),
-        cross: Σ.addFunction(function αvBBq(w) {
-            var Σ_αvBBq = new Σ.Scope(this, Σ, αvBBq, function () {
-                return [
-                    { w: w },
-                    {}
-                ];
-            });
+        cross: Σ.addFunction(function α19(w) {
             return new Flog.RayTracer.Vector(-this.z * w.y + this.y * w.z, this.z * w.x - this.x * w.z, -this.y * w.x + this.x * w.y);
         }, Σ),
-        dot: Σ.addFunction(function αAWdJ(w) {
-            var Σ_αAWdJ = new Σ.Scope(this, Σ, αAWdJ, function () {
-                return [
-                    { w: w },
-                    {}
-                ];
-            });
+        dot: Σ.addFunction(function α20(w) {
             return this.x * w.x + this.y * w.y + this.z * w.z;
         }, Σ),
-        add: Σ.addFunction(function α5gIT(v, w) {
-            var Σ_α5gIT = new Σ.Scope(this, Σ, α5gIT, function () {
-                return [
-                    {
-                        v: v,
-                        w: w
-                    },
-                    {}
-                ];
-            });
+        add: Σ.addFunction(function α21(v, w) {
             return new Flog.RayTracer.Vector(w.x + v.x, w.y + v.y, w.z + v.z);
         }, Σ),
-        subtract: Σ.addFunction(function αzA8b(v, w) {
-            var Σ_αzA8b = new Σ.Scope(this, Σ, αzA8b, function () {
-                return [
-                    {
-                        v: v,
-                        w: w
-                    },
-                    {}
-                ];
-            });
+        subtract: Σ.addFunction(function α22(v, w) {
             if (!w || !v) {
                 throw 'Vectors must be defined [' + v + ',' + w + ']';
             }
             return new Flog.RayTracer.Vector(v.x - w.x, v.y - w.y, v.z - w.z);
         }, Σ),
-        multiplyVector: Σ.addFunction(function αmkfE(v, w) {
-            var Σ_αmkfE = new Σ.Scope(this, Σ, αmkfE, function () {
-                return [
-                    {
-                        v: v,
-                        w: w
-                    },
-                    {}
-                ];
-            });
+        multiplyVector: Σ.addFunction(function α23(v, w) {
             return new Flog.RayTracer.Vector(v.x * w.x, v.y * w.y, v.z * w.z);
         }, Σ),
-        multiplyScalar: Σ.addFunction(function αcdPq(v, w) {
-            var Σ_αcdPq = new Σ.Scope(this, Σ, αcdPq, function () {
-                return [
-                    {
-                        v: v,
-                        w: w
-                    },
-                    {}
-                ];
-            });
+        multiplyScalar: Σ.addFunction(function α24(v, w) {
             return new Flog.RayTracer.Vector(v.x * w, v.y * w, v.z * w);
         }, Σ),
-        toString: Σ.addFunction(function αj8X5() {
+        toString: Σ.addFunction(function α25() {
             return 'Vector [' + this.x + ',' + this.y + ',' + this.z + ']';
         }, Σ)
     };
-    if (typeof Flog == 'undefined') {
-        var Flog = {};
-    }
-    if (typeof Flog.RayTracer == 'undefined') {
-        Flog.RayTracer = {};
-    }
     Flog.RayTracer.Ray = Class.create();
     Flog.RayTracer.Ray.prototype = {
         position: null,
         direction: null,
-        initialize: Σ.addFunction(function α9PHe(pos, dir) {
-            var Σ_α9PHe = new Σ.Scope(this, Σ, α9PHe, function () {
-                return [
-                    {
-                        pos: pos,
-                        dir: dir
-                    },
-                    {}
-                ];
-            });
+        initialize: Σ.addFunction(function α26(pos, dir) {
             this.position = pos;
             this.direction = dir;
         }, Σ),
-        toString: Σ.addFunction(function αSZlR() {
+        toString: Σ.addFunction(function α27() {
             return 'Ray [' + this.position + ',' + this.direction + ']';
         }, Σ)
     };
-    if (typeof Flog == 'undefined') {
-        var Flog = {};
-    }
-    if (typeof Flog.RayTracer == 'undefined') {
-        Flog.RayTracer = {};
-    }
     Flog.RayTracer.Scene = Class.create();
     Flog.RayTracer.Scene.prototype = {
         camera: null,
         shapes: [],
         lights: [],
         background: null,
-        initialize: Σ.addFunction(function αR3lE() {
+        initialize: Σ.addFunction(function α28() {
             this.camera = new Flog.RayTracer.Camera(new Flog.RayTracer.Vector(0, 0, -5), new Flog.RayTracer.Vector(0, 0, 1), new Flog.RayTracer.Vector(0, 1, 0));
             this.shapes = new Array();
             this.lights = new Array();
             this.background = new Flog.RayTracer.Background(new Flog.RayTracer.Color(0, 0, 0.5), 0.2);
         }, Σ)
     };
-    if (typeof Flog == 'undefined') {
-        var Flog = {};
-    }
-    if (typeof Flog.RayTracer == 'undefined') {
-        Flog.RayTracer = {};
-    }
-    if (typeof Flog.RayTracer.Material == 'undefined') {
-        Flog.RayTracer.Material = {};
-    }
+    Flog.RayTracer.Material = {};
     Flog.RayTracer.Material.BaseMaterial = Class.create();
     Flog.RayTracer.Material.BaseMaterial.prototype = {
         gloss: 2,
@@ -457,26 +321,11 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
         reflection: 0,
         refraction: 0.5,
         hasTexture: false,
-        initialize: Σ.addFunction(function αW799() {
+        initialize: Σ.addFunction(function α29() {
         }, Σ),
-        getColor: Σ.addFunction(function αet5Y(u, v) {
-            var Σ_αet5Y = new Σ.Scope(this, Σ, αet5Y, function () {
-                return [
-                    {
-                        u: u,
-                        v: v
-                    },
-                    {}
-                ];
-            });
+        getColor: Σ.addFunction(function α30(u, v) {
         }, Σ),
-        wrapUp: Σ.addFunction(function αQERX(t) {
-            var Σ_αQERX = new Σ.Scope(this, Σ, αQERX, function () {
-                return [
-                    { t: t },
-                    {}
-                ];
-            });
+        wrapUp: Σ.addFunction(function α31(t) {
             t = t % 2;
             if (t < -1) {
                 t += 2;
@@ -486,78 +335,32 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
             }
             return t;
         }, Σ),
-        toString: Σ.addFunction(function αKcNi() {
+        toString: Σ.addFunction(function α32() {
             return 'Material [gloss=' + this.gloss + ', transparency=' + this.transparency + ', hasTexture=' + this.hasTexture + ']';
         }, Σ)
     };
-    if (typeof Flog == 'undefined') {
-        var Flog = {};
-    }
-    if (typeof Flog.RayTracer == 'undefined') {
-        Flog.RayTracer = {};
-    }
     Flog.RayTracer.Material.Solid = Class.create();
-    Flog.RayTracer.Material.Solid.prototype = Object.extend(new Flog.RayTracer.Material.BaseMaterial(), {
-        initialize: Σ.addFunction(function α9C5A(color, reflection, refraction, transparency, gloss) {
-            var Σ_α9C5A = new Σ.Scope(this, Σ, α9C5A, function () {
-                return [
-                    {
-                        color: color,
-                        reflection: reflection,
-                        refraction: refraction,
-                        transparency: transparency,
-                        gloss: gloss
-                    },
-                    {}
-                ];
-            });
+    Flog.RayTracer.Material.Solid.prototype = extendObject(new Flog.RayTracer.Material.BaseMaterial(), {
+        initialize: Σ.addFunction(function α33(color, reflection, refraction, transparency, gloss) {
             this.color = color;
             this.reflection = reflection;
             this.transparency = transparency;
             this.gloss = gloss;
             this.hasTexture = false;
         }, Σ),
-        getColor: Σ.addFunction(function αBNdF(u, v) {
-            var Σ_αBNdF = new Σ.Scope(this, Σ, αBNdF, function () {
-                return [
-                    {
-                        u: u,
-                        v: v
-                    },
-                    {}
-                ];
-            });
+        getColor: Σ.addFunction(function α34(u, v) {
             return this.color;
         }, Σ),
-        toString: Σ.addFunction(function αJZ2J() {
+        toString: Σ.addFunction(function α35() {
             return 'SolidMaterial [gloss=' + this.gloss + ', transparency=' + this.transparency + ', hasTexture=' + this.hasTexture + ']';
         }, Σ)
     });
-    if (typeof Flog == 'undefined') {
-        var Flog = {};
-    }
-    if (typeof Flog.RayTracer == 'undefined') {
-        Flog.RayTracer = {};
-    }
     Flog.RayTracer.Material.Chessboard = Class.create();
-    Flog.RayTracer.Material.Chessboard.prototype = Object.extend(new Flog.RayTracer.Material.BaseMaterial(), {
+    Flog.RayTracer.Material.Chessboard.prototype = extendObject(new Flog.RayTracer.Material.BaseMaterial(), {
         colorEven: null,
         colorOdd: null,
         density: 0.5,
-        initialize: Σ.addFunction(function αYEv8(colorEven, colorOdd, reflection, transparency, gloss, density) {
-            var Σ_αYEv8 = new Σ.Scope(this, Σ, αYEv8, function () {
-                return [
-                    {
-                        colorEven: colorEven,
-                        colorOdd: colorOdd,
-                        reflection: reflection,
-                        transparency: transparency,
-                        gloss: gloss,
-                        density: density
-                    },
-                    {}
-                ];
-            });
+        initialize: Σ.addFunction(function α36(colorEven, colorOdd, reflection, transparency, gloss, density) {
             this.colorEven = colorEven;
             this.colorOdd = colorOdd;
             this.reflection = reflection;
@@ -566,8 +369,8 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
             this.density = density;
             this.hasTexture = true;
         }, Σ),
-        getColor: Σ.addFunction(function αg7J0(u, v) {
-            var Σ_αg7J0 = new Σ.Scope(this, Σ, αg7J0, function () {
+        getColor: Σ.addFunction(function α37(u, v) {
+            var Σ_α37 = new Σ.Scope(this, Σ, α37, function () {
                 return [
                     {
                         u: u,
@@ -583,38 +386,20 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
                 return this.colorOdd;
             }
         }, Σ),
-        toString: Σ.addFunction(function αIKis() {
+        toString: Σ.addFunction(function α38() {
             return 'ChessMaterial [gloss=' + this.gloss + ', transparency=' + this.transparency + ', hasTexture=' + this.hasTexture + ']';
         }, Σ)
     });
-    if (typeof Flog == 'undefined') {
-        var Flog = {};
-    }
-    if (typeof Flog.RayTracer == 'undefined') {
-        Flog.RayTracer = {};
-    }
-    if (typeof Flog.RayTracer.Shape == 'undefined') {
-        Flog.RayTracer.Shape = {};
-    }
+    Flog.RayTracer.Shape = {};
     Flog.RayTracer.Shape.Sphere = Class.create();
     Flog.RayTracer.Shape.Sphere.prototype = {
-        initialize: Σ.addFunction(function αo3Tq(pos, radius, material) {
-            var Σ_αo3Tq = new Σ.Scope(this, Σ, αo3Tq, function () {
-                return [
-                    {
-                        pos: pos,
-                        radius: radius,
-                        material: material
-                    },
-                    {}
-                ];
-            });
+        initialize: Σ.addFunction(function α39(pos, radius, material) {
             this.radius = radius;
             this.position = pos;
             this.material = material;
         }, Σ),
-        intersect: Σ.addFunction(function αW5wG(ray) {
-            var Σ_αW5wG = new Σ.Scope(this, Σ, αW5wG, function () {
+        intersect: Σ.addFunction(function α40(ray) {
+            var Σ_α40 = new Σ.Scope(this, Σ, α40, function () {
                 return [
                     { ray: ray },
                     {
@@ -643,49 +428,26 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
             }
             return info;
         }, Σ),
-        toString: Σ.addFunction(function α7oDp() {
+        toString: Σ.addFunction(function α41() {
             return 'Sphere [position=' + this.position + ', radius=' + this.radius + ']';
         }, Σ)
     };
-    if (typeof Flog == 'undefined') {
-        var Flog = {};
-    }
-    if (typeof Flog.RayTracer == 'undefined') {
-        Flog.RayTracer = {};
-    }
-    if (typeof Flog.RayTracer.Shape == 'undefined') {
-        Flog.RayTracer.Shape = {};
-    }
     Flog.RayTracer.Shape.Plane = Class.create();
     Flog.RayTracer.Shape.Plane.prototype = {
         d: 0,
-        initialize: Σ.addFunction(function αfdiL(pos, d, material) {
-            var Σ_αfdiL = new Σ.Scope(this, Σ, αfdiL, function () {
-                return [
-                    {
-                        pos: pos,
-                        d: d,
-                        material: material
-                    },
-                    {}
-                ];
-            });
+        initialize: Σ.addFunction(function α42(pos, d, material) {
             this.position = pos;
             this.d = d;
             this.material = material;
         }, Σ),
-        intersect: Σ.addFunction(function αXEnw(ray) {
-            var Σ_αXEnw = new Σ.Scope(this, Σ, αXEnw, function () {
+        intersect: Σ.addFunction(function α43(ray) {
+            var Σ_α43 = new Σ.Scope(this, Σ, α43, function () {
                 return [
                     { ray: ray },
                     {
                         info: info,
                         Vd: Vd,
-                        t: t,
-                        vU: vU,
-                        vV: vV,
-                        u: u,
-                        v: v
+                        t: t
                     }
                 ];
             });
@@ -714,16 +476,10 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
             }
             return info;
         }, Σ),
-        toString: Σ.addFunction(function αn5d7() {
+        toString: Σ.addFunction(function α44() {
             return 'Plane [' + this.position + ', d=' + this.d + ']';
         }, Σ)
     };
-    if (typeof Flog == 'undefined') {
-        var Flog = {};
-    }
-    if (typeof Flog.RayTracer == 'undefined') {
-        Flog.RayTracer = {};
-    }
     Flog.RayTracer.IntersectionInfo = Class.create();
     Flog.RayTracer.IntersectionInfo.prototype = {
         isHit: false,
@@ -733,19 +489,13 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
         normal: null,
         color: null,
         distance: null,
-        initialize: Σ.addFunction(function αyO0S() {
+        initialize: Σ.addFunction(function α45() {
             this.color = new Flog.RayTracer.Color(0, 0, 0);
         }, Σ),
-        toString: Σ.addFunction(function αkBvq() {
+        toString: Σ.addFunction(function α46() {
             return 'Intersection [' + this.position + ']';
         }, Σ)
     };
-    if (typeof Flog == 'undefined') {
-        var Flog = {};
-    }
-    if (typeof Flog.RayTracer == 'undefined') {
-        Flog.RayTracer = {};
-    }
     Flog.RayTracer.Camera = Class.create();
     Flog.RayTracer.Camera.prototype = {
         position: null,
@@ -753,25 +503,15 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
         equator: null,
         up: null,
         screen: null,
-        initialize: Σ.addFunction(function αJCvr(pos, lookAt, up) {
-            var Σ_αJCvr = new Σ.Scope(this, Σ, αJCvr, function () {
-                return [
-                    {
-                        pos: pos,
-                        lookAt: lookAt,
-                        up: up
-                    },
-                    {}
-                ];
-            });
+        initialize: Σ.addFunction(function α47(pos, lookAt, up) {
             this.position = pos;
             this.lookAt = lookAt;
             this.up = up;
             this.equator = lookAt.normalize().cross(this.up);
             this.screen = Flog.RayTracer.Vector.prototype.add(this.position, this.lookAt);
         }, Σ),
-        getRay: Σ.addFunction(function αb4SD(vx, vy) {
-            var Σ_αb4SD = new Σ.Scope(this, Σ, αb4SD, function () {
+        getRay: Σ.addFunction(function α48(vx, vy) {
+            var Σ_α48 = new Σ.Scope(this, Σ, α48, function () {
                 return [
                     {
                         vx: vx,
@@ -790,51 +530,24 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
             var ray = new Flog.RayTracer.Ray(pos, dir.normalize());
             return ray;
         }, Σ),
-        toString: Σ.addFunction(function αAEbv() {
+        toString: Σ.addFunction(function α49() {
             return 'Ray []';
         }, Σ)
     };
-    if (typeof Flog == 'undefined') {
-        var Flog = {};
-    }
-    if (typeof Flog.RayTracer == 'undefined') {
-        Flog.RayTracer = {};
-    }
     Flog.RayTracer.Background = Class.create();
     Flog.RayTracer.Background.prototype = {
         color: null,
         ambience: 0,
-        initialize: Σ.addFunction(function αwMk3(color, ambience) {
-            var Σ_αwMk3 = new Σ.Scope(this, Σ, αwMk3, function () {
-                return [
-                    {
-                        color: color,
-                        ambience: ambience
-                    },
-                    {}
-                ];
-            });
+        initialize: Σ.addFunction(function α50(color, ambience) {
             this.color = color;
             this.ambience = ambience;
         }, Σ)
     };
-    if (typeof Flog == 'undefined') {
-        var Flog = {};
-    }
-    if (typeof Flog.RayTracer == 'undefined') {
-        Flog.RayTracer = {};
-    }
     Flog.RayTracer.Engine = Class.create();
     Flog.RayTracer.Engine.prototype = {
         canvas: null,
-        initialize: Σ.addFunction(function α62MX(options) {
-            var Σ_α62MX = new Σ.Scope(this, Σ, α62MX, function () {
-                return [
-                    { options: options },
-                    {}
-                ];
-            });
-            this.options = Object.extend({
+        initialize: Σ.addFunction(function α51(options) {
+            this.options = extendObject({
                 canvasHeight: 100,
                 canvasWidth: 100,
                 pixelWidth: 2,
@@ -848,8 +561,8 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
             this.options.canvasHeight /= this.options.pixelHeight;
             this.options.canvasWidth /= this.options.pixelWidth;
         }, Σ),
-        setPixel: Σ.addFunction(function αAMhZ(x, y, color) {
-            var Σ_αAMhZ = new Σ.Scope(this, Σ, αAMhZ, function () {
+        setPixel: Σ.addFunction(function α52(x, y, color) {
+            var Σ_α52 = new Σ.Scope(this, Σ, α52, function () {
                 return [
                     {
                         x: x,
@@ -874,8 +587,8 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
                 }
             }
         }, Σ),
-        renderScene: Σ.addFunction(function αy91q(scene, canvas) {
-            var Σ_αy91q = new Σ.Scope(this, Σ, αy91q, function () {
+        renderScene: Σ.addFunction(function α53(scene, canvas) {
+            var Σ_α53 = new Σ.Scope(this, Σ, α53, function () {
                 return [
                     {
                         scene: scene,
@@ -883,13 +596,7 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
                     },
                     {
                         canvasHeight: canvasHeight,
-                        canvasWidth: canvasWidth,
-                        y: y,
-                        x: x,
-                        yp: yp,
-                        xp: xp,
-                        ray: ray,
-                        color: color
+                        canvasWidth: canvasWidth
                     }
                 ];
             });
@@ -914,17 +621,14 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
                 throw new Error('Scene rendered incorrectly');
             }
         }, Σ),
-        getPixelColor: Σ.addFunction(function α4OIU(ray, scene) {
-            var Σ_α4OIU = new Σ.Scope(this, Σ, α4OIU, function () {
+        getPixelColor: Σ.addFunction(function α54(ray, scene) {
+            var Σ_α54 = new Σ.Scope(this, Σ, α54, function () {
                 return [
                     {
                         ray: ray,
                         scene: scene
                     },
-                    {
-                        info: info,
-                        color: color
-                    }
+                    { info: info }
                 ];
             });
             var info = this.testIntersection(ray, scene, null);
@@ -934,8 +638,8 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
             }
             return scene.background.color;
         }, Σ),
-        testIntersection: Σ.addFunction(function αsVgd(ray, scene, exclude) {
-            var Σ_αsVgd = new Σ.Scope(this, Σ, αsVgd, function () {
+        testIntersection: Σ.addFunction(function α55(ray, scene, exclude) {
+            var Σ_α55 = new Σ.Scope(this, Σ, α55, function () {
                 return [
                     {
                         ray: ray,
@@ -944,10 +648,7 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
                     },
                     {
                         hits: hits,
-                        best: best,
-                        i: i,
-                        shape: shape,
-                        info: info
+                        best: best
                     }
                 ];
             });
@@ -967,8 +668,8 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
             best.hitCount = hits;
             return best;
         }, Σ),
-        getReflectionRay: Σ.addFunction(function αzjsi(P, N, V) {
-            var Σ_αzjsi = new Σ.Scope(this, Σ, αzjsi, function () {
+        getReflectionRay: Σ.addFunction(function α56(P, N, V) {
+            var Σ_α56 = new Σ.Scope(this, Σ, α56, function () {
                 return [
                     {
                         P: P,
@@ -985,8 +686,8 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
             var R1 = Flog.RayTracer.Vector.prototype.add(Flog.RayTracer.Vector.prototype.multiplyScalar(N, 2 * c1), V);
             return new Flog.RayTracer.Ray(P, R1);
         }, Σ),
-        rayTrace: Σ.addFunction(function α9nbh(info, ray, scene, depth) {
-            var Σ_α9nbh = new Σ.Scope(this, Σ, α9nbh, function () {
+        rayTrace: Σ.addFunction(function α57(info, ray, scene, depth) {
+            var Σ_α57 = new Σ.Scope(this, Σ, α57, function () {
                 return [
                     {
                         info: info,
@@ -997,21 +698,7 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
                     {
                         color: color,
                         oldColor: oldColor,
-                        shininess: shininess,
-                        i: i,
-                        light: light,
-                        v: v,
-                        L: L,
-                        reflectionRay: reflectionRay,
-                        refl: refl,
-                        shadowInfo: shadowInfo,
-                        shadowRay: shadowRay,
-                        vA: vA,
-                        dB: dB,
-                        Lv: Lv,
-                        E: E,
-                        H: H,
-                        glossWeight: glossWeight
+                        shininess: shininess
                     }
                 ];
             });
@@ -1119,13 +806,13 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
         raytracer.renderScene(scene, null, 0);
     }
     var performance = {};
-    performance.now = Σ.addFunction(function αfGJp() {
+    performance.now = Σ.addFunction(function α58() {
         return Date.now();
     }, Σ);
     var BM_RunFunc = renderScene;
-    var BM_SetupFunc = Σ.addFunction(function αaG9b() {
+    var BM_SetupFunc = Σ.addFunction(function α59() {
     }, Σ);
-    var BM_TearDownFunc = Σ.addFunction(function αHoOd() {
+    var BM_TearDownFunc = Σ.addFunction(function α60() {
     }, Σ);
     var BM_RMS = undefined;
     var BM_Iterations = 500;
@@ -1153,15 +840,6 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
         var end = null;
         var i = 0;
         function doRun() {
-            var Σ_BM_Start_doRun = new Σ.Scope(this, Σ_BM_Start, doRun, function () {
-                return [
-                    {},
-                    {
-                        usec: usec,
-                        rms: rms
-                    }
-                ];
-            });
             BM_SetupFunc();
             Σ.console.log('Iteration : ' + i);
             BM_RunFunc();
