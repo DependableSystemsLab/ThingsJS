@@ -1,4 +1,3 @@
-var pidusage = require('pidusage');
 require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
     Σ.setExtractor(function () {
         return [
@@ -15,7 +14,7 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
             }
         ];
     });
-    var startTime = null, endTime = null;
+    var startTime = null, mid = null, endTime = null;
     var target = 20000;
     var timer;
     var count = 0;
@@ -45,16 +44,8 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
         }
         if (count < target) {
             if (count === target / 2 + 1){
-                (function report(){
-                    pidusage(process.pid, function(err, stat) {
-                        process.send({
-                            timestamp: Date.now(),
-                            memory: process.memoryUsage(),
-                            cpu: stat.cpu
-                        })
-                    });
-                    setTimeout(report, Math.round(Math.random()*200 + 100));
-                })();
+                mid = Date.now();
+                process.send({ tag: 'mid' });
             }
             Σ.setImmediate(factorial);
         } else {
@@ -65,7 +56,7 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
             Σ.console.log('factorial(' + target + ') = ' + value);
             endTime = Date.now();
             Σ.console.log('Time taken : ' + (endTime - startTime) + ' ms');
-            process.exit();
+            process.send({ tag: 'end', elapsed: endTime - mid });
         }
     }, Σ);
     startTime = Date.now();

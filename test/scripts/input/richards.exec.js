@@ -1,4 +1,3 @@
-var pidusage = require('pidusage');
 function runRichards() {
   var scheduler = new Scheduler();
   scheduler.addIdleTask(ID_IDLE, 0, null, COUNT);
@@ -295,7 +294,7 @@ var BM_RunFunc = runRichards;
 var BM_SetupFunc = function(){};
 var BM_TearDownFunc = function(){};
 var BM_RMS = undefined;
-var BM_Iterations = 3000;
+var BM_Iterations = 6000;
 var BM_Min_Iterations = 16;
 var BM_Results = [];
 function BM_Start() {
@@ -304,6 +303,7 @@ function BM_Start() {
     var data = { runs: 0, elapsed: 0 };
     var elapsed = 0;
     var start = Date.now();
+    var mid = null;
     var end = null;
     var i = 0;
     function doRun(){
@@ -314,19 +314,11 @@ function BM_Start() {
         BM_TearDownFunc();
         i ++;
         if (i < BM_Iterations){
-            if (i === BM_Iterations / 2 + 1){
-                (function report(){
-                    pidusage(process.pid, function(err, stat) {
-                        process.send({
-                            timestamp: Date.now(),
-                            memory: process.memoryUsage(),
-                            cpu: stat.cpu
-                        })
-                    });
-                    setTimeout(report, Math.round(Math.random()*200 + 100));
-                })();
-            }
-            setImmediate(doRun);
+          if (i === BM_Iterations / 2 + 1){
+            mid = Date.now();
+            process.send({ tag: "mid" });
+          }
+          setImmediate(doRun);
         }
         else {
             if (data != null) {
@@ -339,7 +331,7 @@ function BM_Start() {
             var usec = (data.elapsed * 1000) / data.runs;
             var rms = BM_RMS ? BM_RMS() : 0;
             BM_Results.push({ time: usec, latency: rms });
-            process.exit();
+            process.send({ tag: "end", elapsed: end - mid });
          }
     }
     setImmediate(doRun);

@@ -1,13 +1,18 @@
-var pidusage = require('pidusage');
+/* This Benchmark was modified to handle the edge-case of
+   not migrating native objects that have been augmented.
+   e.g. Object.extend = function(){}    the extend function is not migrated.
+   and was changed to extendObject = function(){}
+ */
 var checkNumber;
 var Class = {
   create: function() {
-    return function() {
+    function init() {
       this.initialize.apply(this, arguments);
     }
+    return init;
   }
 };
-Object.extend = function(destination, source) {
+function extendObject(destination, source) {
   for (var property in source) {
     destination[property] = source[property];
   }
@@ -227,7 +232,7 @@ Flog.RayTracer.Material.BaseMaterial.prototype = {
 // if(typeof(Flog) == 'undefined') var Flog = {};
 // if(typeof(Flog.RayTracer) == 'undefined') Flog.RayTracer = {};
 Flog.RayTracer.Material.Solid = Class.create();
-Flog.RayTracer.Material.Solid.prototype = Object.extend(
+Flog.RayTracer.Material.Solid.prototype = extendObject(
     new Flog.RayTracer.Material.BaseMaterial(), {
         initialize : function(color, reflection, refraction, transparency, gloss) {
             this.color = color;
@@ -247,7 +252,7 @@ Flog.RayTracer.Material.Solid.prototype = Object.extend(
 // if(typeof(Flog) == 'undefined') var Flog = {};
 // if(typeof(Flog.RayTracer) == 'undefined') Flog.RayTracer = {};
 Flog.RayTracer.Material.Chessboard = Class.create();
-Flog.RayTracer.Material.Chessboard.prototype = Object.extend(
+Flog.RayTracer.Material.Chessboard.prototype = extendObject(
     new Flog.RayTracer.Material.BaseMaterial(), {
         colorEven: null,
         colorOdd: null,
@@ -428,7 +433,7 @@ Flog.RayTracer.Engine = Class.create();
 Flog.RayTracer.Engine.prototype = {
     canvas: null, 
     initialize: function(options){
-        this.options = Object.extend({
+        this.options = extendObject({
                 canvasHeight: 100,
                 canvasWidth: 100,
                 pixelWidth: 2,
@@ -673,7 +678,7 @@ var BM_RunFunc = renderScene;
 var BM_SetupFunc = function(){};
 var BM_TearDownFunc = function(){};
 var BM_RMS = undefined;
-var BM_Iterations = 500;
+var BM_Iterations = 1000;
 var BM_Min_Iterations = 16;
 var BM_Results = [];
 function BM_Start() {
@@ -682,6 +687,7 @@ function BM_Start() {
     var data = { runs: 0, elapsed: 0 };
     var elapsed = 0;
     var start = Date.now();
+    var mid = null;
     var end = null;
     var i = 0;
     function doRun(){
@@ -693,16 +699,8 @@ function BM_Start() {
         i ++;
         if (i < BM_Iterations){
             if (i === BM_Iterations / 2 + 1){
-                (function report(){
-                    pidusage(process.pid, function(err, stat) {
-                        process.send({
-                            timestamp: Date.now(),
-                            memory: process.memoryUsage(),
-                            cpu: stat.cpu
-                        })
-                    });
-                    setTimeout(report, Math.round(Math.random()*200 + 100));
-                })();
+                mid = Date.now();
+                process.send({ tag: "mid" });
             }
             setImmediate(doRun);
         }
@@ -717,7 +715,7 @@ function BM_Start() {
             var usec = (data.elapsed * 1000) / data.runs;
             var rms = BM_RMS ? BM_RMS() : 0;
             BM_Results.push({ time: usec, latency: rms });
-            process.exit();
+            process.send({ tag: "end", elapsed: end - mid });
          }
     }
     setImmediate(doRun);

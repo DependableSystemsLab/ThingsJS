@@ -678,7 +678,7 @@ var BM_RunFunc = renderScene;
 var BM_SetupFunc = function(){};
 var BM_TearDownFunc = function(){};
 var BM_RMS = undefined;
-var BM_Iterations = 500;
+var BM_Iterations = 1000;
 var BM_Min_Iterations = 16;
 var BM_Results = [];
 function BM_Start() {

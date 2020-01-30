@@ -294,7 +294,7 @@ var BM_RunFunc = runRichards;
 var BM_SetupFunc = function(){};
 var BM_TearDownFunc = function(){};
 var BM_RMS = undefined;
-var BM_Iterations = 3000;
+var BM_Iterations = 6000;
 var BM_Min_Iterations = 16;
 var BM_Results = [];
 function BM_Start() {

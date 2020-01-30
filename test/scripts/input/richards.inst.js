@@ -378,7 +378,7 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
     var BM_TearDownFunc = Σ.addFunction(function α32() {
     }, Σ);
     var BM_RMS = undefined;
-    var BM_Iterations = 3000;
+    var BM_Iterations = 6000;
     var BM_Min_Iterations = 16;
     var BM_Results = [];
     function BM_Start() {

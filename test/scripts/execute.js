@@ -26,23 +26,59 @@ var CODES = [
 
 var result = {};
 
+function getReporter(pid){
+	var stats = [];
+	var timer = null;
+
+	function report(){
+	    pidusage(pid, (err, stat) => {
+	    	if (!err) stats.push({
+	            timestamp: Date.now(),
+	            memory: stat.memory,
+	            cpu: stat.cpu
+	        });
+	    });
+	    timer = setTimeout(report, Math.round(Math.random()*100 + 50));
+	};
+
+	return {
+		begin: report,
+		end: () => {
+			if (timer) clearTimeout(timer);
+		},
+		getStats: () => stats
+	}
+}
+
 function serialExecute(code_path, count){
 	if (count === 0) return Promise.resolve([]);
 	
 	return new Promise(function(resolve, reject){
 
 		var stats = [], started = null, elapsed = null;
+		var timer = null;
 
 		var spawned = child_process.fork(code_path);
+		var reporter = getReporter(spawned.pid);
+
 			spawned.on('message', function(message){
+				if (message.tag === "mid"){
+					reporter.begin();
+				}
+				else if (message.tag == "end"){
+					reporter.end();
+					elapsed = message.elapsed;
+					stats = reporter.getStats();
+					spawned.kill();
+				}
 				// console.log(message);
-				if (message.timestamp && message.cpu && message.memory){
+				/*if (message.timestamp && message.cpu && message.memory){
 					if (!started) started = Date.now();
 					stats.push(message);
-				}
+				}*/
 			});
 		spawned.on('exit', function(exit_code, signal){
-			elapsed = Date.now() - started;
+			// elapsed = Date.now() - started;
 			stats.forEach(function(item, index, list){
 				list[index].t = item.timestamp - stats[0].timestamp;
 			});
@@ -125,7 +161,7 @@ runTest(CODES)
 				var mem_data = [ '', 'memory' ];
 
 				var cpu_stats = helpers.analyzeArray(run.map(function(item){ return item.cpu }), 95);
-				var mem_stats = helpers.analyzeArray(run.map(function(item){ return item.memory.heapUsed }), 95);
+				var mem_stats = helpers.analyzeArray(run.map(function(item){ return item.memory }), 95);
 
 				cpu_data.push(cpu_stats.mean, cpu_stats.stdev, cpu_stats.max, cpu_stats.min, '' );
 				mem_data.push(mem_stats.mean / 1000000, mem_stats.stdev / 1000000, mem_stats.max / 1000000, mem_stats.min / 1000000, '' );
@@ -136,7 +172,7 @@ runTest(CODES)
 				run.forEach(function(datum){
 					t_data.push(datum.t);
 					cpu_data.push(datum.cpu);
-					mem_data.push(datum.memory.heapUsed / 1000000);
+					mem_data.push(datum.memory / 1000000);
 				})
 
 				run_data.push(t_data);
@@ -171,6 +207,9 @@ runTest(CODES)
 	fs.writeFile(path.join(RESULT_DIR, 'execute.'+SESSION+'.csv'), output, function(err){
 		if (err) throw err;
 		console.log(chalk.green('--- DONE ---'));
+
+		console.log(process._getActiveHandles());
+		console.log(process._getActiveRequests());
 	});
 })
 

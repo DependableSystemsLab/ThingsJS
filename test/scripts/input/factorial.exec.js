@@ -1,5 +1,4 @@
-var pidusage = require('pidusage');
-var startTime = null, endTime = null;
+var startTime = null, mid = null, endTime = null;
 var target = 20000;
 var timer;
 var count = 0;
@@ -20,16 +19,8 @@ var factorial = function(){
     }   
     if (count < target){
         if (count === target/2 + 1){
-            (function report(){
-                pidusage(process.pid, function(err, stat) {
-                    process.send({
-                        timestamp: Date.now(),
-                        memory: process.memoryUsage(),
-                        cpu: stat.cpu
-                    })
-                });
-                setTimeout(report, Math.round(Math.random()*200 + 100));
-            })();
+            mid = Date.now();
+            process.send({ tag: 'mid' });
         }
         setImmediate(factorial);
     }
@@ -41,7 +32,7 @@ var factorial = function(){
         console.log("factorial("+target+") = "+value);
         endTime = Date.now();
         console.log("Time taken : "+(endTime - startTime)+" ms");
-        process.exit();
+        process.send({ tag: 'end', elapsed: endTime - mid });
     }
 };
 startTime = Date.now();

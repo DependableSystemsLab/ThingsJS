@@ -1,4 +1,3 @@
-var pidusage = require('pidusage');
 var kSplayTreeSize = 1000;
 var kSplayTreeModifications = 20;
 var kSplayTreePayloadDepth = 4;
@@ -236,6 +235,7 @@ function BM_Start() {
 	var data = { runs: 0, elapsed: 0 };
 	var elapsed = 0;
 	var start = Date.now();
+  var mid = null;
 	var end = null;
 	var i = 0;
 	function doRun(){
@@ -247,16 +247,8 @@ function BM_Start() {
 		i ++;
 		if (i < BM_Iterations){
       if (i === BM_Iterations / 2 + 1){
-        (function report(){
-            pidusage(process.pid, function(err, stat) {
-                process.send({
-                    timestamp: Date.now(),
-                    memory: process.memoryUsage(),
-                    cpu: stat.cpu
-                })
-            });
-            setTimeout(report, Math.round(Math.random()*80 + 20));
-        })();
+        mid = Date.now();
+        process.send({ tag: 'mid' });
       }
 			setImmediate(doRun);
 		}
@@ -272,7 +264,7 @@ function BM_Start() {
 			var usec = (data.elapsed * 1000) / data.runs;
 			var rms = BM_RMS ? BM_RMS() : 0;
 			BM_Results.push({ time: usec, latency: rms });
-      process.exit();
+      process.send({ tag: 'end', elapsed: end - mid });
 		 }
 	}
 	setImmediate(doRun);

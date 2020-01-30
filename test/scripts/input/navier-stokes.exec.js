@@ -1,4 +1,3 @@
-var pidusage = require('pidusage');
 var solver = null;
 var nsFrameCounter = 0;
 function runNavierStokes()
@@ -371,26 +370,19 @@ function BM_Start() {
 	var data = { runs: 0, elapsed: 0 };
 	var elapsed = 0;
 	var start = Date.now();
+	var mid = null;
 	var end = null;
 	var i = 0;
 	function doRun(){
 		console.log("Iteration : "+i);
-		if (i === BM_Iterations / 2){
-			(function report(){
-				pidusage(process.pid, function(err, stat) {
-					process.send({
-						timestamp: Date.now(),
-						memory: process.memoryUsage(),
-						cpu: stat.cpu
-					})
-				});
-				setTimeout(report, Math.round(Math.random()*200 + 100));
-			})();
-		}
 		BM_RunFunc();
 		elapsed = Date.now() - start;
 		i ++;
 		if (i < BM_Iterations){
+			if (i === BM_Iterations / 2 + 1){
+				mid = Date.now();
+				process.send({ tag: "mid" });
+			}
 			setImmediate(doRun);
 		}
 		else {
@@ -404,7 +396,7 @@ function BM_Start() {
 			var usec = (data.elapsed * 1000) / data.runs;
 			var rms = 0;
 			BM_Results.push({ time: usec, latency: rms });
-            process.exit();
+            process.send({ tag: "end", elapsed: end - mid });
 		 }
 	}
 	setImmediate(doRun);

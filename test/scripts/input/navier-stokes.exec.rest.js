@@ -1,4 +1,3 @@
-var pidusage = require('pidusage');
 require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtractor(function(){ return [{}, {solver:solver,nsFrameCounter:nsFrameCounter,framesTillAddingPoints:framesTillAddingPoints,framesBetweenAddingPoints:framesBetweenAddingPoints,performance:performance,BM_RunFunc:BM_RunFunc,BM_SetupFunc:BM_SetupFunc,BM_TearDownFunc:BM_TearDownFunc,BM_Iterations:BM_Iterations,BM_Min_Iterations:BM_Min_Iterations,BM_Results:BM_Results}] }).hoist(runNavierStokes, Σ).hoist(checkResult, Σ).hoist(voidFunc, Σ).hoist(setupNavierStokes, Σ).hoist(tearDownNavierStokes, Σ).hoist(addPoints, Σ).hoist(prepareFrame, Σ).hoist(FluidField, Σ).hoist(BM_Start, Σ);function runNavierStokes() {
         solver.update();
         nsFrameCounter++;
@@ -474,6 +473,7 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
         };
         var elapsed = 0;
         var start = Date.now();
+        var mid = null;
         var end = null;
         var i = 0;
         function doRun() {
@@ -483,16 +483,8 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
             i++;
             if (i < BM_Iterations) {
                 if (i === BM_Iterations / 2 + 1){
-                    (function report(){
-                        pidusage(process.pid, function(err, stat) {
-                            process.send({
-                                timestamp: Date.now(),
-                                memory: process.memoryUsage(),
-                                cpu: stat.cpu
-                            })
-                        });
-                        setTimeout(report, Math.round(Math.random()*200 + 100));
-                    })();
+                    mid = Date.now();
+                    process.send({ tag: "mid" });
                 }
                 Σ.setImmediate(doRun);
             } else {
@@ -509,7 +501,7 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
                     time: usec,
                     latency: rms
                 });
-                process.exit();
+                process.send({ tag: "end", elapsed: end - mid });
             }
         }
         Σ.setImmediate(doRun);
@@ -869,16 +861,8 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
             i++;
             if (i < BM_Iterations) {
                 if (i === BM_Iterations / 2 + 1){
-                    (function report(){
-                        pidusage(process.pid, function(err, stat) {
-                            process.send({
-                                timestamp: Date.now(),
-                                memory: process.memoryUsage(),
-                                cpu: stat.cpu
-                            })
-                        });
-                        setTimeout(report, Math.round(Math.random()*200 + 100));
-                    })();
+                    mid = Date.now();
+                    process.send({ tag: "mid" });
                 }
                 Σ.setImmediate(doRun);
             } else {
@@ -895,6 +879,6 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
                     time: usec,
                     latency: rms
                 });
-                process.exit();
+                process.send({ tag: "end", elapsed: end - mid });
             }
-        };var data = Σ.addObject({ "runs" : 0,"elapsed" : 0}, "Σ/BM_Start-0.o9");var elapsed = 0;var start = 1580250791897;var end = null;var i = 1500;}());var solver = Σ.restoreObject({"reset" : Σ.getFunction("Σ/FluidField-1.reset"),"getDens" : Σ.getFunction("Σ/FluidField-1.α8-2"),"setResolution" : Σ.getFunction("Σ/FluidField-1.α9-3"),"update" : Σ.getFunction("Σ/FluidField-1.α10-4"),"setDisplayFunction" : Σ.getFunction("Σ/FluidField-1.α11-5"),"iterations" : Σ.getFunction("Σ/FluidField-1.α12-6"),"setIterations" : Σ.getFunction("Σ/FluidField-1.α13-7"),"setUICallback" : Σ.getFunction("Σ/FluidField-1.α14-8")}, "Σ.FluidField", "Σ/FluidField-1", "Σ.o0");var nsFrameCounter = 1500;var framesTillAddingPoints = 25;var framesBetweenAddingPoints = 55;var performance = Σ.addObject({ "now" : Σ.getFunction("Σ.α15-0")}, "Σ.o7");var BM_RunFunc = Σ.getFunction("Σ.runNavierStokes");var BM_SetupFunc = Σ.getFunction("Σ.setupNavierStokes");var BM_TearDownFunc = Σ.getFunction("Σ.tearDownNavierStokes");var BM_Iterations = 3000;var BM_Min_Iterations = 16;var BM_Results = [];Σ.setImmediate(Σ.getFunction("Σ/BM_Start-0.doRun"), "5tXfX3Uy1499"); }, 'mqtt://localhost', 'navier-stokes.js/navier-stokes.js.0', {});
+        };var data = Σ.addObject({ "runs" : 0,"elapsed" : 0}, "Σ/BM_Start-0.o9");var elapsed = 0;var start = 1580250791897;var mid = null;var end = null;var i = 1500;}());var solver = Σ.restoreObject({"reset" : Σ.getFunction("Σ/FluidField-1.reset"),"getDens" : Σ.getFunction("Σ/FluidField-1.α8-2"),"setResolution" : Σ.getFunction("Σ/FluidField-1.α9-3"),"update" : Σ.getFunction("Σ/FluidField-1.α10-4"),"setDisplayFunction" : Σ.getFunction("Σ/FluidField-1.α11-5"),"iterations" : Σ.getFunction("Σ/FluidField-1.α12-6"),"setIterations" : Σ.getFunction("Σ/FluidField-1.α13-7"),"setUICallback" : Σ.getFunction("Σ/FluidField-1.α14-8")}, "Σ.FluidField", "Σ/FluidField-1", "Σ.o0");var nsFrameCounter = 1500;var framesTillAddingPoints = 25;var framesBetweenAddingPoints = 55;var performance = Σ.addObject({ "now" : Σ.getFunction("Σ.α15-0")}, "Σ.o7");var BM_RunFunc = Σ.getFunction("Σ.runNavierStokes");var BM_SetupFunc = Σ.getFunction("Σ.setupNavierStokes");var BM_TearDownFunc = Σ.getFunction("Σ.tearDownNavierStokes");var BM_Iterations = 3000;var BM_Min_Iterations = 16;var BM_Results = [];Σ.setImmediate(Σ.getFunction("Σ/BM_Start-0.doRun"), "5tXfX3Uy1499"); }, 'mqtt://localhost', 'navier-stokes.js/navier-stokes.js.0', {});

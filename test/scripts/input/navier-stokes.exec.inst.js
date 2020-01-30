@@ -1,4 +1,3 @@
-var pidusage = require('pidusage');
 require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
     Σ.setExtractor(function () {
         return [
@@ -515,6 +514,7 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
         };
         var elapsed = 0;
         var start = Date.now();
+        var mid = null;
         var end = null;
         var i = 0;
         function doRun() {
@@ -524,16 +524,8 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
             i++;
             if (i < BM_Iterations) {
                 if (i === BM_Iterations / 2 + 1){
-                    (function report(){
-                        pidusage(process.pid, function(err, stat) {
-                            process.send({
-                                timestamp: Date.now(),
-                                memory: process.memoryUsage(),
-                                cpu: stat.cpu
-                            })
-                        });
-                        setTimeout(report, Math.round(Math.random()*200 + 100));
-                    })();
+                    mid = Date.now();
+                    process.send({ tag: "mid" });
                 }
                 Σ.setImmediate(doRun);
             } else {
@@ -550,7 +542,7 @@ require('things-js/lib/core/Code').bootstrap(module, function (Σ) {
                     time: usec,
                     latency: rms
                 });
-                process.exit();
+                process.send({ tag: "end", elapsed: end - mid });
             }
         }
         Σ.setImmediate(doRun);

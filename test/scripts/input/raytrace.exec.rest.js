@@ -1,4 +1,3 @@
-var pidusage = require('pidusage');
 require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtractor(function(){ return [{}, {checkNumber:checkNumber,Class:Class,Flog:Flog,performance:performance,BM_RunFunc:BM_RunFunc,BM_SetupFunc:BM_SetupFunc,BM_TearDownFunc:BM_TearDownFunc,BM_RMS:BM_RMS,BM_Iterations:BM_Iterations,BM_Min_Iterations:BM_Min_Iterations,BM_Results:BM_Results}] }).hoist(extendObject, Σ).hoist(renderScene, Σ).hoist(BM_Start, Σ);function extendObject(destination, source) {
         for (var property in source) {
             destination[property] = source[property];
@@ -79,6 +78,7 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
         };
         var elapsed = 0;
         var start = Date.now();
+        var mid = null;
         var end = null;
         var i = 0;
         function doRun() {
@@ -90,16 +90,8 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
             i++;
             if (i < BM_Iterations) {
                 if (i === BM_Iterations / 2 + 1){
-                    (function report(){
-                        pidusage(process.pid, function(err, stat) {
-                            process.send({
-                                timestamp: Date.now(),
-                                memory: process.memoryUsage(),
-                                cpu: stat.cpu
-                            })
-                        });
-                        setTimeout(report, Math.round(Math.random()*200 + 100));
-                    })();
+                    mid = Date.now();
+                    process.send({ tag: "mid" });
                 }
                 Σ.setImmediate(doRun);
             } else {
@@ -116,7 +108,7 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
                     time: usec,
                     latency: rms
                 });
-                process.exit();
+                process.send({ tag: "end", elapsed: end - mid });
             }
         }
         Σ.setImmediate(doRun);
@@ -738,16 +730,8 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
             i++;
             if (i < BM_Iterations) {
                 if (i === BM_Iterations / 2 + 1){
-                    (function report(){
-                        pidusage(process.pid, function(err, stat) {
-                            process.send({
-                                timestamp: Date.now(),
-                                memory: process.memoryUsage(),
-                                cpu: stat.cpu
-                            })
-                        });
-                        setTimeout(report, Math.round(Math.random()*200 + 100));
-                    })();
+                    mid = Date.now();
+                    process.send({ tag: "mid" });
                 }
                 Σ.setImmediate(doRun);
             } else {
@@ -764,6 +748,6 @@ require('things-js/lib/core/Code').bootstrap(module, function(Σ){ Σ.setExtract
                     time: usec,
                     latency: rms
                 });
-                process.exit();
+                process.send({ tag: "end", elapsed: end - mid });
             }
-        };var data = Σ.addObject({ "runs" : 0,"elapsed" : 0}, "Σ/BM_Start-14.o9");var elapsed = 0;var start = 1580250833785;var end = null;var i = 250;}());var checkNumber = 2321;var Class = Σ.addObject({ "create" : Σ.getFunction("Σ.α0-0")}, "Σ.o0");var Flog = Σ.addObject({ "RayTracer" : Σ.addObject({ "Color" : Σ.getFunction("Σ/α0-0.init"),"Light" : Σ.getFunction("Σ/α0-1.init"),"Vector" : Σ.getFunction("Σ/α0-2.init"),"Ray" : Σ.getFunction("Σ/α0-3.init"),"Scene" : Σ.getFunction("Σ/α0-4.init"),"Material" : Σ.addObject({ "BaseMaterial" : Σ.getFunction("Σ/α0-5.init"),"Solid" : Σ.getFunction("Σ/α0-6.init"),"Chessboard" : Σ.getFunction("Σ/α0-7.init")}, "Σ.o3"),"Shape" : Σ.addObject({ "Sphere" : Σ.getFunction("Σ/α0-8.init"),"Plane" : Σ.getFunction("Σ/α0-9.init")}, "Σ.o4"),"IntersectionInfo" : Σ.getFunction("Σ/α0-10.init"),"Camera" : Σ.getFunction("Σ/α0-11.init"),"Background" : Σ.getFunction("Σ/α0-12.init"),"Engine" : Σ.getFunction("Σ/α0-13.init")}, "Σ.o2")}, "Σ.o1");var performance = Σ.addObject({ "now" : Σ.getFunction("Σ.α58-58")}, "Σ.o7");var BM_RunFunc = Σ.getFunction("Σ.renderScene");var BM_SetupFunc = Σ.getFunction("Σ.α59-59");var BM_TearDownFunc = Σ.getFunction("Σ.α60-60");var BM_RMS = undefined;var BM_Iterations = 500;var BM_Min_Iterations = 16;var BM_Results = [];Σ.setImmediate(Σ.getFunction("Σ/BM_Start-14.doRun"), "ezAR944g249"); }, 'mqtt://localhost', 'raytrace.js/raytrace.js.0', {});
+        };var data = Σ.addObject({ "runs" : 0,"elapsed" : 0}, "Σ/BM_Start-14.o9");var elapsed = 0;var start = 1580419752360;var mid = null;var end = null;var i = 500;}());var checkNumber = 2321;var Class = Σ.addObject({ "create" : Σ.getFunction("Σ.α0-0")}, "Σ.o0");var Flog = Σ.addObject({ "RayTracer" : Σ.addObject({ "Color" : Σ.getFunction("Σ/α0-0.init"),"Light" : Σ.getFunction("Σ/α0-1.init"),"Vector" : Σ.getFunction("Σ/α0-2.init"),"Ray" : Σ.getFunction("Σ/α0-3.init"),"Scene" : Σ.getFunction("Σ/α0-4.init"),"Material" : Σ.addObject({ "BaseMaterial" : Σ.getFunction("Σ/α0-5.init"),"Solid" : Σ.getFunction("Σ/α0-6.init"),"Chessboard" : Σ.getFunction("Σ/α0-7.init")}, "Σ.o3"),"Shape" : Σ.addObject({ "Sphere" : Σ.getFunction("Σ/α0-8.init"),"Plane" : Σ.getFunction("Σ/α0-9.init")}, "Σ.o4"),"IntersectionInfo" : Σ.getFunction("Σ/α0-10.init"),"Camera" : Σ.getFunction("Σ/α0-11.init"),"Background" : Σ.getFunction("Σ/α0-12.init"),"Engine" : Σ.getFunction("Σ/α0-13.init")}, "Σ.o2")}, "Σ.o1");var performance = Σ.addObject({ "now" : Σ.getFunction("Σ.α58-58")}, "Σ.o7");var BM_RunFunc = Σ.getFunction("Σ.renderScene");var BM_SetupFunc = Σ.getFunction("Σ.α59-59");var BM_TearDownFunc = Σ.getFunction("Σ.α60-60");var BM_RMS = undefined;var BM_Iterations = 1000;var BM_Min_Iterations = 16;var BM_Results = [];Σ.setImmediate(Σ.getFunction("Σ/BM_Start-14.doRun"), "Rv3utixX499"); }, 'mqtt://localhost', 'raytrace.js/raytrace.js.0', {});
